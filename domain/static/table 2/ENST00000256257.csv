@@ -1,0 +1,7 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+RNF122-201,UBE2E1,7324,PF13639-PF00179,,0.0,Retained
+RNF122-201,UBE2D2,7322,PF13639-PF00179,,0.0,Retained
+RNF122-201,UBE2N,7334,PF00179-PF13639,,0.0,Retained
+RNF122-201,UBE2D3,7323,PF13639-PF00179,,0.0,Retained
+RNF122-201,UBE2D1,7321,PF00179-PF13639,,0.0,Retained
+RNF122-201,UBE2L6,9246,PF00179-PF13639,,0.0,Retained

@@ -1,0 +1,2 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+KCNJ9-201,KCNJ6,3763,PF01007-PF01007 ; PF01007-PF17655 ; PF17655-PF01007 ; PF17655-PF17655,,0.0,Retained

@@ -1,0 +1,2 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+ZNF672-203,REPIN1,29803,PF00096-PF00096,PF13894-PF00096,50.0,Affected

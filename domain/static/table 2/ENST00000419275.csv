@@ -1,0 +1,4 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+PPIAL4G-201,PKN2,5586,PF00160-PF00069,,0.0,Retained
+PPIAL4G-201,PPIAL4E,730262,PF00160-PF00160,,0.0,Retained
+PPIAL4G-201,PPIAL4C,653598,PF00160-PF00160,,0.0,Retained

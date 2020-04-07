@@ -1,0 +1,364 @@
+{% extends "domain/base.html" %}
+{% load static %}
+
+{%block content %}
+  <style type="text/css">
+    #mynetwork {
+      width: 800px;
+      height: 540px;
+      border: 2px solid lightgray;
+    }
+        img{
+        max-width: 100%;
+        max-height: 100%;
+        display: block; /* remove extra space below image */
+    }
+    .box{
+        width: 1050px;        
+        border: 5px solid black;
+    }    
+    
+    .tab { margin-left: 90px; }
+    .tab2 { margin-left: 60px; }
+    .tab { margin-left: 50px; }
+    
+    
+    .box.large{
+        height: 300px;
+    }
+    .box.small{
+        height: 100px;
+    }
+    
+  </style>
+  
+  
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="src/tableHTMLExport.js"></script>
+
+
+
+
+	<title>  Exonic Region From The Gene {{ name|safe }}  </title>
+
+<div class="container">
+  <div class="card border-0 shadow my-5">
+    <div class="card-body p-3">
+    
+
+          
+              <br><br>
+      <h2 class="font-weight-light"> Exon Information </h2>
+      <br>
+       <h5 class="lead"> <span style="font-weight:bold"> Exon ID</span>: {{exon_ID|safe }}  </h5 class>  
+      <h5 class="lead"> <span style="font-weight:bold"> Gene name </span>: {{ name|safe }} </h5 class>  
+      
+      <h5 class="lead">   <span style="font-weight:bold">NCBI gene ID </span>:   <a href="https://www.ncbi.nlm.nih.gov/gene/{{entrezID|safe }}"target="_blank">{{entrezID|safe }} </a>       </h5 class> 
+      <h5 class="lead"> <span style="font-weight:bold">Ensembl gene ID</span> :  <a href="https://www.ensembl.org/id/{{gID|safe }}"target="_blank"> {{gID|safe }} </a>   </h5 class> 
+      
+      
+      <br><br>
+      {% if not dis2 %}
+        <h2 class="font-weight-light"> DomainView </h2>
+              
+   <h5 class="tab2">A list of Pfam domains coded by the selected exon and a graphical visualization for their interactions is provided in this table. In <span style="font-weight:bold">DomainView</span> , Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table to visulaize affected interactions. </h5 class>     
+     <center>
+       
+         <br><br>  
+       
+        <p class="lead"> <span style="font-weight:bold">The exon Codes for the following Pfam domains </span>  </p> 
+       
+       <h5 class >   
+      {% autoescape off %}
+         {{ tb2 }}
+        {% endautoescape %}
+
+         </h5 class>  
+          </center>  
+       {% if not dis %}
+        <br> 
+ <h5 class="tab">    The  domains coded by selected exon do not have any known interactions from the available database.  </h5 class>
+
+     {% endif %}
+      {% endif %}
+              
+           {% if dis2 %}
+            <br> 
+           <h4 class="tab">     The selected exon does not code for any known Pfam domain  </h4 class>
+      {% endif %}
+      
+         {% if dis %}
+         
+                  <style type="text/css">
+    #mynetwork {
+      width: 1050px;
+      height: 800px;
+      border: 2px solid lightgray;
+    }
+  </style>
+  
+  
+  
+                     <br />
+            <h2 class="font-weight-light"> ProteinView </h2>
+              
+            <h5 class="tab">   ProteinView provides a general visualization of the protein interaction and its domains interactions.  Proteins (circular nodes) are shown together with their domains and domains-domains interactions.  </h5 class>
+           <h5 class="tab">    The interactions of the<span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions.  </h5 class>
+          
+             
+           
+            <br>
+
+  
+         
+         
+            
+        <div id="mynetwork"></div>
+          <script type="text/javascript">
+          
+        
+          
+                  var PR_LENGTH = 500,
+                  LENGTH_domain = 20,
+                  PR_DM= 400,
+                  LENGTH_SUB = 50,
+                  WIDTH_SCALE = 2,
+                  GREEN = "green",
+                  RED = "#C5000B",
+                  //ORANGE = "orange",
+                  YELLOW= "orange",
+                  WHITE = "#FFFFFF00"
+                  //GRAY = '#666666',
+                  GRAY = "gray",
+                  BLACK = "#2B1B17";
+
+               // create an array with nodes
+                var nodes = new vis.DataSet([
+
+                {% for node in pv_nodes %}
+                    {{ node|safe }}
+                {% endfor %}
+                
+
+
+    ]);
+              // create an array with edges
+              var edges = new vis.DataSet([
+              
+                {% for edge in pv_edges %}
+                    {{ edge|safe }}
+                {% endfor %}
+
+                ]);
+                
+                
+
+   
+                
+                
+           const nodeFilterSelector = document.getElementById("nodeFilterSelect");     
+           
+           
+            // create a network
+            var container = document.getElementById('mynetwork');
+            var data = {
+              nodes: nodes,
+              edges: edges
+            };
+            
+            
+            var options = {
+
+               physics: {
+                    barnesHut: { gravitationalConstant: -10000 },
+                    stabilization: { iterations: 2500 },
+                      avoidOverlap: 0.7
+                  },
+                           
+    
+    
+    
+                nodes: {
+                  scaling: {
+                    min: 16,
+                    max: 32
+                  }
+                },
+                edges: {
+                  color: WHITE,
+                  smooth: false,
+
+                },
+
+ 
+                groups: {
+                  protein: {
+                    shape: "dot",
+                    color: GRAY, // orange
+                   font:
+                  {
+                  size: 18, // px
+                  }
+                  },
+                  
+                  
+                  domain: {
+                    shape: "triangle",
+                    color: "#2B7CE9" // blue
+                  },
+                  
+                  
+
+                  transcript: {
+                    shape: "square",
+                    color: "#109618" // green
+                  }
+                }
+              };
+                
+              function startNetwork(data) {
+
+                new vis.Network(container, data, options);
+              }
+              
+
+        
+        
+        
+        
+        let nodeFilterValue = "";
+
+        
+        
+        
+        
+        const nodesFilter = node => {
+                if (nodeFilterValue === "") {
+                  return node.source === "DDI"; 
+                }
+                switch (nodeFilterValue) {
+
+                  case "PPI-DDI":
+                    return  node.source === "DDI" ;
+                  
+                   case "PPI":
+                    return node.group === "protein";                
+                  
+                  default:
+                    return true;
+                }
+              };
+
+                 
+
+
+
+
+
+                const nodesView = new vis.DataView(nodes, { filter: nodesFilter });
+        
+   
+               
+
+
+
+
+
+
+        startNetwork({ nodes: nodesView, edges: edges });
+
+         
+         
+         
+         
+           </script>
+         <br>  
+         
+          <h5 class="tab">  You can move the protein and domain nodes as you wish for a better view. Notice that the generated network in this view can be very big or difficult to visualize. In that case, <span style="font-weight:bold"> DomainView </span> or <span style="font-weight:bold"> InteractionView </span>  can provide better visualization. </h5 class>
+         
+            <br><br>
+         
+                     <h2 class="font-weight-light" > InteractionView </h2>
+            
+            
+            
+            <h5 class="tab" style="text-align: left;">  InteractionView provides interactive visualization and an analysis of the effect of the spliced region for every interacted protein individually. </h5 class>
+            
+ <h5 class="tab">    The interactions of the <span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions. You can select a protein partner to visualize it in a new tab.</h5 class>
+ 
+<br />
+          
+       <center>
+       <h4 class=="lead">  Protein-Protein Interactions  </h4 class> 
+       <h6 class >   
+      {% autoescape off %}
+         {{ tb3 }}
+        {% endautoescape %}
+         
+                
+      
+      
+      
+      <a href="/static/table/{{exon_ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
+         {% endif %}
+      
+        </center>
+ 
+   <br><br>
+ 
+ 
+ {% if  dis3 %}
+      
+ 
+         
+                     <h2 class="font-weight-light" > The annotation of the exon in the structural context</h2>
+            
+         
+            
+            <h5 class="tab" style="text-align: left;">  The exon region codes the amino acid residues  at the interface of the following Protein-Protein Interactions. </h5 class>
+
+        <br>
+       <center>
+       <h4 class=="lead">  Overview of Protein-Protein Interactions Table </h4 class> 
+       <h5 class >
+            {% autoescape off %}
+         {{ tb4 }}
+        {% endautoescape %}
+      </h5 class>
+       
+{% if  long_table %}
+        <h6 class="font-weight-light">This an overview of the table, not the full interactions. You can download the full table from this link.</h6>
+ {% endif %}          
+              <a href="/static/table/{{exon_ID|safe }}_interface.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
+       </center>
+        <br><br>
+         
+ {% endif %}   
+      
+      
+      
+      
+               
+
+     <h2 class="font-weight-light"> Proteins with the selected coding region </h2>
+     
+       <h5 class="tab2">Select a protein from  the following table to visualize  Proteins-Domains Interactions simultaneously and to compare with the other isoforms. </h5 class>     
+     <center>
+       
+      <br><br>  
+     
+     
+     
+      <p class="lead"> <span style="font-weight:bold">The selected exon region is translated  in the following proteins </span>  </p> 
+          
+       <h5 class >   
+       
+      {% autoescape off %}
+         {{ tb1 }}
+        {% endautoescape %}
+  </h5 class>  
+          </center>  
+          
+
+
+{% endblock content %}

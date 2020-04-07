@@ -1,0 +1,8 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+BID-214,BAX,581,PF06393-PF00452,,0.0,Retained
+BID-214,MCL1,4170,PF00452-PF06393,,0.0,Retained
+BID-214,BCL2L1,598,PF00452-PF06393,,0.0,Retained
+BID-214,BCL2,596,PF06393-PF00452,,0.0,Retained
+BID-214,BCL2L2,599,PF00452-PF06393,,0.0,Retained
+BID-214,BCL2A1,597,PF06393-PF00452,,0.0,Retained
+BID-214,BAK1,578,PF00452-PF06393,,0.0,Retained

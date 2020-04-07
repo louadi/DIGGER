@@ -1,0 +1,2 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+SMG5-201,SMG6,23293,PF10373-PF10374 ; PF10373-PF10373 ; PF13638-PF13638 ; PF10374-PF10374 ; PF10374-PF10373,,0.0,Retained

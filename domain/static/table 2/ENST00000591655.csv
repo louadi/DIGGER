@@ -1,0 +1,2 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+PNLIPRP2-204,PNLIP,5406,PF01477-PF00151 ; PF00151-PF00151 ; PF01477-PF00151,,0.0,Retained

@@ -1,0 +1,6 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+ZNF205-201,TRAF2,7186,PF00097-PF00096,,0.0,Retained
+ZNF205-201,MAPK6,5597,PF00096-PF00069,,0.0,Retained
+ZNF205-201,UBQLN4,56893,PF00627-PF00096,,0.0,Retained
+ZNF205-201,WT1,7490,PF01352-PF00096 ; PF00096-PF00096,,0.0,Retained
+ZNF205-201,HDAC6,10013,PF00096-PF00850,,0.0,Retained

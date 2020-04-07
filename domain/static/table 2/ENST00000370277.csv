@@ -1,0 +1,3 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+CETN2-201,PKN2,5586,PF00069-PF13499,,0.0,Retained
+CETN2-201,CETN1,1068,PF13499-PF13499,,0.0,Retained

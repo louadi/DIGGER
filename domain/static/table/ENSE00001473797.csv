@@ -1,0 +1,5 @@
+Affected Protein,Partner Protein,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+H2BC13,CDK9,1025,,PF00125-PF00069,100.0,Lost
+H2BC13,MCM2,4171,,PF12619-PF00125,100.0,Lost
+H2BC13,H2BC1,255626,,PF00125-PF00125,100.0,Lost
+H2BC13,ATRX,546,,PF00271-PF00125 ; PF00125-PF00176,100.0,Lost

@@ -1,0 +1,3 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+ATP12A-202,GNAI3,2773,PF00690-PF00503,,0.0,Retained
+ATP12A-202,ATP1B3,483,PF00287-PF00689,,0.0,Retained

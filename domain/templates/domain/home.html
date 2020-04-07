@@ -1,0 +1,177 @@
+{% extends "domain/base.html" %}
+{% load static %}
+
+{%block content %}
+
+          <style type="text/css">
+
+
+    .tab2 { margin-left: 10px; }
+    .tab { margin-left: 30px; }
+    
+.button {
+  background-color: #136BB6; /* Not Green  anymore*/
+  border: none;
+  color: white;
+  padding: 25px 100px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+  margin: 4px 22px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+
+
+.button2:hover {
+  box-shadow: 0 12px 6px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+    
+  </style>
+  
+  
+<title>  DomainGraph  </title>
+<div class="container">
+  <div class="card border-0 shadow my-5">
+    <div class="card-body p-5">
+      <h1 class="font-weight-light"> </h1>
+      
+      <h4 class="font-weight-light">&nbsp;</h4>
+<p>&nbsp;</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://sciplexity.files.wordpress.com/2013/02/sysbio.jpg?w=720&amp;h=580" alt="" width="500" height="386" /></p>
+<p>&nbsp;</p> <br />
+<h1 style="text-align: center;">DomainGraph</h1>
+ <br />
+<h5 style="text-align: justify;">By mapping the domain-domain Interactions to the protein-protein interactions, <span style="font-weight:bold"> DomainGraph</span> can provide a visualization of the interacted regions between the proteins.
+        In addition, the tool can analyse  the effect of the splicing variations in the Interactome, starting from a single alternative splicing  event to a set of  protein variants.</h5>
+
+
+ <br /><br/>
+
+
+
+
+
+<center>
+<a href="{% url 'Exon_level' %}" class="button button2" >Exon Level Analysis</a>
+  <a href="{% url 'isoform_level' %}" class="button button2">Isoform Level Analysis</a>
+
+</center>
+      
+     <br /><br />
+     <center>
+      <a href="{% url 'Network' %}" class="button button2">Transcriptomics / Proteomics Data  Analysis</a>
+      </center>
+<!--    
+       <br /><br /><br />
+      <h4 class="font-weight-light"><span style="font-weight:bold">Submit An Alternative Splicing Event</span></h4>
+            
+      <h5 class="font-weight-light"> Input an  exonic region  to map it to its coresponding protein domains  and to visulaize the domain interactions.  This feature is useful to analyze the effect of an alternative splicing event in
+      the protein Interactome.  </h5> 
+      
+         
+          </form>
+                   
+                    <div role="tabpanel" class="tab-pane" id="Section3">
+                            <form class="card card-sm">
+                                <div class="card-body row no-gutters align-items-center">
+                                 
+                                    <div class="col">
+                                        <input 
+                                      class="form-control mr-sm-2"
+                                      type="Ensembl ID"
+                                      placeholder="Input an Ensembl Exon ID "
+                                      aria-label="Search 2 "
+                                      name='search 2'
+                                      value="">
+                                    </div>
+                                   
+                                    <div class="col-auto">
+                                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                                    </div>
+                                   
+                                    
+                                </div>
+                                <h6 class="tab"  style="margin-left:2.5em"> <span style="font-weight:bold"> Examples: ENSE00003467097 ; ENSE00001830743 ; ENSE00003652625  ; ENSE00003668782</span> </h6> 
+                            </form>
+     
+
+
+      
+
+   <!--                       
+      <form class="form-inline my-2 my-lg-1">
+      
+        <input
+            class="form-control mr-sm-2"
+            type="Ensembl ID"
+            placeholder="Input Ensembl ID "
+            aria-label="Search"
+            name='search'
+            value="{{search_term}}">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+       
+      </form>
+      <h6 class="font-weight-light"> Examples:  ENSG00000058404 , ENST00000277945 , ENSP00000358396 </h6> 
+       -->
+      
+      
+  <!--   
+
+<br /><br /> <br />  <br />  
+ <h4 class="font-weight-light"><span style="font-weight:bold">Submit a Protein  </span></h4>
+  
+      <h5 class> Input  a protein to visualize  Proteins-Domains Interactions simultaneously. This feature is useful to visualize interacted region and to compare the structure and interactions of different isoforms. </h5> 
+ 
+ </form>
+                   
+                    <div role="tabpanel" class="tab-pane" id="Section3">
+                            <form class="card card-sm">
+                                <div class="card-body row no-gutters align-items-center">
+                                
+                                    <div class="col">
+                                        <input 
+                                      class="form-control mr-sm-2"
+                                      type="Ensembl ID"
+                                      placeholder="Input an Ensembl ID ( Gene / Transcript / Protein )"
+                                      aria-label="Search"
+                                      name='search'
+                                      value="">
+                                    </div>
+                                  
+                                    <div class="col-auto">
+                                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                                    </div>
+                             
+                                    
+                                </div>
+                                <h6 class="tab"  style="margin-left:2.5em"> <span style="font-weight:bold"> Examples: ENSG00000058404 ;ENST00000409330 ;  ENSP00000358396</span> </h6> 
+                            </form>
+    
+
+          <br />  
+       
+      
+     <br /><br /> <br />  <br />  
+ <h4 class="font-weight-light"><span style="font-weight:bold">Submit Multiple Proteins </span></h4>
+
+ <br /><br /> <br />  <br />   <br />  
+ <h4 class="font-weight-light"><span style="font-weight:bold">About DomainGraph</span></h4>
+       <br />
+       
+       <h5 class='tab'>By mapping the domains-domains Interactions to the proteins-proteins interactions, <span style="font-weight:bold"> DomainGraph</span> can provide a visualization of the interacted regions between the proteins.
+        In addition, the tool can analyse  the effect of the splicing variations in the Interactome, starting from a single alternative splicing  event to a set of  protein variants.  </h5> 
+       
+
+
+
+-->
+
+
+
+
+
+{% endblock content %}

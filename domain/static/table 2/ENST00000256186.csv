@@ -1,0 +1,4 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+MICAL2-201,MAP2K3,5606,,PF00069-PF00412,100.0,Lost
+MICAL2-201,FLT1,2321,,PF00307-PF00047 ; PF00307-PF07714,100.0,Lost
+MICAL2-201,MYC,4609,,PF00412-PF00010,100.0,Lost

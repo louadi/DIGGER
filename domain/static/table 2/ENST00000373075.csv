@@ -1,0 +1,4 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+MEAF6-204,ING5,84289,PF09340-PF12998,,0.0,Retained
+MEAF6-204,ING4,51147,PF09340-PF12998,,0.0,Retained
+MEAF6-204,ING3,54556,PF09340-PF12998,,0.0,Retained

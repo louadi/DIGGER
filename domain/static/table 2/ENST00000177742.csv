@@ -1,0 +1,4 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+MRPS34-201,MRPS22,56945,PF16053-PF10245,,0.0,Retained
+MRPS34-201,MRPS26,64949,PF16053-PF14943,,0.0,Retained
+MRPS34-201,MRPS27,23107,PF16053-PF10037,,0.0,Retained

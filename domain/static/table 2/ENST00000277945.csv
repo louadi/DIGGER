@@ -1,0 +1,7 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+TCF7L2-201,SOX2,6657,PF00505-PF00505,,0.0,Retained
+TCF7L2-201,JUP,3728,,PF08347-PF00514,100.0,Lost
+TCF7L2-201,CTNNB1,1499,,PF00514-PF08347,100.0,Lost
+TCF7L2-201,LEF1,51176,PF00505-PF00505,,0.0,Retained
+TCF7L2-201,TLE3,7090,PF00505-PF00400,,0.0,Retained
+TCF7L2-201,HBP1,26959,PF00505-PF00505,,0.0,Retained

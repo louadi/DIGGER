@@ -1,0 +1,214 @@
+{% extends "domain/base.html" %}
+{% load static %}
+
+{%block content %}
+  <style type="text/css">
+    #mynetwork {
+      width: 2080px;
+      height: 540px;
+      border: 2px solid lightgray;
+    }
+        img{
+        max-width: 100%;
+        max-height: 100%;
+        display: block; /* remove extra space below image */
+    }
+    .box{
+        width: 1050px;        
+        border: 5px solid black;
+    }    
+    
+    .tab { margin-left: 90px; }
+    .tab2 { margin-left: 60px; }
+    .tab { margin-left: 50px; }
+    
+    
+    .box.large{
+        height: 300px;
+    }
+    .box.small{
+        height: 100px;
+    }
+    
+</style>
+
+
+<div class="container">
+  <div class="card border-0 shadow my-5">
+    <div class="card-body p-3">
+    
+
+              
+
+        
+        
+        
+         <style type="text/css">
+    #mynetwork {
+      width: 1000px;
+      height: 600px;
+      border: 2px solid lightgray;
+    }
+  </style>
+
+
+	<title>   {{ tr|safe }} / {{ pr|safe }} Interaction </title>
+            <br />
+            <h2 class="font-weight-light"> InteractionView </h2>
+             <br />
+                          <h5 class="tab1" style="text-align: left;">  Visualization of domain-domain interaction between <span style="font-weight:bold"> {{ tr|safe }}</span>  and <span style="font-weight:bold"> {{ pr|safe }}</span>. Move the proteins and domains nodes as you wish for a better view.   </h5 class>
+                          
+                           <br /> 
+                           
+                           
+                           <center> 
+        <div id="mynetwork"></div>
+          <script type="text/javascript">
+          
+        
+          
+                  var PR_LENGTH = 400,
+                  LENGTH_domain = 30,
+                  PR_DM= 380,
+                  LENGTH_SUB = 50,
+                  WIDTH_SCALE = 2,
+                  GREEN = "green",
+                  RED = "#C5000B",
+                  //ORANGE = "orange",
+                  YELLOW= "orange",
+                  WHITE = "EED5EB"
+                  //GRAY = '#666666',
+                  GRAY = "gray",
+                  BLACK = "#2B1B17";
+
+               // create an array with nodes
+                var nodes = new vis.DataSet([
+
+                {% for node in pv_nodes %}
+                    {{ node|safe }}
+                {% endfor %}
+                
+
+
+    ]);
+              // create an array with edges
+              var edges = new vis.DataSet([
+              
+                {% for edge in pv_edges %}
+                    {{ edge|safe }}
+                {% endfor %}
+
+                ]);
+                
+                
+
+   
+                
+                
+          
+           
+           
+            // create a network
+            var container = document.getElementById('mynetwork');
+            var data = {
+              nodes: nodes,
+              edges: edges
+            };
+            
+            
+            var options = {
+
+               physics: {
+                    barnesHut: { gravitationalConstant: -10000 },
+                    stabilization: { iterations: 15 },
+                      avoidOverlap: 0.7
+                  },
+                           
+    
+    
+    
+                nodes: {
+                  scaling: {
+                    min: 16,
+                    max: 25
+                  }
+                },
+                edges: {
+                  color: WHITE,
+                  smooth: false,
+
+                },
+
+ 
+                groups: {
+                  protein: {
+                    shape: "dot",
+                    color: GRAY, // orange
+                   font:
+                  {
+                  size: 18, // px
+                  }
+                  },
+                  
+                  
+                  domain: {
+                    shape: "triangle",
+                    color: "#2B7CE9" // blue
+                  },
+                  
+                  
+
+                  transcript: {
+                    shape: "square",
+                    color: "#109618" // green
+                  }
+                }
+              };
+                
+              function startNetwork(data) {
+
+                new vis.Network(container, data, options);
+              }
+              
+
+        
+        
+        
+        
+
+
+                 
+
+
+
+
+
+           
+
+
+
+
+
+
+        startNetwork({ nodes: nodes, edges: edges });
+
+          </script>
+          
+           </center> 
+           
+          
+        
+             <br><br><br>
+             <h6 class>
+               <center>   
+             <h5 class>  <span style="font-weight:bold"> Overview about the interaction </span>  </h5 class>  
+      {% autoescape off %}
+         {{ dt1 }}
+        {% endautoescape %}
+ 
+       </center>     
+         </h6 class>     
+        
+
+
+{% endblock content %}

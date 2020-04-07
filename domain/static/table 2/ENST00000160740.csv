@@ -1,0 +1,4 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+CIC-201,SOX2,6657,PF00505-PF00505,,0.0,Retained
+CIC-201,FOXK2,3607,PF00505-PF00498,,0.0,Retained
+CIC-201,ACTC1,70,PF00505-PF00022,,0.0,Retained

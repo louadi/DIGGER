@@ -1,0 +1,6 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+MAD2L2-201,MAD2L1BP,9587,PF06581-PF02301,,0.0,Retained
+MAD2L2-201,MAD2L1,4085,PF02301-PF02301,,0.0,Retained
+MAD2L2-201,FZR1,51343,PF00400-PF02301,,0.0,Retained
+MAD2L2-201,CDC20,991,PF00400-PF02301,,0.0,Retained
+MAD2L2-201,GNB1,2782,PF02301-PF00400,,0.0,Retained

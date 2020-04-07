@@ -1,0 +1,2 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+BCAS2-201,PRPF19,27339,PF04564-PF05700 ; PF05700-PF08606,,0.0,Retained

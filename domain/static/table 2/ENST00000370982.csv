@@ -1,0 +1,6 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+GNG12-201,GNB1,2782,PF00400-PF00631,,0.0,Retained
+GNG12-201,ADRB2,154,PF00001-PF00631,,0.0,Retained
+GNG12-201,GNB2,2783,PF00400-PF00631,,0.0,Retained
+GNG12-201,GNB4,59345,PF00400-PF00631,,0.0,Retained
+GNG12-201,GNB3,2784,PF00400-PF00631,,0.0,Retained

@@ -1,0 +1,5 @@
+Affected Protein,Partner Protein,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+IRF3,CREBBP,1387,,PF10401-PF09030,100.0,Lost
+IRF3,EP300,2033,,PF10401-PF09030,100.0,Lost
+IRF3,IRF7,3665,PF00605-PF00605,PF10401-PF10401,50.0,Affected
+IRF3,IRF5,3663,PF00605-PF00605,PF10401-PF10401,50.0,Affected

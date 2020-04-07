@@ -1,0 +1,5 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+DYRK3-203,NEDD4L,23327,PF00069-PF00397 ; PF00069-PF00168,,0.0,Retained
+DYRK3-203,SORL1,6653,PF00041-PF00069,,0.0,Retained
+DYRK3-203,EGFR,1956,PF00757-PF00069 ; PF00069-PF07714 ; PF00069-PF01030,,0.0,Retained
+DYRK3-203,SMU1,55234,PF00069-PF00400,,0.0,Retained

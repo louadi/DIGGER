@@ -1,0 +1,8 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+RPL18-208,RPL27A,6157,PF17135-PF00828,,0.0,Retained
+RPL18-208,RPL7,6129,PF17135-PF00327,,0.0,Retained
+RPL18-208,RPL28,6158,PF17135-PF01778,,0.0,Retained
+RPL18-208,RPL4,6124,PF14374-PF17135 ; PF17135-PF00573,,0.0,Retained
+RPL18-208,RPL13,6137,PF01294-PF17135,,0.0,Retained
+RPL18-208,RRP1,8568,PF05997-PF17135,,0.0,Retained
+RPL18-208,RPS24,6229,PF01282-PF17135,,0.0,Retained

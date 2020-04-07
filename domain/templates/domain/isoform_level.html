@@ -1,0 +1,78 @@
+
+{% extends "domain/base.html" %}
+{% load static %}
+
+{%block content %}
+
+          <style type="text/css">
+
+
+    .tab2 { margin-left: 10px; }
+    .tab { margin-left: 30px; }
+    
+
+    
+  </style>
+  
+  
+<title>  DomainGraph  </title>
+
+<div class="container">
+  <div class="card border-0 shadow my-5">
+    <div class="card-body p-5">
+      <h1 class="font-weight-light"> </h1>
+      
+      <h4 class="font-weight-light">&nbsp;</h4>
+
+
+
+
+<br /><br /> <br /> 
+ <h4 class="font-weight-light"><span style="font-weight:bold">Submit a Protein Variant </span></h4>
+  
+      <h5 class> Input  a protein to visualize  Proteins and Domains Interactions simultaneously. This feature is useful to visualize interacted region and to compare the structure and interactions of different isoforms. </h5> 
+ 
+ </form>
+                   
+                    <div role="tabpanel" class="tab-pane" id="Section3">
+                            <form class="card card-sm">
+                                <div class="card-body row no-gutters align-items-center">
+                                    <!--end of col-->
+                                    <div class="col">
+                                        <input 
+                                      class="form-control mr-sm-2"
+                                      type="Ensembl ID"
+                                      placeholder="Input an Ensembl ID ( Gene / Transcript / Protein )"
+                                      aria-label="Search"
+                                      name='search'
+                                      value="">
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col-auto">
+                                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                                    </div>
+                                    <!--end of col-->
+                                    
+                                </div>
+                                <h6  class> <span style="font-weight:bold"> Examples: ENSG00000058404 ; ENST00000623693 ;  ENSP00000358396 ; ENSP00000164227 ; ENSP00000489057 ; ENST00000016946  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6> 
+                            </form>
+    
+
+         
+       
+
+
+ <br /><br /> <br />  <br />   <br />   <br /><br /> <br />  <br />  
+ <h4 class="font-weight-light"><span style="font-weight:bold">About DomainGraph</span></h4>
+       <br />
+       
+       <h5 style="text-align: justify" class='tab'>By mapping the domain-domain Interactions to the protein-protein interactions, <span style="font-weight:bold"> DomainGraph</span> can provide a visualization of the interacted regions between the proteins.
+        In addition, the tool can analyse  the effect of the splicing variations in the Interactome, starting from a single alternative splicing  event to a set of  protein variants.  </h5> 
+       
+
+     
+
+
+
+
+{% endblock content %}

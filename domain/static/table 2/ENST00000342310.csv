@@ -1,0 +1,4 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+LMX1A-202,LHX3,8022,PF00412-PF00412 ; PF00046-PF00046,,0.0,Retained
+LMX1A-202,TCF3,6929,PF00412-PF00010 ; PF00010-PF00046,,0.0,Retained
+LMX1A-202,ISL1,3670,PF00412-PF00412 ; PF00046-PF00046,,0.0,Retained

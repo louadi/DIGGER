@@ -1,0 +1,5 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+IRF3-201,IRF5,3663,PF00605-PF00605 ; PF10401-PF10401,,0.0,Retained
+IRF3-201,EP300,2033,PF09030-PF10401,,0.0,Retained
+IRF3-201,CREBBP,1387,PF09030-PF10401,,0.0,Retained
+IRF3-201,IRF7,3665,PF00605-PF00605 ; PF10401-PF10401,,0.0,Retained

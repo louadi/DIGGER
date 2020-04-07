@@ -1,0 +1,5 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+MUSK-201,SYNE1,23345,PF00307-PF07714,,0.0,Retained
+MUSK-201,SCRIB,23513,PF13927-PF13855 ; PF13855-PF07679,,0.0,Retained
+MUSK-201,ERBIN,55914,PF13927-PF13855 ; PF07679-PF13855,,0.0,Retained
+MUSK-201,LRRC1,55227,PF13927-PF13855 ; PF07679-PF13855,,0.0,Retained

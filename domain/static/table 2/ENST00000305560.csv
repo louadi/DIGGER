@@ -1,0 +1,4 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+SPATA5L1-201,FBXW11,23291,PF00400-PF00004,,0.0,Retained
+SPATA5L1-201,RIPK4,54101,PF17862-PF13637 ; PF17862-PF12796,,0.0,Retained
+SPATA5L1-201,SPATA5,166378,PF00004-PF17862 ; PF00004-PF00004 ; PF17862-PF17862 ; PF17862-PF00004,,0.0,Retained

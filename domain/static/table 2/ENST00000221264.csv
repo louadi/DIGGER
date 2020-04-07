@@ -1,0 +1,3 @@
+Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
+PLAUR-201,PLAU,5328,PF00021-PF00051,,0.0,Retained
+PLAUR-201,TEX101,83639,PF00021-PF00021,,0.0,Retained
