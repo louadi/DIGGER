@@ -8,7 +8,14 @@ import numpy as np
 import pickle
 import pandas as pd
 from domain.Process import process_data as pr
+from sqlalchemy import create_engine, text
 
+
+# --- Create database connection aka 'SQLAlchemie engine'
+# sqlite://<no_hostname>/<path>
+# where <path> is relative:
+engine = create_engine('sqlite:///domain/database/datasets.db')
+metadata_engine = engine
 
 #load the network
 def load_obj(name):
@@ -141,11 +148,29 @@ def exon_3D(exon_IDs,Ensemble_transID):
     
     for exon_ID in exon_IDs:
           print(exon_ID)
-          p1=PPI[ (PPI['Exon stable ID_x']==exon_ID)  &  (PPI['Transcript stable ID_x']==Ensemble_transID) ].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
-          
-          
-          p2=PPI[ (PPI['Exon stable ID_y']==exon_ID)  &  (PPI['Transcript stable ID_y']==Ensemble_transID)].drop(columns=['Exon stable ID_y','Exon stable ID_x']).drop_duplicates()
-          
+          # --- Get tables from database
+          query = """
+                  SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
+                  FROM ppi_data 
+                  WHERE "Exon stable ID_x"=:exon_id AND "Transcript stable ID_x"=:ensemble_trans_id
+                  """
+          p1 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID,
+                                                                      'ensemble_trans_id': Ensemble_transID})
+
+          query = """
+                  SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
+                  FROM ppi_data 
+                  WHERE "Exon stable ID_y"=:exon_id AND "Transcript stable ID_y"=:ensemble_trans_id
+                  """
+          p2 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID,
+                                                                      'ensemble_trans_id': Ensemble_transID})
+
+          # Compare the new and old dataframes
+          p1_old=PPI[ (PPI['Exon stable ID_x']==exon_ID)  &  (PPI['Transcript stable ID_x']==Ensemble_transID)].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
+          p2_old=PPI[ (PPI['Exon stable ID_y']==exon_ID)  &  (PPI['Transcript stable ID_y']==Ensemble_transID)].drop(columns=['Exon stable ID_y','Exon stable ID_x']).drop_duplicates()
+          assert (np.array_equal(p1.values, p1_old.values))
+          assert (np.array_equal(p2.values, p2_old.values))
+
           p2=p2[['Transcript stable ID_y','u_ac_2','Transcript stable ID_x','u_ac_1']]
           p2=p2.rename(columns= {
               'Transcript stable ID_y':'Transcript stable ID_x',

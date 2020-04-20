@@ -1,10 +1,19 @@
+import pandas as pd
+import numpy as np
+
 from domain.Process import process_data as pr
-from domain.Process import exonstodomain as exd 
+from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as  info
 from domain.Process import transcript as  tr
 from domain.Process import gene as  g
-import pandas as pd
+from sqlalchemy import create_engine, text
 
+
+# --- Create database connection aka 'SQLAlchemie engine'
+# sqlite://<no_hostname>/<path>
+# where <path> is relative:
+engine = create_engine('sqlite:///domain/database/datasets.db')
+metadata_engine = engine
 
 
 PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
@@ -173,12 +182,28 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     
 def PPI_inter(exon_ID,gene_name):
+    # --- Get tables from database
+    query = """
+            SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
+            FROM ppi_data 
+            WHERE "Exon stable ID_x"=:exon_id
+            """
+    p1 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID})
 
-    
-    
-    p1=PPI[ PPI['Exon stable ID_x']==exon_ID].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
-    
-    p2=PPI[ PPI['Exon stable ID_y']==exon_ID].drop(columns=['Exon stable ID_y','Exon stable ID_x']).drop_duplicates()
+    query = """
+            SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
+            FROM ppi_data 
+            WHERE "Exon stable ID_y"=:exon_id
+            """
+    p2 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID})
+
+    # Compare the new and old dataframes
+    p1_old=PPI[ PPI['Exon stable ID_x']==exon_ID].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
+    p2_old=PPI[ PPI['Exon stable ID_y']==exon_ID].drop(columns=['Exon stable ID_y','Exon stable ID_x']).drop_duplicates()
+    assert (np.array_equal(p1.values, p1_old.values))
+    assert (np.array_equal(p2.values, p2_old.values))
+
+
     p2=p2[['Transcript stable ID_y','u_ac_2','Transcript stable ID_x','u_ac_1']]
     p2=p2.rename(columns= {
         'Transcript stable ID_y':'Transcript stable ID_x',
