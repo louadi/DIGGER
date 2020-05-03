@@ -13,7 +13,6 @@ from sqlalchemy import create_engine, text
 # sqlite://<no_hostname>/<path>
 # where <path> is relative:
 engine = create_engine('sqlite:///domain/database/datasets.db')
-metadata_engine = engine
 
 
 PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
