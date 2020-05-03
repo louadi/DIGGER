@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, text
 # sqlite://<no_hostname>/<path>
 # where <path> is relative:
 engine = create_engine('sqlite:///datasets.db')
-metadata_engine = engine
+
 
 # --- Get ppi_data tables from database
 def get_ppi_data():
@@ -18,6 +18,7 @@ def get_ppi_data():
             WHERE "Exon stable ID_x"=:exon_id
             """
     p1_sql = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': 'ENSE00003756482'})
+
 
 # --- Get exons_to_domains_data tables from database
 def getexons_to_domains_data():
@@ -48,5 +49,21 @@ def getexons_to_domains_data():
 
     return exons, D, p
 
+
+# --- Get name from transcript id (mapper)
+def transcript_id_to_name():
+    transcript_ID = 'ENST00000368192'
+    # SQL
+    query = """
+            SELECT "Transcript name" 
+            FROM gene_info 
+            WHERE "Transcript stable ID"=:transcript_id
+            LIMIT 1
+            """
+    tdata = \
+    pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': transcript_ID}).iloc[0, 0].split('-')[0]
+    print(tdata)
+
+
 if __name__ == '__main__':
-    getexons_to_domains_data()
+    transcript_id_to_name()

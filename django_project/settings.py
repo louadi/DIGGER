@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from sqlalchemy import create_engine
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -80,6 +82,12 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# --- Create database connection aka 'SQLAlchemie engine'
+# Database for analysis (SQLalchemie engine)
+# sqlite://<no_hostname>/<path>
+# where <path> is relative:
+DATABASE_ENGINE = create_engine('sqlite:///datasets.db')
 
 
 # Password validation

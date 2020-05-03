@@ -7,15 +7,14 @@ import networkx as nx
 import numpy as np
 import pickle
 import pandas as pd
+
+from django_project import settings
 from domain.Process import process_data as pr
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 
 
-# --- Create database connection aka 'SQLAlchemie engine'
-# sqlite://<no_hostname>/<path>
-# where <path> is relative:
-engine = create_engine('sqlite:///domain/database/datasets.db')
-metadata_engine = engine
+# --- Get database connection aka 'SQLAlchemie engine'
+engine = settings.DATABASE_ENGINE
 
 #load the network
 def load_obj(name):
