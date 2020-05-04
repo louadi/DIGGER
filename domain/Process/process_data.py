@@ -81,8 +81,6 @@ def transcript(transcript_ID):
             """
     tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': transcript_ID})
 
-    print('========HERE')
-
     # df_filter = data['Transcript stable ID'].isin([transcript_ID])
     # tdata=data[df_filter].sort_values(by=['Exon rank in transcript'])
     exons=tdata.drop(columns=["Pfam ID","Pfam start","Pfam end"]).drop_duplicates()
