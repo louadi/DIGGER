@@ -3,7 +3,11 @@ from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as  info
 import pandas as pd
     
-    
+from sqlalchemy import text
+
+from django_project import settings
+# --- Get database connection aka 'SQLAlchemie engine'
+engine = settings.DATABASE_ENGINE  
     
     
     
@@ -16,9 +20,23 @@ def TranscriptsID_to_table(transcripts):
                 pfams=[]
                
                 for tr in transcripts :
-                           
-                          df_filter = pr.data['Transcript stable ID'].isin([tr])
-                          tdata=pr.data[df_filter]
+                                           
+                          query = """
+                          SELECT * 
+                          FROM exons_to_domains_data 
+                          WHERE "Transcript stable ID"=:transcript_id 
+                          """
+                          tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr})
+                          
+                          tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
+                          
+                          
+                          
+                          #df_filter = pr.data['Transcript stable ID'].isin([tr])
+                          #tdata=pr.data[df_filter]
+                          
+                          
+                          
                           #print(tdata)
                           if len(tdata)!=0  :
                               ID.append(tr)
