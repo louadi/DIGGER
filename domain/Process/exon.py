@@ -1,14 +1,21 @@
+import pandas as pd
+import numpy as np
+
+from django.conf import settings
 from domain.Process import process_data as pr
-from domain.Process import exonstodomain as exd 
+from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as  info
 from domain.Process import transcript as  tr
 from domain.Process import gene as  g
-import pandas as pd
+from sqlalchemy import text
 
 
+# --- Get database connection aka 'SQLAlchemie engine'
+engine = settings.DATABASE_ENGINE
 
-PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
-tr_to_name= pd.read_csv( "domain/data/gene_info.csv")
+
+PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
+tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
 
 
 def input_exon(exon_ID):
@@ -173,12 +180,28 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     
 def PPI_inter(exon_ID,gene_name):
+    # --- Get tables from database
+    query = """
+            SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
+            FROM ppi_data 
+            WHERE "Exon stable ID_x"=:exon_id
+            """
+    p1 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID})
 
-    
-    
-    p1=PPI[ PPI['Exon stable ID_x']==exon_ID].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
-    
-    p2=PPI[ PPI['Exon stable ID_y']==exon_ID].drop(columns=['Exon stable ID_y','Exon stable ID_x']).drop_duplicates()
+    query = """
+            SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
+            FROM ppi_data 
+            WHERE "Exon stable ID_y"=:exon_id
+            """
+    p2 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID})
+
+    # Compare the new and old dataframes
+    p1_old=PPI_old[PPI_old['Exon stable ID_x'] == exon_ID].drop(columns=['Exon stable ID_x', 'Exon stable ID_y']).drop_duplicates()
+    p2_old=PPI_old[PPI_old['Exon stable ID_y'] == exon_ID].drop(columns=['Exon stable ID_y', 'Exon stable ID_x']).drop_duplicates()
+    assert (np.array_equal(p1.values, p1_old.values))
+    assert (np.array_equal(p2.values, p2_old.values))
+
+
     p2=p2[['Transcript stable ID_y','u_ac_2','Transcript stable ID_x','u_ac_1']]
     p2=p2.rename(columns= {
         'Transcript stable ID_y':'Transcript stable ID_x',
@@ -227,12 +250,23 @@ def PPI_inter(exon_ID,gene_name):
     
     
     return p_html,n
-  
-  
+
+
 def tr_to_names(list_tr):
-   names=[] 
-   for tr in   list_tr:
-     
-     names.append(tr_to_name[  tr_to_name['Transcript stable ID']==tr ]['Transcript name'].tolist()[0].split('-')[0])
-   return names      
-     
+    names = []
+    for tr in list_tr:
+        # SQL
+        query = """
+                SELECT "Transcript name" 
+                FROM gene_info 
+                WHERE "Transcript stable ID"=:transcript_id
+                LIMIT 1
+                """
+        name = \
+            pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr}).iloc[0, 0].split('-')[0]
+        name_old = tr_to_name_old[tr_to_name_old['Transcript stable ID'] == tr]['Transcript name'].tolist()[0].split('-')[0]
+
+        assert (np.array_equal(name, name_old))
+
+        names.append(name)
+    return names
