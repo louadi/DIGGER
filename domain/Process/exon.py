@@ -82,6 +82,9 @@ def input_exon(exon_ID):
                           table_domains["Pfam known interactions"]='<center>'+table_domains["Pfam known interactions"].astype(str)+'</center>'
                           table_domains["Visualization of the domain interactions"]='<center>'+table_domains["Visualization of the domain interactions"]+'</center>'
                           
+                          
+                          
+                          
                           table_domains=table_domains.to_html(escape=False, index=False)
                           
                     
@@ -158,34 +161,24 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
     pd_interaction["Lost DDIs"]='<center>&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;</center>'
     
-    
+    pd_interaction['Residue evidence']='<center>-<center>'
     
     pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
     h="/ID/"+entrezID+'.'+ExonID+'/InteractionView/'
-    
     pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
     pd_interaction["Affected Protein"]='<center>'+pd_interaction["Affected Protein"]+'</center>'
     pd_interaction["Protein-protein interaction"]='<center>'+pd_interaction["Protein-protein interaction"]+'<a target="'+'_blank"href="'+h+pd_interaction["NCBI gene ID"]+'">'+" (Visualize) "+'</a>'+'</center>'
-    pd_interaction["Partner Protein"]='<center>'+pd_interaction["Partner Protein"]+'</center>'
-    
-    #dont move it from here
+
+        #dont move it from here
     pd_interaction["NCBI gene ID"]='<center>'+pd_interaction["NCBI gene ID"]+'</center>'
     
     
     
-    
-    pd_interaction=pd_interaction.rename(columns={
-    "Partner Protein": "<center>Partner Protein</center>", 
-    "Affected Protein": "<center>Affected Protein</center>",
-    "NCBI gene ID": "<center>NCBI gene ID</center>", 
-    "Percentage of lost domain-domain interactions": "<center> % of lost DDIs</center>",
-    "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
-    "Lost DDIs": "<center>Lost Domain-Domain interactions</center>",
-    "Protein-protein interaction": "<center>Protein-protein interaction</center>"
-    })
+    pd_interaction['Residue evidence']='<center>-<center>'
     
     pd.set_option('display.max_colwidth',1000)
-    pd_interaction=pd_interaction.to_html(escape=False, index=False)
+    
+    #pd_interaction=pd_interaction.to_html(escape=False, index=False)
     return nodes,edges,pd_interaction
     
     
@@ -248,7 +241,7 @@ def PPI_inter(exon_ID,gene_name):
             p1[['Protein with selected exonic region','Partner Protein','Uniprot ID of Protein 1','Uniprot ID of Protein 2']].drop_duplicates().to_csv('domain/static/table/'+exon_ID+'_interface.csv', index=False,)
            
 
-                
+               
             
             p1=p1[['Protein with selected exonic region','Partner Protein']].drop_duplicates()
             
@@ -257,10 +250,10 @@ def PPI_inter(exon_ID,gene_name):
             p1=p1[:max]
             #p1=p1[:10]
     pd.set_option('display.max_colwidth',1000)
-    p_html=p1.to_html(escape=False, index=False)
+    #p_html=p1.to_html(escape=False, index=False)
     
     
-    return p_html,n
+    return p1,n
 
 
 def tr_to_names(list_tr):
