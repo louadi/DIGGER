@@ -49,7 +49,7 @@ def vis_node_(node):
           
           #Domain node
           if len(n.split("/"))==1:
-                      print(n)
+                      #print(n)
                       N.append("{id: \""+n+"\", label:  \""+n+
                        "\" ,group: \"Domain\",physics:true , value: \"4"+"\"},")
                   
@@ -146,7 +146,7 @@ def exon_3D(exon_IDs,Ensemble_transID):
     #p2=PPI[ PPI['Transcript stable ID_y']==Ensemble_transID]
     
     for exon_ID in exon_IDs:
-          print(exon_ID)
+          #print(exon_ID)
           # --- Get tables from database
           query = """
                   SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
@@ -165,10 +165,10 @@ def exon_3D(exon_IDs,Ensemble_transID):
                                                                       'ensemble_trans_id': Ensemble_transID})
 
           # Compare the new and old dataframes
-          p1_old=PPI[ (PPI['Exon stable ID_x']==exon_ID)  &  (PPI['Transcript stable ID_x']==Ensemble_transID)].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
-          p2_old=PPI[ (PPI['Exon stable ID_y']==exon_ID)  &  (PPI['Transcript stable ID_y']==Ensemble_transID)].drop(columns=['Exon stable ID_y','Exon stable ID_x']).drop_duplicates()
-          assert (np.array_equal(p1.values, p1_old.values))
-          assert (np.array_equal(p2.values, p2_old.values))
+          #p1_old=PPI[ (PPI['Exon stable ID_x']==exon_ID)  &  (PPI['Transcript stable ID_x']==Ensemble_transID)].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
+          #p2_old=PPI[ (PPI['Exon stable ID_y']==exon_ID)  &  (PPI['Transcript stable ID_y']==Ensemble_transID)].drop(columns=['Exon stable ID_y','Exon stable ID_x']).drop_duplicates()
+          #assert (np.array_equal(p1.values, p1_old.values))
+          #assert (np.array_equal(p2.values, p2_old.values))
 
           p2=p2[['Transcript stable ID_y','u_ac_2','Transcript stable ID_x','u_ac_1']]
           p2=p2.rename(columns= {
@@ -218,7 +218,7 @@ def input_transcript(Ensemble_transID):
 
     exon_info=exons[['Exon stable ID','Exon rank in transcript']]
     n,exons_in_interface=exon_3D(exon_info['Exon stable ID'].tolist(),Ensemble_transID)
-    exon_info['Number of PPIs with residues AA coded in the exon']=n
+    exon_info['Number of interaction interface mapped to the exon']=n
     
     
     print(exons_in_interface)
@@ -246,7 +246,7 @@ def input_transcript(Ensemble_transID):
     droped1["Corresponding domain ID"]='<center>'+droped1["Corresponding domain ID"]+'</center>'
     droped1["Exon rank in transcript"]='<center>'+droped1["Exon rank in transcript"].astype(str)+'</center>'
     
-    droped1["Number of PPIs with residues AA coded in the exon"]='<center>'+droped1["Number of PPIs with residues AA coded in the exon"].astype(str)+'</center>'
+    droped1["Number of interaction interface mapped to the exon"]='<center>'+droped1["Number of interaction interface mapped to the exon"].astype(str)+'</center>'
     droped2["Pfam known interactions"]='<center>'+droped2["Pfam known interactions"].astype(int).astype(str)+'</center>'
     droped2["Visualization of the domain interactions"]='<center>'+droped2["Visualization of the domain interactions"]+'</center>'
     

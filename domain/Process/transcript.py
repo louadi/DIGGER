@@ -4,6 +4,14 @@ from domain.Process import proteininfo as  info
 import pandas as pd
 
 
+
+from sqlalchemy import text
+
+from django_project import settings
+# --- Get database connection aka 'SQLAlchemie engine'
+engine = settings.DATABASE_ENGINE
+
+
 PPI=exd.load_obj("PPI")
 g2d=exd.load_obj("g2d")
 DomainG=exd.load_obj("DomainG")
@@ -151,9 +159,18 @@ def Protein_view(P_id):
           pfams=[]
           
           for tr in transcripts :
+                
+              query = """
+              SELECT * 
+              FROM exons_to_domains_data 
+              WHERE "Transcript stable ID"=:transcript_id 
+              """
+              tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr})
               
-              df_filter = pr.data['Transcript stable ID'].isin([tr])
-              tdata=pr.data[df_filter]
+              tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
+              
+              #df_filter = pr.data['Transcript stable ID'].isin([tr])
+              #tdata=pr.data[df_filter]
               
               if len(tdata)!=0  :
                   ID.append(tr)

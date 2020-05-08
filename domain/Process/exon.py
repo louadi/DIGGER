@@ -20,8 +20,19 @@ tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
 
 def input_exon(exon_ID):
     
-                
-            tb=pr.data[pr.data['Exon stable ID'].isin([exon_ID])]  
+            query = """
+            SELECT * 
+            FROM exons_to_domains_data 
+            WHERE "Exon stable ID"=:exon_ID 
+            ORDER BY "Exon rank in transcript"
+            """
+            tb = pd.read_sql_query(sql=text(query), con=engine, params={'exon_ID': exon_ID})
+            
+            tb=tb.drop(columns=["Unnamed: 0"]).drop_duplicates()
+    
+       
+            #tb=pr.data[pr.data['Exon stable ID'].isin([exon_ID])]  
+            
             transcripts=tb['Transcript stable ID'].unique()
             
             if len(transcripts) == 0:
@@ -196,10 +207,10 @@ def PPI_inter(exon_ID,gene_name):
     p2 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID})
 
     # Compare the new and old dataframes
-    p1_old=PPI_old[PPI_old['Exon stable ID_x'] == exon_ID].drop(columns=['Exon stable ID_x', 'Exon stable ID_y']).drop_duplicates()
-    p2_old=PPI_old[PPI_old['Exon stable ID_y'] == exon_ID].drop(columns=['Exon stable ID_y', 'Exon stable ID_x']).drop_duplicates()
-    assert (np.array_equal(p1.values, p1_old.values))
-    assert (np.array_equal(p2.values, p2_old.values))
+    #p1_old=PPI_old[PPI_old['Exon stable ID_x'] == exon_ID].drop(columns=['Exon stable ID_x', 'Exon stable ID_y']).drop_duplicates()
+    #p2_old=PPI_old[PPI_old['Exon stable ID_y'] == exon_ID].drop(columns=['Exon stable ID_y', 'Exon stable ID_x']).drop_duplicates()
+    #assert (np.array_equal(p1.values, p1_old.values))
+    #assert (np.array_equal(p2.values, p2_old.values))
 
 
     p2=p2[['Transcript stable ID_y','u_ac_2','Transcript stable ID_x','u_ac_1']]

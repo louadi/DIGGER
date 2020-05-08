@@ -80,7 +80,9 @@ def transcript(transcript_ID):
             ORDER BY "Exon rank in transcript"
             """
     tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': transcript_ID})
-
+    
+    tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
+     
     # df_filter = data['Transcript stable ID'].isin([transcript_ID])
     # tdata=data[df_filter].sort_values(by=['Exon rank in transcript'])
     exons=tdata.drop(columns=["Pfam ID","Pfam start","Pfam end"]).drop_duplicates()
@@ -115,7 +117,7 @@ def req(ext):
 
 
 
-
+# used !!
 def gene_to_all_transcripts(gene_ID):
 
 
@@ -151,10 +153,22 @@ def gene_to_all_transcripts_online(gene_ID):
     
     
     
-#not used    
+# used    !!!!
 def tranID_convert(Ensemble_transID):
-    df_filter = gene_info['Transcript stable ID'].isin([Ensemble_transID])
-    tdata=gene_info[df_filter]
+
+    query = """
+            SELECT * 
+            FROM gene_info 
+            WHERE "Transcript stable ID"=:Ensemble_transID 
+            """
+    tdata = pd.read_sql_query(sql=text(query), con=engine, params={'Ensemble_transID': Ensemble_transID})
+    
+    
+    
+    
+    
+    #df_filter = gene_info['Transcript stable ID'].isin([Ensemble_transID])
+    #tdata=gene_info[df_filter]
     
  
             
@@ -169,7 +183,7 @@ def tranID_convert(Ensemble_transID):
             
             
     else: entrezID=str(int(tdata["NCBI gene ID"].unique()[0]))
-    print('ID ========',entrezID)
+    #print('ID ========',entrezID)
     
     gene_description=tdata["Gene description"].unique()[0]
     
