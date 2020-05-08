@@ -97,9 +97,9 @@ def exon(request,exon_ID):
     
    if number >0 :
            
-           nodes,edges,interaction=ex.vis_exon(domains,entrezID,gene_name,exon_ID)
+           nodes,edges,pd_interaction=ex.vis_exon(domains,entrezID,gene_name,exon_ID)
    else:
-        nodes,edges,interaction=[],[],[]
+        nodes,edges,pd_interaction=[],[],[]
         
    #PPI res interfaces on the exon:      
    #table: HTML table with all PPIs that have res interface mapped to the exon
@@ -108,13 +108,45 @@ def exon(request,exon_ID):
    table,number_of_PPI=ex.PPI_inter(exon_ID,gene_name)
    
    
+   # added to combine evidence of DDI and Residue in one final table
    
-        
+   
+   
+   if number >0 :
+                if number_of_PPI>0:
+                      ppi_from_res=table['Partner Protein'].unique()
+                      print('yooooooooo',ppi_from_res)
+                      print(pd_interaction)
+                      f=pd_interaction['Partner Protein'].isin(ppi_from_res)
+                       
+                      pd_interaction.loc[f, 'Residue evidence'] = '<center>&#128504;</center>'
+                 
+                
+                pd_interaction["Partner Protein"]='<center>'+pd_interaction["Partner Protein"]+'</center>'
+                
+                pd_interaction=pd_interaction[["Affected Protein",'Partner Protein','NCBI gene ID','Retained DDIs','Lost DDIs','Percentage of lost domain-domain interactions','Residue evidence',"Protein-protein interaction"]]
+                
+                
+                pd_interaction=pd_interaction.rename(columns={
+                "Partner Protein": "<center>Partner Protein</center>", 
+                "Affected Protein": "<center>Affected Protein</center>",
+                "NCBI gene ID": "<center>NCBI gene ID</center>", 
+                "Percentage of lost domain-domain interactions": "<center> % of lost DDIs</center>",
+                "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
+                "Lost DDIs": "<center>Lost Domain-Domain interactions</center>",
+                "Protein-protein interaction": "<center>Protein-protein interaction</center>",
+                'Residue evidence':'<center>Residue evidence</center>'
+                })
+
+
+                pd_interaction=pd_interaction.to_html(escape=False, index=False)
+             
+   table=table.to_html(escape=False, index=False)  
    context = {
    
       'tb1':tb_transc,
       'tb2':table_domains,
-      'tb3':interaction,
+      'tb3':pd_interaction,
       'tb4':table,
       'name':gene_name,
          'exon_ID':exon_ID,
