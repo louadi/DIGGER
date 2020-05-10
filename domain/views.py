@@ -108,17 +108,13 @@ def exon(request,exon_ID):
    table,number_of_PPI=ex.PPI_inter(exon_ID,gene_name)
    
    
-   # added to combine evidence of DDI and Residue in one final table
-   
-   
    
    if number >0 :
+                # added to combine evidence of DDI and Residue in one final table
                 if number_of_PPI>0:
+                      
                       ppi_from_res=table['Partner Protein'].unique()
-                      print('yooooooooo',ppi_from_res)
-                      print(pd_interaction)
                       f=pd_interaction['Partner Protein'].isin(ppi_from_res)
-                       
                       pd_interaction.loc[f, 'Residue evidence'] = '<center>&#128504;</center>'
                  
                 
@@ -352,7 +348,7 @@ def network(request):
           input_query[0]=input_query[0].replace(" ", "")
           
           #max input IDs
-          if len(input_query)<2000:
+          if len(input_query)<2000 and len(input_query)>1:
                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
                       job_num=str(random.randrange(500))
                       with open('domain/static/jobs/'+job_num+".txt", "wb") as fp:   #Pickling
@@ -382,7 +378,13 @@ def Multi_proteins(request, job='0'):
     
     else:    
       genes, missing,num_isoforms=info
-      nodes,edges,tab,tb_html=nt.Construct_network(genes, missing,job)
+      
+      Net=nt.Construct_network(genes, missing,job)
+      
+      if Net==0:  
+          return HttpResponse("<h1>There is no known interaction between these proteins</h1>")
+      
+      else: nodes,edges,tab,tb_html=Net
 
     
     
@@ -442,7 +444,26 @@ def example1(request):
                       return redirect(Multi_proteins,job=job_num)
     return render(request,'domain/Network_example1.html')   
     
+def example3(request):
 
+    if "input" in request.GET :
+          input_query = request.GET['input']
+          print(input_query)
+          #print(input_query)
+          input_query=input_query.split("\r\n")
+          #print(input_query)
+          input_query[0]=input_query[0].replace(" ", "")
+          
+          #max input IDs
+          if len(input_query)<2000:
+                if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
+                      job_num=str(random.randrange(500))
+                      with open('domain/static/jobs/'+job_num+".txt", "wb") as fp:   #Pickling
+                             pickle.dump(input_query, fp)
+                      return redirect(Multi_proteins,job=job_num)
+    return render(request,'domain/Network_example4.html')   
+    
+    
 def about(request):
  
     return render(request,'domain/about.html',) 
