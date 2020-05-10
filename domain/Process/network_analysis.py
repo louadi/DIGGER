@@ -38,8 +38,8 @@ def Construct_network(proteins_id, missing,job_ID):
       
       # Get the subgraph:
       H = PPI.subgraph(proteins_id)
-      
-      
+      print('interactions:',H)
+      if len(H.edges())==0: return 0
       for e in H.edges():
           if e[0] not in N: N.append(e[0])
           if e[1] not in N: N.append(e[1])
@@ -166,7 +166,7 @@ def Construct_network(proteins_id, missing,job_ID):
       
       pd_html.sort_values(by=['Source of the interaction'], ascending=[True])
       
-      
+      print('here',pd_html['Protein 1 name'])
       pd_html['Protein 1 name']='<center>&emsp;'+pd_html['Protein 1 name']+'&emsp;</center>'
       pd_html['Protein 2 name']='<center>&emsp;'+pd_html['Protein 2 name']+'&emsp;</center>'
       pd_html['Retained DDIs']='<center>&emsp;'+pd_html['Retained DDIs']+'&emsp;</center>'
