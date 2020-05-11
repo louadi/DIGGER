@@ -1,7 +1,13 @@
-# project imports
-import os
+# Python imports
+from os.path import join
+from sqlalchemy import create_engine
 
+# project imports
 from .common import *
+from .i18n import *
+
+# Dummy variable to import so PyCharm does not remove it while optimizing imports
+__dummy = LANGUAGE_CODE
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True    # ToDo change for production
