@@ -8,7 +8,7 @@ import numpy as np
 import pickle
 import pandas as pd
 
-from django_project import settings
+from django.conf import settings
 from domain.Process import process_data as pr
 from sqlalchemy import text
 
