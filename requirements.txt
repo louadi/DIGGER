@@ -54,7 +54,7 @@ python-dateutil==2.8.1
 python-louvain==0.13
 pytz==2019.3
 pyvis==0.1.7.0
-PyYAML==3.13
+PyYAML==5.1
 pyzmq==17.1.2
 qtconsole==4.5.5
 requests==2.22.0
