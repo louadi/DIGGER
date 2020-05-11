@@ -196,7 +196,12 @@ def input_transcript(Ensemble_transID):
     
     #if the transcript have known domains:
     exons,domains,unique_domains=pr.transcript(Ensemble_transID)
-    tran_name,gene_name,Ensemble_geneID,entrezID,gene_description=pr.tranID_convert(Ensemble_transID)
+    
+    output=pr.tranID_convert(Ensemble_transID)
+    if output==0: return 0
+    else: tran_name,gene_name,Ensemble_geneID,entrezID,gene_description=output
+    
+   
     
     text1="The transcript "+tran_name+' have '+str(exons.shape[0])+' exons and '+str(len(unique_domains))+" unique protein domains." 
     # HTML code to visualize the table

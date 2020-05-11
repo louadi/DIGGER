@@ -170,8 +170,11 @@ def tranID_convert(Ensemble_transID):
     #df_filter = gene_info['Transcript stable ID'].isin([Ensemble_transID])
     #tdata=gene_info[df_filter]
     
- 
-            
+    #No domain or wrong entry
+    if    len(tdata)==0:     return 0
+    
+    
+    
     Ensemble_geneID=tdata["Gene stable ID"].unique()[0]
     tran_name=tdata["Transcript name"].unique()[0]
     gene_name=tran_name.split('-')[0]

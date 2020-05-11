@@ -21,7 +21,9 @@ DomainG=exd.load_obj("DomainG")
 
 def Protein_view(P_id):
     
-    domains,unique_domains,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p=info.get_protein_info(P_id)
+    i=info.get_protein_info(P_id)
+    if i==0: return 0
+    domains,unique_domains,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p=i
     
 
     
@@ -32,6 +34,7 @@ def Protein_view(P_id):
         
     else : 
           print('no interactions')
+          return 1
         
     #search for the protein domains interactions:
     # before coming here need to check if the protein have known domains
