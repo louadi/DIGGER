@@ -10,7 +10,7 @@ import requests, sys
 
 from sqlalchemy import text
 
-from django_project import settings
+from django.conf import settings
 
 server = "http://rest.ensembl.org"
 cwd = os.getcwd()

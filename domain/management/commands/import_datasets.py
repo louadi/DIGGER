@@ -1,7 +1,7 @@
 import pandas as pd
 from django.core.management import BaseCommand
 
-from django_project import settings
+from django.conf import settings
 from os import path
 
 # --- Get database connection aka 'SQLAlchemie engine'
