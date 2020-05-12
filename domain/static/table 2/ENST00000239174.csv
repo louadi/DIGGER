@@ -1,4 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-HOXB1-201,NR3C1,2908,PF00046-PF00104 ; PF00046-PF00105,,0.0,Retained
-HOXB1-201,PAX6,5080,PF00292-PF00046 ; PF00046-PF00046,,0.0,Retained
-HOXB1-201,PBX1,5087,PF00046-PF00046,,0.0,Retained

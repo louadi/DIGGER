@@ -1,3 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-CLIP1-221,MAPRE1,22919,,PF01302-PF03271,100.0,Lost
-CLIP1-221,DCTN1,1639,PF16641-PF01302,PF01302-PF01302,50.0,Affected

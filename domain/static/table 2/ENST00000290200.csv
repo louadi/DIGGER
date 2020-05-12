@@ -1,3 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-IL10RB-201,IL10RA,3587,PF01108-PF09294 ; PF01108-PF01108,,0.0,Retained
-IL10RB-201,IL22,50616,PF09294-PF14565 ; PF01108-PF14565,,0.0,Retained

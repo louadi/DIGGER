@@ -1,4 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-RSPO1-204,LGR4,55366,PF13855-PF15913,,0.0,Retained
-RSPO1-204,RNF43,54894,PF18212-PF15913,,0.0,Retained
-RSPO1-204,ZNRF3,84133,PF18212-PF15913,,0.0,Retained

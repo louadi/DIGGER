@@ -1,2 +1,0 @@
-Affected Protein,Partner Protein,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-KCNJ6,KCNJ9,3765,,PF01007-PF01007 ; PF01007-PF17655 ; PF17655-PF01007 ; PF17655-PF17655,100.0,Lost

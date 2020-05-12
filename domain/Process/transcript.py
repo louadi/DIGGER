@@ -15,7 +15,7 @@ engine = settings.DATABASE_ENGINE
 
 # --- Create folder
 # Global table path
-table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table')
+table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table 2')
 if not os.path.exists(table_path_2):
     os.makedirs(table_path_2)
 

@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
 from .load.domaingraph import load_obj
@@ -23,6 +26,11 @@ def get_input(query=None):
     queries=query.split('')
 '''
 
+# --- Create folder
+# Global jobs path
+jobs_path = os.path.join(settings.MEDIA_ROOT, 'jobs')
+if not os.path.exists(jobs_path):
+    os.makedirs(jobs_path)
 
 # or reference a template from templates folder
 def home(request):
@@ -351,7 +359,7 @@ def network(request):
           if len(input_query)<2000 and len(input_query)>1:
                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
                       job_num=str(random.randrange(500))
-                      with open('domain/static/jobs/'+job_num+".txt", "wb") as fp:   #Pickling
+                      with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
                              pickle.dump(input_query, fp)
                       return redirect(Multi_proteins,job=job_num)
                 
@@ -361,7 +369,7 @@ def network(request):
 
 def Multi_proteins(request, job='0'):
 
-    with open('domain/static/jobs/'+job+".txt", "rb") as fp:   # Unpickling
+    with open(f'{jobs_path}/{job}.txt', "rb") as fp:   # Unpickling
             inputs = pickle.load(fp)
             
     
@@ -417,7 +425,7 @@ def example2(request):
           if len(input_query)<2000:
                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
                       job_num=str(random.randrange(500))
-                      with open('domain/static/jobs/'+job_num+".txt", "wb") as fp:   #Pickling
+                      with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
                              pickle.dump(input_query, fp)
                       return redirect(Multi_proteins,job=job_num)
     return render(request,'domain/Network_example2.html')   
@@ -439,7 +447,7 @@ def example1(request):
           if len(input_query)<2000:
                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
                       job_num=str(random.randrange(500))
-                      with open('domain/static/jobs/'+job_num+".txt", "wb") as fp:   #Pickling
+                      with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
                              pickle.dump(input_query, fp)
                       return redirect(Multi_proteins,job=job_num)
     return render(request,'domain/Network_example1.html')   
@@ -458,7 +466,7 @@ def example3(request):
           if len(input_query)<2000:
                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
                       job_num=str(random.randrange(500))
-                      with open('domain/static/jobs/'+job_num+".txt", "wb") as fp:   #Pickling
+                      with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
                              pickle.dump(input_query, fp)
                       return redirect(Multi_proteins,job=job_num)
     return render(request,'domain/Network_example4.html')   
