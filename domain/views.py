@@ -183,7 +183,8 @@ def transcript(request,P_id):
 
 
     print(P_id)
-    
+    out=tr.Protein_view(P_id)
+    if out==0 :return HttpResponse(' wrong entry or protein without any known Pfam domains')
     nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,interaction,isoforms,=tr.Protein_view(P_id)
     
     '''
