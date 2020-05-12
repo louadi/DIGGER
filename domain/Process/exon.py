@@ -28,7 +28,7 @@ def input_exon(exon_ID):
             """
             tb = pd.read_sql_query(sql=text(query), con=engine, params={'exon_ID': exon_ID})
             
-            tb=tb.drop(columns=["Unnamed: 0"]).drop_duplicates()
+            # tb=tb.drop(columns=["Unnamed: 0"]).drop_duplicates()
     
        
             #tb=pr.data[pr.data['Exon stable ID'].isin([exon_ID])]  

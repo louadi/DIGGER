@@ -170,7 +170,7 @@ def Protein_view(P_id):
               """
               tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr})
               
-              tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
+              # tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
               
               #df_filter = pr.data['Transcript stable ID'].isin([tr])
               #tdata=pr.data[df_filter]

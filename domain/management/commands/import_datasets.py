@@ -8,7 +8,7 @@ from os import path
 engine = settings.DATABASE_ENGINE
 
 # --- Import the datasets into dataframes
-data_base_path = path.join(settings.BASE_DIR, 'domain/data')
+data_base_path = path.join(settings.PROJECT_ROOT, 'domain/data')
 
 
 def load_datasets():

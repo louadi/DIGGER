@@ -16,10 +16,10 @@ from os.path import abspath, basename, dirname, join, normpath
 
 # ##### PATH CONFIGURATION ################################
 
-# fetch Django's project directory
+# Fetch Django's project directory (The directory containing the settings package - DomainExplorer)
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 
-# fetch the project_root
+# Fetch the project_root (The directory containing all the files for this project - what Django calls BASE_DIR)
 PROJECT_ROOT = dirname(DJANGO_ROOT)
 
 # the name of the whole site
