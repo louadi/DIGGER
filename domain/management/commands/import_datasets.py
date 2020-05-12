@@ -15,17 +15,19 @@ def load_datasets():
     print('='*80)
     print(f'Importing data sets from "{data_base_path}"\ninto {engine.name} database')
     print('='*80)
+    # Dictionary of table_name : file_name
     datasets = {
-        'ppi_data': path.join(data_base_path, 'PPI_interface_mapped_to_exon.csv'),
-        'exons_to_domains_data': path.join(data_base_path, 'final.csv'),
-        'gene_info': path.join(data_base_path, 'gene_info.csv'),
+        'ppi_data': 'PPI_interface_mapped_to_exon.csv',
+        'exons_to_domains_data': 'final.csv',
+        'gene_info': 'gene_info.csv',
     }
 
     # --- Write dataframes to tables in database
-    for table_name, data_path in datasets.items():
+    for table_name, data_file_name in datasets.items():
         print(f'Adding table {table_name}:')
-        data = pd.read_csv(data_path)
-        print(f'\tContains {data.shape[0]} rows and {data.shape[1]} columns')
+        print(f'\tParsing file {data_file_name}')
+        data = pd.read_csv(path.join(data_base_path, data_file_name))
+        print(f'\tImporting {data.shape[0]} rows and {data.shape[1]} columns')
         data.to_sql(table_name, engine, if_exists='replace', index=False)
         print(f'\tDone')
 
