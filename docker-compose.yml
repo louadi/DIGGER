@@ -5,6 +5,8 @@ services:
   web:
     build: .
     command: gunicorn DomainExplorer.wsgi:application --bind 0.0.0.0:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=DomainExplorer.settings.production
     env_file:
       - .env
     volumes:
