@@ -12,7 +12,7 @@ def get_protein_info(ID):
 
   #Get data about the input transcript or the protein 
   info,trID=ID_mapper(ID) 
-  if info==0: return 0
+   
   domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface=info
   #save Image of protein Structure
   path='domain/static/images/'
@@ -25,7 +25,7 @@ def get_protein_info2(ID):
 
   #Get data about the input transcript or the protein 
   info,trID=ID_mapper(ID) 
-  if info==0: return 0
+   
   domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface=info
 
 

@@ -5,7 +5,7 @@ import pandas as pd
     
 from sqlalchemy import text
 
-from django.conf import settings
+from django_project import settings
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE  
     
