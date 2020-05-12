@@ -76,3 +76,4 @@ widgetsnbextension==3.4.1
 gunicorn==19.6.0
 
 SQLAlchemy~=1.3.16
+gunicorn==20.0.4
