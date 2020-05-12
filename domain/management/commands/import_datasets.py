@@ -25,9 +25,9 @@ def load_datasets():
     # --- Write dataframes to tables in database
     for table_name, data_file_name in datasets.items():
         print(f'Adding table {table_name}:')
-        print(f'\tParsing file {data_file_name}')
+        print(f'\tParsing file "{data_file_name}"')
         data = pd.read_csv(path.join(data_base_path, data_file_name))
-        print(f'\tImporting {data.shape[0]} rows and {data.shape[1]} columns')
+        print(f'\tWriting {data.shape[0]} rows and {data.shape[1]} columns to database')
         data.to_sql(table_name, engine, if_exists='replace', index=False)
         print(f'\tDone')
 
