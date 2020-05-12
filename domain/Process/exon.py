@@ -14,7 +14,7 @@ from sqlalchemy import text
 engine = settings.DATABASE_ENGINE
 
 
-PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
+#PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
 tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
 
 
