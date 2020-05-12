@@ -16,8 +16,8 @@ from sqlalchemy import text
 engine = settings.DATABASE_ENGINE
 
 
-PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
-tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
+#PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
+#tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
 
 # --- Create folder
 # Global table path
@@ -275,9 +275,9 @@ def tr_to_names(list_tr):
                 """
         name = \
             pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr}).iloc[0, 0].split('-')[0]
-        name_old = tr_to_name_old[tr_to_name_old['Transcript stable ID'] == tr]['Transcript name'].tolist()[0].split('-')[0]
+        #name_old = tr_to_name_old[tr_to_name_old['Transcript stable ID'] == tr]['Transcript name'].tolist()[0].split('-')[0]
 
-        assert (np.array_equal(name, name_old))
+        #assert (np.array_equal(name, name_old))
 
         names.append(name)
     return names
