@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import numpy as np
 
@@ -17,6 +19,11 @@ engine = settings.DATABASE_ENGINE
 PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
 tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
 
+# --- Create folder
+# Global table path
+table_path = os.path.join(settings.MEDIA_ROOT, 'table')
+if not os.path.exists(table_path):
+    os.makedirs(table_path)
 
 def input_exon(exon_ID):
     
@@ -153,7 +160,7 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     pd_interaction=pd_interaction.rename(columns={
     "Protein name": "Partner Protein", })
-    pd_interaction.to_csv('domain/static/table/'+ExonID+'.csv', index=False,)
+    pd_interaction.to_csv(f'{table_path}/{ExonID}.csv', index=False,)
     
     
     
@@ -238,7 +245,7 @@ def PPI_inter(exon_ID,gene_name):
                 
             })
             
-            p1[['Protein with selected exonic region','Partner Protein','Uniprot ID of Protein 1','Uniprot ID of Protein 2']].drop_duplicates().to_csv('domain/static/table/'+exon_ID+'_interface.csv', index=False,)
+            p1[['Protein with selected exonic region','Partner Protein','Uniprot ID of Protein 1','Uniprot ID of Protein 2']].drop_duplicates().to_csv(f'{table_path}/{exon_ID}_interface.csv', index=False,)
            
 
                

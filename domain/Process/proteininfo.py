@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 matplotlib.use('agg')
 
 # Global image path
-images_path = os.path.join(settings.MEDIA_ROOT, 'images')
+images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
 if not os.path.exists(images_path):
     os.makedirs(images_path)
 
