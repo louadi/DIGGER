@@ -23,7 +23,7 @@ def load_obj(name):
 
 
 Graph=load_obj("DomainG")
-PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
+# PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
 DomainG=Graph
 
 #function for visulaization in the website
