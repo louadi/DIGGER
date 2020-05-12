@@ -435,8 +435,8 @@ def example2(request):
         
 def example1(request):
 
-    if "input" in request.GET :
-          input_query = request.GET['input']
+    if "input" in request.POST :
+          input_query = request.POST['input']
           print(input_query)
           #print(input_query)
           input_query=input_query.split("\r\n")
