@@ -40,3 +40,7 @@ DATABASES = {
 # sqlite://<no_hostname>/<path>
 # where <path> is relative:
 DATABASE_ENGINE = create_engine(f'postgres://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}')
+
+# ##### APPLICATION CONFIGURATION #########################
+
+INSTALLED_APPS = DEFAULT_APPS
