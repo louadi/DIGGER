@@ -28,7 +28,7 @@ def TranscriptsID_to_table(transcripts):
                           """
                           tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr})
                           
-                          tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
+                          # tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
                           
                           
                           

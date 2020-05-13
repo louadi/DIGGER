@@ -3,6 +3,7 @@
 
 
 {%block content %}
+{% load static %}
 
 
         
@@ -14,8 +15,7 @@
       border: 2px solid lightgray;
     }
   </style>
-  </style>
-  
+
   
   
    <div class="container">
@@ -112,7 +112,7 @@ var network = new vis.Network(container, data, options);
 
     <br>
        
-<a href="/static/jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download The Generated Sub-Network with scored edges (SIF format)</a>
+<a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download The Generated Sub-Network with scored edges (SIF format)</a>
       </center> 
     
     
@@ -121,7 +121,7 @@ var network = new vis.Network(container, data, options);
       <h3 class="font-weight-light">Interactions Table </h3>
      
         <br>
-       <a href="/static/jobs/tables/{{ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download The  Full Table of interactions with interacted domains</a>
+       <a href="{% get_media_prefix %}jobs/tables/{{ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download The  Full Table of interactions with interacted domains</a>
        
        
         <br> <br>
@@ -133,7 +133,7 @@ var network = new vis.Network(container, data, options);
         {% endautoescape %}
  
        </center>     
-         </h6 class>     
+         </h6 class>
 <h6 class="font-weight-light">This an overview of the table , not the full table of interactions. You can download the full table from link above.</h6>
     
     

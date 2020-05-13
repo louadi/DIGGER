@@ -1,4 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-AZIN2-202,OAZ3,51686,PF02100-PF02784,PF02100-PF00278,50.0,Affected
-AZIN2-202,OAZ1,4946,PF02784-PF02100,PF00278-PF02100,50.0,Affected
-AZIN2-202,OAZ2,4947,PF02784-PF02100,PF00278-PF02100,50.0,Affected

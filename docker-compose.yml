@@ -1,16 +1,20 @@
-version: '3'
+version: '3.2'
 
 services:
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn DomainExplorer.wsgi:application --bind 0.0.0.0:8000 --timeout 360 --workers=6 --threads=2
+    environment:
+      - DJANGO_SETTINGS_MODULE=DomainExplorer.settings.production
     env_file:
       - .env
-    ports:
-      - "8000:8000"
+    volumes:
+      - static_volume:/code/run/static
+      - media_volume:/code/run/media
     networks:
-      - domaingraph_database_network
+      - digger_database_network
+      - digger_nginx_network
     depends_on:
       - db
 
@@ -19,14 +23,37 @@ services:
     env_file:
       - .env
     networks:
-      - domaingraph_database_network
+      - digger_database_network
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
+  nginx:
+    build: ./docker/nginx
+    volumes:
+      - static_volume:/data/digger/run/static
+      - media_volume:/data/digger/run/media
+    # If you want the application to be listening on another port different than port 8000
+    # Change the 'published' port number to the port you desire
+    ports:
+      - target: 80
+        published: 8082 #${NGINX_PUBLISHED_PORT}             # Change this port
+        protocol: tcp
+        mode: host
+    environment:
+      - NGINX_PUBLISHED_PATH=${NGINX_PUBLISHED_PATH}
+    networks:
+      - digger_nginx_network
+    depends_on:
+      - web
+
 
 networks:
-  domaingraph_database_network:
+  digger_database_network:
+    driver: bridge
+  digger_nginx_network:
     driver: bridge
 
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:

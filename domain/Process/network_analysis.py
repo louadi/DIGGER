@@ -1,4 +1,8 @@
-from domain.Process import exonstodomain as exd 
+import os
+
+from django.conf import settings
+
+from domain.Process import exonstodomain as exd
 from domain.Process import process_data as pr
 import pandas as pd
 import numpy as np
@@ -16,7 +20,16 @@ g2d=exd.load_obj("g2d")
 data = pd.read_csv( "domain/data/all_Proteins.csv")
 
 
+# --- Create folder
+# Global jobs table path
+jobs_table_path = os.path.join(settings.MEDIA_ROOT, 'jobs', 'tables')
+if not os.path.exists(jobs_table_path):
+    os.makedirs(jobs_table_path)
 
+# Global jobs networks path
+jobs_networks_path = os.path.join(settings.MEDIA_ROOT, 'jobs', 'networks')
+if not os.path.exists(jobs_networks_path):
+    os.makedirs(jobs_networks_path)
 
 
 
@@ -148,7 +161,7 @@ def Construct_network(proteins_id, missing,job_ID):
       pd.set_option('display.max_colwidth',1000)
       
       
-      pd_interaction.to_csv('domain/static/jobs/tables/'+job_ID+'.csv', index=False)
+      pd_interaction.to_csv(f'{jobs_table_path}/{job_ID}.csv', index=False)
       
       
       pd_html=pd_interaction.drop(columns=['Protein 1', 'Protein 2'])
@@ -199,7 +212,7 @@ def Construct_network(proteins_id, missing,job_ID):
           
           
       pd_interaction['Weight']=pd_interaction['Weight'].astype(float)     
-      pd_interaction.drop(columns=['Protein 1 name', 'Protein 2 name','Retained DDIs','Lost DDIs','Source of the interaction']).to_csv('domain/static/jobs/networks/'+job_ID+'.sif', index=False,sep='\t')
+      pd_interaction.drop(columns=['Protein 1 name', 'Protein 2 name','Retained DDIs','Lost DDIs','Source of the interaction']).to_csv(f'{jobs_networks_path}/{job_ID}.sif', index=False,sep='\t')
       
       
       

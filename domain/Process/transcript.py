@@ -1,3 +1,5 @@
+import os
+
 from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
 from domain.Process import proteininfo as  info
@@ -11,6 +13,11 @@ from django.conf import settings
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE
 
+# --- Create folder
+# Global table path
+table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table 2')
+if not os.path.exists(table_path_2):
+    os.makedirs(table_path_2)
 
 PPI=exd.load_obj("PPI")
 g2d=exd.load_obj("g2d")
@@ -111,7 +118,7 @@ def Protein_view(P_id):
               
           pd_interaction.insert(0,'Selected Protein variant','')
           pd_interaction["Selected Protein variant"]=tran_name
-          pd_interaction.to_csv('domain/static/table 2/'+trID+'.csv', index=False,)
+          pd_interaction.to_csv(f'{table_path_2}/{trID}.csv', index=False,)
           
     
           pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
@@ -170,7 +177,7 @@ def Protein_view(P_id):
               """
               tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr})
               
-              tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
+              # tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
               
               #df_filter = pr.data['Transcript stable ID'].isin([tr])
               #tdata=pr.data[df_filter]

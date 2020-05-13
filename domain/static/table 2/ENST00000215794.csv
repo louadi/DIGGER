@@ -1,7 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-USP18-201,ISG15,9636,PF00443-PF00240,,0.0,Retained
-USP18-201,CHUK,1147,PF00443-PF00069,,0.0,Retained
-USP18-201,USP41,373856,PF00443-PF00443,,0.0,Retained
-USP18-201,HERC1,8925,PF00443-PF00400,,0.0,Retained
-USP18-201,IKBKB,3551,PF00069-PF00443,,0.0,Retained
-USP18-201,RPS27A,6233,PF00443-PF00240,,0.0,Retained
