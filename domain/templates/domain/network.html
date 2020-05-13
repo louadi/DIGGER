@@ -33,16 +33,20 @@
 
   
       <h5 class> Enter a list of Ensembl IDs (Genes/Transcripts or Proteins) </h5> 
-       <h5 class='tab'>  <a href="{% url 'Network_example3' %}" class="test">[Example 1: Specific interaction between two Isoforms]</a></h5>  
+       <h5 class='tab'>  <a href="{% url 'Network_example1' %}" class="test">[Example 1: Specific interaction between two Isoforms]</a></h5>
       <h5 class='tab'>  <a href="{% url 'Network_example2' %}" class="test">[Example 2: Interaction between multiple isoforms]</a></h5>  
-   <h5 class='tab'>  <a href="{% url 'Network_example1' %}" class="test">[Example 3: Transcritpomics data from TCGA - PAN-Cancer (2000 most abundant transcripts]</a></h5> 
+   <h5 class='tab'>  <a href="{% url 'Network_example3' %}" class="test">[Example 3: Transcritpomics data from TCGA - PAN-Cancer (2000 most abundant transcripts]</a></h5>
   </form>
                    
 
 
   <br>
-<form method=”POST”>
+<form action="{% url 'Network' %}" method="post">
+    {% csrf_token %}
+
   <textarea name="input" rows="30" cols="50" >
+      {% block example_ids %}
+      {% endblock example_ids%}
  </textarea>
 
   <br><br>

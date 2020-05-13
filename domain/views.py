@@ -347,14 +347,15 @@ def Exon_level(request):
 #PPI network analysis
 def network(request):
     
-    if "input" in request.GET :
-          input_query = request.GET['input']
+    if "input" in request.POST:
+          input_query = []
+          for element in request.POST['input'].split('\n'):
+              element = element.strip()
+              if element:
+                  input_query.append(element)
+
           print(input_query)
-          #print(input_query)
-          input_query=input_query.split("\r\n")
-          #print(input_query)
-          input_query[0]=input_query[0].replace(" ", "")
-          
+
           #max input IDs
           if len(input_query)<2000 and len(input_query)>1:
                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
@@ -411,65 +412,65 @@ def Multi_proteins(request, job='0'):
     
     return render(request,'domain/vis_network.html',context) 
 
-def example2(request):
-
-    if "input" in request.GET :
-          input_query = request.GET['input']
-          print(input_query)
-          #print(input_query)
-          input_query=input_query.split("\r\n")
-          #print(input_query)
-          input_query[0]=input_query[0].replace(" ", "")
-          
-          #max input IDs
-          if len(input_query)<2000:
-                if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
-                      job_num=str(random.randrange(500))
-                      with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
-                             pickle.dump(input_query, fp)
-                      return redirect(Multi_proteins,job=job_num)
-    return render(request,'domain/Network_example2.html')   
-    
-    
-    
-        
-def example1(request):
-
-    if "input" in request.POST :
-          input_query = request.POST['input']
-          print(input_query)
-          #print(input_query)
-          input_query=input_query.split("\r\n")
-          #print(input_query)
-          input_query[0]=input_query[0].replace(" ", "")
-          
-          #max input IDs
-          if len(input_query)<2000:
-                if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
-                      job_num=str(random.randrange(500))
-                      with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
-                             pickle.dump(input_query, fp)
-                      return redirect(Multi_proteins,job=job_num)
-    return render(request,'domain/Network_example1.html')   
-    
-def example3(request):
-
-    if "input" in request.GET :
-          input_query = request.GET['input']
-          print(input_query)
-          #print(input_query)
-          input_query=input_query.split("\r\n")
-          #print(input_query)
-          input_query[0]=input_query[0].replace(" ", "")
-          
-          #max input IDs
-          if len(input_query)<2000:
-                if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
-                      job_num=str(random.randrange(500))
-                      with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
-                             pickle.dump(input_query, fp)
-                      return redirect(Multi_proteins,job=job_num)
-    return render(request,'domain/Network_example4.html')   
+# def example2(request):
+#
+#     if "input" in request.GET :
+#           input_query = request.GET['input']
+#           print(input_query)
+#           #print(input_query)
+#           input_query=input_query.split("\r\n")
+#           #print(input_query)
+#           input_query[0]=input_query[0].replace(" ", "")
+#
+#           #max input IDs
+#           if len(input_query)<2000:
+#                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
+#                       job_num=str(random.randrange(500))
+#                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
+#                              pickle.dump(input_query, fp)
+#                       return redirect(Multi_proteins,job=job_num)
+#     return render(request,'domain/Network_example2.html')
+#
+#
+#
+#
+# def example1(request):
+#
+#     if "input" in request.POST :
+#           input_query = request.POST['input']
+#           print(input_query)
+#           #print(input_query)
+#           input_query=input_query.split("\r\n")
+#           #print(input_query)
+#           input_query[0]=input_query[0].replace(" ", "")
+#
+#           #max input IDs
+#           if len(input_query)<2000:
+#                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
+#                       job_num=str(random.randrange(500))
+#                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
+#                              pickle.dump(input_query, fp)
+#                       return redirect(Multi_proteins,job=job_num)
+#     return render(request,'domain/Network_example1.html')
+#
+# def example3(request):
+#
+#     if "input" in request.GET :
+#           input_query = request.GET['input']
+#           print(input_query)
+#           #print(input_query)
+#           input_query=input_query.split("\r\n")
+#           #print(input_query)
+#           input_query[0]=input_query[0].replace(" ", "")
+#
+#           #max input IDs
+#           if len(input_query)<2000:
+#                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
+#                       job_num=str(random.randrange(500))
+#                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
+#                              pickle.dump(input_query, fp)
+#                       return redirect(Multi_proteins,job=job_num)
+#     return render(request,'domain/Network_example4.html')
     
     
 def about(request):
