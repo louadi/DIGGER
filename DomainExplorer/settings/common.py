@@ -122,6 +122,11 @@ STATIC_URL = f'{os.environ.get("NGINX_PUBLISHED_PATH", "")}/static/'
 # the URL for media files
 MEDIA_URL = f'{os.environ.get("NGINX_PUBLISHED_PATH", "")}/media/'
 
+# Restrict the cookie access to a certain path (allows for multiple Django instances to run on one server)
+# https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-SESSION_COOKIE_PATH
+SESSION_COOKIE_PATH = f'{os.environ.get("NGINX_PUBLISHED_PATH")}/'
+# https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-CSRF_COOKIE_PATH
+CSRF_COOKIE_PATH = f'{os.environ.get("NGINX_PUBLISHED_PATH")}/'
 
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = False
