@@ -4,7 +4,7 @@ services:
 
   web:
     build: .
-    command: gunicorn DomainExplorer.wsgi:application --bind 0.0.0.0:8000 --timeout 360
+    command: gunicorn DomainExplorer.wsgi:application --bind 0.0.0.0:8000 --timeout 360 --workers=6 --threads=2
     environment:
       - DJANGO_SETTINGS_MODULE=DomainExplorer.settings.production
     env_file:
