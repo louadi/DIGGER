@@ -1,2 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-GSTT2-202,GSTP1,2950,PF02798-PF02798 ; PF02798-PF00043 ; PF02798-PF14497 ; PF02798-PF00043 ; PF14497-PF00043 ; PF00043-PF00043,,0.0,Retained

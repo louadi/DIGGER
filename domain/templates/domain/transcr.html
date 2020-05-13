@@ -32,7 +32,7 @@
     
   </style>
 
-	<title>  DomainExplorer Transcript {{ tran_name|safe }}  </title>
+	<title>  DIGGER  Transcript {{ tran_name|safe }}  </title>
 
 <div class="container">
   <div class="card border-0 shadow my-5">
@@ -53,7 +53,7 @@
       
       <div class="box.large">
       
-      <img src="{%static 'images/'%}/{{trID}}.png" alt="My image"> 
+      <img src="{% get_media_prefix %}images/{{trID}}.png" alt="My image">
       </div>
        
        
@@ -336,7 +336,7 @@
                 </center>     
                  
 
-                <a href="/static/table 2/{{trID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
+                <a href="{% get_media_prefix %}/table 2/{{trID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
          </h6 class>  
          <br /><br />
                      <br />

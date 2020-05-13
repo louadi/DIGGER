@@ -39,7 +39,7 @@
 
 
 
-	<title>  Exonic Region From The Gene {{ name|safe }}  </title>
+	<title>  DIGGER | Exonic Region From The Gene {{ name|safe }}  </title>
 
 <div class="container">
   <div class="card border-0 shadow my-5">
@@ -299,7 +299,7 @@
       
       
       
-      <a href="/static/table/{{exon_ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
+      <a href="{% get_media_prefix %}table/{{exon_ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
          {% endif %}
       
         </center>
@@ -329,7 +329,7 @@
 {% if  long_table %}
         <h6 class="font-weight-light">This an overview of the table, not the full interactions. You can download the full table from this link.</h6>
  {% endif %}          
-              <a href="/static/table/{{exon_ID|safe }}_interface.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
+              <a href="{% get_media_prefix %}table/{{exon_ID|safe }}_interface.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
        </center>
         <br><br>
          

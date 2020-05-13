@@ -1,4 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-WNT3A-201,FZD1,8321,PF01392-PF00110,,0.0,Retained
-WNT3A-201,WNT3,7473,PF00110-PF00110,,0.0,Retained
-WNT3A-201,FZD2,2535,PF00110-PF01392,,0.0,Retained

@@ -2,11 +2,18 @@ from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
 
 
+import os
+from django.conf import settings
 from dna_features_viewer import GraphicFeature, GraphicRecord, CircularGraphicRecord
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('agg')
+
+# Global image path
+images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
+if not os.path.exists(images_path):
+    os.makedirs(images_path)
 
 def get_protein_info(ID):
 
@@ -15,11 +22,10 @@ def get_protein_info(ID):
   if info==0: return 0
   domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface=info
   #save Image of protein Structure
-  path='domain/static/images/'
 
-  Protein_structure(trID,exons,domains,path,trID,exons_in_interface)
+  Protein_structure(trID,exons,domains,images_path,trID,exons_in_interface)
 
-  return domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,path
+  return domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,images_path
 
 def get_protein_info2(ID):
 

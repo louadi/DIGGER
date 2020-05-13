@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import numpy as np
 
@@ -14,9 +16,14 @@ from sqlalchemy import text
 engine = settings.DATABASE_ENGINE
 
 
-PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
-tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
+#PPI_old= pd.read_csv("domain/data/PPI_interface_mapped_to_exon.csv")
+#tr_to_name_old = pd.read_csv( "domain/data/gene_info.csv")
 
+# --- Create folder
+# Global table path
+table_path = os.path.join(settings.MEDIA_ROOT, 'table')
+if not os.path.exists(table_path):
+    os.makedirs(table_path)
 
 def input_exon(exon_ID):
     
@@ -28,7 +35,7 @@ def input_exon(exon_ID):
             """
             tb = pd.read_sql_query(sql=text(query), con=engine, params={'exon_ID': exon_ID})
             
-            tb=tb.drop(columns=["Unnamed: 0"]).drop_duplicates()
+            # tb=tb.drop(columns=["Unnamed: 0"]).drop_duplicates()
     
        
             #tb=pr.data[pr.data['Exon stable ID'].isin([exon_ID])]  
@@ -153,7 +160,7 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     pd_interaction=pd_interaction.rename(columns={
     "Protein name": "Partner Protein", })
-    pd_interaction.to_csv('domain/static/table/'+ExonID+'.csv', index=False,)
+    pd_interaction.to_csv(f'{table_path}/{ExonID}.csv', index=False,)
     
     
     
@@ -238,7 +245,7 @@ def PPI_inter(exon_ID,gene_name):
                 
             })
             
-            p1[['Protein with selected exonic region','Partner Protein','Uniprot ID of Protein 1','Uniprot ID of Protein 2']].drop_duplicates().to_csv('domain/static/table/'+exon_ID+'_interface.csv', index=False,)
+            p1[['Protein with selected exonic region','Partner Protein','Uniprot ID of Protein 1','Uniprot ID of Protein 2']].drop_duplicates().to_csv(f'{table_path}/{exon_ID}_interface.csv', index=False,)
            
 
                
@@ -268,9 +275,9 @@ def tr_to_names(list_tr):
                 """
         name = \
             pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr}).iloc[0, 0].split('-')[0]
-        name_old = tr_to_name_old[tr_to_name_old['Transcript stable ID'] == tr]['Transcript name'].tolist()[0].split('-')[0]
+        #name_old = tr_to_name_old[tr_to_name_old['Transcript stable ID'] == tr]['Transcript name'].tolist()[0].split('-')[0]
 
-        assert (np.array_equal(name, name_old))
+        #assert (np.array_equal(name, name_old))
 
         names.append(name)
     return names

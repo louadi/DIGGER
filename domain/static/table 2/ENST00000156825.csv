@@ -1,4 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-MBD3-201,MBD2,8932,,PF01429-PF01429,100.0,Lost
-MBD3-201,GATAD2A,54815,PF14048-PF16563,,0.0,Retained
-MBD3-201,GATAD2B,57459,PF14048-PF16563,,0.0,Retained

@@ -1,3 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-ENO1-205,ENO3,2027,PF00113-PF03952 ; PF03952-PF03952,PF00113-PF00113 ; PF03952-PF00113,50.0,Affected
-ENO1-205,ENO2,2026,PF00113-PF03952 ; PF03952-PF03952,PF00113-PF00113 ; PF03952-PF00113,50.0,Affected

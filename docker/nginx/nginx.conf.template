@@ -1,0 +1,38 @@
+# first we declare our upstream server, which is our Gunicorn application
+upstream DIGGER_web {
+    # docker will automatically resolve this to the correct address
+    # because we use the same name as the service: "DIGGER_web"
+    server web:8000;
+}
+
+server {
+
+    listen 80;
+    client_max_body_size 0;
+
+    underscores_in_headers on;
+
+
+    location / {
+        proxy_connect_timeout 360s;
+        proxy_send_timeout 360s;
+        proxy_read_timeout 360s;
+        proxy_pass http://DIGGER_web;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+        proxy_pass_request_headers on;
+        proxy_pass_header SCRIPT_NAME;
+    }
+
+    # This url has to be the same as in the django config 'STATIC_URL'
+    location ${NGINX_PUBLISHED_PATH}/static/ {
+        alias /data/digger/run/static/;
+    }
+
+    # This url has to be the same as in the django config 'MEDIA_URL'
+    location ${NGINX_PUBLISHED_PATH}/media/ {
+        alias /data/digger/run/media/;
+    }
+
+}

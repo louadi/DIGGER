@@ -1,4 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-CRYAA-201,CRYAB,1410,PF00011-PF00011 ; PF00011-PF00525 ; PF00011-PF00525 ; PF00525-PF00525,,0.0,Retained
-CRYAA-201,HSPB2,3316,PF00011-PF00011 ; PF00011-PF00525,,0.0,Retained
-CRYAA-201,HSPB1,3315,PF00011-PF00011 ; PF00525-PF00011,,0.0,Retained

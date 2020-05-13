@@ -1,6 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-SERBP1-203,FAU,2197,PF04774-PF04758,,0.0,Retained
-SERBP1-203,EFTUD2,9343,PF03764-PF04774,,0.0,Retained
-SERBP1-203,RPS3,6188,PF04774-PF00189,,0.0,Retained
-SERBP1-203,RPS10,6204,PF04774-PF03501,,0.0,Retained
-SERBP1-203,NHP2,55651,PF04774-PF01248,,0.0,Retained

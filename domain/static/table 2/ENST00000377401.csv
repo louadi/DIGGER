@@ -1,5 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-H2BC13-201,CDK9,1025,PF00125-PF00069,,0.0,Retained
-H2BC13-201,MCM2,4171,PF12619-PF00125,,0.0,Retained
-H2BC13-201,H2BC1,255626,PF00125-PF00125,,0.0,Retained
-H2BC13-201,ATRX,546,PF00271-PF00125 ; PF00125-PF00176,,0.0,Retained

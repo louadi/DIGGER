@@ -1,4 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-MATN4-204,MATN2,4147,PF14670-PF14670 ; PF07645-PF14670 ; PF10393-PF10393 ; PF00092-PF00092,,0.0,Retained
-MATN4-204,CILP2,148113,PF00090-PF00092,,0.0,Retained
-MATN4-204,MATN1,4146,PF14670-PF14670 ; PF10393-PF10393 ; PF00092-PF00092,,0.0,Retained

@@ -1,3 +1,0 @@
-Selected Protein variant,Protein name,NCBI gene ID,Retained DDIs,Lost DDIs,Percentage of lost domain-domain interactions,Protein-protein interaction
-CD48-201,LCK,3932,PF00017-PF07686,,0.0,Retained
-CD48-201,CD2,914,PF05790-PF07686 ; PF07686-PF07686,PF13895-PF07686,33.0,Affected
