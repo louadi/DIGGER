@@ -83,7 +83,7 @@ def input_exon(exon_ID):
                           
                           
                           h=reverse('home')+"graph/"
-                          print(h)
+                     
                           table_domains["Visualization of the domain interactions"]=""
                           df_filter =table_domains['Pfam known interactions']!=0
                           
