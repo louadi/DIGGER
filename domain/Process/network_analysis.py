@@ -7,7 +7,7 @@ from domain.Process import process_data as pr
 import pandas as pd
 import numpy as np
 
-
+from django.urls import reverse
 
 
 
@@ -48,7 +48,7 @@ def Construct_network(proteins_id, missing,job_ID):
       #Score = (retained DDI/All interactions)
       score=[]
       source=[]
-      
+      home=reverse('home')
       # Get the subgraph:
       H = PPI.subgraph(proteins_id)
       print('interactions:',H)
@@ -146,13 +146,13 @@ def Construct_network(proteins_id, missing,job_ID):
       for n in N:
           ensembl=entrez_to_ensembl(n)
           if (n in affected_nodes) and (missing[ensembl]!=[]):
-              nodes.append("{id: \""+n+"\",url:  '/ID/gene/"+ensembl+"' , color: CHOOSEN2, label:  '"+pr.entrez_to_name(n)+"'}, ")
+              nodes.append("{id: \""+n+"\",url:  '"+home+"ID/gene/"+ensembl+"' , color: CHOOSEN2, label:  '"+pr.entrez_to_name(n)+"'}, ")
               
           elif n in DDI_nodes:
-              nodes.append("{id: \""+n+"\", url:  '/ID/gene/"+ensembl+"' , color: CHOOSEN3, label:  '"+pr.entrez_to_name(n)+"'},")
+              nodes.append("{id: \""+n+"\", url:  '"+home+"ID/gene/"+ensembl+"' , color: CHOOSEN3, label:  '"+pr.entrez_to_name(n)+"'},")
       
           else:    
-              nodes.append("{id: \""+n+"\", url:  '/ID/gene/"+ensembl+"' , label:  '"+pr.entrez_to_name(n)+"'},")    
+              nodes.append("{id: \""+n+"\", url:  '"+home+"ID/gene/"+ensembl+"' , label:  '"+pr.entrez_to_name(n)+"'},")    
       
       
       # Table of interactions
