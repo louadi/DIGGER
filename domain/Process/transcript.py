@@ -4,7 +4,7 @@ from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
 from domain.Process import proteininfo as  info
 import pandas as pd
-
+from django.urls import reverse
 
 
 from sqlalchemy import text
@@ -82,7 +82,7 @@ def Protein_view(P_id):
             n=[]
             l=[]
             dom=[]
-            h="/graph/"
+            h=reverse('home')+"graph/"
             for d in missing_domain:
                 s=d.split('/')
                 dom.append(s[1])
@@ -127,7 +127,7 @@ def Protein_view(P_id):
           
           
           pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
-          h="/ID/"+trID+'/InteractionView/'
+          h=reverse('home')+"ID/"+trID+'/InteractionView/'
           
           pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
           
@@ -198,7 +198,7 @@ def Protein_view(P_id):
             pd_isoforms.sort_values('length', ascending=False, inplace=True)
             pd_isoforms=pd_isoforms.drop(columns=['length'])
             
-            h="/ID/"
+            h=reverse('home')+"ID/"
             pd_isoforms["<center>Link</center>"]='<center>&emsp;'+'<a target="'+'_blank"href="'+h+pd_isoforms["<center>Transcript ID</center>"]+'">'+" (Visualize) "+'</a>'+'&emsp;</center>'
             pd_isoforms["<center>Transcript ID</center>"]='<center>&emsp;'+pd_isoforms["<center>Transcript ID</center>"]+'&emsp;</center>'
             

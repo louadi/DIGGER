@@ -10,7 +10,7 @@ from domain.Process import proteininfo as  info
 from domain.Process import transcript as  tr
 from domain.Process import gene as  g
 from sqlalchemy import text
-
+from django.urls import reverse
 
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE
@@ -24,6 +24,8 @@ engine = settings.DATABASE_ENGINE
 table_path = os.path.join(settings.MEDIA_ROOT, 'table')
 if not os.path.exists(table_path):
     os.makedirs(table_path)
+
+
 
 def input_exon(exon_ID):
     
@@ -78,9 +80,15 @@ def input_exon(exon_ID):
                     else:     
                           #function to count number of interactions of the domain:
                           table_domains,_,_=exd.expand_table(tb,domains,entrezID)
-                          h="/graph/"
+                          
+                          
+                          h=reverse('home')+"graph/"
+                          print(h)
                           table_domains["Visualization of the domain interactions"]=""
                           df_filter =table_domains['Pfam known interactions']!=0
+                          
+                         
+                          h=reverse('home')+"graph/"
                           table_domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+table_domains['Pfam ID']+'">'+gene_name+'-'+table_domains['Pfam ID']+'</a>'
                           table_domains=table_domains.drop(columns=['Exon rank in transcript','Exon stable ID','CDS start','CDS end','Pfam start','Pfam end','Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end"])
                           table_domains=table_domains.drop_duplicates()
@@ -171,7 +179,7 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     pd_interaction['Residue evidence']='<center>-<center>'
     
     pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
-    h="/ID/"+entrezID+'.'+ExonID+'/InteractionView/'
+    h=reverse('home')+"ID/"+entrezID+'.'+ExonID+'/InteractionView/'
     pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
     pd_interaction["Affected Protein"]='<center>'+pd_interaction["Affected Protein"]+'</center>'
     pd_interaction["Protein-protein interaction"]='<center>'+pd_interaction["Protein-protein interaction"]+'<a target="'+'_blank"href="'+h+pd_interaction["NCBI gene ID"]+'">'+" (Visualize) "+'</a>'+'</center>'

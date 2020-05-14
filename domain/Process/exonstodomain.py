@@ -11,7 +11,7 @@ import pandas as pd
 from django.conf import settings
 from domain.Process import process_data as pr
 from sqlalchemy import text
-
+from django.urls import reverse
 
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE
@@ -212,7 +212,7 @@ def input_transcript(Ensemble_transID):
     
     #Link to visualize the network
     domains["Visualization of the domain interactions"]=""
-    h="/graph/"
+    h=reverse('home')+"graph/"
     h2='target="'
     h3='_blank"'
     df_filter =domains['Pfam known interactions']!=0
@@ -244,7 +244,7 @@ def input_transcript(Ensemble_transID):
     #prepare the html table
     droped1["Corresponding domain ID"] = droped1["Corresponding domain ID"].fillna('-')
     
-    h4="/ID/exon/"
+    h4=reverse('home')+"ID/exon/"
     
     droped1["Protein features encoded by the exon"]='<a target="'+'_blank"href="'+h4+droped1["<center>Exon  ID</center>"]+'">Exon Page</a>'
     droped1["Protein features encoded by the exon"]='<center>'+droped1["Protein features encoded by the exon"]+'</center>'

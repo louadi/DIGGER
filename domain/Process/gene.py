@@ -2,7 +2,7 @@ from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
 from domain.Process import proteininfo as  info
 import pandas as pd
-    
+from django.urls import reverse
 from sqlalchemy import text
 
 from django.conf import settings
@@ -56,7 +56,7 @@ def TranscriptsID_to_table(transcripts):
                           pd_isoforms.sort_values('length', ascending=False, inplace=True)
                           pd_isoforms=pd_isoforms.drop(columns=['length'])
                           
-                          h="/ID/"
+                          h=reverse('home')+"ID/"
                           pd_isoforms["<center>Link</center>"]='<center>&emsp;'+'<a target="'+'_blank"href="'+h+pd_isoforms["<center>Transcript ID</center>"]+'">'+" (Visualize) "+'</a>'+'&emsp;</center>'
                           pd_isoforms["<center>Transcript ID</center>"]='<center>&emsp;'+pd_isoforms["<center>Transcript ID</center>"]+'&emsp;</center>'
                           pd.set_option('display.max_colwidth',1000)
