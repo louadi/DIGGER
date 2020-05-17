@@ -333,13 +333,17 @@ def Exon_level(request):
             gene_ID=search_query[0]
             s1=int(search_query[1])
             e1=int(search_query[2])
-         
-            exonID=pr.coordinate_to_exonID(gene_ID,s1,e1)
             
-            if exonID!=[]:
-                return redirect(exon, exon_ID = exonID)
-                #return exon(request,exonID)   
-            else: return HttpResponse("<h1>No match</h1>")
+            #Correct for very big inputs 
+            if abs(s1-e1)<3000:
+            
+                #map coordinates to exon
+                exonID=pr.coordinate_to_exonID(gene_ID,s1,e1)
+                
+                if exonID!=[]:
+                    return redirect(exon, exon_ID = exonID)
+                    #return exon(request,exonID)   
+                else: return HttpResponse("<h1>No match</h1>")
     return render(request,'domain/Exon_level.html',) 
     
     
