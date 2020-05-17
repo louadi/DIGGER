@@ -18,7 +18,7 @@ def TranscriptsID_to_table(transcripts):
                 ID=[]
                 name=[]
                 pfams=[]
-               
+                #print(transcripts)
                 for tr in transcripts :
                                            
                           query = """
@@ -39,10 +39,12 @@ def TranscriptsID_to_table(transcripts):
                           
                           #print(tdata)
                           if len(tdata)!=0  :
-                              ID.append(tr)
-                              n=pr.tranID_convert(tr)[0]
-                              name.append(n)
                               
+                              tmp=pr.tranID_convert(tr)
+                              if tmp==0: continue
+                              n=tmp[0]
+                              name.append(n)
+                              ID.append(tr)
                               p=tdata["Pfam ID"].unique()
                               p = p[~pd.isnull(p)]
                               
