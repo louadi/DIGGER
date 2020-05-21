@@ -120,10 +120,16 @@ def req(ext):
 # used !!
 def gene_to_all_transcripts(gene_ID):
 
+    query = """
+            SELECT * 
+            FROM gene_info 
+            WHERE "Gene stable ID"=:Gene
+            """
+    tdata = pd.read_sql_query(sql=text(query), con=engine, params={'Gene': gene_ID})
+    
 
-
-    df_filter = genes['Gene stable ID'].isin([gene_ID])
-    tdata=genes[df_filter]
+    #df_filter = genes['Gene stable ID'].isin([gene_ID])
+    #tdata=genes[df_filter]
     
     
     
@@ -243,6 +249,9 @@ def coordinate_to_exonID(gene_ID,s1,e1):
             
             exon_ID=[]
             trs=list(gene_to_all_transcripts(gene_ID))
+            
+
+            
             df_filter =data['Transcript stable ID'].isin(trs)
             df=data[df_filter]
             
