@@ -260,36 +260,31 @@ def InteractionView(request,P_id,P2_id):
     
     }
  
-    return render(request,'domain/InteractionView.html',context) 
-
-
-
-
+    return render(request,'domain/InteractionView.html',context)
 
 
 def isoform_level(request):
-  if "search" in request.GET :     # If the form is submitted
-    
+    if "search" in request.GET:  # If the form is submitted
+
         search_query = request.GET['search']
-        search_query=search_query.replace(" ", "")
-        search_query=search_query.split("+")[0]
-        search_query=search_query.split("%")[0]
-        search_query=search_query.split(".")[0]
-        search_query=search_query[:15]
-        #Input search is a protein:
-        if  search_query[:4]=='ENST' or search_query[:4]=='ENSP':
-          return redirect(transcript, P_id = search_query)
-          #return transcript(request,search_query)
-          
-          
-          
-          
-        #Input search is an exon: 
-        elif len(search_query)==15 and search_query[:4]=='ENSG':
-          return redirect(gene, gene_ID = search_query)
-          #return gene(request,search_query)
-     
-  return render(request,'domain/isoform_level.html',) 
+        search_query = search_query.split("+")[0]
+        search_query = search_query.split("%")[0]
+        search_query = search_query.split(".")[0]
+        search_query = search_query[:15]
+        # Input search is a protein:
+        if search_query[:4] == 'ENST' or search_query[:4] == 'ENSP':
+            return redirect(transcript, P_id=search_query)
+            # return transcript(request,search_query)
+
+
+
+
+        # Input search is an exon:
+        elif len(search_query) == 15 and search_query[:4] == 'ENSG':
+            return redirect(gene, gene_ID=search_query)
+            # return gene(request,search_query)
+
+    return render(request, 'domain/isoform_level.html', )
 
 
 

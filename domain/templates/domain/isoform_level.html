@@ -26,6 +26,7 @@
                 <br/>
 
                 <div role="tabpanel" class="tab-pane" id="Section3">
+
                     <form class="card card-sm">
                         <div class="card-body row no-gutters align-items-center">
                             <div class="col">
@@ -70,7 +71,7 @@
 
     <script src="{% static "domain/typeahead.bundle.js" %}"></script>
 
-    {# Derived from here https://stackoverflow.com/questions/45588138/typeahead-js-in-django-project  #}
+    <!-- Derived from here https://stackoverflow.com/questions/45588138/typeahead-js-in-django-project -->
     <script>
         var gene_symbol = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('gene_symbol'),
