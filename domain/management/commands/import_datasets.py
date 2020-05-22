@@ -22,9 +22,9 @@ def load_datasets():
     print('=' * 80)
     # Dictionary of table_name : file_name
     datasets = {
-        # 'ppi_data': 'PPI_interface_mapped_to_exon.csv',
-        # 'exons_to_domains_data': 'final.csv',
-        # 'gene_info': 'gene_info.csv',
+        'ppi_data': 'PPI_interface_mapped_to_exon.csv',
+        'exons_to_domains_data': 'final.csv',
+        'gene_info': 'gene_info.csv',
         Gene: 'gene_name2entrez_id.csv',
 
     }
