@@ -45,7 +45,6 @@ PROJECT_TEMPLATES = [
 # add apps/ to the Python path
 sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
 
-
 # ##### APPLICATION CONFIGURATION #########################
 
 # these are the apps
@@ -93,7 +92,6 @@ TEMPLATES = [
 # Internationalization
 USE_I18N = False
 
-
 # ##### SECURITY CONFIGURATION ############################
 
 # We store the secret key here
@@ -105,7 +103,6 @@ ADMINS = (
     ('your name', 'your_name@example.com'),
 )
 MANAGERS = ADMINS
-
 
 # ##### DJANGO RUNNING CONFIGURATION ######################
 
@@ -131,13 +128,13 @@ CSRF_COOKIE_PATH = f'{os.environ.get("NGINX_PUBLISHED_PATH")}/'
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = False
 
-
 # finally grab the SECRET KEY
 try:
     SECRET_KEY = open(SECRET_FILE).read().strip()
 except IOError:
     try:
         from django.utils.crypto import get_random_string
+
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789!$%&()=+-_'
         SECRET_KEY = get_random_string(50, chars)
         with open(SECRET_FILE, 'w') as f:
