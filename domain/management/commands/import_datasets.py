@@ -4,6 +4,7 @@ import django
 import pandas as pd
 from django.conf import settings
 from django.core.management import BaseCommand
+from tqdm import tqdm
 
 from domain.models import Gene
 
@@ -38,7 +39,7 @@ def load_datasets():
         # Write to database using Django models
         if type(table_name) is django.db.models.base.ModelBase:
             table_name.objects.all().delete()
-            for _, row in data.iterrows():
+            for _, row in tqdm(data.iterrows(), total=data.shape[0]):
                 entry = Gene()
                 entry.gene_symbol = row['Gene name']
                 entry.ensembl_id = row['Gene stable ID']
