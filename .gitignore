@@ -216,3 +216,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+/.pybiomart.sqlite
