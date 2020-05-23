@@ -271,7 +271,7 @@ def isoform_level(request):
         search_query = request.GET['search'].strip()
 
         # Try and parse the search_query as gene name from the database
-        query_set = Gene.objects.filter(gene_symbol=search_query)
+        query_set = Gene.objects.filter(gene_symbol__iexact=search_query)
         if query_set:
             search_query = query_set[0].ensembl_id
 

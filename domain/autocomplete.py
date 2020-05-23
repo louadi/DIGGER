@@ -11,7 +11,7 @@ def gene_symbol_autocomplete(request):
     data = {}
 
     if q:
-        qs = Gene.objects.filter(gene_symbol__startswith=q)
+        qs = Gene.objects.filter(gene_symbol__istartswith=q)
         data = [{'gene_symbol': gene.gene_symbol, 'ensembl_id': gene.ensembl_id} for gene in qs]
 
     return JsonResponse(data, safe=False)
