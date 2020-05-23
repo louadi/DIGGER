@@ -10,3 +10,6 @@ dna_features_viewer==3.0
 requests==2.22.0
 psycopg2==2.8.5
 gunicorn==20.0.4
+
+pybiomart~=0.2.0
+tqdm~=4.46.0

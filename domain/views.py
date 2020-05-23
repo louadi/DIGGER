@@ -18,7 +18,9 @@ from .Process import network_analysis as nt
 
 
 import pickle
-import random 
+import random
+
+from .models import Gene
 
 '''
 def get_input(query=None):
@@ -260,36 +262,34 @@ def InteractionView(request,P_id,P2_id):
     
     }
  
-    return render(request,'domain/InteractionView.html',context) 
-
-
-
-
+    return render(request,'domain/InteractionView.html',context)
 
 
 def isoform_level(request):
-  if "search" in request.GET :     # If the form is submitted
-    
-        search_query = request.GET['search']
-        search_query=search_query.replace(" ", "")
-        search_query=search_query.split("+")[0]
-        search_query=search_query.split("%")[0]
-        search_query=search_query.split(".")[0]
-        search_query=search_query[:15]
-        #Input search is a protein:
-        if  search_query[:4]=='ENST' or search_query[:4]=='ENSP':
-          return redirect(transcript, P_id = search_query)
-          #return transcript(request,search_query)
-          
-          
-          
-          
-        #Input search is an exon: 
-        elif len(search_query)==15 and search_query[:4]=='ENSG':
-          return redirect(gene, gene_ID = search_query)
-          #return gene(request,search_query)
-     
-  return render(request,'domain/isoform_level.html',) 
+    if "search" in request.GET:  # If the form is submitted
+        # Get and sanitize the search_query
+        search_query = request.GET['search'].strip()
+
+        # Try and parse the search_query as gene name from the database
+        query_set = Gene.objects.filter(gene_symbol=search_query)
+        if query_set:
+            search_query = query_set[0].ensembl_id
+
+        search_query = search_query.split("+")[0]
+        search_query = search_query.split("%")[0]
+        search_query = search_query.split(".")[0]
+        search_query = search_query[:15]
+        # Input search is a protein:
+        if search_query[:4] == 'ENST' or search_query[:4] == 'ENSP':
+            return redirect(transcript, P_id=search_query)
+            # return transcript(request,search_query)
+
+        # Input search is an exon:
+        elif len(search_query) == 15 and search_query[:4] == 'ENSG':
+            return redirect(gene, gene_ID=search_query)
+            # return gene(request,search_query)
+
+    return render(request, 'domain/isoform_level.html', )
 
 
 

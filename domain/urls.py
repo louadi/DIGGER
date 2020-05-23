@@ -1,9 +1,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from . import views 
-
-
+from domain import views, autocomplete
 
 urlpatterns = [
     path('', views.home, name="home"),
@@ -21,7 +19,7 @@ urlpatterns = [
     path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
     path('ID/gene/<str:gene_ID>/', views.gene, name="InteractionView"),
     path('ID/exon/<str:exon_ID>/', views.exon, name="Exon"),
-     
-    
-    
+
+    # Autocomplete views
+    path('gene_symbol-autocomplete/', autocomplete.gene_symbol_autocomplete, name='gene_symbol-autocomplete',)
 ]
