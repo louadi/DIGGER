@@ -117,7 +117,7 @@ def req(ext):
 def gene_to_all_transcripts(gene_ID):
 
     query = """
-            SELECT * 
+            SELECT DISTINCT "Transcript stable ID" 
             FROM gene_info 
             WHERE "Gene stable ID"=:Gene
             """
@@ -130,7 +130,7 @@ def gene_to_all_transcripts(gene_ID):
     
     
     #tdata=tdata["Transcript stable ID"].drop_duplicates()
-    tdata=tdata["Transcript stable ID"].unique()
+    #tdata=tdata["Transcript stable ID"].unique()
     
     
     
