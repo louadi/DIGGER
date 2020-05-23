@@ -144,9 +144,9 @@ def Protein_view(P_id):
           "Selected Protein variant": "<center>Selected Protein variant</center>",
           "Protein name": "<center>Partner Protein </center>", 
           "NCBI gene ID": "<center>NCBI gene ID</center>", 
-          "Percentage of lost domain-domain interactions": "<center> % of lost DDIs</center>",
+          "Percentage of lost domain-domain interactions": "<center> % of missing DDIs</center>",
           "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
-          "Lost DDIs": "<center>Lost Domain-Domain interactions</center>",
+          "Lost DDIs": "<center>Missing Domain-Domain interactions</center>",
           "Protein-protein interaction": "<center>Protein-protein interaction</center>"
           })
           
@@ -259,7 +259,7 @@ def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain)
             
             st='Affected'
             if p==0: st='Retained'
-            if p==1: st='Lost'
+            if p==1: st='Missing'
             
             status.append(st)
             

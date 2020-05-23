@@ -15,23 +15,26 @@
   </style>
   
   
-<title>  DIGGER   </title>
+<title>  DIGGER  | Isoform-Level Analysis </title>
 
 <div class="container">
-  <div class="card border-0 shadow my-5">
-    <div class="card-body p-5">
+
+    
       <h1 class="font-weight-light"> </h1>
       
       <h4 class="font-weight-light">&nbsp;</h4>
 
 
+ <br /><br /> <br />  <br />  <br /> 
+      <h1 class="font-weight-light"><span style="font-weight:bold">Isoform-Level Analysis</span></h1>
 
-
-<br /><br /> <br /> 
+      <br /><br /> <br />  
+      
+      
  <h4 class="font-weight-light"><span style="font-weight:bold">Submit a Protein Variant </span></h4>
   
-      <h5 class> Input a protein to visualize  Proteins and Domains Interactions simultaneously. This feature is useful to visualize the interacted surface and to compare the structure and interactions of different isoforms. </h5> 
- 
+      <h5 class> Input  a protein to visualize  protein and domain Interactions simultaneously. This mode is useful to visualize interacted region and to compare the structure and interactions of different isoforms. </h5> 
+  <br /> 
  </form>
                    
                     <div role="tabpanel" class="tab-pane" id="Section3">
@@ -54,25 +57,24 @@
                                     <!--end of col-->
                                     
                                 </div>
-                                <h6  class> <span style="font-weight:bold"> Examples: ENSG00000058404 ; ENST00000066544 ; ENST00000623693 ;  ENSP00000358396 ; ENSP00000489057 ; ENST00000016946  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6> 
+                                <h6 class="tab"  style="margin-left:2.5em"> <span style="font-weight:bold">  Examples</span> : ENSG00000058404 ; ENST00000066544 ; ENST00000623693 ;  ENSP00000358396 ; ENSP00000489057 ; ENST00000016946  ;  ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6> 
                             </form>
-    
+                            
+                            
+                            
+                            
+      <br /><br />     <br /><br />   <br /> <br /> 
+ <h4 class="font-weight-light"><span style="font-weight:bold"> How does this mode work? </span></h4>
+ 
+   
+     <center>
+       <img src="{%static 'image/isoform mode.svg'%}" />
+   </center>  
 
-         
-       
-
-
- <br /><br /> <br />  <br />   <br />   <br /><br /> <br />  <br />  
- <h4 class="font-weight-light"><span style="font-weight:bold">About DIGGER </span></h4>
-       <br />
-       
-       <h5 style="text-align: justify" class='tab'>By mapping the domain-domain Interactions to the protein-protein interactions, <span style="font-weight:bold"> DIGGER </span> can provide a visualization of the interacted regions between the proteins.
-        In addition, the tool can analyse  the effect of the splicing variations in the Interactome, starting from a single alternative splicing  event to a set of  protein variants.  </h5> 
-       
 
      
 
-
+    </div>
 
 
 {% endblock content %}
