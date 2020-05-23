@@ -203,7 +203,7 @@ def input_transcript(Ensemble_transID):
     
    
     
-    text1="The transcript "+tran_name+' have '+str(exons.shape[0])+' exons and '+str(len(unique_domains))+" unique protein domains." 
+    text1="The transcript "+tran_name+' has '+str(exons.shape[0])+' exons and '+str(len(unique_domains))+" unique protein domains." 
     # HTML code to visualize the table
     
 

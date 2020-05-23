@@ -137,9 +137,9 @@ def exon(request,exon_ID):
                 "Partner Protein": "<center>Partner Protein</center>", 
                 "Affected Protein": "<center>Affected Protein</center>",
                 "NCBI gene ID": "<center>NCBI gene ID</center>", 
-                "Percentage of lost domain-domain interactions": "<center> % of lost DDIs</center>",
+                "Percentage of lost domain-domain interactions": "<center> % of missing DDIs</center>",
                 "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
-                "Lost DDIs": "<center>Lost Domain-Domain interactions</center>",
+                "Lost DDIs": "<center>Missing Domain-Domain interactions</center>",
                 "Protein-protein interaction": "<center>Protein-protein interaction</center>",
                 'Residue evidence':'<center>Residue evidence</center>'
                 })
