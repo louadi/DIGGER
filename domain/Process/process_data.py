@@ -92,19 +92,15 @@ def transcript(transcript_ID):
     return exons,D,p
 
 
-
-
 # cool function to search for all transcripts that contains a specific domain in the genome
-
-def domain_search(Pfam_ID):
-    return data[data['Pfam ID'].isin([Pfam_ID])].sort_values(by=['Exon rank in transcript'])
-
-
-
-
-
-
-
+def domain_search(pfam_id):
+    query = """
+            SELECT * 
+            FROM exons_to_domains_data 
+            WHERE "Pfam ID"=:pfam_id 
+            ORDER BY "Exon rank in transcript"
+            """
+    return pd.read_sql_query(sql=text(query), con=engine, params={'pfam_id': pfam_id})
 
 
 def req(ext):
