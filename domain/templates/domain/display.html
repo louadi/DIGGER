@@ -12,7 +12,7 @@
     }
   </style>
 
-  
+  	<title>  DIGGER | DomainView for the domain {{ domain|safe }} from the gene  {{ gene|safe }}   </title>
 <div class="container">
   <div class="card border-0 shadow my-5">
     <div class="card-body p-5">
@@ -26,7 +26,7 @@
 
        <br />
     
-      <h5 class="tab1">   Visualization of the interaction of <span style="font-weight:bold"> {{ domain|safe }}</span> from the gene  <span style="font-weight:bold"> {{ gene|safe }}</span>. In this view, Each domain is shown only once, and all proteins containing the domain are linked to this domain node. </h5 class>
+      <h5 class="tab1">   Visualization of the interaction of <span style="font-weight:bold"> {{ domain|safe }}</span> from the gene  <span style="font-weight:bold"> {{ gene|safe }}</span>. In this view, each domain is shown only once  (triangles), and all proteins containing the domain are linked to this domain node (circular). </h5 class>
        <br />
         <div id="mynetwork"></div>
           <script type="text/javascript">

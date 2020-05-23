@@ -42,7 +42,7 @@
       <h2 class="font-weight-light"> Protein Features </h2>
       <br>
       <h5 class="lead"> <span style="font-weight:bold"> Gene name </span>: {{ gene_description|safe }} </h5 class>  
-      <h5 class="lead">  <span style="font-weight:bold">Transcipt name</span> : {{ tran_name|safe }}  </h5 class>  
+      <h5 class="lead">  <span style="font-weight:bold">Transcript name</span> : {{ tran_name|safe }}  </h5 class>  
       <h5 class="lead">   <span style="font-weight:bold">NCBI gene ID </span>:   <a href="https://www.ncbi.nlm.nih.gov/gene/{{entrezID|safe }}"target="_blank">{{entrezID|safe }} </a>       </h5 class> 
       <h5 class="lead"> <span style="font-weight:bold">Ensembl</span> :  <a href="https://www.ensembl.org/id/{{gID|safe }}"target="_blank"> {{gID|safe }} </a>  ; <a href="https://www.ensembl.org/id/{{trID|safe }}"target="_blank">{{trID|safe }} </a> </h5 class> 
       
@@ -83,7 +83,7 @@
 
 
 
-            <br />
+            <br /><br> <br> 
             <h2 class="font-weight-light"> ProteinView </h2>
               
             <h5 class="tab1">   ProteinView provides a general visualization of the protein and its domains interactions. Please select your view mode.</h5 class>
@@ -104,7 +104,7 @@
             </label>
 </h6 class>  
          
-         
+           <center>  
             
         <div id="mynetwork"></div>
           <script type="text/javascript">
@@ -269,6 +269,8 @@
         startNetwork({ nodes: nodesView, edges: edges });
 
           </script>
+            </center>  
+          
           <br />
          {% if dis1 %}
          <h6 class="tab1">  Dashe edges represent missing domains in the selected protein ({{ tran_name|safe }}) but present in other isoforms from other genes. These domains-domains interactions are lost. Which may also affect the interactions with their respective proteins. </h6 class>
@@ -278,7 +280,7 @@
          <br /><br />
             <h2 class="font-weight-light"> DomainView </h2>
               
-            <h5 class="tab1">  DomainView provides a more specific graphical visualization for each  domain.  In this view, Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table. </h5 class>
+            <h5 class="tab1">  DomainView provides a more specific graphical visualization for each  domain.   The domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table. </h5 class>
  
          <center>
              <h4 class=="lead">  Domains of the isoform {{ tran_name|safe }}  </h4 class> 
@@ -333,10 +335,11 @@
          {{ dt4 }}
         {% endautoescape %}
 
-                </center>     
+               
                  
-
+<br>
                 <a href="{% get_media_prefix %}/table 2/{{trID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
+                 </center>     
          </h6 class>  
          <br /><br />
                      <br />

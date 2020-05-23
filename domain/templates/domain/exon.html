@@ -61,7 +61,7 @@
       {% if not dis2 %}
         <h2 class="font-weight-light"> DomainView </h2>
               
-   <h5 class="tab2">A list of Pfam domains coded by the selected exon and a graphical visualization for their interactions is provided in this table. In <span style="font-weight:bold">DomainView</span> , Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table to visulaize affected interactions. </h5 class>     
+   <h5 class="tab2">A list of Pfam domains coded by the selected exon and a graphical visualization for their interactions is provided in this table. Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table to visualize affected interactions. </h5 class>     
      <center>
        
          <br><br>  
@@ -99,10 +99,10 @@
   
   
   
-                     <br />
+                     <br /><br> <br> 
             <h2 class="font-weight-light"> ProteinView </h2>
               
-            <h5 class="tab">   ProteinView provides a general visualization of the protein interaction and its domains interactions.  Proteins (circular nodes) are shown together with their domains and domains-domains interactions.  </h5 class>
+            <h5 class="tab">   ProteinView provides a general visualization of the protein interaction and its domains interactions.  Proteins (circular nodes) are shown together with their domains (triangles) and domains-domains interactions.  </h5 class>
            <h5 class="tab">    The interactions of the<span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions.  </h5 class>
           
              
@@ -111,7 +111,7 @@
 
   
          
-         
+         <center>   
             
         <div id="mynetwork"></div>
           <script type="text/javascript">
@@ -272,6 +272,7 @@
          
          
            </script>
+            </center>  
          <br>  
          
           <h5 class="tab">  You can move the protein and domain nodes as you wish for a better view. Notice that the generated network in this view can be very big or difficult to visualize. In that case, <span style="font-weight:bold"> DomainView </span> or <span style="font-weight:bold"> InteractionView </span>  can provide better visualization. </h5 class>
@@ -297,7 +298,7 @@
          
                 
       
-      
+      <br>
       
       <a href="{% get_media_prefix %}table/{{exon_ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
          {% endif %}
@@ -327,7 +328,7 @@
       </h5 class>
        
 {% if  long_table %}
-        <h6 class="font-weight-light">This an overview of the table, not the full interactions. You can download the full table from this link.</h6>
+        <h6 class="font-weight-light">This an overview of the table. You can download the full table with the specific interacting variants from this link.</h6>
  {% endif %}          
               <a href="{% get_media_prefix %}table/{{exon_ID|safe }}_interface.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
        </center>
@@ -340,7 +341,7 @@
       
                
 
-     <h2 class="font-weight-light"> Proteins with the selected coding region </h2>
+     <h2 class="font-weight-light"> Proteins that use this exon </h2>
      
        <h5 class="tab2">Select a protein from  the following table to visualize  Proteins-Domains Interactions simultaneously and to compare with the other isoforms. </h5 class>     
      <center>

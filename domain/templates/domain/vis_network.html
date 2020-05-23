@@ -16,7 +16,7 @@
     }
   </style>
 
-  
+  	<title>  DIGGER  | Generated Subnetwork  {{ tran_name|safe }}  </title>
   
    <div class="container">
   <div class="card border-0 shadow my-5">
@@ -29,7 +29,7 @@
     <h5 class="lead"> <span style="font-weight:bold"> Number of interacted proteins: </span>: {{ interacted_nodes|safe }} </h5 class>
 
 <br />
-    <h2 class="font-weight-light"> Visualization of The Sub-network</h2 class>
+    <h2 class="font-weight-light"> Visualization of The Subnetwork</h2 class>
 
   
      
@@ -43,7 +43,7 @@
 
 
  var CHOOSEN = 'blue',
- CHOOSEN3= 'yellow'
+ CHOOSEN3= 'orange'
  CHOOSEN2= 'red';
 
 
@@ -112,7 +112,7 @@ var network = new vis.Network(container, data, options);
 
     <br>
        
-<a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download The Generated Sub-Network with scored edges (SIF format)</a>
+<a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download the generated subnetwork with scored edges (SIF format)</a>
       </center> 
     
     
@@ -121,7 +121,7 @@ var network = new vis.Network(container, data, options);
       <h3 class="font-weight-light">Interactions Table </h3>
      
         <br>
-       <a href="{% get_media_prefix %}jobs/tables/{{ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download The  Full Table of interactions with interacted domains</a>
+       <a href="{% get_media_prefix %}jobs/tables/{{ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download the full table of interactions with interacted domains</a>
        
        
         <br> <br>
@@ -134,7 +134,7 @@ var network = new vis.Network(container, data, options);
  
        </center>     
          </h6 class>
-<h6 class="font-weight-light">This an overview of the table , not the full table of interactions. You can download the full table from link above.</h6>
+<h6 class="font-weight-light">This an overview of the table , not necessary all interactions of the generated subnetwork. You can download the full table from link above.</h6>
     
     
     
