@@ -121,8 +121,8 @@ def gene_to_all_transcripts(gene_ID):
             FROM gene_info 
             WHERE "Gene stable ID"=:Gene
             """
-    tdata = pd.read_sql_query(sql=text(query), con=engine, params={'Gene': gene_ID})
-    
+    tdata = pd.read_sql_query(sql=text(query), con=engine, params={'Gene': gene_ID})["Transcript stable ID"]
+
 
     #df_filter = genes['Gene stable ID'].isin([gene_ID])
     #tdata=genes[df_filter]
