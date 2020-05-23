@@ -64,7 +64,7 @@ def transcript_id_to_name():
             LIMIT 1
             """
     tdata = \
-    pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': transcript_ID}).iloc[0, 0].split('-')[0]
+        pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': transcript_ID}).iloc[0, 0].split('-')[0]
     print(tdata)
 
 
@@ -85,7 +85,24 @@ def transcript_with_domain():
     tdata_old = data_old[data_old['Pfam ID'].isin([pfam_id])].sort_values(by=['Exon rank in transcript'])
 
     # COMPARE
-    assert (np.array_equal(tdata['Exon stable ID'].sort_values().values, tdata_old['Exon stable ID'].sort_values().values))
+    assert (
+        np.array_equal(tdata['Exon stable ID'].sort_values().values, tdata_old['Exon stable ID'].sort_values().values))
+
+
+def coordinate_to_exonID():
+    gene_id = 'ENSG00000117036'
+
+    query = """
+                SELECT * 
+                FROM exons_to_domains_data 
+                WHERE "Transcript stable ID" IN
+                    (SELECT DISTINCT "Transcript stable ID" 
+                    FROM gene_info 
+                    WHERE "Gene stable ID"=:gene_id )
+                """
+    tdata = pd.read_sql_query(sql=text(query), con=engine, params={'gene_id': gene_id})
+
+    return tdata
 
 if __name__ == '__main__':
-    transcript_with_domain()
+    coordinate_to_exonID()
