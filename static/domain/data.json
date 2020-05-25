@@ -1,1 +1,0 @@
-{"links": [{"source": "3670/PF00046", "target": "3670/PF00046"}, {"source": "3670/PF00046", "target": "89884/PF00046"}, {"source": "3670/PF00046", "target": "64843/PF00046"}, {"source": "64843/PF00046", "target": "89884/PF00046"}], "multigraph": false, "nodes": [{"id": "3670/PF00046"}, {"id": "64843/PF00046"}, {"id": "89884/PF00046"}], "graph": {}, "directed": false}
