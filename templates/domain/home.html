@@ -1,0 +1,114 @@
+{% extends "domain/base.html" %}
+{% load static %}
+
+{%block content %}
+
+          <style type="text/css">
+
+
+    .tab2 { margin-left: 10px; }
+    .tab { margin-left: 30px; }
+    
+.button {
+  background-color: #136BB6; /* Not Green  anymore*/
+  border: none;
+  color: white;
+  padding: 25px 100px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+  margin: 4px 22px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+
+
+.button2:hover {
+  box-shadow: 0 12px 6px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+    
+  </style>
+  
+  
+<title>  DIGGER | Home Page  </title>
+<div class="container">
+  <div class="card border-0 shadow my-5">
+    <div class="card-body p-5">
+    
+  
+
+
+<center>
+
+<img src="{%static 'image/logo_s.svg'%}"alt=""  />
+</center>
+<p>&nbsp;</p> <br />
+
+ <br /> 
+<h5 style="text-align: justify;">  Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein interaction and domain-domain interactions  into a joint graph and maps interacting residues to exons. DIGGER  allows the users to query exons or isoforms individually or as a set to visually explore their interactions. The  following modes of DIGGER can be used interchangeably! </h5>
+ <br /><br/>
+
+ <br />
+
+
+
+    
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="{%static 'image/Isoform.svg'%}" alt="">
+          <div class="card-body">
+          <center>
+            <h4 class="card-title">Isoform-Level analysis</h4>
+            </center>
+            <p class="card-text" style="text-align: justify;" >Visualize  the interacting domains of proteins and compare the structure and interactions of different isoforms.</p>
+          </div>
+          <div class="card-footer">
+          <center>
+            <a href="{% url 'isoform_level' %}" class="btn btn-primary">Explore an isoform interactions</a>
+            </center>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="{%static 'image/exon_page.svg'%}" alt="">
+          <div class="card-body">
+          <center>
+            <h4 class="card-title">Exon-Level analysis </h4>
+            </center>
+            <p class="card-text" style="text-align: justify;">Input an exonic region to analyze the effect of an alternative splicing event in the protein interactions and affected edges.</p>
+          </div>
+          <div class="card-footer">
+          <center>
+            <a href="{% url 'Exon_level' %}" class="btn btn-primary">Query a skipped exon</a>
+            </center>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="{%static 'image/net_page.svg'%}" alt="">
+          <div class="card-body">
+          <center>
+            <h4 class="card-title">Network-Level analysis</h4>
+            </center>
+            <p class="card-text"style="text-align: justify;">Explore the interaction between multiple isoforms and generate a specific subnetwork from a list of protein variants or transcripts.</p>
+          </div>
+          <div class="card-footer">
+          <center>
+            <a href="{% url 'Network' %}" class="btn btn-primary">Build your subnetwork</a>
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.row -->
+
+<link rel="stylesheet" type="text/css" href="//wpcc.io/lib/1.0.2/cookieconsent.min.css"/><script src="//wpcc.io/lib/1.0.2/cookieconsent.min.js"></script><script>window.addEventListener("load", function(){window.wpcc.init({"border":"thin","corners":"small","colors":{"popup":{"background":"#222222","text":"#ffffff","border":"#b5e1a0"},"button":{"background":"#b5e1a0","text":"#000000"}},"position":"bottom-right","content":{"message":"DIGGER uses cookies to ensure you get the best experience."}})});</script>
+
+
+{% endblock content %}

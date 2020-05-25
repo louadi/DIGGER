@@ -1,0 +1,155 @@
+
+{% extends "domain/base.html" %}
+
+
+{%block content %}
+{% load static %}
+
+
+        
+        
+         <style type="text/css">
+    #mynetwork {
+      width: 1080px;
+      height: 850px;
+      border: 2px solid lightgray;
+    }
+  </style>
+
+  	<title>  DIGGER  | Generated Subnetwork  {{ tran_name|safe }}  </title>
+  
+   <div class="container">
+  <div class="card border-0 shadow my-5">
+    <div class="card-body p-4">
+    
+    <br /><br />
+    <h2 class="font-weight-light"> Statistics of The Input Data</h2 class>
+   <h5 class="lead"> <span style="font-weight:bold"> Number of protein variants: </span>: {{ isoforms_num|safe }} </h5 class>
+   <h5 class="lead"> <span style="font-weight:bold"> Number of coding genes: </span>: {{ genes_number|safe }} </h5 class>
+    <h5 class="lead"> <span style="font-weight:bold"> Number of interacted proteins: </span>: {{ interacted_nodes|safe }} </h5 class>
+
+<br />
+    <h2 class="font-weight-light"> Visualization of The Subnetwork</h2 class>
+
+  
+     
+      
+        <br />
+          <center>
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+
+
+
+ var CHOOSEN = 'blue',
+ CHOOSEN3= 'orange'
+ CHOOSEN2= 'red';
+
+
+
+var nodes = new vis.DataSet([
+     {% for node in pv_nodes %}
+                    {{ node|safe }}
+                {% endfor %}
+                
+]);
+
+// create an array with edges
+var edges = new vis.DataSet([
+                     {% for edge in pv_edges %}
+                    {{ edge|safe }}
+                {% endfor %}
+
+]);
+
+// create a network
+var container = document.getElementById("mynetwork");
+var data = {
+  nodes: nodes,
+  edges: edges
+};
+
+
+
+  var options = {
+                nodes: {
+                    shape: 'dot',
+                      scaling: {
+                    min: 16,
+                    max: 32
+                  },
+                    font: 24
+                },
+                physics: {
+                    forceAtlas2Based: {
+                        gravitationalConstant: -26,
+                        centralGravity: 0.005,
+                        springLength: 230,
+                        springConstant: 0.18
+                    },
+                    maxVelocity: 20,
+                    solver: 'forceAtlas2Based',
+                    timestep: 0.5,
+                    stabilization: {iterations: 1}
+                }
+            };
+
+
+
+
+
+var network = new vis.Network(container, data, options);
+
+  network.on("selectNode", function (params) {
+        if (params.nodes.length === 1) {
+            var node = nodes.get(params.nodes[0]);
+            window.open(node.url, '_blank');
+        }
+    });
+
+</script>
+
+    <br>
+       
+<a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download the generated subnetwork with scored edges (SIF format)</a>
+      </center> 
+    
+    
+
+      <br>    <br>
+      <h3 class="font-weight-light">Interactions Table </h3>
+     
+        <br>
+       <a href="{% get_media_prefix %}jobs/tables/{{ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download the full table of interactions with interacted domains</a>
+       
+       
+        <br> <br>
+             <h6 class>
+               <center>   
+
+      {% autoescape off %}
+         {{ tab }}
+        {% endautoescape %}
+ 
+       </center>     
+         </h6 class>
+<h6 class="font-weight-light">This an overview of the table , not necessary all interactions of the generated subnetwork. You can download the full table from link above.</h6>
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}
+
