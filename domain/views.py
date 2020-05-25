@@ -497,10 +497,10 @@ def graph(request):
 
 
 
-
-def homeold(request):
-  return HttpResponse("<h1>Blog home</h1>") 
-  
+def doc(request):
+ 
+    return render(request,'domain/doc.html',) 
+ 
   
   
   
