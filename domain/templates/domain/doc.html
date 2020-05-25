@@ -1,0 +1,98 @@
+{% extends "domain/base.html" %}
+{% load static %}
+
+{%block content %}
+
+          <style type="text/css">
+
+
+    .tab2 { margin-left: 10px; }
+    .tab { margin-left: 30px; }
+    
+.button {
+  background-color: #136BB6; /* Not Green  anymore*/
+  border: none;
+  color: white;
+  padding: 25px 100px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+  margin: 4px 22px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+
+
+.button2:hover {
+  box-shadow: 0 12px 6px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+    
+  </style>
+  
+  
+<title>  DIGGER | documentation Page </title>
+<div class="container">
+  <div class="card border-0 shadow my-5">
+   
+
+<p>&nbsp;</p>
+
+
+<center>
+
+<img src="{%static 'image/logo_s.svg'%}"alt="" width="800" height="200" >
+</center>
+ <br />
+
+
+      <br> <br> <br> <br> <br>
+<h3><span style="background-color: black; color: #ffffff; padding: 0 3px;">DIGGER</span> Documentation & Help </h3>
+  <br> <br>
+<h4><p><strong>General workflow for AS analysis using DIGGER.</strong></h4>  
+<h5>DIGGER integrates protein-protein interaction and domain-domain interactions into a joint graph and maps interacting residues to exons. DIGGER  allows the users to query exons or isoforms individually or as a set to visually explore their interactions. The three modes of DIGGER can be used interchangeably.</p></h5>
+  
+        <br>
+        <center>
+
+<img src="{%static 'image/workflow.svg'%}" >
+</center>
+        
+        
+        
+        
+
+         <br><br>   <br><br>
+         
+         
+         <h3 class="font-weight-light"> <span style="font-weight:bold">Contact us</span>  </h3>
+         <div> <h5 class>
+
+
+	<p><b>Zakaria louadi</b></br>
+           louadi@wzw.tum.de</p>
+     
+
+      
+	<p><b>Markus List</b></br>
+           markus.list@wzw.tum.de</p>
+     
+
+        
+	<p><b>Tim Kacprowski</b></br>
+             tim.kacprowski@wzw.tum.de</p>
+        
+</h5 class>
+  </div>
+                    
+         </div>
+         
+</div>
+
+
+
+
+
+{% endblock content %}
