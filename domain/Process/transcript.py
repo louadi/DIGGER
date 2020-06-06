@@ -309,11 +309,13 @@ def vis_node_(g,entrezID,protein_with_DDI,tran_name,missing_domain):
                              ", source:  \""+source_node(node,entrezID,protein_with_DDI)+"\", value:  \""+value_node(node,entrezID)+"\"},")
                 except KeyError:
                     print(' ')
-
+ 
                     
         else:
+                    color=''
+                    if node in missing_domain:  color='color: missing, '
                     label=node_label(node,entrezID,tran_name)
-                    N.append("{id: \""+node+"\", label:  \""+label+"\", group:  \""+group_node(node,entrezID)+"\", physics:"+physics(node,entrezID)+
+                    N.append("{id: \""+node+"\", label:  \""+label+"\", "+color+"group:  \""+group_node(node,entrezID)+"\", physics:"+physics(node,entrezID)+
                              ", source:  \""+source_node(node,entrezID,protein_with_DDI)+"\", value:  \""+value_node(node,entrezID)+"\"},")
 
     for e in g.edges():

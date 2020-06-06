@@ -225,9 +225,14 @@ def vis_interaction_(g,entrezID,protein_with_DDI,tran_name,missing_domain,p2):
     
                         
             else:
+                        color=''
+                        if node in missing_domain:  color='color: missing,'
                         label=tr.node_label(node,entrezID,tran_name)
-                        N.append("{id: \""+node+"\", label:  \""+label+"\", group:  \""+tr.group_node(node,entrezID)+"\", physics:"+tr.physics(node,entrezID)+
+                        
+                        N.append("{id: \""+node+"\", label:  \""+label+"\", "+color+"group:  \""+tr.group_node(node,entrezID)+"\", physics:"+tr.physics(node,entrezID)+
                                  ", source:  \""+tr.source_node(node,entrezID,protein_with_DDI)+"\", value:  \""+tr.value_node(node,entrezID)+"\"},")
+                        
+
 
     for e in g.edges():
         gene1=e[0].split('/')[0]
