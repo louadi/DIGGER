@@ -3,7 +3,7 @@
 [Some project description]
 
 
-## Deploying Digger
+## Deploying DIGGER
 To install Digger (running it for the first time) follow these steps:
 ```shell script
 # First clone this repository and change into the created directory
