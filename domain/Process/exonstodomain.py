@@ -144,12 +144,34 @@ def exon_3D(exon_IDs,Ensemble_transID):
     exons_in_interface=[]
     #p1=PPI[ PPI['Transcript stable ID_x']==Ensemble_transID]
     #p2=PPI[ PPI['Transcript stable ID_y']==Ensemble_transID]
+   
+    
+    
+    query = """
+                  SELECT * 
+                  FROM ppi_data 
+                  WHERE  "Transcript stable ID_x"=:ensemble_trans_id
+                  """
+    tr_1 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
+    
+    query = """   
+                  SELECT * 
+                  FROM ppi_data 
+                  WHERE "Transcript stable ID_x"=:ensemble_trans_id
+                  """
+    tr_2 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
+    
+    
+    
+    
     
     for exon_ID in exon_IDs:
           #print(exon_ID)
           # --- Get tables from database
+          
+          '''
           query = """
-                  SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
+                  
                   FROM ppi_data 
                   WHERE "Exon stable ID_x"=:exon_id AND "Transcript stable ID_x"=:ensemble_trans_id
                   """
@@ -163,6 +185,8 @@ def exon_3D(exon_IDs,Ensemble_transID):
                   """
           p2 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID,
                                                                       'ensemble_trans_id': Ensemble_transID})
+          '''
+         
 
           # Compare the new and old dataframes
           #p1_old=PPI[ (PPI['Exon stable ID_x']==exon_ID)  &  (PPI['Transcript stable ID_x']==Ensemble_transID)].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
@@ -170,6 +194,10 @@ def exon_3D(exon_IDs,Ensemble_transID):
           #assert (np.array_equal(p1.values, p1_old.values))
           #assert (np.array_equal(p2.values, p2_old.values))
 
+
+          p1=tr_1[tr_1['Exon stable ID_x']==exon_ID].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
+          p2=tr_2[tr_2['Exon stable ID_y']==exon_ID].drop(columns=['Exon stable ID_x','Exon stable ID_y']).drop_duplicates()
+          
           p2=p2[['Transcript stable ID_y','u_ac_2','Transcript stable ID_x','u_ac_1']]
           p2=p2.rename(columns= {
               'Transcript stable ID_y':'Transcript stable ID_x',
