@@ -192,7 +192,7 @@ def Construct_network(proteins_id, missing,job_ID):
           "Protein 1 name": "<center>Protein 1 name</center>",
           "Protein 2 name": "<center>Protein 2 name</center>", 
           "Source of the interaction": "<center>&emsp;Source of the interaction&emsp;</center>", 
-          "Score": "<center> Score</center>",
+          "Score": "<center> Score*</center>",
           "Retained DDIs": "<center>Retained Domain-Domain interactions</center>", 
           "Lost DDIs": "<center>Lost Domain-Domain interactions</center>",
           

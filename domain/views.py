@@ -125,7 +125,7 @@ def exon(request,exon_ID):
                       
                       ppi_from_res=table['Partner Protein'].unique()
                       f=pd_interaction['Partner Protein'].isin(ppi_from_res)
-                      pd_interaction.loc[f, 'Residue evidence'] = '<center>&#128504;</center>'
+                      pd_interaction.loc[f, 'Residue evidence'] = '<center>&#9989;</center>'
                  
                 
                 pd_interaction["Partner Protein"]='<center>'+pd_interaction["Partner Protein"]+'</center>'
@@ -141,7 +141,7 @@ def exon(request,exon_ID):
                 "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
                 "Lost DDIs": "<center>Missing Domain-Domain interactions</center>",
                 "Protein-protein interaction": "<center>Protein-protein interaction</center>",
-                'Residue evidence':'<center>Residue evidence</center>'
+                'Residue evidence':'<center>Residue-level evidence*</center>'
                 })
 
 
