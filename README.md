@@ -1,6 +1,6 @@
 # DIGGER
 
-[Some project description]
+Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein interaction and domain-domain interactions into a joint graph and maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or as a set to visually explore their interactions. The following modes of DIGGER can be used interchangeably!
 
 
 ## Deploying DIGGER
