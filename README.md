@@ -10,7 +10,7 @@ To install Digger (running it for the first time) follow these steps:
 git clone https://github.com/louadi/DIGGER.git && cd DIGGER
 
 # Download a copy of all the data files into domain/data
-wget .... [maybe publish a zip archive with our files?]
+wget https://zenodo.org/record/3885677/files/data.rar
 
 # Create a copy of the .env.sample file and edit the .env file
 cp .env.sample .env   # now edit the .env file 
