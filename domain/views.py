@@ -503,7 +503,10 @@ def doc(request):
  
   
   
-  
+def download(request):
+ 
+    return render(request,'domain/download.html',) 
+ 
   
   
   

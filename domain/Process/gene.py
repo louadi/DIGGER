@@ -47,8 +47,9 @@ def TranscriptsID_to_table(transcripts):
                               ID.append(tr)
                               p=tdata["Pfam ID"].unique()
                               p = p[~pd.isnull(p)]
-                              
+                              p=sorted(p)
                               pfams.append('&emsp;<center>'+' ; '.join(p)+'</center>&emsp;')
+                
                 
                 
                 if ID!=[]:

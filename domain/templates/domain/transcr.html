@@ -26,7 +26,7 @@
     .box.large{
         height: 300px;
     }
-    .box.small{
+    .box.mid{
         height: 100px;
     }
     
@@ -269,8 +269,13 @@
         startNetwork({ nodes: nodesView, edges: edges });
 
           </script>
+               <img src="{%static 'image/legend_1.svg'%}"alt=""  />
             </center>  
-          
+              
+      
+ 
+    
+      
           <br />
          {% if dis1 %}
          <h6 class="tab1">  Dashe edges represent missing domains in the selected protein ({{ tran_name|safe }}) but present in other isoforms from other genes. These domains-domains interactions are lost. Which may also affect the interactions with their respective proteins. </h6 class>
