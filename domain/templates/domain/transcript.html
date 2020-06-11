@@ -1,0 +1,285 @@
+{% extends "domain/base.html" %}
+{% load static %}
+
+{% block title %}BiCoN-Web ANALYSIS TEMPLATE{% endblock %}
+
+{% block custom_template_css %}
+    <style>
+        .list-group > .list-group > .list-group-item {
+            padding-left: 2.5rem;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container pt-5">
+        <div class="row pt-5">
+            <!-- Vertical pill selection menu-->
+            <div class="col-lg-3">
+{#                <h3 class="my-4">View selection</h3>#}
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
+                       role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
+                    <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
+                       aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
+                    <a class="nav-link" id="v-pills-domain-tab" data-toggle="pill" href="#v-pills-domain" role="tab"
+                       aria-controls="v-pills-domain" aria-selected="false">DomainView</a>
+                    <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction"
+                       role="tab"
+                       aria-controls="v-pills-interaction" aria-selected="false">InteractionView</a>
+                </div>
+            </div>
+            <!-- /.col-lg-3 -->
+
+            <!-- Tab / page content -->
+            <div class="col-lg-9">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <!-- Overview content -->
+                    <div class="tab-pane fade show active" id="v-pills-overview" role="tabpanel"
+                         aria-labelledby="v-pills-overview-tab">
+                            <h1 class="font-weight-light"> Protein Features </h1>
+                            <br>
+                            <h5 class="lead"><span
+                                    style="font-weight:bold"> Gene name </span>: {{ gene_description|safe }}
+                            </h5 class>
+                            <h5 class="lead"><span style="font-weight:bold">Transcript name</span>
+                                : {{ tran_name|safe }}
+                            </h5 class>
+                            <h5 class="lead"><span style="font-weight:bold">NCBI gene ID </span>: <a
+                                    href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
+                                    target="_blank">{{ entrezID|safe }} </a>
+                            </h5 class>
+                            <h5 class="lead"><span style="font-weight:bold">Ensembl</span> : <a
+                                    href="https://www.ensembl.org/id/{{ gID|safe }}"
+                                    target="_blank"> {{ gID|safe }} </a> ; <a
+                                    href="https://www.ensembl.org/id/{{ trID|safe }}"
+                                    target="_blank">{{ trID|safe }} </a>
+                            </h5 class>
+
+
+                            <br> <br> <br>
+                            <p class="lead"><span style="font-weight:bold">Domain and exon architecture </span></p>
+
+                            <div class="box.large">
+
+                                <img src="{% get_media_prefix %}images/{{ trID }}.png" style="width: 100%">
+                            </div>
+
+
+                            <br>
+                            <h6>
+
+                                <h5 class=="lead">  {{ text1|safe }} </h5 class>
+                                {% autoescape off %}
+                                    {{ dt }}
+                                {% endautoescape %}
+
+                            </h6>
+                    </div>
+
+                    <!-- ProteinView content -->
+                    <div class="tab-pane fade " id="v-pills-protein" role="tabpanel"
+                         aria-labelledby="v-pills-protein-tab">
+                            <h1 class="font-weight-light"> ProteinView </h1>
+
+                            <h5 class="tab1"> ProteinView provides a general visualization of the protein and its
+                                domains interactions. Please
+                                select your view mode.</h5 class>
+
+                            <p class="tab">
+                            <h6 class="tab"><span style="font-weight:bold">PPI View</span> : show only protein
+                                interactions. Nodes are proteins
+                                and the central node is the selected transcript.</h6 class>
+                            <h6 class="tab"><span style="font-weight:bold">PPI-DDI View</span> : proteins are shown
+                                together with their domains
+                                and domains-domains interactions. </h6 class>
+
+                            <h6 class="tab1"> You can move the protein and domain nodes as you wish for a better view.
+                                Notice that the generated
+                                network in this view can be very big or difficult to visualize. In that case, DomainView
+                                or InteractionView can
+                                provide better visualization. </h6 class>
+                            <br>
+
+                            <h6 class=="tab">
+                                <label>
+                                    <select id="nodeFilterSelect">
+                                        <option value="PPI"> PPI View</option>
+                                        <option value="PPI-DDI"> PPI-DDI View</option>
+                                    </select>
+                                </label>
+                            </h6 class>
+
+                            <center>
+
+                                <div id="mynetwork"></div>
+                                <script type="text/javascript">
+
+
+                                    var PR_LENGTH = 500,
+                                        LENGTH_domain = 20,
+                                        PR_DM = 400,
+                                        LENGTH_SUB = 50,
+                                        WIDTH_SCALE = 2,
+                                        GREEN = "green",
+                                        RED = "#C5000B",
+                                        //ORANGE = "orange",
+                                        YELLOW = "orange",
+                                        WHITE = "EED5EB"
+                                    //GRAY = '#666666',
+                                    GRAY = "gray",
+                                        BLACK = "#2B1B17";
+                                    missing = '#C70039';
+                                    // create an array with nodes
+                                    var nodes = new vis.DataSet([
+
+                                        {% for node in pv_nodes %}
+                                            {{ node|safe }}
+                                        {% endfor %}
+
+
+
+                                    ]);
+                                    // create an array with edges
+                                    var edges = new vis.DataSet([
+
+                                        {% for edge in pv_edges %}
+                                            {{ edge|safe }}
+                                        {% endfor %}
+
+                                    ]);
+
+
+                                    const nodeFilterSelector = document.getElementById("nodeFilterSelect");
+
+
+                                    // create a network
+                                    var container = document.getElementById('mynetwork');
+                                    var data = {
+                                        nodes: nodes,
+                                        edges: edges
+                                    };
+
+
+                                    var options = {
+
+                                        physics: {
+                                            barnesHut: {gravitationalConstant: -10000},
+                                            stabilization: {iterations: 2500},
+                                            avoidOverlap: 0.7
+                                        },
+
+
+                                        nodes: {
+                                            scaling: {
+                                                min: 16,
+                                                max: 32
+                                            }
+                                        },
+                                        edges: {
+                                            color: WHITE,
+                                            smooth: false,
+
+                                        },
+
+
+                                        groups: {
+                                            protein: {
+                                                shape: "dot",
+                                                color: GRAY, // orange
+                                                font:
+                                                    {
+                                                        size: 18, // px
+                                                    }
+                                            },
+
+
+                                            domain: {
+                                                shape: "triangle",
+                                                color: "#2B7CE9" // blue
+                                            },
+
+
+                                            transcript: {
+                                                shape: "square",
+                                                color: "#109618" // green
+                                            }
+                                        }
+                                    };
+
+                                    function startNetwork(data) {
+
+                                        new vis.Network(container, data, options);
+                                    }
+
+
+                                    let nodeFilterValue = "";
+
+
+                                    const nodesFilter = node => {
+                                        if (nodeFilterValue === "") {
+                                            return node.group === "protein";
+                                        }
+                                        switch (nodeFilterValue) {
+
+                                            case "PPI-DDI":
+                                                return node.source === "DDI";
+
+                                            case "PPI":
+                                                return node.group === "protein";
+
+                                            default:
+                                                return true;
+                                        }
+                                    };
+
+
+                                    const nodesView = new vis.DataView(nodes, {filter: nodesFilter});
+
+
+                                    nodeFilterSelector.addEventListener("change", e => {
+                                        // set new value to filter variable
+                                        nodeFilterValue = e.target.value;
+                                        /*
+                                              refresh DataView,
+                                              so that its filter function is re-calculated with the new variable
+                                            */
+                                        nodesView.refresh();
+                                    });
+
+
+                                    startNetwork({nodes: nodesView, edges: edges});
+
+                                </script>
+                                <img src="{% static 'image/legend_1.svg' %}" alt=""/>
+                            </center>
+
+
+                            <br/>
+                            {% if dis1 %}
+                                <h6 class="tab1"> Dashe edges represent missing domains in the selected protein
+                                    ({{ tran_name|safe }}) but
+                                    present in other isoforms from other genes. These domains-domains interactions are
+                                    lost. Which may also
+                                    affect the interactions with their respective proteins. </h6 class>
+                            {% endif %}
+                    </div>
+
+                    <!-- DomainView content -->
+                    <div class="tab-pane fade" id="v-pills-domain" role="tabpanel"
+                         aria-labelledby="v-pills-domain-tab">...
+                    </div>
+
+                    <!-- InteractionView content -->
+                    <div class="tab-pane fade" id="v-pills-interaction" role="tabpanel"
+                         aria-labelledby="v-pills-interaction-tab">...
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-9 -->
+
+        </div>
+    </div>
+{% endblock %}

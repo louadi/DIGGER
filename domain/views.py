@@ -7,14 +7,14 @@ from .load.domaingraph import load_obj
 from django_pandas.managers import DataFrameManager
 from django.shortcuts import redirect
 
-from .Process import exonstodomain as exd 
-from .Process import exon as ex 
+from .Process import exonstodomain as exd
+from .Process import exon as ex
 from .Process import process_data as pr
 from .Process import proteininfo as  info
 from .Process import transcript as  tr
 from .Process import InteractionView as  iv
 from .Process import gene as  g
-from .Process import network_analysis as nt 
+from .Process import network_analysis as nt
 
 
 import pickle
@@ -37,9 +37,9 @@ if not os.path.exists(jobs_path):
 # or reference a template from templates folder
 def home(request):
 
-    
+
     if "search" in request.GET :     # If the form is submitted
-    
+
         search_query = request.GET['search']
         search_query=search_query.replace(" ", "")
         search_query=search_query.split("+")[0]
@@ -48,17 +48,17 @@ def home(request):
         #Input search is a protein:
         if len(search_query)==15 and search_query[:4]=='ENST' or search_query[:4]=='ENSP':
           return transcript(request,search_query)
-          
-          
-          
-          
-        #Input search is an exon: 
+
+
+
+
+        #Input search is an exon:
         elif search_query[:4]=='ENSG':
           return gene(request,search_query)
-     
-     
+
+
     if "search 2" in request.GET :     # If the form is submitted
-    
+
         search_query = request.GET['search 2']
         search_query=search_query.replace(" ", "")
         search_query=search_query.split("+")[0]
@@ -67,24 +67,24 @@ def home(request):
 
         if search_query[:4]=='ENSE':
           return exon(request,search_query)
-        
-    return render(request,'domain/home.html' ) 
+
+    return render(request,'domain/home.html' )
 
 
 
 #Display transcripts of a gene
 def gene(request,gene_ID):
-  
+
    transcript_table,gene_name=g.input_gene(gene_ID)
 
    if transcript_table==[]:
        return HttpResponse(' wrong entry or protein without any known Pfam domains')
-   
+
    context = {
       'tb':transcript_table,
       'name':gene_name,
-       }  
-   return render(request,'domain/gene.html',context)  
+       }
+   return render(request,'domain/gene.html',context)
 
 
 
@@ -93,52 +93,52 @@ def gene(request,gene_ID):
 #Input is an exon:
 
 def exon(request,exon_ID):
-    
+
    v=ex.input_exon(exon_ID)
-   
+
    if v==True:
        return HttpResponse(' wrong entry or exon in a gene without any known Pfam domains')
    else:
        _,domains, gene_name,Ensemble_geneID,entrezID,tb_transc,table_domains,number=v
-       
-       
+
+
     #only if the exon code for domains with known interactions
-   
-    
+
+
    if number >0 :
-           
+
            nodes,edges,pd_interaction=ex.vis_exon(domains,entrezID,gene_name,exon_ID)
    else:
         nodes,edges,pd_interaction=[],[],[]
-        
-   #PPI res interfaces on the exon:      
+
+   #PPI res interfaces on the exon:
    #table: HTML table with all PPIs that have res interface mapped to the exon
    #number_of_PPI: number of interactions
-   
+
    table,number_of_PPI=ex.PPI_inter(exon_ID,gene_name)
-   
-   
-   
+
+
+
    if number >0 :
                 # added to combine evidence of DDI and Residue in one final table
                 if number_of_PPI>0:
-                      
+
                       ppi_from_res=table['Partner Protein'].unique()
                       f=pd_interaction['Partner Protein'].isin(ppi_from_res)
                       pd_interaction.loc[f, 'Residue evidence'] = '<center>&#9989;</center>'
-                 
-                
+
+
                 pd_interaction["Partner Protein"]='<center>'+pd_interaction["Partner Protein"]+'</center>'
-                
+
                 pd_interaction=pd_interaction[["Affected Protein",'Partner Protein','NCBI gene ID','Retained DDIs','Lost DDIs','Percentage of lost domain-domain interactions','Residue evidence',"Protein-protein interaction"]]
-                
-                
+
+
                 pd_interaction=pd_interaction.rename(columns={
-                "Partner Protein": "<center>Partner Protein</center>", 
+                "Partner Protein": "<center>Partner Protein</center>",
                 "Affected Protein": "<center>Affected Protein</center>",
-                "NCBI gene ID": "<center>NCBI gene ID</center>", 
+                "NCBI gene ID": "<center>NCBI gene ID</center>",
                 "Percentage of lost domain-domain interactions": "<center> % of missing DDIs</center>",
-                "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
+                "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>",
                 "Lost DDIs": "<center>Missing Domain-Domain interactions</center>",
                 "Protein-protein interaction": "<center>Protein-protein interaction</center>",
                 'Residue evidence':'<center>Residue-level evidence*</center>'
@@ -146,10 +146,10 @@ def exon(request,exon_ID):
 
 
                 pd_interaction=pd_interaction.to_html(escape=False, index=False)
-             
-   table=table.to_html(escape=False, index=False)  
+
+   table=table.to_html(escape=False, index=False)
    context = {
-   
+
       'tb1':tb_transc,
       'tb2':table_domains,
       'tb3':pd_interaction,
@@ -164,9 +164,9 @@ def exon(request,exon_ID):
     'long_table': number_of_PPI>25,
     'pv_nodes': nodes,
     'pv_edges': edges,
-    
-       }  
-   return render(request,'domain/exon.html',context)  
+
+       }
+   return render(request,'domain/exon.html',context)
 
 
 
@@ -176,15 +176,15 @@ def exon(request,exon_ID):
 
 #Display a single node
 def display(request,Pfam_id):
-  
+
    n,e,gene,domain=exd.vis_node_(Pfam_id)
    context = {
      'nodes':n,
      'edges':e,
      'gene':gene,
      'domain':domain
-       }  
-   return render(request,'domain/display.html',context)  
+       }
+   return render(request,'domain/display.html',context)
 
 
 
@@ -197,7 +197,7 @@ def transcript(request,P_id):
     if out==0 :return HttpResponse(' Wrong entry or protein without any known Pfam domains')
     if out==1 :return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
     nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,interaction,isoforms,=tr.Protein_view(P_id)
-    
+
     '''
     dis1=True
     if missed==[]: dis1=False
@@ -210,7 +210,7 @@ def transcript(request,P_id):
     dis3=True
     if isoforms==[]: dis3=False
     '''
-        
+
     context={
     'dt':droped1,
     'text1':text1,
@@ -226,17 +226,63 @@ def transcript(request,P_id):
     'dt3' :missed,
     'dt4' :interaction,
      "dt5": isoforms,
-     
+
     'dis1': missed!=[],
     'dis2': interaction!=[],
-  
+
     'dis3': isoforms!=[],
-    
+
     }
- 
-    return render(request,'domain/transcr.html',context) 
+
+    return render(request,'domain/transcr.html',context)
+
+### DEV
+def transcript2(request, P_id):
+    print(P_id)
+    out = tr.Protein_view(P_id)
+    if out == 0: return HttpResponse(' Wrong entry or protein without any known Pfam domains')
+    if out == 1: return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
+    nodes, edges, _, domains, unique, exons, text1, domainshtml, Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID, entrezID, gene_description, exons, droped1, droped2, trID, p, missed, interaction, isoforms, = tr.Protein_view(
+        P_id)
+
+    '''
+    dis1=True
+    if missed==[]: dis1=False
 
 
+    dis2=True
+    if interaction==[]: dis2=False
+
+
+    dis3=True
+    if isoforms==[]: dis3=False
+    '''
+
+    context = {
+        'dt': droped1,
+        'text1': text1,
+        'tran_name': tran_name,
+        'gene_description': gene_description,
+        'trID': trID,
+        'gID': Ensemble_geneID,
+        'path': p,
+        'pv_nodes': nodes,
+        'pv_edges': edges,
+        'entrezID': entrezID,
+        'dt2': droped2,
+        'dt3': missed,
+        'dt4': interaction,
+        "dt5": isoforms,
+
+        'dis1': missed != [],
+        'dis2': interaction != [],
+
+        'dis3': isoforms != [],
+
+    }
+
+    return render(request, 'domain/transcript.html', context)
+### DEV
 
 
 
@@ -245,13 +291,13 @@ def transcript(request,P_id):
 #InteractionView
 def InteractionView(request,P_id,P2_id):
 
-    
-    
-    
+
+
+
     nodes,edges,interaction,tr,p_name=iv.int_view(P_id,P2_id)
-    
-  
-    
+
+
+
     context={
 
     'pv_nodes': nodes,
@@ -260,9 +306,9 @@ def InteractionView(request,P_id,P2_id):
     'dt1' :interaction,
     'pr':p_name,
     'tr':tr,
-    
+
     }
- 
+
     return render(request,'domain/InteractionView.html',context)
 
 
@@ -311,8 +357,8 @@ def Exon_level(request):
 
       if  search_query[:4]=='ENSE':
           return redirect(exon, exon_ID = search_query)
-          #return exon(request,search_query)   
-    
+          #return exon(request,search_query)
+
 
 
 
@@ -321,11 +367,11 @@ def Exon_level(request):
         #Input coordinate of the exon
         #Check if coordinate are correct
         #  Example   ' ENSG00000266028  206437964 206437042 '
-    
+
         print('-----------------------------------------------------------')
         search_query = request.GET['search']
-        
-        
+
+
         search_query=search_query.split(" ")
         search_query =[x for x in search_query if x!='']
         #search_query[0]=search_query[0].split(".")[0]
@@ -334,25 +380,25 @@ def Exon_level(request):
             gene_ID=search_query[0]
             s1=int(search_query[1])
             e1=int(search_query[2])
-            
-            #Correct for very big inputs 
+
+            #Correct for very big inputs
             if abs(s1-e1)<3000:
-            
+
                 #map coordinates to exon
                 exonID=pr.coordinate_to_exonID(gene_ID,s1,e1)
-                
+
                 if exonID!=[]:
                     return redirect(exon, exon_ID = exonID)
-                    #return exon(request,exonID)   
+                    #return exon(request,exonID)
                 else: return HttpResponse("<h1>No match</h1>")
-    return render(request,'domain/Exon_level.html',) 
-    
-    
-    
+    return render(request,'domain/Exon_level.html',)
+
+
+
 
 #PPI network analysis
 def network(request):
-    
+
     if "input" in request.POST:
           input_query = []
           for element in request.POST['input'].split('\n'):
@@ -369,8 +415,8 @@ def network(request):
                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
                              pickle.dump(input_query, fp)
                       return redirect(Multi_proteins,job=job_num)
-                
-    return render(request,'domain/network.html')  
+
+    return render(request,'domain/network.html')
 
 
 
@@ -378,31 +424,31 @@ def Multi_proteins(request, job='0'):
 
     with open(f'{jobs_path}/{job}.txt', "rb") as fp:   # Unpickling
             inputs = pickle.load(fp)
-            
-    
+
+
     if inputs[0][0:4]=='ENSG' :
        info=nt.analysis_input_genes(inputs)
-       
+
     elif inputs[0][0:4]=='ENSG' or inputs[0][0:4]=='ENST' or inputs[0][0:4]=='ENSP':
           info=nt.analysis_input_isoforms(inputs)
-    else: 
+    else:
            return HttpResponse("<h1>wrong entry</h1>")
-           
+
     if info==False:
         return HttpResponse("<h1>Too many inputs (max=2000 genes)</h1>")
-    
-    else:    
+
+    else:
       genes, missing,num_isoforms=info
-      
+
       Net=nt.Construct_network(genes, missing,job)
-      
-      if Net==0:  
+
+      if Net==0:
           return HttpResponse("<h1>There is no known interaction between these proteins</h1>")
-      
+
       else: nodes,edges,tab,tb_html=Net
 
-    
-    
+
+
 
     context={
 
@@ -413,10 +459,10 @@ def Multi_proteins(request, job='0'):
     "genes_number": len(missing),
     "isoforms_num": num_isoforms,
     'interacted_nodes':len(nodes),
-    
+
     }
-    
-    return render(request,'domain/vis_network.html',context) 
+
+    return render(request,'domain/vis_network.html',context)
 
 # def example2(request):
 #
@@ -477,20 +523,20 @@ def Multi_proteins(request, job='0'):
 #                              pickle.dump(input_query, fp)
 #                       return redirect(Multi_proteins,job=job_num)
 #     return render(request,'domain/Network_example4.html')
-    
-    
-def about(request):
- 
-    return render(request,'domain/about.html',) 
- 
 
- 
+
+def about(request):
+
+    return render(request,'domain/about.html',)
+
+
+
 def graph(request):
     jdata = {
      'data':jsonData,
      'data2':jsonData2
        }
-    return render(request,'domain/index.html',jdata) 
+    return render(request,'domain/index.html',jdata)
 
 
 
@@ -498,32 +544,32 @@ def graph(request):
 
 
 def doc(request):
- 
-    return render(request,'domain/doc.html',) 
- 
-  
-  
+
+    return render(request,'domain/doc.html',)
+
+
+
 def download(request):
- 
-    return render(request,'domain/download.html',) 
- 
-  
-  
-  
-  
-  
-  
-  
-  
+
+    return render(request,'domain/download.html',)
 
 
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
