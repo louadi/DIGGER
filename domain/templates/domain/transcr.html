@@ -63,13 +63,13 @@
   <style type="text/css">
     #mynetwork {
              position:relative;
-      width: 800px;
-      height: 640px;
+      width: 1000px;
+      height: 840px;
       border: 2px solid lightgray;
     }
     
         #mynetwork2 {
-      width: 800px;
+      width: q000px;
       height: 540px;
       border: 2px solid lightgray;
     }
@@ -95,6 +95,8 @@
         height: 100px;
     }
     
+    
+    
   </style>
 
 
@@ -102,102 +104,109 @@
 
 
 
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
     <div class="wider-container pt-5">
         <div class="row pt-5">
-            <!-- Vertical pill selection menu-->
-            <div class="col-lg-3">
-                {#                <h3 class="my-4">View selection</h3>#}
-                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
-                       role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
-                    <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
-                       aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
-                    <a class="nav-link" id="v-pills-domain-tab" data-toggle="pill" href="#v-pills-domain" role="tab"
-                       aria-controls="v-pills-domain" aria-selected="false">DomainView</a>
-                    <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction"
-                       role="tab"
-                       aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
-                    <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
-                       role="tab"
-                       aria-controls="v-pills-interaction" aria-selected="false">Compare with other isoforms</a>
-                </div>
-            </div>
+                          <!-- Vertical pill selection menu-->
+                          <div class="col-lg-3">
+                              {#                <h3 class="my-4">View selection</h3>#}
+                              <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                  <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
+                                     role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
+                                  <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
+                                     aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
+                                  <a class="nav-link" id="v-pills-domain-tab" data-toggle="pill" href="#v-pills-domain" role="tab"
+                                     aria-controls="v-pills-domain" aria-selected="false">DomainView</a>
+                                  <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction"
+                                     role="tab"
+                                     aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
+                                  <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
+                                     role="tab"
+                                     aria-controls="v-pills-interaction" aria-selected="false">Compare with other isoforms</a>
+                              </div>
+                          </div>
+                          
+                          
             <!-- /.col-lg-3 -->
 
             <!-- Tab / page content -->
             <div class="col-lg-9">
                 <div class="tab-content" id="v-pills-tabContent">
                     <!-- Overview content -->
-                                              <div class="tab-pane fade show active" id="v-pills-overview" role="tabpanel"
-                                                   aria-labelledby="v-pills-overview-tab">
+<div class="tab-pane fade show active" id="v-pills-overview" role="tabpanel" aria-labelledby="v-pills-overview-tab">
                                                    
                                                    
                                                    
-                                                <h1 class="font-weight-light"> Protein Features </h1>
-                        <br>
-                        <h5 class="lead"><span
-                                style="font-weight:bold"> Gene name </span>: {{ gene_description|safe }}
-                        </h5 class>
-                        <h5 class="lead"><span style="font-weight:bold">Transcript name</span>
-                            : {{ tran_name|safe }}
-                        </h5 class>
-                        <h5 class="lead"><span style="font-weight:bold">NCBI gene ID </span>: <a
-                                href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
-                                target="_blank">{{ entrezID|safe }} </a>
-                        </h5 class>
-                        <h5 class="lead"><span style="font-weight:bold">Ensembl</span> : <a
-                                href="https://www.ensembl.org/id/{{ gID|safe }}"
-                                target="_blank"> {{ gID|safe }} </a> ; <a
-                                href="https://www.ensembl.org/id/{{ trID|safe }}"
-                                target="_blank">{{ trID|safe }} </a>
-                        </h5 class>
+                                               <h1 class="font-weight-light"> Protein Features </h1>
+                                              <br>
+                                              <h5 class="lead"><span
+                                                      style="font-weight:bold"> Gene name </span>: {{ gene_description|safe }}
+                                              </h5 class>
+                                              
+                                              
+                                              <h5 class="lead"><span style="font-weight:bold">Transcript name</span>
+                                                  : {{ tran_name|safe }}
+                                              </h5 class>
+                                              
+                                              
+                                              <h5 class="lead"><span style="font-weight:bold">NCBI gene ID </span>: <a
+                                                      href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
+                                                      target="_blank">{{ entrezID|safe }} </a>
+                                              </h5 class>
+                                              
+                                              
+                                              <h5 class="lead"><span style="font-weight:bold">Ensembl</span> : <a
+                                                      href="https://www.ensembl.org/id/{{ gID|safe }}"
+                                                      target="_blank"> {{ gID|safe }} </a> ; <a
+                                                      href="https://www.ensembl.org/id/{{ trID|safe }}"
+                                                      target="_blank">{{ trID|safe }} </a>
+                                              </h5 class>
+                      
+                      <center>
+                                              <br> <br> <br>
+                                              <p class="lead"><span style="font-weight:bold">Domain and exon architecture </span></p>
+                      
+                                              <div class="box.large">
+                      
+                                                  <img src="{% get_media_prefix %}images/{{ trID }}.png" >
+                                              </div>
+                      
+                      
+                                              <br>
+                                              
+                                              
+                                              <h6>
+                                                  <h5 class=="lead">  {{ text1|safe }} </h5 class>
+                                                  {% autoescape off %}
+                                                      {{ dt }}
+                                                  {% endautoescape %}
+                                              </h6>
+                               
+                               
+                               
+                               
+                      </center>
+                               
+                               
+                               
+         
+         
+         
+</div>
 
-                          <center>
-                        <br> <br> <br>
-                        <p class="lead"><span style="font-weight:bold">Domain and exon architecture </span></p>
+<!-- ProteinView content -->
+<div class="tab-pane fade " id="v-pills-protein" role="tabpanel"  aria-labelledby="v-pills-protein-tab">
+     
 
-                        <div class="box.large">
-
-                            <img src="{% get_media_prefix %}images/{{ trID }}.png" >
-                        </div>
-
-
-                        <br>
-                        <h6>
-
-                            <h5 class=="lead">  {{ text1|safe }} </h5 class>
-                            {% autoescape off %}
-                                {{ dt }}
-                            {% endautoescape %}
-
-                        </h6>
-         
-         
-         
-         
-          </center>
-         
-         
-         
-         
-         
-         
-                    </div>
-
-                    <!-- ProteinView content -->
-                    <div class="tab-pane fade " id="v-pills-protein" role="tabpanel"
-                         aria-labelledby="v-pills-protein-tab">
-                         
-
-                         
-                                                <h2 class="font-weight-light"> ProteinView </h2>
+      <div id='overview'>
+                                                <h1 class="font-weight-light"> ProteinView </h1>
                                                               
                                                             <h5 class="tab1">   ProteinView provides a general visualization of the protein and its domains interactions. Please select your view mode.</h5 class>
                                                  
-                                                            <p class="tab">
+                                                            
                                                             <h6 class="tab">   <span style="font-weight:bold">PPI View</span> : show only protein interactions. Nodes are proteins and the central node is the selected transcript.</h6 class>  
+                                                            
                                                             <h6 class="tab">   <span style="font-weight:bold">PPI-DDI View</span> : proteins are shown together with their domains and domains-domains interactions. </h6 class>  
                                                              
                                                             <h6 class="tab1">  You can move the protein and domain nodes as you wish for a better view. Notice that the generated network in this view can be very big or difficult to visualize. In that case, DomainView or InteractionView can provide better visualization. </h6 class>
@@ -212,9 +221,9 @@
                                                             </label>
                                                 </h6 class>  
                                                          
-                                                         
-                                                         
-                                                           <center>  
+                                                    
+                                                              </div>
+                                                         <center>  
 
                                                         <div id="mynetwork"></div>
                                                        
@@ -267,11 +276,15 @@
                                                               nodes: nodes,
                                                               edges: edges
                                                             };
-                                                            
+                                                             
                                                             
                                                             var options = {
-                                                
+ 
+             autoResize: true,
+    width: '100%',
+    height: '100%',
                                                                physics: {
+                                                               enabled: true,
                                                                     barnesHut: { gravitationalConstant: -10000 },
                                                                     stabilization: { iterations: 2500 },
                                                                   },
@@ -317,11 +330,7 @@
                                                                 }
                                                               };
                                                                 
-                                                              function startNetwork(data) {
-                                                
-                                                                new vis.Network(container, data, options);
-                                                                
-                                                              }
+
                                                               
                                                 
                                                         
@@ -368,18 +377,30 @@
                                                                         so that its filter function is re-calculated with the new variable
                                                                       */
                                                                   nodesView.refresh();
-                                                                   Network.fit();
+                                                          
+
+
                                                                 });
+                                                                
+                                                                
+                                                                
+                                                                
+
+
+
+                                                   
+                                                    function startNetwork(data) {
                                                 
-                                                
-                                                
-                                                
-                                                
+                                                var network=new vis.Network(container, data, options) ;
+                                              
+                                               }
+               
                                                 
                                                         startNetwork({ nodes: nodesView, edges: edges });
-                                                        
+                                
+                                                        network.ft();
                                                           </script>
-                                                               <img src="{%static 'image/legend_1.svg'%}"alt=""  />
+                                                               <img src="{%static 'image/legend_1.svg'%}"alt="" >
                                                             </center>  
                                                               
                                                       
@@ -396,13 +417,12 @@
                                                 
                                                 
                                                 
+ </div>
 
-
-                    </div>
-
+                 
+  
                     <!-- DomainView content -->
-                    <div class="tab-pane fade" id="v-pills-domain" role="tabpanel"
-                         aria-labelledby="v-pills-domain-tab">
+  <div class="tab-pane fade" id="v-pills-domain" role="tabpanel" aria-labelledby="v-pills-domain-tab">
                     
                     
                     
@@ -410,17 +430,17 @@
               
             <h5 class="tab1">  DomainView provides a more specific graphical visualization for each  domain.   The domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table. </h5 class>
  
-         <center>
+     <center>
              <h4 class=="lead">  Domains of the isoform {{ tran_name|safe }}  </h4 class> 
-         <h5 class >   
        
-   
-      {% autoescape off %}
-         {{ dt2 }}
-        {% endautoescape %}
-          
+       
+         <h5 class >   
+              {% autoescape off %}
+                 {{ dt2 }}
+                {% endautoescape %}
+                  
         </h5 class>  
-        </center> 
+       </center> 
         
         {% if dis1 %}
    <br />
@@ -442,7 +462,7 @@
                   
                   <br /><br /><br /> 
        
-    </p>
+   
    <h5 class=="lead">  Select your domain </h5 class> 
 <label>
 
@@ -456,9 +476,9 @@
                 
   </select>
 </label>
-     </h6 class=="tab" >       
+     
 
-       
+
     <center>     
 <div id="mynetwork2"></div>
           <script type="text/javascript">
@@ -514,7 +534,7 @@
     physics: {
                     barnesHut: { gravitationalConstant: -10000 },
                     stabilization: { iterations: 15 },
-                      avoidOverlap: 0.7
+                  
                   },
     
     
@@ -630,12 +650,12 @@
                     
                     
                     
-                    </div>
+</div>
 
 
 
                     <!-- InteractionView content -->
-                    <div class="tab-pane fade" id="v-pills-interaction" role="tabpanel"
+<div class="tab-pane fade" id="v-pills-interaction" role="tabpanel"
                          aria-labelledby="v-pills-interaction-tab">
                      
                 
@@ -662,8 +682,9 @@
                  
 <br>
                 <a href="{% get_media_prefix %}/table 2/{{trID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
-                 </center>     
+                
          </h6 class>  
+          </center>     
          <br /><br />
                      <br />
            <h6 class="tab1" style="text-align: left;">  <span style="font-weight:bold">Retained DDIs</span> : For every partner, a list of  the retained DDI in this protein variant is shown. </h6 class>
@@ -680,7 +701,7 @@
               
               
                   </div>
-                {% if dis2 %} 
+            
                 
                 
                 
@@ -689,7 +710,7 @@
                          aria-labelledby="v-pills-compare-tab">
                   
                   
-                  
+                      {% if dis2 %} 
                         
             <h2 class="font-weight-light" > Compare with other isoforms </h2>
             
@@ -710,22 +731,27 @@
          {{ dt5 }}
         {% endautoescape %}
 
-                </center>     
+              
          </h6 class> 
-                  
+                    </center>     
                   
           
-                  
-                    </div>
                     {% endif %}
-                </div>
+                      <div style="height: 150px"></div>
+                    </div>
+                  
 
+
+  <div style="height: 150px"></div>
+  <div style="height: 150px"></div>
+
+                    </div>
             </div>
             <!-- /.col-lg-9 -->
 
-        </div>
-        
-    </div>
+     
+      </div>   
+</div>
 {% endblock %}
 
 
