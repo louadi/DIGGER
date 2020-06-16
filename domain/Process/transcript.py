@@ -104,7 +104,9 @@ def Protein_view(P_id):
             
             dfff["Pfam known interactions"]='<center>'+dfff["Pfam known interactions"].astype(str)+'</center>'
             dfff["Visualization of the domain interactions"]='<center>'+dfff["Visualization of the domain interactions"]+'</center>'
-            df_missed=dfff.to_html(escape=False, index=False)
+            
+            df_missed=dfff
+            #df_missed=dfff.to_html(escape=False, index=False)
     
             
     

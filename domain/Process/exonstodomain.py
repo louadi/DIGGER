@@ -28,7 +28,8 @@ DomainG=Graph
 
 #function for visulaization in the website
 def vis_node_(node):
-      node.split(".")
+      p_id='"'+node.split(".")[1]+'"'
+      ppp=node.split(".")[1]
       node=node.split(".")[0]+"/"+node.split(".")[1]
       G= nx.Graph()
       if DomainG.has_node(node):
@@ -50,8 +51,8 @@ def vis_node_(node):
           #Domain node
           if len(n.split("/"))==1:
                       #print(n)
-                      N.append("{id: \""+n+"\", label:  \""+n+
-                       "\" ,group: \"Domain\",physics:true , value: \"4"+"\"},")
+                      N.append("{id: \""+n+ppp+"\", label:  \""+n+
+                       "\" ,group: \"Domain\",physics:true ,"+" source: "+p_id+", value: \"4"+"\"},")
                   
           else:    
               
@@ -61,24 +62,24 @@ def vis_node_(node):
               #Main Domain of interest
               if n==node:
                   try:
-                    N.append("{id: \""+n+"\", label:  \""+pr.entrez_to_name(gene)+"-"+n.split("/")[1]+
-                             "\" ,group:  \"MDomain\",physics:false , value:\" 5"+"\"},")
+                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene)+"-"+n.split("/")[1]+
+                             "\" ,group:  \"MDomain\",physics:false, "+" source: "+p_id+", value:\" 5"+"\"},")
                   except KeyError:
                     print(node)
               #a gene node
               else:
                 try:
-                    N.append("{id: \""+n+"\", label:  \""+pr.entrez_to_name(gene)+
-                             "\" ,group: \"protein\",physics:true , value: \"2"+"\"},")
+                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene)+
+                             "\" ,group: \"protein\",physics:true , "+" source: "+p_id+", value: \"2"+"\"},")
                 except KeyError:
                     print(node)
       for e in g.edges:
           
           #edge to the main domain
           if any(x==node for x in e):
-              E.append("{from: \""+e[0]+"\", to: \""+e[1]+"\", length:  L1, color:  BLACK  "+"},")  
+              E.append("{from: \""+e[0]+ppp+"\", to: \""+e[1]+ppp+"\", length:  L1, color:  BLACK  "+"},")  
           else:
-              E.append("{from: \""+e[0]+"\", to: \""+e[1]+"\", length:  L2, color:  RED  "+"},")  
+              E.append("{from: \""+e[0]+ppp+"\", to: \""+e[1]+ppp+"\", length:  L2, color:  RED  "+"},")  
       
               
       return N,E,pr.entrez_to_name(node.split("/")[0]),node.split("/")[1]

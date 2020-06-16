@@ -198,19 +198,29 @@ def transcript(request,P_id):
     if out==1 :return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
     nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,interaction,isoforms,=tr.Protein_view(P_id)
     
-    '''
-    dis1=True
-    if missed==[]: dis1=False
+    if len(missed)!=0:
+      missing_domains=missed['Pfam ID'].unique()
+      missed=missed.to_html(escape=False, index=False)
+      
+    
+    #print('domain :::::::',unique)
+    #print('misssed :::::::',missing_domains)   
     
     
-    dis2=True
-    if interaction==[]: dis2=False
+    nodes_domainV=[]
+    edges_domainV=[]
+    switcher=[]
+    switcher_js=[]
+    for pfams in unique: 
+      n,e,_,_=exd.vis_node_(entrezID+"."+pfams)
+      nodes_domainV=nodes_domainV+n
+      edges_domainV=edges_domainV+e
+      
+
     
-    
-    dis3=True
-    if isoforms==[]: dis3=False
-    '''
-        
+      switcher.append('<option value="'+pfams+'"> '+pfams+'</option>')
+      switcher_js.append('case "'+pfams+'": return node.source === "'+pfams+'";')
+                
     context={
     'dt':droped1,
     'text1':text1,
@@ -226,11 +236,18 @@ def transcript(request,P_id):
     'dt3' :missed,
     'dt4' :interaction,
      "dt5": isoforms,
-     
+      
     'dis1': missed!=[],
     'dis2': interaction!=[],
   
     'dis3': isoforms!=[],
+    
+    
+    'first_domain':unique[0],
+    'switch1':switcher,
+    'switch2':switcher_js,
+    'Domainview_edges':edges_domainV,
+    'Domainview_nodes':nodes_domainV
     
     }
  
