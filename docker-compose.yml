@@ -36,7 +36,7 @@ services:
     # Change the 'published' port number to the port you desire
     ports:
       - target: 80
-        published: 8083 #${NGINX_PUBLISHED_PORT}             # Change this port
+        published: 8082 #${NGINX_PUBLISHED_PORT}             # Change this port
         protocol: tcp
         mode: host
     environment:

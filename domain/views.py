@@ -15,7 +15,7 @@ from .Process import transcript as  tr
 from .Process import InteractionView as  iv
 from .Process import gene as  g
 from .Process import network_analysis as nt 
-
+import pandas as pd
 
 import pickle
 import random
@@ -192,34 +192,89 @@ def display(request,Pfam_id):
 def transcript(request,P_id):
 
 
-    print(P_id)
+    #print(P_id)
     out=tr.Protein_view(P_id)
     if out==0 :return HttpResponse(' Wrong entry or protein without any known Pfam domains')
     if out==1 :return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
-    nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,interaction,isoforms,=tr.Protein_view(P_id)
     
+    
+    
+    nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,pd_interaction,isoforms=tr.Protein_view(P_id)
+    
+    
+    #Interactive view
+    pd_interaction['_']='Interaction with &nbsp;&nbsp;'+pd_interaction["Protein name"]+'&nbsp;&nbsp; ( NCBI ID: '+pd_interaction["NCBI gene ID"].astype(str)+'&nbsp; Score '+pd_interaction["Score"].round().astype(str)+' )'
+  
+    pd_interaction['selector']='<option value="'+pd_interaction['NCBI gene ID'].astype(str)+'"> '+pd_interaction['_']+'</option>'
+    
+    pd_interaction['switcher']='case "'+pd_interaction['NCBI gene ID'].astype(str)+'": return (node.id === "'+pd_interaction['NCBI gene ID'].astype(str)+'")   || (node.id === "'+    entrezID   +'")     ||  (node.origin==="'+pd_interaction['NCBI gene ID'].astype(str)+'") ||  (node.origin==="'+entrezID+'")  ;'
+    
+    Interactiveview_selec=pd_interaction['selector'].tolist()
+    Interactiveview_switch=pd_interaction['switcher'].tolist()
+    #the first protein to show
+    first_victim=pd_interaction['NCBI gene ID'].tolist()[0]
+    
+    
+    pd_interaction=pd_interaction.rename(columns={
+    "Selected Protein variant": "<center>Selected Protein variant</center>",
+    "Protein name": "<center>Partner Protein </center>", 
+    "NCBI gene ID": "<center>NCBI gene ID</center>", 
+    "Percentage of lost domain-domain interactions": "<center> % of missing DDIs</center>",
+    "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
+    "Lost DDIs": "<center>Missing Domain-Domain interactions</center>",
+    "Protein-protein interaction": "<center>Protein-protein interaction</center>"
+    })
+    
+ 
+    
+    #Get ID of missing domains with interactions
     if len(missed)!=0:
-      missing_domains=missed['Pfam ID'].unique()
+      missing_domains=missed[missed['Interactions mediated by the domain']!='<center>0</center>']['Pfam ID'].unique()
       missed=missed.to_html(escape=False, index=False)
       
     
-    #print('domain :::::::',unique)
-    #print('misssed :::::::',missing_domains)   
+ 
     
     
     nodes_domainV=[]
     edges_domainV=[]
     switcher=[]
     switcher_js=[]
+    first=unique[0]
+    maxx=0
+    
+    #DomainView for retained domains
     for pfams in unique: 
       n,e,_,_=exd.vis_node_(entrezID+"."+pfams)
-      nodes_domainV=nodes_domainV+n
-      edges_domainV=edges_domainV+e
-      
-
+      if len(e)>maxx:
+        maxx=len(e)
+        first=pfams
+      if len(e)!=0:
+            nodes_domainV=nodes_domainV+n
+            edges_domainV=edges_domainV+e
+            switcher.append('<option value="'+pfams+'"> '+pfams+'</option>')
+            switcher_js.append('case "'+pfams+'": return node.source === "'+pfams+'";')
+            
+            
+           
+    #DomainView for missing domains
+   
+    switcher_m=[]
+    if len(missed)!=0:
+        for pfams in missing_domains: 
+          n,e,_,_=exd.vis_node_(entrezID+"."+pfams)
+          if len(e)>maxx:
+            maxx=len(e)
+            first=pfams
+          if len(e)!=0:
+                nodes_domainV=nodes_domainV+n
+                edges_domainV=edges_domainV+e
+                switcher_m.append('<option value="'+pfams+'"> '+pfams+' (missing in the isoform) </option>')
+                switcher_js.append('case "'+pfams+'": return node.source === "'+pfams+'";')
+        
     
-      switcher.append('<option value="'+pfams+'"> '+pfams+'</option>')
-      switcher_js.append('case "'+pfams+'": return node.source === "'+pfams+'";')
+
+    pd_interaction=pd_interaction.drop(columns=['_','switcher',"selector"]).to_html(escape=False, index=False)
                 
     context={
     'dt':droped1,
@@ -234,20 +289,29 @@ def transcript(request,P_id):
     'entrezID' : entrezID,
     'dt2': droped2,
     'dt3' :missed,
-    'dt4' :interaction,
+    'dt4' :pd_interaction,
      "dt5": isoforms,
       
     'dis1': missed!=[],
-    'dis2': interaction!=[],
+    'dis2': pd_interaction!=[],
   
     'dis3': isoforms!=[],
     
     
-    'first_domain':unique[0],
+     'Interactiveview_selec' :Interactiveview_selec,
+    'first_vict' :first_victim,
+    'Interactiveview_switch': Interactiveview_switch,
+    
+    'first_domain':first,
     'switch1':switcher,
+    'switch1_missing':switcher_m,
     'switch2':switcher_js,
     'Domainview_edges':edges_domainV,
-    'Domainview_nodes':nodes_domainV
+    'Domainview_nodes':nodes_domainV,
+    
+    
+    #define max edges in ProteinView here
+    'enable_Proteinview': (len(edges_domainV)>90) or (len(edges_domainV)>130 and len(unique)+len(missed)==1),
     
     }
  

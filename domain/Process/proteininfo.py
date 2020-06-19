@@ -1,6 +1,6 @@
 from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
-
+from domain.Process import network_analysis as nt 
 
 import os
 from django.conf import settings
@@ -20,22 +20,24 @@ def get_protein_info(ID):
   #Get data about the input transcript or the protein 
   info,trID=ID_mapper(ID) 
   if info==0: return 0
-  domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface=info
+  domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface,co_partners=info
   #save Image of protein Structure
 
   Protein_structure(trID,exons,domains,images_path,trID,exons_in_interface)
 
-  return domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,images_path
+  return domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,images_path,co_partners
+
+
 
 def get_protein_info2(ID):
 
   #Get data about the input transcript or the protein 
   info,trID=ID_mapper(ID) 
   if info==0: return 0
-  domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface=info
+  domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface,co_partners=info
 
 
-  return domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID
+  return domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,co_partners
 
 
 
@@ -46,7 +48,7 @@ def ID_mapper(ID):
     if ID[3]=="T" :return exd.input_transcript(ID),ID
 
     #if the ID is a protein ID:
-    trID=pr.protein_to_transcript(ID)
+    trID=nt.pr_to_tr(ID)
     if ID[3]=="P" :return exd.input_transcript(trID),trID
 
 

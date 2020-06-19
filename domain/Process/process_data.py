@@ -130,7 +130,7 @@ def gene_to_all_transcripts(gene_ID):
     
     
     #tdata=tdata["Transcript stable ID"].drop_duplicates()
-    #tdata=tdata["Transcript stable ID"].unique()
+    tdata=tdata.unique()
     
     
     
@@ -157,7 +157,7 @@ def gene_to_all_transcripts_online(gene_ID):
     
 # used    !!!!
 def tranID_convert(Ensemble_transID):
-
+    print('ID...........',Ensemble_transID)
     query = """
             SELECT * 
             FROM gene_info 

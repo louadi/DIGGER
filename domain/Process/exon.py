@@ -54,7 +54,7 @@ def input_exon(exon_ID):
                     #get info about the gene
                     _,gene_name,Ensemble_geneID,entrezID,gene_description=pr.tranID_convert(transcripts[0])
                     
-                    print(gene_name,Ensemble_geneID,entrezID,gene_description)
+                    #print(gene_name,Ensemble_geneID,entrezID,gene_description)
                     
                     ## Table of Transcripts:
                     ## a function from gene page that give list of transcripts with links
@@ -83,7 +83,7 @@ def input_exon(exon_ID):
                           
                           
                           h=reverse('home')+"graph/"
-                          print(h)
+                          #print(h)
                           table_domains["Visualization of the domain interactions"]=""
                           df_filter =table_domains['Pfam known interactions']!=0
                           

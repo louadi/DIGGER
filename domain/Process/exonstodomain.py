@@ -146,7 +146,7 @@ def exon_3D(exon_IDs,Ensemble_transID):
     #p1=PPI[ PPI['Transcript stable ID_x']==Ensemble_transID]
     #p2=PPI[ PPI['Transcript stable ID_y']==Ensemble_transID]
    
-    
+    partners=[]
     
     query = """
                   SELECT * 
@@ -155,16 +155,26 @@ def exon_3D(exon_IDs,Ensemble_transID):
                   """
     tr_1 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
     
+    partners=tr_1['Transcript stable ID_y'].unique().tolist()
+    
     query = """   
                   SELECT * 
                   FROM ppi_data 
-                  WHERE "Transcript stable ID_x"=:ensemble_trans_id
+                  WHERE "Transcript stable ID_y"=:ensemble_trans_id
                   """
     tr_2 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
     
     
     
     
+    partners=list(set(partners+tr_2['Transcript stable ID_x'].unique().tolist()))
+    
+    
+    
+    
+    if len(partners)!=0:
+      partners=list(set([pr.tranID_convert(x)[3] for x in partners]))
+      
     
     for exon_ID in exon_IDs:
           #print(exon_ID)
@@ -207,13 +217,15 @@ def exon_3D(exon_IDs,Ensemble_transID):
               'Transcript stable ID_x':'Transcript stable ID_y',   
           })
             
-            
+         
           p1=p1.append(p2, ignore_index = True).drop_duplicates()
           p1=p1['u_ac_2'].unique()
+          
+
           n=len(p1)
           N.append(n)
           if n!=0: exons_in_interface.append(exon_ID)
-    return N  ,exons_in_interface
+    return N  ,exons_in_interface,partners
     
 
 
@@ -240,27 +252,30 @@ def input_transcript(Ensemble_transID):
     domains=domains.sort_values(['Exon rank in transcript', 'Pfam start'], ascending=[True, True])
     
     #Link to visualize the network
-    domains["Visualization of the domain interactions"]=""
+    domains["Link to other Databases"]=""
     h=reverse('home')+"graph/"
     h2='target="'
     h3='_blank"'
     df_filter =domains['Pfam known interactions']!=0
-    domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+domains['Pfam ID']+'">'+gene_name+'-'+domains['Pfam ID']+'</a>'
+    
+    domains.at[df_filter,"Link to other Databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
+    
+    #domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+domains['Pfam ID']+'">'+gene_name+'-'+domains['Pfam ID']+'</a>'
     
     pd.set_option('display.max_colwidth',1000)
 
 
     exon_info=exons[['Exon stable ID','Exon rank in transcript']]
-    n,exons_in_interface=exon_3D(exon_info['Exon stable ID'].tolist(),Ensemble_transID)
+    n,exons_in_interface,co_partners=exon_3D(exon_info['Exon stable ID'].tolist(),Ensemble_transID)
     exon_info['Number of interaction interface mapped to the exon']=n
     
     
-    print(exons_in_interface)
+    #print(exons_in_interface)
     droped1=exon_info.merge(domains,how='left', left_on='Exon stable ID', right_on='Exon stable ID')
     droped1=droped1.rename(columns={"Pfam ID": "Corresponding domain ID","Exon stable ID": "<center>Exon  ID</center>",
     "Exon rank in transcript_x":'Exon rank in transcript'})
  
-    droped1=droped1.drop(columns=['CDS start','CDS end','Pfam start','Pfam end',"Visualization of the domain interactions","Pfam known interactions",'Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end",'Exon rank in transcript_y'])
+    droped1=droped1.drop(columns=['CDS start','CDS end','Pfam start','Pfam end',"Link to other Databases","Pfam known interactions",'Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end",'Exon rank in transcript_y'])
     
 
     
@@ -282,9 +297,12 @@ def input_transcript(Ensemble_transID):
     
     droped1["Number of interaction interface mapped to the exon"]='<center>'+droped1["Number of interaction interface mapped to the exon"].astype(str)+'</center>'
     droped2["Pfam known interactions"]='<center>'+droped2["Pfam known interactions"].astype(int).astype(str)+'</center>'
-    droped2["Visualization of the domain interactions"]='<center>'+droped2["Visualization of the domain interactions"]+'</center>'
+    droped2["Link to other Databases"]='<center>'+droped2["Link to other Databases"]+'</center>'
     
-    return domains,unique_domains,exons,text1,domains.to_html(escape=False),Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1.to_html(escape=False, index=False),droped2.to_html(escape=False, index=False),exons_in_interface
+    droped2=droped2.rename(columns={"Pfam known interactions":"Interactions mediated by the domain"})
+    
+    
+    return domains,unique_domains,exons,text1,domains.to_html(escape=False),Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1.to_html(escape=False, index=False),droped2.to_html(escape=False, index=False),exons_in_interface,co_partners
 
 
 
