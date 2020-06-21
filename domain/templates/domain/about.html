@@ -7,7 +7,7 @@
 
 
     .tab2 { margin-left: 10px; }
-    .tab { margin-left: 30px; }
+    .tab { margin-left: 100px; }
     
 .button {
   background-color: #136BB6; /* Not Green  anymore*/
@@ -24,7 +24,10 @@
   transition-duration: 0.4s;
 }
 
-
+img.resize {
+  max-width:70%;
+  max-height:70%;
+}
 
 .button2:hover {
   box-shadow: 0 12px 6px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
@@ -33,19 +36,18 @@
   </style>
   
   
-<title>  DIGGER | About Page </title>
+<title>  DIGGER | About Page  </title>
 <div class="container">
   <div class="card border-0 shadow my-5">
-   
+    <div class="card-body p-3">
+  
 
-<p>&nbsp;</p>
-
-
+ <br /> 
 <center>
 
-<img src="{%static 'image/logo_s.png'%}"alt="" width="800" height="200" >
+<img class="resize" src="{%static 'image/DIGGER.png'%}">
+
 </center>
- <br />
 
 
  <br /> <br />
@@ -65,8 +67,15 @@
         <li h5 class="lead"> <span style="font-weight:bold"> Maintainer:</span> &nbsp; <a href="https://github.com/louadi/"target="_blank">Zakaria Louadi</a>  </h5 class> </li>
         <li h5 class="lead"> <span style="font-weight:bold"> With contributions from:  </span> &nbsp;  Kevin Yuan  </h5 class> </li>
           <br> <br />
-         <li h5 class="lead"> <span style="font-weight:bold"> How to cite DIGGER:  </span> &nbsp;   </h5 class> </li><br>
+          
+          
+         <li h5 class="lead"> <span style="font-weight:bold"> If you use DIGGER, please cite:  </span> &nbsp;   </h5 class> </li><br>
+         <center>
+         <h5 class> <span style="font-weight:bold"> (Posted once published) </span></h5 class>
+          </center>
            <br>  <br>
+           
+           
         <li h5 class="lead"> DIGGER  was created with funding from  <a href="https://www.sys-med.de/en/alliances/sys-care/"target="_blank">  BMBF Sys_CARE project. </a>  </h5 class> </li>
          <li h5 class="lead"> Source code  is available on  <a href="https://github.com/louadi/DIGGER/"target="_blank">Github.</a>  </h5 class> </li>
          
@@ -97,7 +106,7 @@
          <div> <h5 class>
 
 
-	<p><b>Zakaria louadi</b></br>
+	<p><b>Zakaria Louadi</b></br>
            louadi@wzw.tum.de</p>
      
 

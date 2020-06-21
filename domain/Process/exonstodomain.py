@@ -123,6 +123,7 @@ def expand_table(table,unique_domains,entrezID)   :
     Text_nodes={}
     text_edges={}
     for domain in unique_domains:
+        print(entrezID,domain)
         node=entrezID+"/"+domain
         if Graph.has_node(node): 
             # add a function that convert from entrez ID to 
@@ -166,15 +167,15 @@ def exon_3D(exon_IDs,Ensemble_transID):
     
     
     
-    
-    partners=list(set(partners+tr_2['Transcript stable ID_x'].unique().tolist()))
-    
-    
-    
-    
     if len(partners)!=0:
-      partners=list(set([pr.tranID_convert(x)[3] for x in partners]))
-      
+            partners=list(set(partners+tr_2['Transcript stable ID_x'].unique().tolist()))
+            
+            
+            
+            
+            if len(partners)!=0:
+                partners=list(set([pr.tranID_convert(x)[3] for x in partners]))
+              
     
     for exon_ID in exon_IDs:
           #print(exon_ID)
@@ -240,6 +241,7 @@ def input_transcript(Ensemble_transID):
     
     output=pr.tranID_convert(Ensemble_transID)
     if output==0: return 0
+    if any(x ==False for x in output) : return 0  
     else: tran_name,gene_name,Ensemble_geneID,entrezID,gene_description=output
     
    

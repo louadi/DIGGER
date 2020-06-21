@@ -346,7 +346,7 @@ def edge_option(edge,entrezID,co_partners):
     if len(e1)==1 and len(e2)==1:
         edge_color=''
         #print(co_partners)
-        if (e1[0] in co_partners) or  (e2[0] in co_partners): edge_color='color: Residue,'
+        if (e1[0] in co_partners and e1[0]!=entrezID) or  (e2[0] in co_partners and e2[0]!=entrezID): edge_color='color: Residue,'
         
         option='length: PR_LENGTH,'+edge_color+' width: WIDTH_SCALE * 4'
         

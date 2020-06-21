@@ -373,7 +373,7 @@ img {
                                                       </div>
                                                            
    <div>                                           
-<label for="test"><h5>Freeze the network  </h5> </label>
+<label for="test"><h5>Disable physics  </h5> </label>
 <label class="myCheckbox">
   <input id='checkbox' type="checkbox" name="checkbox">
   <span></span>
@@ -640,8 +640,9 @@ var checkbox = document.querySelector("input[name=checkbox]");
                     {{ s|safe }}
                 {% endfor %}
   
-   {% endif %}
+   
                  </optgroup>
+       {% endif %}          
   </select>
 </label>
      
@@ -659,7 +660,7 @@ function myFunction() {
    
    <div>  
    <h5>                                         
-<label for="test">Freeze the network </label>
+<label for="test">Disable physics </label>
 <label class="myCheckbox">
   <input id='checkbox2' type="checkbox" name="checkbox2">
   <span></span>
@@ -923,7 +924,7 @@ function myFunction() {
        
                                        
               
-            <h5 class="tab1" style="text-align: left;">  InteractionView provides an  interactive visualization of the interaction for the selected isoform with every partner individually. The interactions in the table are confirmed by both Protein-Protein Interactions (PPI) and Domain-Domain Interactions (DDI) networks. You can select the protein partner to visualize it in a new tab. </h5 class>
+            <h5 class="tab1" style="text-align: left;">  InteractionView provides an  interactive visualization of the interaction for the selected isoform with every partner individually. The interactions in the table are confirmed by both Protein-Protein Interactions (PPI) and Domain-Domain Interactions (DDI) networks. You can select the protein partner to visualize it. </h5 class>
             
 
                                                          <center>  
@@ -940,16 +941,17 @@ function myFunction() {
 </select>
 </label>
 </h6 class>  
-
+   </center>  
+   
    <div>                                           
-<label for="test"><h4>Freeze the network  </h4> </label>
+<label for="test"><h4>Disable physics &nbsp;</h4> </label>
 <label class="myCheckbox">
   <input id='checkbox3' type="checkbox" name="checkbox3">
 </label>
 
 
               
-              
+                 <center>  
                                                         <div id="mynetwork3"></div>
                                                        
                                                        
@@ -1211,7 +1213,7 @@ return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe 
               
                   </div>
             
-                
+                </div>  
                 
                 
                     <!-- Compare with other isoforms content -->

@@ -176,21 +176,35 @@ def tranID_convert(Ensemble_transID):
     if    len(tdata)==0:     return 0
     
     
+    try:
+          Ensemble_geneID=tdata["Gene stable ID"].unique()[0]
+          
+    except TypeError :
+            Ensemble_geneID=False
+    try:        
+          tran_name=tdata["Transcript name"].unique()[0]
+          gene_name=tran_name.split('-')[0]
+    except TypeError :
+            tran_name=False
+            gene_name=False
+            
+    try:      
+          entrezID=tdata["NCBI gene ID"].unique()[0]
+          entrezID=str(int(tdata["NCBI gene ID"].unique()[0]))
+          
+    except TypeError :
+          entrezID=False
+          
+          
+    try:
+          gene_description=tdata["Gene description"].unique()[0]
+            
+            
+    except TypeError :
+            gene_description=False
     
-    Ensemble_geneID=tdata["Gene stable ID"].unique()[0]
-    tran_name=tdata["Transcript name"].unique()[0]
-    gene_name=tran_name.split('-')[0]
-    entrezID=tdata["NCBI gene ID"].unique()[0]
-    if np.isnan(entrezID):
-            mg = mygene.MyGeneInfo()
-            entrezID = mg.querymany(Ensemble_geneID,  fields='entrezgene', species='human')[0]
-            
-            
-            
-    else: entrezID=str(int(tdata["NCBI gene ID"].unique()[0]))
-    #print('ID ========',entrezID)
     
-    gene_description=tdata["Gene description"].unique()[0]
+    
     
     return tran_name,gene_name,Ensemble_geneID,entrezID,gene_description
     

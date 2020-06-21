@@ -159,7 +159,7 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
             
         
     protein_with_DDI = list(set(protein_with_DDI))
-    nodes,edges,_=tr.vis_node_(g,entrezID,protein_with_DDI,gene_name,missing_domain)
+    nodes,edges,_=tr.vis_node_(g,entrezID,protein_with_DDI,gene_name,missing_domain,[])
     
     pd_interaction=tr.table_interaction(gene_name,entrezID,entrezID,g,protein_with_DDI,missing_domain)
     
@@ -173,23 +173,25 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     
     
-    pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
-    pd_interaction["Lost DDIs"]='<center>&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;</center>'
+    #pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
+   #pd_interaction["Lost DDIs"]='<center>&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;</center>'
     
     pd_interaction['Residue evidence']='<center>-<center>'
     
     pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
     h=reverse('home')+"ID/"+entrezID+'.'+ExonID+'/InteractionView/'
-    pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
-    pd_interaction["Affected Protein"]='<center>'+pd_interaction["Affected Protein"]+'</center>'
-    pd_interaction["Protein-protein interaction"]='<center>'+pd_interaction["Protein-protein interaction"]+'<a target="'+'_blank"href="'+h+pd_interaction["NCBI gene ID"]+'">'+" (Visualize) "+'</a>'+'</center>'
+    pd_interaction["Score"]=(1-((pd_interaction["Percentage of lost domain-domain interactions"].astype(int)/100)))
+    
+    #pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
+    #pd_interaction["Affected Protein"]='<center>'+pd_interaction["Affected Protein"]+'</center>'
+    #pd_interaction["Protein-protein interaction"]='<center>'+pd_interaction["Protein-protein interaction"]+'<a target="'+'_blank"href="'+h+pd_interaction["NCBI gene ID"]+'">'+" (Visualize) "+'</a>'+'</center>'
 
         #dont move it from here
-    pd_interaction["NCBI gene ID"]='<center>'+pd_interaction["NCBI gene ID"]+'</center>'
+    #pd_interaction["NCBI gene ID"]='<center>'+pd_interaction["NCBI gene ID"]+'</center>'
     
     
     
-    pd_interaction['Residue evidence']='<center>-<center>'
+    #pd_interaction['Residue evidence']='<center>-<center>'
     
     pd.set_option('display.max_colwidth',1000)
     
