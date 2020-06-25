@@ -235,7 +235,7 @@ def exon(request,exon_ID):
     'Interactiveview_switch': Interactiveview_switch,
     
     
-    
+    'enable_Proteinview': len(edges_domainV)>70 ,
        }  
    return render(request,'domain/exon.html',context)  
 
@@ -270,7 +270,7 @@ def transcript(request,P_id):
     
     
     
-    nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,pd_interaction,isoforms=tr.Protein_view(P_id)
+    nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,pd_interaction,isoforms,co_partners=tr.Protein_view(P_id)
     
     
     #Interactionview
@@ -280,8 +280,15 @@ def transcript(request,P_id):
     
     print(pd_interaction)
     if len(pd_interaction)!=0:
-            pd_interaction['_']='Interaction with &nbsp;&nbsp;'+pd_interaction["Protein name"]+'&nbsp;&nbsp; ( Score '+pd_interaction["Score"].round(2).astype(str)+' )'
-          
+    
+            pd_interaction['Residue evidence']=''
+            
+            pd_interaction.loc[pd_interaction["NCBI gene ID"].isin(co_partners),'Residue evidence']='<span>&#9733;</span>'
+            
+            
+            pd_interaction['_']='&nbsp;Interaction &nbsp; with &nbsp;'+pd_interaction["Protein name"]+'&nbsp;&nbsp; ( Score '+pd_interaction["Score"].round(2).astype(str)+')&nbsp;&nbsp;'+pd_interaction['Residue evidence']+'&nbsp;&nbsp;'
+            
+
             pd_interaction['selector']='<option value="'+pd_interaction['NCBI gene ID'].astype(str)+'"> '+pd_interaction['_']+'</option>'
             
             pd_interaction['switcher']='case "'+pd_interaction['NCBI gene ID'].astype(str)+'": return (node.id === "'+pd_interaction['NCBI gene ID'].astype(str)+'")   || (node.id === "'+    entrezID   +'")     ||  (node.origin==="'+pd_interaction['NCBI gene ID'].astype(str)+'") ||  (node.origin==="'+entrezID+'")  ;'

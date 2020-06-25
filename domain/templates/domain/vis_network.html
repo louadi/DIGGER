@@ -50,17 +50,17 @@ tr:nth-child(even) {
     
     
     <br /><br />
-    <h2 class="font-weight-light"> Statistics of The Input Data</h2 class>
+    <h2 class="font-weight-light"> Statistics of the input data</h2 class>
    <h5 class="lead"> <span style="font-weight:bold"> Number of protein variants: </span> {{ isoforms_num|safe }} </h5 class>
    <h5 class="lead"> <span style="font-weight:bold"> Number of coding genes: </span>{{ genes_number|safe }} </h5 class>
-    <h5 class="lead"> <span style="font-weight:bold"> Number of interacted proteins: </span>: {{ interacted_nodes|safe }} </h5 class>
+    <h5 class="lead"> <span style="font-weight:bold"> Number of interacting proteins: </span> {{ interacted_nodes|safe }} </h5 class>
 
 <br />  <br />
-    <h2 class="font-weight-light"> Visualization of The Subnetwork</h2 class>
+    <h2 class="font-weight-light"> Visualization of the subnetwork</h2 class>
 
       
    <div>                                           
-<label for="test"><h5>Freeze the network&nbsp;  </h5> </label>
+<label for="test"><h4>Disable physics &nbsp;</h4> </label>
 <label class="myCheckbox">
   <input id='checkbox' type="checkbox" name="checkbox">
   <span></span>
@@ -173,8 +173,9 @@ var network = new vis.Network(container, data, options);
 
     <br>
        <center>
-<a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download the generated subnetwork with scored edges (SIF format)</a>
-      <a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.graphml" class="btn btn-secondary px-4 py-2 btn-sm">Download (.graphml. format)</a>
+        <h5 class="font-weight-light">Download the generated subnetwork with scored edges </h5>
+<a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download (.SIF format)</a>
+      <a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.graphml" class="btn btn-secondary px-4 py-2 btn-sm">Download (.GraphMl format)</a>
     </center>
     
 

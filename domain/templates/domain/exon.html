@@ -224,7 +224,10 @@ img {
     max-width: 100%;
     max-height: 100%;
 }
-    
+     img.resize {
+    max-width: 1000px;
+    max-height: 90%;
+}
     
   </style>
   
@@ -287,7 +290,18 @@ img {
 
  <div class="col-lg-9">
                 <div class="tab-content" id="v-pills-tabContent">
+                
+                
+ <h1 class="font-weight-light"> Exon Information </h1>
+<br>
+<h5 class="lead"> <span style="font-weight:bold"> Exon ID</span>: {{exon_ID|safe }}  </h5 class>  
+<h5 class="lead"> <span style="font-weight:bold"> Gene name </span>: {{ name|safe }} </h5 class>  
 
+<h5 class="lead">   <span style="font-weight:bold">NCBI gene ID </span>:   <a href="https://www.ncbi.nlm.nih.gov/gene/{{entrezID|safe }}"target="_blank">{{entrezID|safe }} </a>       </h5 class> 
+<h5 class="lead"> <span style="font-weight:bold">Ensembl gene ID</span> :  <a href="https://www.ensembl.org/id/{{gID|safe }}"target="_blank"> {{gID|safe }} </a>   </h5 class> 
+
+
+<br><br>
 
 
 
@@ -295,21 +309,13 @@ img {
                     <!-- DomainView content -->
   <div class="tab-pane fade show active" id="v-pills-domain" role="tabpanel" aria-labelledby="v-pills-domain-tab">
           
-              <br><br>
-      <h2 class="font-weight-light"> Exon Information </h2>
-      <br>
-       <h5 class="lead"> <span style="font-weight:bold"> Exon ID</span>: {{exon_ID|safe }}  </h5 class>  
-      <h5 class="lead"> <span style="font-weight:bold"> Gene name </span>: {{ name|safe }} </h5 class>  
-      
-      <h5 class="lead">   <span style="font-weight:bold">NCBI gene ID </span>:   <a href="https://www.ncbi.nlm.nih.gov/gene/{{entrezID|safe }}"target="_blank">{{entrezID|safe }} </a>       </h5 class> 
-      <h5 class="lead"> <span style="font-weight:bold">Ensembl gene ID</span> :  <a href="https://www.ensembl.org/id/{{gID|safe }}"target="_blank"> {{gID|safe }} </a>   </h5 class> 
-      
-      
-      <br><br>
+
       {% if not dis2 %}
-        <h2 class="font-weight-light"> DomainView </h2>
+        <h1 class="font-weight-light"> DomainView </h1>
               
-   <h5 class="tab2">A list of Pfam domains coded by the selected exon and a graphical visualization for their interactions is provided in this view. Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table to visualize affected interactions. </h5 class>     
+<h5 class>A list of Pfam domains coded by the selected exon and a graphical visualization for their interactions is provided in this view. Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest to visualize affected interactions. </h5 class>     
+   
+   
      <center>
        
          <br><br>  
@@ -352,10 +358,10 @@ function myFunction() {
    
    <div>  
    <h5>                                         
-<label for="test">Disable physics </label>
+<label for="test"><h4>Disable physics &nbsp;</h4> </label>
 <label class="myCheckbox">
   <input id='checkbox2' type="checkbox" name="checkbox2">
-  <span></span>
+
 </label>
 </h5> 
  </div>  
@@ -572,24 +578,21 @@ function myFunction() {
 
        {% if not dis %}
         <br> 
- <h5 class="tab">    The  domains coded by selected exon do not have any known interactions from the available database.  </h5 class>
-<div style="height: 350px"></div>   
+ <h5 class=>    The  domains coded by selected exon do not have any known interactions from the available database.  </h5 class>
+<div style="height: 30px"></div>   
      {% endif %}
       {% endif %}
               
+              
+              
+              
+              
            {% if dis2 %}
             <br> 
-           <h4 class="tab">     The selected exon does not code for any known Pfam domain  </h4 class>
+           <h4>     The selected exon does not code for any known Pfam domain  </h4 class>
 
-<div style="height: 10px"></div>
-  <div style="height: 150px"></div>
-  <div style="height: 150px"></div>
-    <div style="height: 150px"></div>
-  <div style="height: 150px"></div>      
-      <div style="height: 150px"></div>
-  <div style="height: 150px"></div>     
-      <div style="height: 150px"></div>
-        	
+<div style="height: 30px"></div>
+
       {% endif %}
       
 
@@ -609,14 +612,24 @@ function myFunction() {
 <div class="tab-pane fade " id="v-pills-protein" role="tabpanel"  aria-labelledby="v-pills-protein-tab">
 
          {% if dis %}
+              <h1 class="font-weight-light"> ProteinView </h1>   
+         
+{% if enable_Proteinview %}
 
+<h5 class="tab1">  ProteinView is not available for this protein because of its high number of partners in the PPI. check InteractionView or DomainView.</h5 class>
+
+
+
+
+
+{% endif %}     
+
+{% if not enable_Proteinview %}
                   
-            <h2 class="font-weight-light"> ProteinView </h2>
+    
               
-            <h5 class="tab">   ProteinView provides a general visualization of the protein interaction and its domains interactions.  Proteins (circular nodes) are shown together with their domains (triangles) and domains-domains interactions.  </h5 class>
-           <h5 class="tab">    The interactions of the<span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions.  </h5 class>
+            <h5 class>   ProteinView provides a general visualization of the protein interactions and its domains interactions.  Proteins (circular nodes) are shown together with their domains (triangles) and domains-domains interactions.  The interactions of the<span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions.  </h5 class>
           
-                        <br><br>
            
             <br>
 
@@ -624,11 +637,11 @@ function myFunction() {
          
       
             
-        <div>                                           
-<label for="test"><h5>Disable physics  </h5> </label>
+  <div>                                           
+<label for="test"><h4>Disable physics &nbsp;</h4></label>
 <label class="myCheckbox">
   <input id='checkbox' type="checkbox" name="checkbox">
-  <span></span>
+
 </label>
 
  </div>  
@@ -827,7 +840,7 @@ var checkbox = document.querySelector("input[name=checkbox]");
                                                         
                                                           </script>
 
-                                                               <img src="{%static 'image/legend1.svg'%}"alt="" >
+                                                               <img class="resize" src="{%static 'image/legend2.png'%}"alt="" >
                                                             </center>  
                                                               
                                                       
@@ -835,18 +848,15 @@ var checkbox = document.querySelector("input[name=checkbox]");
                                                     
                                                       
                                                           <br />
-                                                         {% if dis1 %}
-                                                         <h6 class="tab1">  Dashe edges represent missing domains in the selected protein ({{ tran_name|safe }}) but present in other isoforms from other genes. These domains-domains interactions are lost. Which may also affect the interactions with their respective proteins. </h6 class>
-                                                         {% endif %}
                                                 
                                                 
                                                 
                                                 {% endif %}
-                                                
-                                                
+                                            
+          {% endif %}                                             
  </div>
 
-         
+       
 
          
 
@@ -864,23 +874,16 @@ var checkbox = document.querySelector("input[name=checkbox]");
                                              {% if dis %}
                                         
 
-                     <h2 class="font-weight-light" > InteractionView </h2>
+                     <h1 class="font-weight-light" > InteractionView </h1>
             
             
             
-            <h5 class="tab" style="text-align: left;">  InteractionView provides interactive visualization and an analysis of the effect of the spliced region for every interacted protein individually. </h5 class>
-            
- <h5 class="tab">    The interactions of the <span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions. You can select a protein partner to visualize it in a new tab.</h5 class>
+<h5  style="text-align: left;">  InteractionView provides interactive visualization and an analysis of the effect of the spliced region for every interaction individually. The interactions of the <span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions. </h5 class>
  
+ <br><br>
+  <h5 class=="lead"> Select a partner protein </h5 class> 
 
-
-
-
-  <center>  
-
-
-
-              <h6 class=="tab" > 
+              <h6> 
 <label>
 <select id="nodeFilterSelect3"  class="select-css">
             {% for s in Interactiveview_selec %}
@@ -890,7 +893,7 @@ var checkbox = document.querySelector("input[name=checkbox]");
 </select>
 </label>
 </h6 class>  
-   </center>  
+  
    
    <div>                                           
 <label for="test"><h4>Disable physics &nbsp;</h4> </label>
@@ -1112,7 +1115,9 @@ return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe 
                                                         
                                                           </script>
 
- </center>
+                                                            <img class="resize" src="{%static 'image/legend2.png'%}"alt="" >
+                                                            </center>  
+                                                              
        </div> 
                
 
@@ -1137,26 +1142,26 @@ return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe 
    <br>
 
  
-<h6 class="tab"> *Residue-level evidence is checked  &#9989; if there is structurally resolved evidence at the residue level of the interaction. In that case, The exon contains residues that lie on that PPI interface.  </h6 class> 
+<h6 > *Residue-level evidence is checked  &#9989; if there is structurally resolved evidence at the residue level of the interaction. In that case, The exon contains residues that lie on that PPI interface.  </h6 class> 
 
 
      {% endif %}
-      <br><br>
-
+    
  {% if  dis3 %}
-
-  
-         
-                     <h2 class="font-weight-light" > The annotation of the exon in the structural context</h2>
-            
+ 
                {% if  dis3 and not dis %}
-      <h4 class="tab">     The selected exon does not code for any known Pfam domain, but residue-level annotation of the exon exist  </h4 class>
+      <h5 class>     The selected exon does not code for any known Pfam domain, but residue-level annotation of the exon exist.  </h5 class>
     
 
-   <br><br>
+ 
      {% endif %}
+  
+           <br> 
+                     <h2 class="font-weight-light"> The annotation of the exon in the structural context</h2>
             
-            <h5 class="tab" style="text-align: left;">  The exon region codes the amino acid residues  at the interface of the following Protein-Protein Interactions. </h5 class>
+
+            
+            <h5 style="text-align: left;">  The exon   contains residues that lie on the PPI interface of the following protein-protein interactions. </h5 class>
 
         <br>
        <center>
@@ -1172,7 +1177,7 @@ return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe 
      {% endif %}          
               <a href="{% get_media_prefix %}table/{{exon_ID|safe }}_interface.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
        </center>
-        <br><br>
+        <br><br> <br><br>
          
  {% endif %}   
       
@@ -1188,7 +1193,7 @@ return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe 
 
      <h2 class="font-weight-light"> Proteins that use this exon </h2>
      
-       <h5 class="tab2">Select a protein from  the following table go to its page. </h5 class>     
+       <h5>Select a protein from  the following table go to its page. </h5 class>     
      <center>
        
       <br><br>  
@@ -1204,7 +1209,7 @@ return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe 
         {% endautoescape %}
   </h6 class>  
           </center>  
-           <div style="height:490px"></div>   
+        
    </div>
             </div>
             <!-- /.col-lg-9 -->

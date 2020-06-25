@@ -119,7 +119,7 @@ def expand_table(table,unique_domains,entrezID)   :
     
     
     #number of domains with known interactions
-    table["Pfam known interactions"]=np.zeros(table.shape[0])
+    table["Interactions mediated by the domain"]=np.zeros(table.shape[0])
     Text_nodes={}
     text_edges={}
     for domain in unique_domains:
@@ -130,7 +130,7 @@ def expand_table(table,unique_domains,entrezID)   :
             nodes,edges,degree=vis_node(Graph,node)
             
             filters=table['Pfam ID'].isin([domain])
-            table.at[filters,"Pfam known interactions"]=degree
+            table.at[filters,"Interactions mediated by the domain"]=degree
             Text_nodes[domain]=nodes
             text_edges[domain]=edges
          
@@ -254,13 +254,13 @@ def input_transcript(Ensemble_transID):
     domains=domains.sort_values(['Exon rank in transcript', 'Pfam start'], ascending=[True, True])
     
     #Link to visualize the network
-    domains["Link to other Databases"]=""
+    domains["Link to other databases"]=""
     h=reverse('home')+"graph/"
     h2='target="'
     h3='_blank"'
-    df_filter =domains['Pfam known interactions']!=0
+    df_filter =domains['Interactions mediated by the domain']!=0
     
-    domains.at[df_filter,"Link to other Databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
+    domains.at[df_filter,"Link to other databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
     
     #domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+domains['Pfam ID']+'">'+gene_name+'-'+domains['Pfam ID']+'</a>'
     
@@ -277,7 +277,7 @@ def input_transcript(Ensemble_transID):
     droped1=droped1.rename(columns={"Pfam ID": "Corresponding domain ID","Exon stable ID": "<center>Exon  ID</center>",
     "Exon rank in transcript_x":'Exon rank in transcript'})
  
-    droped1=droped1.drop(columns=['CDS start','CDS end','Pfam start','Pfam end',"Link to other Databases","Pfam known interactions",'Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end",'Exon rank in transcript_y'])
+    droped1=droped1.drop(columns=['CDS start','CDS end','Pfam start','Pfam end',"Link to other databases","Interactions mediated by the domain",'Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end",'Exon rank in transcript_y'])
     
 
     
@@ -298,10 +298,10 @@ def input_transcript(Ensemble_transID):
     droped1["Exon rank in transcript"]='<center>'+droped1["Exon rank in transcript"].astype(str)+'</center>'
     
     droped1["Number of interaction interface mapped to the exon"]='<center>'+droped1["Number of interaction interface mapped to the exon"].astype(str)+'</center>'
-    droped2["Pfam known interactions"]='<center>'+droped2["Pfam known interactions"].astype(int).astype(str)+'</center>'
-    droped2["Link to other Databases"]='<center>'+droped2["Link to other Databases"]+'</center>'
+    droped2["Interactions mediated by the domain"]='<center>'+droped2["Interactions mediated by the domain"].astype(int).astype(str)+'</center>'
+    #droped2["Link to other Databases"]='<center>'+droped2["Link to other Databases"]+'</center>'
     
-    droped2=droped2.rename(columns={"Pfam known interactions":"Interactions mediated by the domain"})
+    droped2=droped2.rename(columns={"Interactions mediated by the domain":"Interactions mediated by the domain"})
     
     
     return domains,unique_domains,exons,text1,domains.to_html(escape=False),Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1.to_html(escape=False, index=False),droped2.to_html(escape=False, index=False),exons_in_interface,co_partners

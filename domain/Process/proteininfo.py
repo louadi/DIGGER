@@ -68,7 +68,7 @@ def Visualize_transciript(exon_table,domain_table,exons_in_interface):
                 features1.append(
                     GraphicFeature(ax=1,start=st/3, end=e/3, color="#FF9200",label=str(rank)))
                 fend=e/3
-    domain_table=domain_table[["Pfam ID","Pfam start","Pfam end","Pfam known interactions"]]
+    domain_table=domain_table[["Pfam ID","Pfam start","Pfam end","Interactions mediated by the domain"]]
     domain_table=domain_table.drop_duplicates()
     for st,e,i in zip(domain_table["Pfam start"],domain_table["Pfam end"],domain_table["Pfam ID"]):
         if not np.isnan(st):
