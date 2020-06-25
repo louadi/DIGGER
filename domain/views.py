@@ -285,7 +285,7 @@ def transcript(request,P_id):
             
             pd_interaction.loc[pd_interaction["NCBI gene ID"].isin(co_partners),'Residue evidence']='<span>&#9733;</span>'
             
-            
+            pd_interaction=pd_interaction.sort_values('Protein name')
             pd_interaction['_']='&nbsp;Interaction &nbsp; with &nbsp;'+pd_interaction["Protein name"]+'&nbsp;&nbsp; ( Score '+pd_interaction["Score"].round(2).astype(str)+')&nbsp;&nbsp;'+pd_interaction['Residue evidence']+'&nbsp;&nbsp;'
             
 
@@ -300,14 +300,16 @@ def transcript(request,P_id):
             
             
             pd_interaction=pd_interaction.rename(columns={
-            "Selected Protein variant": "<center>Selected Protein variant</center>",
-            "Protein name": "<center>Partner Protein </center>", 
-            "NCBI gene ID": "<center>NCBI gene ID</center>", 
-            "Percentage of lost domain-domain interactions": "<center> % of missing DDIs</center>",
-            "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
-            "Lost DDIs": "<center>Missing Domain-Domain interactions</center>",
-            "Protein-protein interaction": "<center>Protein-protein interaction</center>"
+            "Selected Protein variant": "Selected Protein variant",
+            "Protein name": "Partner Protein", 
+            "NCBI gene ID": "NCBI gene ID", 
+            "Percentage of lost domain-domain interactions": " % of missing DDIs",
+            "Retained DDIs": "Retained Domain-Domain interactions", 
+            "Lost DDIs": "Missing Domain-Domain interactions",
+            "Protein-protein interaction": "Protein-protein interaction"
             })
+            
+            
             pd_interaction=pd_interaction.drop(columns=['_','switcher',"selector"]).to_html(escape=False, index=False)
             
     
