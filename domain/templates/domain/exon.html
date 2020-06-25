@@ -2,12 +2,202 @@
 {% load static %}
 
 {%block content %}
+
+    <style>
+        .list-group > .list-group > .list-group-item {
+            padding-left: 2.5rem;
+        }
+        
+        .tab-content > .tab-pane:not(.active) {
+            display: block;
+            height: 0;
+            overflow-y: hidden;
+        }
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 95%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+
+.myCheckbox input {
+  position: relative;
+  z-index: -9999;
+}
+
+.myCheckbox span {
+  width: 20px;
+  height: 20px;
+  display: block;
+  background: url("link_to_image");
+}
+
+.myCheckbox input:checked + span {
+  background: url("link_to_another_image");
+}
+
+
+
+
+
+
+
+.select-css {
+	display: block;
+	font-size: 16px;
+	font-family: sans-serif;
+	font-weight: 700;
+	color: #444;
+	line-height: 1.3;
+	padding: .6em 1.4em .5em .8em;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	border: 1px solid #aaa;
+	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+	border-radius: .5em;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: #fff;
+	background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+	  linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
+	background-repeat: no-repeat, repeat;
+	background-position: right .7em top 50%, 0 0;
+	background-size: .65em auto, 100%;
+}
+.select-css::-ms-expand {
+	display: none;
+}
+.select-css:hover {
+	border-color: #888;
+}
+.select-css:focus {
+	border-color: #aaa;
+	box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+	box-shadow: 0 0 0 3px -moz-mac-focusring;
+	color: #222;
+	outline: none;
+}
+.select-css option {
+	font-weight:normal;
+}
+  
+  
+  
+  /* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+	background-position: left .7em top 50%, 0 0;
+	padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+	color: graytext;
+	background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+	  linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
+}
+.select-css:disabled:hover, .select-css[aria-disabled=true] {
+	border-color: #aaa;
+}
+
+
+
+  
+  
+        
+        .wider-container {
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 576px) {
+            .wider-container {
+                max-width: 540px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .wider-container {
+                max-width: 720px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .wider-container {
+                max-width: 960px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .wider-container {
+                max-width: 1140px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .wider-container {
+                max-width: 1370px;
+            }
+        }
+
+        @media (min-width: 1920px) {
+            .wider-container {
+                max-width: 1820px;
+            }
+        }
+
+    </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <style type="text/css">
     #mynetwork {
-      width: 800px;
-      height: 540px;
+             position:relative;
+      width: 1000px;
+      height: 840px;
       border: 2px solid lightgray;
     }
+    
+        #mynetwork2 {
+      width: 1000px;
+      height: 840px;
+      border: 2px solid lightgray;
+    }
+    
+           #mynetwork3 {
+      width: 1000px;
+      height: 500px;
+      border: 2px solid lightgray;
+    }
+    
+    
         img{
         max-width: 100%;
         max-height: 100%;
@@ -30,6 +220,15 @@
         height: 100px;
     }
     
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+     img.resize {
+    max-width: 1000px;
+    max-height: 90%;
+}
+    
   </style>
   
   
@@ -41,27 +240,82 @@
 
 	<title>  DIGGER | Exonic Region From The Gene {{ name|safe }}  </title>
 
-<div class="container">
-  <div class="card border-0 shadow my-5">
-    <div class="card-body p-3">
-    
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
+    <div class="wider-container pt-5">
+        <div class="row pt-5">
+                          <!-- Vertical pill selection menu-->
+                          <div class="col-lg-3">
+
+
+                              {#                <h3 class="my-4">View selection</h3>#}
+                              <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+
+                                     
+                                  <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-domain" role="tab"
+                                     aria-controls="v-pills-domain" aria-selected="true">DomainView</a>   
+                                     
+
+                                      {% if dis %}
+                                  <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
+                                     aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
+                                     
+
+
+                                          {% endif %}
+                                          
+                                                {% if dis or dis3 %}
+                                  <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction" role="tab"
+                                     aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>   
+                                     
+                                    
+                                     
+                                       {% endif %}
+
+                                     
+
+                                     
+                                     
+                                  <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
+                                     role="tab"
+                                     aria-controls="v-pills-interaction" aria-selected="false">Proteins that use this exon</a>
+                                     
+                      
+                                     
+                              </div>
+                          </div>
+
+
+
+ <div class="col-lg-9">
+                <div class="tab-content" id="v-pills-tabContent">
+                
+                
+ <h1 class="font-weight-light"> Exon Information </h1>
+<br>
+<h5 class="lead"> <span style="font-weight:bold"> Exon ID</span>: {{exon_ID|safe }}  </h5 class>  
+<h5 class="lead"> <span style="font-weight:bold"> Gene name </span>: {{ name|safe }} </h5 class>  
+
+<h5 class="lead">   <span style="font-weight:bold">NCBI gene ID </span>:   <a href="https://www.ncbi.nlm.nih.gov/gene/{{entrezID|safe }}"target="_blank">{{entrezID|safe }} </a>       </h5 class> 
+<h5 class="lead"> <span style="font-weight:bold">Ensembl gene ID</span> :  <a href="https://www.ensembl.org/id/{{gID|safe }}"target="_blank"> {{gID|safe }} </a>   </h5 class> 
+
+
+<br><br>
+
+
+
+
+                    <!-- DomainView content -->
+  <div class="tab-pane fade show active" id="v-pills-domain" role="tabpanel" aria-labelledby="v-pills-domain-tab">
           
-              <br><br>
-      <h2 class="font-weight-light"> Exon Information </h2>
-      <br>
-       <h5 class="lead"> <span style="font-weight:bold"> Exon ID</span>: {{exon_ID|safe }}  </h5 class>  
-      <h5 class="lead"> <span style="font-weight:bold"> Gene name </span>: {{ name|safe }} </h5 class>  
-      
-      <h5 class="lead">   <span style="font-weight:bold">NCBI gene ID </span>:   <a href="https://www.ncbi.nlm.nih.gov/gene/{{entrezID|safe }}"target="_blank">{{entrezID|safe }} </a>       </h5 class> 
-      <h5 class="lead"> <span style="font-weight:bold">Ensembl gene ID</span> :  <a href="https://www.ensembl.org/id/{{gID|safe }}"target="_blank"> {{gID|safe }} </a>   </h5 class> 
-      
-      
-      <br><br>
+
       {% if not dis2 %}
-        <h2 class="font-weight-light"> DomainView </h2>
+        <h1 class="font-weight-light"> DomainView </h1>
               
-   <h5 class="tab2">A list of Pfam domains coded by the selected exon and a graphical visualization for their interactions is provided in this table. Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest from the following table to visualize affected interactions. </h5 class>     
+<h5 class>A list of Pfam domains coded by the selected exon and a graphical visualization for their interactions is provided in this view. Each domain is shown only once, and all proteins containing the domain are linked to this domain node. Select your domain of interest to visualize affected interactions. </h5 class>     
+   
+   
      <center>
        
          <br><br>  
@@ -75,51 +329,48 @@
 
          </h5 class>  
           </center>  
-       {% if not dis %}
-        <br> 
- <h5 class="tab">    The  domains coded by selected exon do not have any known interactions from the available database.  </h5 class>
+<br><br> 
+{% if  dis %}
+  <h5 class=="lead">  Select a Pfam domain ID </h5 class> 
+<label>
 
-     {% endif %}
-      {% endif %}
-              
-           {% if dis2 %}
-            <br> 
-           <h4 class="tab">     The selected exon does not code for any known Pfam domain  </h4 class>
-      {% endif %}
-      
-         {% if dis %}
-         
-                  <style type="text/css">
-    #mynetwork {
-      width: 1050px;
-      height: 800px;
-      border: 2px solid lightgray;
-    }
-  </style>
+  <select id="nodeFilterSelect2"  class="select-css"  onchange="myFunction()">
   
-  
-  
-                     <br /><br> <br> 
-            <h2 class="font-weight-light"> ProteinView </h2>
-              
-            <h5 class="tab">   ProteinView provides a general visualization of the protein interaction and its domains interactions.  Proteins (circular nodes) are shown together with their domains (triangles) and domains-domains interactions.  </h5 class>
-           <h5 class="tab">    The interactions of the<span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions.  </h5 class>
-          
-             
-           
-            <br>
+  <optgroup label="Domains of the exon">
+                {% for s in switch1 %}
+                    {{ s|safe }}
+                {% endfor %}
+            </optgroup>
+  </select>
+</label>
+     
+<p id="demo"></p>
+<script>
+function myFunction() {
+  var x = document.getElementById("nodeFilterSelect2").value;
+  document.getElementById("demo").innerHTML = ' <h5 class="lead">   <span style="font-weight:bold"> You Selected: </span>'+x+'   </h5 class>'
+
+  ;
+}
+</script>
 
   
+   
+   <div>  
+   <h5>                                         
+<label for="test"><h4>Disable physics &nbsp;</h4> </label>
+<label class="myCheckbox">
+  <input id='checkbox2' type="checkbox" name="checkbox2">
+
+</label>
+</h5> 
+ </div>  
          
-         <center>   
-            
-        <div id="mynetwork"></div>
+    <center>     
+<div id="mynetwork2"></div>
           <script type="text/javascript">
-          
-        
-          
-                  var PR_LENGTH = 500,
-                  LENGTH_domain = 20,
+                  var L1 = 300,
+                  L2 = 30,
                   PR_DM= 400,
                   LENGTH_SUB = 50,
                   WIDTH_SCALE = 2,
@@ -127,57 +378,58 @@
                   RED = "#C5000B",
                   //ORANGE = "orange",
                   YELLOW= "orange",
-                  WHITE = "#FFFFFF00"
+                  WHITE = "EED5EB"
                   //GRAY = '#666666',
                   GRAY = "gray",
                   BLACK = "#2B1B17";
-
+          
+               
                // create an array with nodes
-                var nodes = new vis.DataSet([
-
-                {% for node in pv_nodes %}
-                    {{ node|safe }}
+                var nodes2 = new vis.DataSet([
+                
+                {% for node in Domainview_nodes %}
+                    {{  node|safe }}
                 {% endfor %}
                 
-
-
     ]);
               // create an array with edges
-              var edges = new vis.DataSet([
-              
-                {% for edge in pv_edges %}
+              var edges2 = new vis.DataSet([
+
+                {% for edge in Domainview_edges %}
                     {{ edge|safe }}
                 {% endfor %}
-
                 ]);
-                
-                
+   
+   
+   
+              const nodeFilterSelector2 = document.getElementById("nodeFilterSelect2");     
 
    
-                
-                
-           const nodeFilterSelector = document.getElementById("nodeFilterSelect");     
-           
-           
             // create a network
-            var container = document.getElementById('mynetwork');
-            var data = {
-              nodes: nodes,
-              edges: edges
+            var container2 = document.getElementById('mynetwork2');
+            var data2 = {
+              nodes2: nodes2,
+              edges2: edges2
             };
             
             
-            var options = {
+            
+            
+            
+  var options2 = {
 
-               physics: {
+                      
+                      interaction: {
+          navigationButtons: true,
+          
+        }  ,
+   
+      physics: {
                     barnesHut: { gravitationalConstant: -10000 },
-                    stabilization: { iterations: 2500 },
-                      avoidOverlap: 0.7
+                    stabilization: { iterations: 15 },
+                    
                   },
-                           
-    
-    
-    
+   
                 nodes: {
                   scaling: {
                     min: 16,
@@ -202,51 +454,367 @@
                   },
                   
                   
-                  domain: {
+                  Domain: {
                     shape: "triangle",
                     color: "#2B7CE9" // blue
                   },
                   
                   
 
-                  transcript: {
-                    shape: "square",
+                  MDomain: {
+                    shape: "triangle",
                     color: "#109618" // green
                   }
                 }
               };
                 
-              function startNetwork(data) {
+                
+                
+                   
+               
+              var checkbox2 = document.querySelector("input[name=checkbox2]"); 
+               
+               
+              function startNetwork(data2) {
 
-                new vis.Network(container, data, options);
-              }
+                  var network2=new vis.Network(container2, data2, options2);
+                
+                 checkbox2.addEventListener( 'change', function() {
+                                                          if(this.checked) {
+                                                                           network2.setOptions( { physics: false } );
+                                                            } else {              
+                                                               network2.setOptions( { physics: true } );
+                                                               
+                                                                 }
+                                                                });
+                                                                
+                                                                
+                nodeFilterSelector2.addEventListener("change", e => {
+                                                                  
+                                                     network2.setOptions( { physics: true } );
+                                                     if (document.getElementById('checkbox2').checked) {   
+                                                                         
+                                                                          setTimeout(function(){
+                                                                                  network2.setOptions( { physics: false } );
+                                                                              }, 10000);
+                                                                          
+                                                                 
+                                                                  }
+                                                                  
+                                                                  });
+                    
+                    
+                    };
+
+
+              let nodeFilterValue2 = "";
+
+               
+               
+                  const nodesFilter2 = node => {
+                    if (nodeFilterValue2 === "") {
+                     return node.source ===  "{{ first_domain|safe}}";
+                    }
+                    switch (nodeFilterValue2) {
+                        
+                                {% for s in switch2 %}
+                                    {{ s|safe }}
+                                {% endfor %}   
+
+                      default:
+                        return true;
+                    }
+                  };
+                                   
+
+
+
+
+
+
+                const nodesView2 = new vis.DataView(nodes2, { filter: nodesFilter2 });
+        
+                
+                nodeFilterSelector2.addEventListener("change", e => {
+                  // set new value to filter variable
+                  nodeFilterValue2 = e.target.value;
+                  /*
+                        refresh DataView,
+                        so that its filter function is re-calculated with the new variable
+                      */
+                  nodesView2.refresh();
+                  
+  
+                    
+                    
+                   
+              
+                
+                });
+
+
+
+
+
+
+        startNetwork({ nodes: nodesView2, edges: edges2 });     
+       
+       
+       
+            
+          </script>
+            </center>                    
+
+
+
+
+
+{% endif %}
+
+
+
+
+
+
+       {% if not dis %}
+        <br> 
+ <h5 class=>    The  domains coded by selected exon do not have any known interactions from the available database.  </h5 class>
+<div style="height: 30px"></div>   
+     {% endif %}
+      {% endif %}
+              
+              
+              
+              
+              
+           {% if dis2 %}
+            <br> 
+           <h4>     The selected exon does not code for any known Pfam domain  </h4 class>
+
+<div style="height: 30px"></div>
+
+      {% endif %}
+      
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="tab-pane fade " id="v-pills-protein" role="tabpanel"  aria-labelledby="v-pills-protein-tab">
+
+         {% if dis %}
+              <h1 class="font-weight-light"> ProteinView </h1>   
+         
+{% if enable_Proteinview %}
+
+<h5 class="tab1">  ProteinView is not available for this protein because of its high number of partners in the PPI. check InteractionView or DomainView.</h5 class>
+
+
+
+
+
+{% endif %}     
+
+{% if not enable_Proteinview %}
+                  
+    
+              
+            <h5 class>   ProteinView provides a general visualization of the protein interactions and its domains interactions.  Proteins (circular nodes) are shown together with their domains (triangles) and domains-domains interactions.  The interactions of the<span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions.  </h5 class>
+          
+           
+            <br>
+
+  
+         
+      
+            
+  <div>                                           
+<label for="test"><h4>Disable physics &nbsp;</h4></label>
+<label class="myCheckbox">
+  <input id='checkbox' type="checkbox" name="checkbox">
+
+</label>
+
+ </div>  
+                                                     
+                                                         <center>  
+
+                                                        <div id="mynetwork"></div>
+                                                       
+                                                          <script type="text/javascript">
+
+                                                                  var PR_LENGTH = 500,
+                                                                  LENGTH_domain = 20,
+                                                                  PR_DM= 400,
+                                                                  LENGTH_SUB = 50,
+                                                                  WIDTH_SCALE = 2,
+                                                                  GREEN = "green",
+                                                                  RED = "#C5000B",
+                                                                  //ORANGE = "orange",
+                                                                  YELLOW= "orange",
+                                                                  WHITE = "EED5EB"
+                                                                  //GRAY = '#666666',
+                                                                  GRAY = "gray",
+                                                                  BLACK = "#2B1B17";
+                                                                  missing= '#C70039';
+                                                                  Residue= '#85929E ';
+                                                               // create an array with nodes
+                                                                var nodes = new vis.DataSet([
+                                                
+                                                                {% for node in pv_nodes %}
+                                                                    {{ node|safe }}
+                                                                {% endfor %}
+                                                                
+                                                
+                                                
+                                                    ]);
+                                                              // create an array with edges
+                                                              var edges = new vis.DataSet([
+                                                              
+                                                                {% for edge in pv_edges %}
+                                                                    {{ edge|safe }}
+                                                                {% endfor %}
+                                                
+                                                                ]);
+                                                                
+                                                                
+                                                
+                                                   
+                                                                
+                                                                
+                                                             
+                                                           
+                                                           
+                                                            // create a network
+                                                            var container = document.getElementById('mynetwork');
+                                                            var data = {
+                                                              nodes: nodes,
+                                                              edges: edges
+                                                            };
+                                                             
+                                                            
+                                                            var options = {
+ 
+                                                                            
+                      interaction: {
+          navigationButtons: true,
+          
+        },  
+                                                               physics: {
+                                                               enabled: true,
+                                                                    barnesHut: { gravitationalConstant: -10000 },
+                                                                    stabilization: { iterations: 20 },
+                                                                  },
+                                                                           
+                                                    
+                                                    
+                                                    
+                                                                nodes: {
+                                                                  scaling: {
+                                                                    min: 16,
+                                                                    max: 32
+                                                                  }
+                                                                },
+                                                                edges: {
+                                                                  color: WHITE,
+                                                                  smooth: false,
+                                                
+                                                                },
+                                                
+                                                 
+                                                                groups: {
+                                                                  protein: {
+                                                                    shape: "dot",
+                                                                    color: GRAY, // orange
+                                                                   font:
+                                                                  {
+                                                                  size: 18, // px
+                                                                  }
+                                                                  },
+                                                                  
+                                                                  
+                                                                  domain: {
+                                                                    shape: "triangle",
+                                                                    color: "#2B7CE9" // blue
+                                                                  },
+                                                                  
+                                                                  
+                                                
+                                                                  transcript: {
+                                                                    shape: "square",
+                                                                    color: "#109618" // green
+                                                                  }
+                                                                }
+                                                              };
+                                                                
+
+                                                              
+                                                
+                                                        
+                                                        
+                                                        
+                                                        let nodeFilterValue = "";
+                                                        
+                                                const nodeFilterSelector = document.getElementById("nodeFilterSelect");     
+           
+                                                        
+                                                        
+                                                        
+                                                        
+                                                     
+                                                
+                                                                 
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                
+                                                        
+                                                                
+                                                 
+                                                                
+                                                                
+                                                                
+                                                       
+
+
+var checkbox = document.querySelector("input[name=checkbox]");
+                                                   
+                                                    function startNetwork(data) {
+                                                
+                                                 var network=new vis.Network(container, data, options) ;
+                                                               
+                
+                                           checkbox.addEventListener( 'change', function() {
+                                                if(this.checked) {
+                                                                 network.setOptions( { physics: false } );
+                                                  } else {              
+                                                     network.setOptions( { physics: true } );
+                                                     
+                                                       }
+                                                      });
+                                                      
+                                                      
+                                        
               
 
-        
-        
-        
-        
-        let nodeFilterValue = "";
-
-        
-        
-        
-        
-        const nodesFilter = node => {
+                                              
+                                               }
+                       const nodesFilter = node => {
                 if (nodeFilterValue === "") {
                   return node.source === "DDI"; 
                 }
-                switch (nodeFilterValue) {
-
-                  case "PPI-DDI":
-                    return  node.source === "DDI" ;
-                  
-                   case "PPI":
-                    return node.group === "protein";                
-                  
-                  default:
-                    return true;
-                }
+                
               };
 
                  
@@ -267,26 +835,292 @@
 
         startNetwork({ nodes: nodesView, edges: edges });
 
+                                                
+                                                        
+                                                        
+                                                          </script>
+
+                                                               <img class="resize" src="{%static 'image/legend2.png'%}"alt="" >
+                                                            </center>  
+                                                              
+                                                      
+                                                 
+                                                    
+                                                      
+                                                          <br />
+                                                
+                                                
+                                                
+                                                {% endif %}
+                                            
+          {% endif %}                                             
+ </div>
+
+       
+
          
-         
-         
-         
-           </script>
-            </center>  
-         <br>  
-         
-          <h5 class="tab">  You can move the protein and domain nodes as you wish for a better view. Notice that the generated network in this view can be very big or difficult to visualize. In that case, <span style="font-weight:bold"> DomainView </span> or <span style="font-weight:bold"> InteractionView </span>  can provide better visualization. </h5 class>
-         
-            <br><br>
-         
-                     <h2 class="font-weight-light" > InteractionView </h2>
+
+
+
+
+
+
+
+                    <!-- InteractionView content -->
+<div class="tab-pane fade" id="v-pills-interaction" role="tabpanel"
+                         aria-labelledby="v-pills-interaction-tab">
+                     
+
+                                             {% if dis %}
+                                        
+
+                     <h1 class="font-weight-light" > InteractionView </h1>
             
             
             
-            <h5 class="tab" style="text-align: left;">  InteractionView provides interactive visualization and an analysis of the effect of the spliced region for every interacted protein individually. </h5 class>
-            
- <h5 class="tab">    The interactions of the <span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions. You can select a protein partner to visualize it in a new tab.</h5 class>
+<h5  style="text-align: left;">  InteractionView provides interactive visualization and an analysis of the effect of the spliced region for every interaction individually. The interactions of the <span style="font-weight:bold"> spliced domains </span>  are shown in <span style="font-weight:bold">dashed edges</span>  to illustrate the effect of splicing in these interactions. </h5 class>
  
+ <br><br>
+  <h5 class=="lead"> Select a partner protein </h5 class> 
+
+              <h6> 
+<label>
+<select id="nodeFilterSelect3"  class="select-css">
+            {% for s in Interactiveview_selec %}
+                    {{ s|safe }}
+                {% endfor %}
+
+</select>
+</label>
+</h6 class>  
+  
+   
+   <div>                                           
+<label for="test"><h4>Disable physics &nbsp;</h4> </label>
+<label class="myCheckbox">
+  <input id='checkbox3' type="checkbox" name="checkbox3">
+</label>
+
+
+              
+                 <center>  
+                                                        <div id="mynetwork3"></div>
+                                                       
+                                                       
+                                                          <script type="text/javascript">
+
+                                                                  var PR_LENGTH = 500,
+                                                                  LENGTH_domain = 20,
+                                                                  PR_DM= 400,
+                                                                  LENGTH_SUB = 50,
+                                                                  WIDTH_SCALE = 2,
+                                                                  GREEN = "green",
+                                                                  RED = "#C5000B",
+                                                                  //ORANGE = "orange",
+                                                                  YELLOW= "orange",
+                                                                  WHITE = "EED5EB"
+                                                                  //GRAY = '#666666',
+                                                                  GRAY = "gray",
+                                                                  BLACK = "#2B1B17";
+                                                                  missing= '#C70039';
+                                                                  Residue= '#85929E';
+                                                                  
+
+                                                           var nodes3 = new vis.DataSet([
+                                                
+                                                                {% for node in pv_nodes %}
+                                                                    {{ node|safe }}
+                                                                {% endfor %}
+                                                                
+                                                
+                                                
+                                                    ]);
+                                                              // create an array with edges
+                                                              var edges3 = new vis.DataSet([
+                                                              
+                                                                {% for edge in pv_edges %}
+                                                                    {{ edge|safe }}
+                                                                {% endfor %}
+                                                
+                                                                ]);
+                                                                
+                                                                
+                                                
+                                                   
+                                                
+                                                   
+                                                                
+                                                                
+                                                           const nodeFilterSelector3 = document.getElementById("nodeFilterSelect3");     
+                                                           
+                                                           
+                                                            // create a network
+                                                            var container3 = document.getElementById('mynetwork3');
+                                                            var data3 = {
+                                                              nodes3: nodes3,
+                                                              edges3: edges3
+                                                            };
+                                                             
+                                                            
+                                                            var options3 = {
+ 
+                                                                            
+                                                                interaction: {
+                                                    navigationButtons: true,
+                                                    
+                                                  },  
+                                                               physics: {
+                                                               enabled: true,
+                                                                    barnesHut: { gravitationalConstant: -10000 },
+                                                                    stabilization: { iterations: 20 },
+                                                                  },
+                                                                           
+                                                    
+                                                    
+                                                    
+                                                                nodes: {
+                                                                  scaling: {
+                                                                    min: 16,
+                                                                    max: 32
+                                                                  }
+                                                                },
+                                                                edges: {
+                                                                  color: WHITE,
+                                                                  smooth: false,
+                                                
+                                                                },
+                                                
+                                                 
+                                                                groups: {
+                                                                  protein: {
+                                                                    shape: "dot",
+                                                                    color: GRAY, // orange
+                                                                   font:
+                                                                  {
+                                                                  size: 18, // px
+                                                                  }
+                                                                  },
+                                                                  
+                                                                  
+                                                                  domain: {
+                                                                    shape: "triangle",
+                                                                    color: "#2B7CE9" // blue
+                                                                  },
+                                                                  
+                                                                  
+                                                
+                                                                  transcript: {
+                                                                    shape: "square",
+                                                                    color: "#109618" // green
+                                                                  }
+                                                                }
+                                                              };
+                                                                
+
+                                                              
+                                                
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        let nodeFilterValue3 = "";
+                                                
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        const nodesFilter3= node => {
+                                                                if (nodeFilterValue3 === "") {
+return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe }}") || (node.origin === "{{ first_vict|safe }}")  ||(node.origin === "{{ entrezID|safe }}")  ; 
+                                                                }
+                                                                switch (nodeFilterValue3) {
+                                                                                          
+                                                                          {% for s in Interactiveview_switch %}
+                                                                              {{ s|safe }}
+                                                                          {% endfor %}   
+                                                                          
+                                                                          
+                                                                          
+                                                                  default:
+                                                                    return true;
+                                                                }
+                                                              };
+                                                
+                                                                 
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                const nodesView3 = new vis.DataView(nodes3, { filter: nodesFilter3});
+                                                        
+                                                                
+                                                                nodeFilterSelector3.addEventListener("change", e => {
+                                                                  // set new value to filter variable
+                                                                  nodeFilterValue3 = e.target.value;
+                                                                  /*
+                                                                        refresh DataView,
+                                                                        so that its filter function is re-calculated with the new variable
+                                                                      */
+                                                                  nodesView3.refresh();
+                                                          
+
+
+                                                                });
+                                                                
+                                                                
+                                                                
+                                                       
+
+                                                   
+                                                    function startNetwork(data3) {
+                                                
+                                                 var network3=new vis.Network(container3, data3, options3) ;
+                                                               
+                                                  network3.fit()
+              
+                               checkbox3.addEventListener( 'change', function() {
+                                                          if(this.checked) {
+                                                                           network3.setOptions( { physics: false } );
+                                                            } else {              
+                                                               network3.setOptions( { physics: true } );
+                                                               network3.fit()
+                                                                 }
+                                                                });
+                                                                
+                                                                
+                nodeFilterSelector3.addEventListener("change", e => {
+                                                                  
+                                                     network3.setOptions( { physics: true } );
+                                                     if (document.getElementById('checkbox3').checked) {   
+                                                                         
+                                                                          setTimeout(function(){
+                                                                                  network3.setOptions( { physics: false } );
+                                                                              }, 2500);
+                                                                          network3.fit()
+                                                                 
+                                                                  }
+                                                                  
+                                                                  });
+              
+              
+              
+              
+                                              
+                                               }
+               
+                                                
+                                                        startNetwork({ nodes: nodesView3, edges: edges3 });
+                           
+                                                        
+                                                          </script>
+
+                                                            <img class="resize" src="{%static 'image/legend2.png'%}"alt="" >
+                                                            </center>  
+                                                              
+       </div> 
+               
+
 <br />
           
        <center>
@@ -301,22 +1135,33 @@
       <br>
       
       <a href="{% get_media_prefix %}table/{{exon_ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
-         {% endif %}
+        
       
         </center>
  
-   <br><br>
+   <br>
+
  
- 
+<h6 > *Residue-level evidence is checked  &#9989; if there is structurally resolved evidence at the residue level of the interaction. In that case, The exon contains residues that lie on that PPI interface.  </h6 class> 
+
+
+     {% endif %}
+    
  {% if  dis3 %}
-      
  
-         
-                     <h2 class="font-weight-light" > The annotation of the exon in the structural context</h2>
+               {% if  dis3 and not dis %}
+      <h5 class>     The selected exon does not code for any known Pfam domain, but residue-level annotation of the exon exist.  </h5 class>
+    
+
+ 
+     {% endif %}
+  
+           <br> 
+                     <h2 class="font-weight-light"> The annotation of the exon in the structural context</h2>
             
-         
+
             
-            <h5 class="tab" style="text-align: left;">  The exon region codes the amino acid residues  at the interface of the following Protein-Protein Interactions. </h5 class>
+            <h5 style="text-align: left;">  The exon   contains residues that lie on the PPI interface of the following protein-protein interactions. </h5 class>
 
         <br>
        <center>
@@ -327,23 +1172,28 @@
         {% endautoescape %}
       </h5 class>
        
-{% if  long_table %}
+    {% if  long_table %}
         <h6 class="font-weight-light">This an overview of the table. You can download the full table with the specific interacting variants from this link.</h6>
- {% endif %}          
+     {% endif %}          
               <a href="{% get_media_prefix %}table/{{exon_ID|safe }}_interface.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
        </center>
-        <br><br>
+        <br><br> <br><br>
          
  {% endif %}   
       
       
       
       
-               
+  </div>
+
+
+                                   <!-- Compare with other isoforms content -->
+                    <div class="tab-pane fade" id="v-pills-compare" role="tabpanel"
+                         aria-labelledby="v-pills-compare-tab">
 
      <h2 class="font-weight-light"> Proteins that use this exon </h2>
      
-       <h5 class="tab2">Select a protein from  the following table to visualize  Proteins-Domains Interactions simultaneously and to compare with the other isoforms. </h5 class>     
+       <h5>Select a protein from  the following table go to its page. </h5 class>     
      <center>
        
       <br><br>  
@@ -351,15 +1201,21 @@
      
      
       <p class="lead"> <span style="font-weight:bold">The selected exon region is translated  in the following proteins </span>  </p> 
-          
-       <h5 class >   
+         
+       <h6 class >   
        
       {% autoescape off %}
          {{ tb1 }}
         {% endautoescape %}
-  </h5 class>  
+  </h6 class>  
           </center>  
-          
+        
+   </div>
+            </div>
+            <!-- /.col-lg-9 -->
 
+     
+      </div>   
+</div>
 
 {% endblock content %}

@@ -17,7 +17,7 @@ def int_view(P_id,P2_id):
     
     if P_id[0]=='E':
                   
-                  domains,unique_domains,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID=info.get_protein_info2(P_id)
+                  domains,unique_domains,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,co_partners=info.get_protein_info2(P_id)
                   
                                  
                   
@@ -69,7 +69,7 @@ def int_view(P_id,P2_id):
               
                   
                   
-                  nodes,edges,_=vis_interaction_(g,entrezID,protein_with_DDI,tran_name,missing_domain,P2_id)
+                  nodes,edges,_=vis_interaction_(g,entrezID,protein_with_DDI,tran_name,missing_domain,P2_id,co_partners)
               
                   
                   
@@ -206,7 +206,7 @@ def int_view(P_id,P2_id):
 
 
 
-def vis_interaction_(g,entrezID,protein_with_DDI,tran_name,missing_domain,p2):
+def vis_interaction_(g,entrezID,protein_with_DDI,tran_name,missing_domain,p2,co_partners):
 
     N=[]
     E=[]
@@ -225,16 +225,21 @@ def vis_interaction_(g,entrezID,protein_with_DDI,tran_name,missing_domain,p2):
     
                         
             else:
+                        color=''
+                        if node in missing_domain:  color='color: missing,'
                         label=tr.node_label(node,entrezID,tran_name)
-                        N.append("{id: \""+node+"\", label:  \""+label+"\", group:  \""+tr.group_node(node,entrezID)+"\", physics:"+tr.physics(node,entrezID)+
+                        
+                        N.append("{id: \""+node+"\", label:  \""+label+"\", "+color+"group:  \""+tr.group_node(node,entrezID)+"\", physics:"+tr.physics(node,entrezID)+
                                  ", source:  \""+tr.source_node(node,entrezID,protein_with_DDI)+"\", value:  \""+tr.value_node(node,entrezID)+"\"},")
+                        
+
 
     for e in g.edges():
         gene1=e[0].split('/')[0]
         gene2=e[1].split('/')[0]
         
         if all(x in [entrezID,p2] for x in [gene1,gene2]):
-            E.append("{from: \""+e[0]+"\", to: \""+e[1]+"\", dashes:  "+tr.edge_dashes(e,entrezID,missing_domain)[0]+","+tr.edge_option(e,entrezID)+"},")      
+            E.append("{from: \""+e[0]+"\", to: \""+e[1]+"\", dashes:  "+tr.edge_dashes(e,entrezID,missing_domain)[0]+","+tr.edge_option(e,entrezID,co_partners)+"},")      
 
     return N,E,len(g)-1
 

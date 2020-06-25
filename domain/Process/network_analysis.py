@@ -6,7 +6,7 @@ from domain.Process import exonstodomain as exd
 from domain.Process import process_data as pr
 import pandas as pd
 import numpy as np
-
+import networkx as nx
 from django.urls import reverse
 
 
@@ -192,7 +192,7 @@ def Construct_network(proteins_id, missing,job_ID):
           "Protein 1 name": "<center>Protein 1 name</center>",
           "Protein 2 name": "<center>Protein 2 name</center>", 
           "Source of the interaction": "<center>&emsp;Source of the interaction&emsp;</center>", 
-          "Score": "<center> Score</center>",
+          "Score": "<center> Score*</center>",
           "Retained DDIs": "<center>Retained Domain-Domain interactions</center>", 
           "Lost DDIs": "<center>Lost Domain-Domain interactions</center>",
           
@@ -207,14 +207,24 @@ def Construct_network(proteins_id, missing,job_ID):
       
       #Generate the network file (only edges and scores)
       pd_interaction=pd_interaction.rename(columns={
-          "Score": "Weight",
+          "Score": "weight",
           })
           
           
-      pd_interaction['Weight']=pd_interaction['Weight'].astype(float)     
-      pd_interaction.drop(columns=['Protein 1 name', 'Protein 2 name','Retained DDIs','Lost DDIs','Source of the interaction']).to_csv(f'{jobs_networks_path}/{job_ID}.sif', index=False,sep='\t')
+      pd_interaction['weight']=pd_interaction['weight'].astype(float)     
+      edges =pd_interaction.drop(columns=['Protein 1 name', 'Protein 2 name','Retained DDIs','Lost DDIs','Source of the interaction'])
+      edges.to_csv(f'{jobs_networks_path}/{job_ID}.sif', index=False,sep='\t')
       
+      edges=edges.rename(columns={"Protein 1": "source",
+       "Protein 2": "target",
+       
+       
+       })
+       
+      weighted_G=nx.from_pandas_edgelist(edges, edge_attr=True)
       
+      print(weighted_G.edges())
+      nx.write_graphml(weighted_G, f'{jobs_networks_path}/{job_ID}.graphml')  
       
       return nodes,E,pd_interaction,pd_html
 
