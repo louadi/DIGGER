@@ -186,19 +186,19 @@ def Protein_view(P_id):
                   
                   p=tdata["Pfam ID"].unique()
                   p = p[~pd.isnull(p)]
-                  
-                  pfams.append('&emsp;<center>'+' ; '.join(p)+'</center>&emsp;')
+                  p=sorted(p)
+                  pfams.append(' ; '.join(p))
           
           
           if ID!=[]:        
-            pd_isoforms=pd.DataFrame(list(zip(name, ID,pfams)), columns =['<center>Transcript name<center>', '<center>Transcript ID</center>','<center>Pfam domains<center>'])
-            pd_isoforms['length'] = pd_isoforms['<center>Pfam domains<center>'].str.len()
+            pd_isoforms=pd.DataFrame(list(zip(name, ID,pfams)), columns =['Transcript name', 'Transcript ID','Pfam domains'])
+            pd_isoforms['length'] = pd_isoforms['Pfam domains'].str.len()
             pd_isoforms.sort_values('length', ascending=False, inplace=True)
             pd_isoforms=pd_isoforms.drop(columns=['length'])
             
             h=reverse('home')+"ID/"
-            pd_isoforms["<center>Link</center>"]='<center>&emsp;'+'<a target="'+'_blank"href="'+h+pd_isoforms["<center>Transcript ID</center>"]+'">'+" (Visualize) "+'</a>'+'&emsp;</center>'
-            pd_isoforms["<center>Transcript ID</center>"]='<center>&emsp;'+pd_isoforms["<center>Transcript ID</center>"]+'&emsp;</center>'
+            pd_isoforms["Link"]='<a href="'+h+pd_isoforms["Transcript ID"]+'">'+" (Visualize) "+'</a>'
+            
             
             
             

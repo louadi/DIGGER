@@ -10,8 +10,9 @@
         
          <style type="text/css">
     #mynetwork {
-      width: 100%;
-      height: 1000px;
+             position:relative;
+      max-width: 100%;
+      height: 900px;
       border: 2px solid lightgray;
     }
    
@@ -31,10 +32,8 @@ td, th {
 tr:nth-child(even) {
   background-color: #dddddd;
   
-  
-  
-    
-    
+ 
+
     
   </style>
 
@@ -50,13 +49,14 @@ tr:nth-child(even) {
     
     
     <br /><br />
-    <h2 class="font-weight-light"> Statistics of the input data</h2 class>
+    
+    <h1 class="font-weight-light"> Statistics of the input data</h1 class>
    <h5 class="lead"> <span style="font-weight:bold"> Number of protein variants: </span> {{ isoforms_num|safe }} </h5 class>
    <h5 class="lead"> <span style="font-weight:bold"> Number of coding genes: </span>{{ genes_number|safe }} </h5 class>
     <h5 class="lead"> <span style="font-weight:bold"> Number of interacting proteins: </span> {{ interacted_nodes|safe }} </h5 class>
 
 <br />  <br />
-    <h2 class="font-weight-light"> Visualization of the subnetwork</h2 class>
+    <h1 class="font-weight-light"> Visualization of the subnetwork</h1 class>
 
       
    <div>                                           
@@ -69,7 +69,7 @@ tr:nth-child(even) {
  </div>       
       
   
-        
+          <center>
 
     <div id="mynetwork"></div>
   
@@ -169,18 +169,23 @@ var network = new vis.Network(container, data, options);
   
 
 </script>
+                                                                  
+                                                               <img  style='height: 80%; width: 80%; object-fit: contain' src="{%static 'image/legend 4.png'%}" alt="" >
+                                                             
+                                                            </center>  
+                                                              
+                                                      
 
-
-    <br>
+    <br>  <br>  <br><br>
        <center>
-        <h5 class="font-weight-light">Download the generated subnetwork with scored edges </h5>
+        <h4 class="font-weight-light">Download the generated subnetwork with scored edges </h4>
 <a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download (.SIF format)</a>
       <a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.graphml" class="btn btn-secondary px-4 py-2 btn-sm">Download (.GraphMl format)</a>
     </center>
     
 
       <br>   <br>  <br> <br>
-      <h2 class="font-weight-light">Interactions Table </h2>
+      <h1 class="font-weight-light">Interactions Table </h1>
      
         <br>
          <center>
@@ -205,7 +210,7 @@ var network = new vis.Network(container, data, options);
     
     
     
-<div style="height: 150px"></div>
+<div style="height: 50px"></div>
 
   
 </div>

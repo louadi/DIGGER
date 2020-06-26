@@ -171,21 +171,28 @@ tr:nth-child(even) {
 
 
   <style type="text/css">
+  
+  div {
+  text-align: justify;
+  text-justify: inter-word;
+}
     #mynetwork {
              position:relative;
-      width: 1000px;
+      max-width: 85%;
       height: 840px;
       border: 2px solid lightgray;
     }
     
         #mynetwork2 {
-      width: 1000px;
+        position:relative;
+      max-width: 85%;
       height: 840px;
       border: 2px solid lightgray;
     }
     
            #mynetwork3 {
-      width: 1000px;
+           position:relative;
+      max-width: 85%;
       height: 600px;
       border: 2px solid lightgray;
     }
@@ -219,10 +226,13 @@ img {
 }
     
  img.resize {
-    max-width: 1000px;
-    max-height: 90%;
+    max-width:80%;
+    max-height: 80%;
 }
-    
+  img.resize2 {
+    max-width: 55%;
+    max-height: 55%;
+}   
   </style>
 
 
@@ -312,13 +322,15 @@ img {
 
 <p class="lead"><span style="font-weight:bold">Domain and exon architecture </span></p>
 
-<div class="img">
+
 
 <img src="{% get_media_prefix %}images/{{ trID }}.png" >
-</div>
-
-
 <br>
+<img class="resize2" src="{%static 'image/legend 3.png'%}" >
+
+
+
+<br><br><br>
 
 
 <h6>
@@ -952,9 +964,9 @@ function myFunction() {
        
                                        
               
-            <h5 class="tab1" style="text-align: left;">  InteractionView provides an  interactive visualization of the interaction for the selected isoform with every partner individually. The interactions in the table are confirmed by both Protein-Protein Interactions (PPI) and Domain-Domain Interactions (DDI) networks. You can select the protein partner to visualize it. </h5 class>
-            
-
+            <h5 >  InteractionView provides an interactive visualization of isoform-specific interactions. The interactions in the table are confirmed by both Protein-Protein Interactions (PPI) and Domain-Domain Interactions (DDI) networks.  If residue-level evidence is available a <span>&#9733;</span> is sown in the table.  </h5 class>
+             <br /> 
+ <h5> You can select the protein partner to visualize it individually and download the isoform interactions table.</h5 class>
                                                     
       <br />
 

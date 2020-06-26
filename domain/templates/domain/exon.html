@@ -47,7 +47,10 @@ tr:nth-child(even) {
 }
 
 
-
+  div {
+  text-align: justify;
+  text-justify: inter-word;
+}
 
 
 
@@ -180,23 +183,24 @@ tr:nth-child(even) {
   <style type="text/css">
     #mynetwork {
              position:relative;
-      width: 1000px;
+      max-width: 85%;
       height: 840px;
       border: 2px solid lightgray;
     }
     
         #mynetwork2 {
-      width: 1000px;
+        position:relative;
+      max-width: 85%;
       height: 840px;
       border: 2px solid lightgray;
     }
     
            #mynetwork3 {
-      width: 1000px;
-      height: 500px;
+           position:relative;
+      max-width: 85%;
+      height: 600px;
       border: 2px solid lightgray;
     }
-    
     
         img{
         max-width: 100%;
@@ -224,9 +228,9 @@ img {
     max-width: 100%;
     max-height: 100%;
 }
-     img.resize {
-    max-width: 1000px;
-    max-height: 90%;
+ img.resize {
+    max-width:80%;
+    max-height: 80%;
 }
     
   </style>
@@ -1142,7 +1146,7 @@ return (node.id === "{{ entrezID|safe }}")  || (node.id === "{{ first_vict|safe 
    <br>
 
  
-<h6 > *Residue-level evidence is checked  &#9989; if there is structurally resolved evidence at the residue level of the interaction. In that case, The exon contains residues that lie on that PPI interface.  </h6 class> 
+<h6 > *Residue-level evidence is checked  &#9989; if there is structurally resolved evidence at the residue level of the interaction. In that case, the selected exon  contains residues that lie on that PPI interface.  </h6 class> 
 
 
      {% endif %}

@@ -179,22 +179,16 @@ def Construct_network(proteins_id, missing,job_ID):
       
       pd_html.sort_values(by=['Source of the interaction'], ascending=[True])
       
-      print('here',pd_html['Protein 1 name'])
-      pd_html['Protein 1 name']='<center>&emsp;'+pd_html['Protein 1 name']+'&emsp;</center>'
-      pd_html['Protein 2 name']='<center>&emsp;'+pd_html['Protein 2 name']+'&emsp;</center>'
-      pd_html['Retained DDIs']='<center>&emsp;'+pd_html['Retained DDIs']+'&emsp;</center>'
-      pd_html['Lost DDIs']='<center>&emsp;'+pd_html['Lost DDIs']+'&emsp;</center>'
-      pd_html['Score']='<center>&emsp;'+pd_html['Score']+'&emsp;</center>'
-      pd_html['Source of the interaction']='<center>&emsp;'+pd_html['Source of the interaction']+'&emsp;</center>'
+
+
       
       
       pd_html=pd_html.rename(columns={
-          "Protein 1 name": "<center>Protein 1 name</center>",
-          "Protein 2 name": "<center>Protein 2 name</center>", 
-          "Source of the interaction": "<center>&emsp;Source of the interaction&emsp;</center>", 
-          "Score": "<center> Score*</center>",
-          "Retained DDIs": "<center>Retained Domain-Domain interactions</center>", 
-          "Lost DDIs": "<center>Lost Domain-Domain interactions</center>",
+
+          "Source of the interaction": "Source of the interaction", 
+          "Score": "Score*",
+          "Retained DDIs": "Retained domain-domain interactions", 
+          "Lost DDIs": "Missing domain-domain interactions",
           
           })
       

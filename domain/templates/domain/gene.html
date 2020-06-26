@@ -29,7 +29,21 @@
     .box.small{
         height: 100px;
     }
-    
+    table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 95%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
   </style>
 
 	<title>  DIGGER  | Gene {{ name|safe }}  </title>
@@ -53,14 +67,14 @@
           
        <center>
        
-       <h5 class >   
+       <h6 class >   
        
       {% autoescape off %}
          {{ tb }}
         {% endautoescape %}
 
                   
-         </h5 class>  
+         </h6 class>  
           </center>  
        
 

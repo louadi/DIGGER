@@ -180,20 +180,20 @@ def exon(request,exon_ID):
             
             
                 
-                pd_interaction["Partner Protein"]='<center>'+pd_interaction["Partner Protein"]+'</center>'
+                
                 
                 pd_interaction=pd_interaction[["Affected Protein",'Partner Protein','NCBI gene ID','Retained DDIs','Lost DDIs','Percentage of lost domain-domain interactions','Residue evidence',"Protein-protein interaction",'Score']]
                 
                 
                 pd_interaction=pd_interaction.rename(columns={
-                "Partner Protein": "<center>Partner Protein</center>", 
-                "Affected Protein": "<center>Affected Protein</center>",
-                "NCBI gene ID": "<center>NCBI gene ID</center>", 
-                "Percentage of lost domain-domain interactions": "<center> % of missing DDIs</center>",
-                "Retained DDIs": "<center>&emsp;Retained Domain-Domain interactions</center>", 
-                "Lost DDIs": "<center>Missing Domain-Domain interactions</center>",
-                "Protein-protein interaction": "<center>Protein-protein interaction</center>",
-                'Residue evidence':'<center>Residue-level evidence*</center>'
+                
+                
+                 
+                "Percentage of lost domain-domain interactions": "% of missing DDIs",
+                "Retained DDIs": "Retained domain-domain interactions", 
+                "Lost DDIs": "Missing domain-domain interactions",
+                "Protein-protein interaction": "Protein-protein interaction",
+                'Residue evidence':'Residue-level evidence*'
                 })
 
 
@@ -300,17 +300,17 @@ def transcript(request,P_id):
             
             
             pd_interaction=pd_interaction.rename(columns={
-            "Selected Protein variant": "Selected Protein variant",
+            
             "Protein name": "Partner Protein", 
-            "NCBI gene ID": "NCBI gene ID", 
-            "Percentage of lost domain-domain interactions": " % of missing DDIs",
-            "Retained DDIs": "Retained Domain-Domain interactions", 
-            "Lost DDIs": "Missing Domain-Domain interactions",
+            'Residue evidence':'Residue-level evidence',
+            "Percentage of lost domain-domain interactions": "% of missing DDIs",
+            "Retained DDIs": "Retained domain-domain interactions", 
+            "Lost DDIs": "Missing domain-domain interactions",
             "Protein-protein interaction": "Protein-protein interaction"
             })
             
-            
-            pd_interaction=pd_interaction.drop(columns=['_','switcher',"selector"]).to_html(escape=False, index=False)
+            pd_interaction=pd_interaction[["Selected Protein variant",'Partner Protein','NCBI gene ID','Retained domain-domain interactions','Missing domain-domain interactions','% of missing DDIs','Residue-level evidence',"Protein-protein interaction",'Score']]
+            pd_interaction=pd_interaction.to_html(escape=False, index=False)
             
     
     #Get ID of missing domains with interactions
@@ -527,7 +527,7 @@ def network(request):
               if element:
                   input_query.append(element)
 
-          print(input_query)
+          input_query=list(set(input_query))
 
           #max input IDs
           if len(input_query)<2000 and len(input_query)>1:
