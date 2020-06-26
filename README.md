@@ -1,16 +1,15 @@
 # DIGGER
 
-[Some project description]
+Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein interaction and domain-domain interactions into a joint graph and maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or as a set to visually explore their interactions. 
 
-
-## Deploying Digger
-To install Digger (running it for the first time) follow these steps:
+## Deploying DIGGER
+To install DIGGER (running it for the first time) follow these steps:
 ```shell script
 # First clone this repository and change into the created directory
 git clone https://github.com/louadi/DIGGER.git && cd DIGGER
 
 # Download a copy of all the data files into domain/data
-wget .... [maybe publish a zip archive with our files?]
+wget https://zenodo.org/record/3885677/files/data.rar
 
 # Create a copy of the .env.sample file and edit the .env file
 cp .env.sample .env   # now edit the .env file 
