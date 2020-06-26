@@ -170,21 +170,21 @@ var network = new vis.Network(container, data, options);
 
 </script>
                                                                   
-                                                               <img  style='height: 80%; width: 80%; object-fit: contain' src="{%static 'image/legend 4.png'%}" alt="" >
+                                                               <img  style='max-width:90%; max-width:70%' src="{%static 'image/legend 4.png'%}" alt="" >
                                                              
                                                             </center>  
                                                               
                                                       
 
-    <br>  <br>  <br><br>
+   <div style="height: 20px"></div>
        <center>
-        <h4 class="font-weight-light">Download the generated subnetwork with scored edges </h4>
+        <h3 class="font-weight-light">Download the generated subnetwork with scored edges </h3>
 <a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download (.SIF format)</a>
       <a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.graphml" class="btn btn-secondary px-4 py-2 btn-sm">Download (.GraphMl format)</a>
     </center>
     
 
-      <br>   <br>  <br> <br>
+       <div style="height: 20px"></div>
       <h1 class="font-weight-light">Interactions Table </h1>
      
         <br>
