@@ -97,6 +97,12 @@ var data = {
 
 var network = new vis.Network(container, data, options);
 
+
+network.on("stabilizationIterationsDone", function () {
+    network.setOptions( { physics: false } );
+    
+    
+    
   network.on("selectNode", function (params) {
         if (params.nodes.length === 1) {
             var node = nodes.get(params.nodes[0]);

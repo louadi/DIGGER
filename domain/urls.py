@@ -14,6 +14,7 @@ urlpatterns = [
     path('Network_analysis/example3', TemplateView.as_view(template_name='domain/Network_example_3.html'), name="Network_example3"),
     path('about/', views.about, name="about_page"),
     path('documentation/', views.doc, name="doc_page"),
+    path('download/', views.download, name="download_page"),
     path('graph/', views.graph, name="graph"),
     path('graph/<str:Pfam_id>', views.display, name="Node_vis"),
     path('ID/<str:P_id>', views.transcript, name="transcript"),

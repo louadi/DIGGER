@@ -54,7 +54,7 @@ def input_exon(exon_ID):
                     #get info about the gene
                     _,gene_name,Ensemble_geneID,entrezID,gene_description=pr.tranID_convert(transcripts[0])
                     
-                    print(gene_name,Ensemble_geneID,entrezID,gene_description)
+                    #print(gene_name,Ensemble_geneID,entrezID,gene_description)
                     
                     ## Table of Transcripts:
                     ## a function from gene page that give list of transcripts with links
@@ -83,19 +83,32 @@ def input_exon(exon_ID):
                           
                           
                           h=reverse('home')+"graph/"
-                          print(h)
-                          table_domains["Visualization of the domain interactions"]=""
-                          df_filter =table_domains['Pfam known interactions']!=0
+                          #print(h)
+                          #table_domains["Link to other Databases"]=""
+                          table_domains['Interactions mediated by the domain']=table_domains['Interactions mediated by the domain'].astype(int)
+                          #df_filter =table_domains['Interactions mediated by the domain']!=0
                           
                          
-                          h=reverse('home')+"graph/"
-                          table_domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+table_domains['Pfam ID']+'">'+gene_name+'-'+table_domains['Pfam ID']+'</a>'
+                          #h=reverse('home')+"graph/"
+                          
+                          
+                          
+                          table_domains["Link to other Databases"]='<a href="http://pfam.xfam.org/family/'+table_domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+table_domains['Pfam ID']+'"target="_blank">3did  </a>   </h5 class> '
+                         
+                         
+                         
+                          #table_domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+table_domains['Pfam ID']+'">'+gene_name+'-'+table_domains['Pfam ID']+'</a>'
+                          
+                          
+                          
                           table_domains=table_domains.drop(columns=['Exon rank in transcript','Exon stable ID','CDS start','CDS end','Pfam start','Pfam end','Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end"])
                           table_domains=table_domains.drop_duplicates()
                           pd.set_option('display.max_colwidth',1000)
-                          Total = table_domains['Pfam known interactions'].sum()
-                          table_domains["Pfam known interactions"]='<center>'+table_domains["Pfam known interactions"].astype(str)+'</center>'
-                          table_domains["Visualization of the domain interactions"]='<center>'+table_domains["Visualization of the domain interactions"]+'</center>'
+                          Total = table_domains['Interactions mediated by the domain'].sum()
+                          
+                          
+                          #table_domains["Pfam known interactions"]='<center>'+table_domains["Pfam known interactions"].astype(str)+'</center>'
+                          #table_domains["Visualization of the domain interactions"]='<center>'+table_domains["Visualization of the domain interactions"]+'</center>'
                           
                           
                           
@@ -159,7 +172,7 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
             
         
     protein_with_DDI = list(set(protein_with_DDI))
-    nodes,edges,_=tr.vis_node_(g,entrezID,protein_with_DDI,gene_name,missing_domain)
+    nodes,edges,_=tr.vis_node_(g,entrezID,protein_with_DDI,gene_name,missing_domain,[])
     
     pd_interaction=tr.table_interaction(gene_name,entrezID,entrezID,g,protein_with_DDI,missing_domain)
     
@@ -173,23 +186,26 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     
     
-    pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
-    pd_interaction["Lost DDIs"]='<center>&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;</center>'
+    #pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
+   #pd_interaction["Lost DDIs"]='<center>&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;</center>'
     
     pd_interaction['Residue evidence']='<center>-<center>'
     
     pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
     h=reverse('home')+"ID/"+entrezID+'.'+ExonID+'/InteractionView/'
-    pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
-    pd_interaction["Affected Protein"]='<center>'+pd_interaction["Affected Protein"]+'</center>'
-    pd_interaction["Protein-protein interaction"]='<center>'+pd_interaction["Protein-protein interaction"]+'<a target="'+'_blank"href="'+h+pd_interaction["NCBI gene ID"]+'">'+" (Visualize) "+'</a>'+'</center>'
+    pd_interaction["Percentage of lost domain-domain interactions"]=pd_interaction["Percentage of lost domain-domain interactions"].astype(int)
+    pd_interaction["Score"]=(1-((pd_interaction["Percentage of lost domain-domain interactions"]/100)))
+    
+    #pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
+    #pd_interaction["Affected Protein"]='<center>'+pd_interaction["Affected Protein"]+'</center>'
+    #pd_interaction["Protein-protein interaction"]='<center>'+pd_interaction["Protein-protein interaction"]+'<a target="'+'_blank"href="'+h+pd_interaction["NCBI gene ID"]+'">'+" (Visualize) "+'</a>'+'</center>'
 
         #dont move it from here
-    pd_interaction["NCBI gene ID"]='<center>'+pd_interaction["NCBI gene ID"]+'</center>'
+    #pd_interaction["NCBI gene ID"]='<center>'+pd_interaction["NCBI gene ID"]+'</center>'
     
     
     
-    pd_interaction['Residue evidence']='<center>-<center>'
+    #pd_interaction['Residue evidence']='<center>-<center>'
     
     pd.set_option('display.max_colwidth',1000)
     
