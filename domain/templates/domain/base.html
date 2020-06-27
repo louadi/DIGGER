@@ -86,14 +86,13 @@ tr:nth-child(even) {
 
         </li>
         <li class="nav-item">
-
-          <a class="nav-link" href="{% url 'download_page' %}">Download</a>
+          <a class="nav-link {% if "download" in request.path %}active{% endif %}" href="{% url 'download_page' %}">Download</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'doc_page' %}">Documentation</a>
+          <a class="nav-link {% if "documentation" in request.path %}active{% endif %}" href="{% url 'doc_page' %}">Documentation</a>
         </li>
         <li class="nav-item">
-         <a class="nav-link" href="{% url 'about_page' %}">About</a>
+         <a class="nav-link {% if "about" in request.path %}active{% endif %}" href="{% url 'about_page' %}">About</a>
         </li>
       </ul>
     </div>
@@ -101,7 +100,6 @@ tr:nth-child(even) {
 </nav>
 
 <!-- Page Content -->
-
 
     	{% block content %} {% endblock %}
 
