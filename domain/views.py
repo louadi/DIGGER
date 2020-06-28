@@ -35,6 +35,7 @@ if not os.path.exists(jobs_path):
     os.makedirs(jobs_path)
 
 # or reference a template from templates folder
+""" NOT USED
 def home(request):
 
     
@@ -69,7 +70,7 @@ def home(request):
           return exon(request,search_query)
         
     return render(request,'domain/home.html' ) 
-
+"""
 
 
 #Display transcripts of a gene
@@ -645,11 +646,11 @@ def Multi_proteins(request, job='0'):
 #                       return redirect(Multi_proteins,job=job_num)
 #     return render(request,'domain/Network_example4.html')
     
-    
+""" NOT USED
 def about(request):
  
     return render(request,'domain/about.html',) 
- 
+"""
 
  
 def graph(request):
@@ -663,17 +664,19 @@ def graph(request):
 
 
 
-
+""" NOT USED
 def doc(request):
  
-    return render(request,'domain/doc.html',) 
- 
+    return render(request,'domain/documentation.html',) 
+"""
+
   
-  
+""" NOT USED
 def download(request):
  
     return render(request,'domain/download.html',) 
- 
+"""
+
   
   
   
