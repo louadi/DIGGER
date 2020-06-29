@@ -1,72 +1,49 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Isoform-Level Analysis{% endblock %}
+
 {% block header %}
     <link href="{% static 'domain/typeaheadjs.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
+        <div class="jumbotron">
+            <h1 class="display-4">Isoform-Level Analysis</h1>
+            <p class="lead">Input a protein to visualize protein and domain interactions simultaneously. This mode is
+                useful
+                to identify isoform-specific interactions and to compare between different isoforms.</p>
+        </div>
 
-    <title> DIGGER | Isoform-Level Analysis </title>
-
-    <div class="jumbotron">
-        <h1 class="display-4">Isoform-Level Analysis</h1>
-        <p class="lead">Input a protein to visualize protein and domain interactions simultaneously. This mode is useful
-            to identify isoform-specific interactions and to compare between different isoforms.</p>
-    </div>
-    {##}
-    {##}
-    {#    <h1 class="font-weight-light"></h1>#}
-    {##}
-    {#    <h4 class="font-weight-light">&nbsp;</h4>#}
-    {##}
-    {##}
-    {#    <br/><br/> <br/> <br/> <br/>#}
-    {#    <h1 class="font-weight-light"><span style="font-weight:bold">Isoform-Level Analysis</span></h1>#}
-    {##}
-    {#    <br/><br/> <br/>#}
-    {#    <h4 class="font-weight-light"><span style="font-weight:bold">Submit a Protein Variant </span></h4>#}
-    {##}
-    {#    <h5 class> Input a protein to visualize protein and domain interactions simultaneously. This mode is useful to#}
-    {#        identify isoform-specific interactions and to compare between different isoforms.</h5>#}
-    {#    <br/>#}
-
-    <div role="tabpanel" class="tab-pane" id="Section3">
-
-        <form class="card card-sm">
-            <div class="card-body row no-gutters align-items-center">
-                <div class="col">
-                    <div id="remote">
-                        <input
-                                class="form-control mr-sm-2 typeahead"
-                                type="text"
-                                placeholder="Input a Gene Symbol or an Ensembl ID ( Gene / Transcript / Protein )"
-                                aria-label="Search"
-                                name='search'
-                                value="">
+        <div role="tabpanel" class="tab-pane" id="Section3">
+            <form class="card card-sm">
+                <div class="card-body row no-gutters align-items-center">
+                    <div class="col">
+                        <div id="remote">
+                            <input
+                                    class="form-control mr-sm-2 typeahead"
+                                    type="text"
+                                    placeholder="Input a Gene Symbol or an Ensembl ID ( Gene / Transcript / Protein )"
+                                    aria-label="Search"
+                                    name='search'
+                                    value="">
+                        </div>
                     </div>
+                    <!--end of col-->
+
+                    <div class="col-auto">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                    </div>
+                    <!--end of col-->
+
                 </div>
-                <!--end of col-->
-                <div class="col-auto">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
-                </div>
-                <!--end of col-->
-
-            </div>
-            <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold">  Examples</span> :
-                NCK2 ; BAG1 ; ENSG00000058404 ; ENST00000066544 ; ENST00000623693 ; ENSP00000358396 ; ENSP00000489057 ;
-                ENST00000016946 ; ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6>
-            </h6>
-        </form>
-
-
-    </div>
-    </div>
-    </div>
-    </div>
-{% endblock content %}
-
-{% block script %}
+                <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold">  Examples</span> :
+                    NCK2 ; BAG1 ; ENSG00000058404 ; ENST00000066544 ; ENST00000623693 ; ENSP00000358396 ;
+                    ENSP00000489057 ;
+                    ENST00000016946 ; ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6>
+                </h6>
+            </form>
+        </div>
 
     <script src="{% static "domain/typeahead.bundle.js" %}"></script>
 

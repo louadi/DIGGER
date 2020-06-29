@@ -1,51 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block content %}
+{% block title %}Exon-Level Analysis{% endblock %}
 
+{% block header %}
     <style type="text/css">
-
-
-        .tab2 {
-            margin-left: 10px;
-        }
-
         .tab {
             margin-left: 30px;
         }
-
-        .tab3 {
-            margin-left: 100px;
-        }
-
-
     </style>
+{% endblock %}
 
+{% block content %}
 
-    <title> DIGGER Exon Level Analysis </title>
-
-    <h1 class="font-weight-light"></h1>
-
-    <h4 class="font-weight-light">&nbsp;</h4>
-
-
-
-
-    <br/><br/> <br/>  <br/>  <br/>
-    <h1 class="font-weight-light"><span style="font-weight:bold">Exon-Level Analysis</span></h1>
-
-    <br/><br/> <br/>
-    <h3 class="font-weight-light"><span style="font-weight:bold">Submit An Exon or An Alternative Splicing Event</span>
-    </h3>
-    <br/>
-    <h5 class="font-weight-light">Input an exonic region to map it to its corresponding protein domains/residues and to
-        visualize the domain interactions. This feature is useful to analyze the effect of an alternative splicing event
-        in the PPI. </h5>
-
-    <br/><br/>
-    <h5 class="font-weight-light"><span style="font-weight:bold"> Option 1  </span>: Input an Exon ID </h5>
+    <div class="jumbotron">
+        <h1 class="display-4">Exon-Level Analysis</h1>
+        {#    Submit An Exon or An Alternative Splicing Event#}
+        <p class="lead">Input an exonic region to map it to its corresponding protein domains/residues and to
+            visualize the domain interactions. This feature is useful to analyze the effect of an alternative splicing
+            event in the PPI.</p>
+    </div>
 
     <form class="card card-sm">
+        <h5 class="card-header"><span style="font-weight:bold">Option 1</span>: Input an Exon ID </h5>
         <div class="card-body row no-gutters align-items-center">
             <!--end of col-->
             <div class="col">
@@ -62,67 +39,39 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
             </div>
             <!--end of col-->
-
         </div>
         <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold"> Examples</span> : ENSE00002224211 ;
             ENSE00003467097 ; ENSE00003586509 ; ENSE00001830743 ; ENSE00003652625 ; ENSE00003557822 </span> </h6>
     </form>
 
 
-    <br/><br/><br/>
+    <form class="card card-sm mt-4">
+        <h5 class="card-header"><span style="font-weight:bold">Option 2</span>: Input genomic coordinates of an
+            exon or an alternative splicing event</h5>
 
 
-
-
-
-    <h5 class="font-weight-light"><span style="font-weight:bold"> Option 2  </span>: Input genomic coordinates of an
-        exon or an alternative splicing event.</h5>
-
-    <h6 class="tab3"> Input format:&nbsp;&nbsp;&nbsp;&nbsp; Ensembl Gene ID &nbsp;&nbsp;&nbsp;&nbsp; Start &nbsp;&nbsp;&nbsp;&nbsp;
-        End </h6>
-
-
-    </form>
-
-    <div role="tabpanel" class="tab-pane" id="Section4">
-        <form class="card card-sm">
-            <div class="card-body row no-gutters align-items-center">
-                <!--end of col-->
-                <div class="col">
-                    <input
-                            class="form-control mr-sm-2"
-                            type="Ensembl ID"
-                            placeholder="Input the coordinates of exon or AS event from human genome build hg38 (GRCh38)"
-                            aria-label="Search"
-                            name='search'
-                            value="">
-                </div>
-                <!--end of col-->
-                <div class="col-auto">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
-                </div>
-                <!--end of col-->
-
+        <div class="card-body no-gutters row align-items-center">
+            <!--end of col-->
+            <div class="col">
+                <input
+                        class="form-control mr-sm-2"
+                        type="Ensembl ID"
+                        placeholder="Input the coordinates of exon or AS event from human genome build hg38 (GRCh38)"
+                        aria-label="Search"
+                        name='search'
+                        value="">
             </div>
-            <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold"> Example</span>: ENSG00000117036
-                157135471 157135708 </h6>
-        </form>
-
-        <!--
-<br /><br />     <br /><br />   
-
- <h4 class="font-weight-light"><span style="font-weight:bold"> How does this mode work? </span></h4>
- 
-   
-     <center>
-       <img src="{%static 'image/isoform mode.png'%}" />
-   </center>  
-
-     
- </div>
-    </div>
-
-
--->
-    </div>
+            <!--end of col-->
+            <div class="col-auto">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+            </div>
+            <!--end of col-->
+        </div>
+        <h6 class="tab" style="margin-left:2.5em">Input format:&nbsp;&nbsp;&nbsp;&nbsp; Ensembl Gene ID &nbsp;&nbsp;&nbsp;&nbsp;
+            Start
+            &nbsp;&nbsp;&nbsp;&nbsp; End</h6>
+        <h6 class="tab mt-2" style="margin-left:2.5em"><span style="font-weight:bold"> Example</span>: ENSG00000117036
+            157135471 157135708 </h6>
+        </div>
+    </form>
 {% endblock content %}
