@@ -153,9 +153,7 @@ def exon(request,exon_ID):
    
        
 
-   print(nodes)
-   print('number....',number)
-   print(pd_interaction)
+ 
    if number >0 and len(pd_interaction)>0:
                 # added to combine evidence of DDI and Residue in one final table
                 if number_of_PPI>0:
