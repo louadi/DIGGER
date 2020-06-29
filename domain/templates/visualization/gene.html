@@ -1,83 +1,40 @@
 {% extends "base.html" %}
 {% load static %}
 
-{%block content %}
-  <style type="text/css">
-    #mynetwork {
-      width: 800px;
-      height: 540px;
-      border: 2px solid lightgray;
-    }
-        img{
-        max-width: 100%;
-        max-height: 100%;
-        display: block; /* remove extra space below image */
-    }
-    .box{
-        width: 1050px;        
-        border: 5px solid black;
-    }    
-    
-    .tab { margin-left: 90px; }
-    .tab2 { margin-left: 60px; }
-    .tab { margin-left: 50px; }
-    
-    
-    .box.large{
-        height: 300px;
-    }
-    .box.small{
-        height: 100px;
-    }
-    table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 95%;
-}
+{% block title %}Gene {{ name }}{% endblock %}
 
-td, th {
-  border: 1px solid #dddddd;
-  text-align: center;
-  padding: 5px;
-}
+{% block content %}
+    <style type="text/css">
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 95%;
+        }
 
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-  </style>
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 5px;
+        }
 
-	<title>  DIGGER  | Gene {{ name|safe }}  </title>
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
 
-<div class="container">
-  <div class="card border-0 shadow my-5">
-    <div class="card-body p-3">
-    
-    
 
-              
-         <h3 class="font-weight-light" > List of the gene <span style="font-weight:bold">{{ name|safe }}</span>  transcripts with known Pfam domains. </h3>
-            
-            
-            
-         
-              <br><br>
-          
+    <div class="card border-0 shadow my-5">
+        <div class="card-body p-3">
 
- 
-          
-       <center>
-       
-       <h6 class >   
-       
-      {% autoescape off %}
-         {{ tb }}
-        {% endautoescape %}
 
-                  
-         </h6 class>  
-          </center>  
-       
-
-              
-
+            <h3 class="font-weight-light card-title"> List of the gene <span style="font-weight:bold">{{ name|safe }}</span>
+                transcripts
+                with known Pfam domains. </h3>
+            <h6 class="mt-4">
+                {% autoescape off %}
+                    {{ tb }}
+                {% endautoescape %}
+            </h6>
+        </div>
+    </div>
 {% endblock content %}
