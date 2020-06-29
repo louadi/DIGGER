@@ -81,7 +81,7 @@ def input_exon(exon_ID):
                           #function to count number of interactions of the domain:
                           table_domains,_,_=exd.expand_table(tb,domains,entrezID)
                           
-                          
+                          print(table_domains)
                           h=reverse('home')+"graph/"
                           #print(h)
                           #table_domains["Link to other Databases"]=""

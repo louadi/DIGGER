@@ -153,10 +153,10 @@ def exon(request,exon_ID):
    
        
 
-
-
-   
-   if number >0 :
+   print(nodes)
+   print('number....',number)
+   print(pd_interaction)
+   if number >0 and len(pd_interaction)>0:
                 # added to combine evidence of DDI and Residue in one final table
                 if number_of_PPI>0:
                       
@@ -215,8 +215,12 @@ def exon(request,exon_ID):
     'entrezID':entrezID,
     'gID':Ensemble_geneID,
     'dis':number>0,
+    
     "dis2": number==-1,
     'dis3':number_of_PPI!=0,
+    
+    #only a self loop for the domains>> no interactionView
+    'dis4':number>0 and len(pd_interaction)==0,
     'long_table': number_of_PPI>25,
     'pv_nodes': nodes,
     'pv_edges': edges,
