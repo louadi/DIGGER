@@ -25,16 +25,13 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/general.css' %}">
-    {#TODO Merge CSS#}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/slider.css' %}">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet"/>
 
     <!-- JS -->
     {#TODO remove and move into files#}
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 
     <!-- Title -->
-    <title>{% block title %} {% endblock %} | DIGGER </title>
+    <title>{% block title %}{% endblock %} | DIGGER</title>
 
     {% block header %}
     {% endblock %}
@@ -73,7 +70,9 @@
 
 <!-- Page Content -->
 <div class="wrapper">
-    {% block content %} {% endblock %}
+    <div class="container my-5">
+            {% block content %}{% endblock %}
+    </div>
 </div>
 
 {#<div style="height: 15px"></div>#}

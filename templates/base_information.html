@@ -1,0 +1,31 @@
+{# Base template for the information pages, e. g. Download, Documentation, About #}
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- DIGGER LOGO -->
+    <div style="text-align: center;">
+        <img class="resize" src="{% static 'image/DIGGER.png' %}">
+    </div>
+
+    <!-- Section Title -->
+    <div class="row">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <h2 class="mt-5">
+                    <span style="background-color: black; color: #ffffff; padding: 0 3px;">DIGGER</span>
+                    {% block section-title %}{% endblock %}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Content -->
+    <div class="row">
+        {% block section-content %}
+        {% endblock %}
+    </div>
+
+
+{% endblock content %}

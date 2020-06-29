@@ -22,12 +22,14 @@ from DomainExplorer import views
 urlpatterns = [
     # Static pages for all the apps
     path('', views.HomePageView.as_view(), name="home"),
-    path('download/', views.DownloadPageView.as_view(), name="download_page"),
-    path('documentation/', views.DocPageView.as_view(), name="doc_page"),
-    path('about/', views.AboutPageView.as_view(), name="about_page"),
+    path('download/', views.DownloadPageView.as_view(), name="download-page"),
+    path('documentation/', views.DocPageView.as_view(), name="doc-page"),
+    path('about/', views.AboutPageView.as_view(), name="about-page"),
 
     # Include the DIGGER app
     path('', include("domain.urls")),
+
+    path('dummy', views.TemplateView.as_view(template_name='base.html')),
 ]
 
 # Serve media files during debugging through the django server as well
