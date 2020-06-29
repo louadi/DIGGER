@@ -73,9 +73,9 @@
         var gene_symbol = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('gene_symbol'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            prefetch: '{% url "gene_symbol-autocomplete" %}?q=%QUERY',
+            prefetch: '{% url "gene-symbol-autocomplete" %}?q=%QUERY',
             remote: {
-                url: '{% url "gene_symbol-autocomplete" %}?q=%QUERY',
+                url: '{% url "gene-symbol-autocomplete" %}?q=%QUERY',
                 wildcard: '%QUERY'
             }
         });

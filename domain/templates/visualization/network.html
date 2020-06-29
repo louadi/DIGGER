@@ -1,0 +1,228 @@
+
+{% extends "base.html" %}
+
+
+{%block content %}
+{% load static %}
+
+
+        
+        
+         <style type="text/css">
+    #mynetwork {
+             position:relative;
+      max-width: 100%;
+      height: 900px;
+      border: 2px solid lightgray;
+    }
+   
+    
+    table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+  
+ 
+
+    
+  </style>
+
+  	<title>  DIGGER  | Generated Subnetwork    </title>
+  
+   <div class="container">
+  <div class="card border-0 shadow my-5">
+    
+    
+    
+    
+   
+    
+    
+    <br /><br />
+    
+    <h1 class="font-weight-light"> Statistics of the input data</h1 class>
+   <h5 class="lead"> <span style="font-weight:bold"> Number of protein variants: </span> {{ isoforms_num|safe }} </h5 class>
+   <h5 class="lead"> <span style="font-weight:bold"> Number of coding genes: </span>{{ genes_number|safe }} </h5 class>
+    <h5 class="lead"> <span style="font-weight:bold"> Number of interacting proteins: </span> {{ interacted_nodes|safe }} </h5 class>
+
+<br />  <br />
+    <h1 class="font-weight-light"> Visualization of the subnetwork</h1 class>
+
+      
+   <div>                                           
+<label for="test"><h4>Disable physics &nbsp;</h4> </label>
+<label class="myCheckbox">
+  <input id='checkbox' type="checkbox" name="checkbox">
+  <span></span>
+</label>
+
+ </div>       
+      
+  
+          <center>
+
+    <div id="mynetwork"></div>
+  
+<script type="text/javascript">
+
+
+
+ var CHOOSEN = 'blue',
+ CHOOSEN3= 'orange'
+ CHOOSEN2= 'red';
+
+
+
+var nodes = new vis.DataSet([
+     {% for node in pv_nodes %}
+                    {{ node|safe }}
+                {% endfor %}
+                
+]);
+
+// create an array with edges
+var edges = new vis.DataSet([
+                     {% for edge in pv_edges %}
+                    {{ edge|safe }}
+                {% endfor %}
+
+]);
+
+// create a network
+var container = document.getElementById("mynetwork");
+var data = {
+  nodes: nodes,
+  edges: edges
+};
+
+
+
+  var options = {
+                nodes: {
+                    shape: 'dot',
+                      scaling: {
+                    min: 16,
+                    max: 32
+                  },
+                    font: 24
+                },
+                physics: {
+                    forceAtlas2Based: {
+                        gravitationalConstant: -26,
+                        centralGravity: 0.005,
+                        springLength: 230,
+                        springConstant: 0.18
+                    },
+                    maxVelocity: 20,
+                    solver: 'forceAtlas2Based',
+                    timestep: 0.5,
+                    stabilization: {iterations: 1}
+                },
+              
+              
+                      interaction: {
+          navigationButtons: true,
+          
+        }  
+                
+            };
+
+
+
+
+
+var network = new vis.Network(container, data, options);
+
+ var checkbox = document.querySelector("input[name=checkbox]"); 
+
+
+
+          checkbox.addEventListener( 'change', function() {
+                                                          if(this.checked) {
+                                                                           network.setOptions( { physics: false } );
+                                                            } else {              
+                                                               network.setOptions( { physics: true } );
+                                                               
+                                                                 }
+                                                                });
+        
+                                                       
+  network.on("selectNode", function (params) {
+        if (params.nodes.length === 1) {
+            var node = nodes.get(params.nodes[0]);
+            window.open(node.url, '_blank');
+        }
+    });
+    
+    
+  network.fit();
+  
+
+</script>
+                                                                  
+                                                               <img style='max-width:90%; max-width:70%' src="{%static 'image/legend 4.png' %}" alt="" >
+                                                             
+                                                            </center>  
+                                                              
+                                                      
+
+   <div style="height: 20px"></div>
+       <center>
+        <h3 class="font-weight-light">Download the generated subnetwork with scored edges </h3>
+<a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.sif" class="btn btn-secondary px-4 py-2 btn-sm">Download (.SIF format)</a>
+      <a href="{% get_media_prefix %}jobs/networks/{{ID|safe }}.graphml" class="btn btn-secondary px-4 py-2 btn-sm">Download (.GraphMl format)</a>
+    </center>
+    
+
+       <div style="height: 20px"></div>
+      <h1 class="font-weight-light">Interactions Table </h1>
+     
+        <br>
+         <center>
+    <a href="{% get_media_prefix %}jobs/tables/{{ID|safe }}.csv" class="btn btn-secondary px-4 py-2 btn-sm">Download the full table of interactions with interacted domains</a>
+    
+    
+        </center>
+       
+        <br> <br>  
+        <h6 class="font-weight-light">* The score represents the confidence of the PPI. A score of 0 means that all known structurally resolved interfaces between the two proteins are missing in your list of isoforms. </h6>
+      
+             <h6 class>
+               <center>   
+
+      {% autoescape off %}
+         {{ tab }}
+        {% endautoescape %}
+ 
+       </center>     
+         </h6 class>
+<h6 class="font-weight-light">This an overview of the table , not necessary all interactions of the generated subnetwork. You can download the full table from link above.</h6>
+    
+    
+    
+<div style="height: 50px"></div>
+
+  
+</div>
+
+</div>
+
+
+
+</div>
+
+</body>
+
+
+{% endblock content %}
+
