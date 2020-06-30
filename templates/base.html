@@ -73,9 +73,11 @@
 
 <!-- Page Content -->
 <div class="wrapper">
-    <div class="container my-3">
-        {% block content %}{% endblock %}
-    </div>
+    {% block raw_content %}
+        <div class="container my-3">
+            {% block content %}{% endblock %}
+        </div>
+    {% endblock %}
 </div>
 
 <!-- Script, after all the content -->

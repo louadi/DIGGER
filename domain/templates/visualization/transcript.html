@@ -6,7 +6,7 @@
 {% block header %}
 {% endblock %}
 
-{% block content %}
+{% block raw_content %}
     <link rel="stylesheet" href="{% static 'css/table.css' %}">
     <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
 
@@ -74,10 +74,7 @@
     </style>
 
 
-
-    {#    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>#}
-
-    <div class="wider-container">
+    <div class="wider-container my-3">
         <div class="row">
             <!-- Vertical pill selection menu-->
             <div class="col-lg-3">
@@ -132,6 +129,32 @@
                             href="https://www.ensembl.org/id/{{ trID|safe }}"
                             target="_blank">{{ trID|safe }} </a>
                     </h5>
+
+                    {#                    <table class="table">#}
+                    {#                        <tbody>#}
+                    {#                        <tr>#}
+                    {#                            <td><h5><span style="font-weight: bold">Gene name</span></h5></td>#}
+                    {#                            <td>{{ gene_description }}</td>#}
+                    {#                        </tr>#}
+                    {#                        <tr>#}
+                    {#                            <td><h5><span style="font-weight: bold">Transcript name</span></h5></td>#}
+                    {#                            <td>{{ tran_name }}</td>#}
+                    {#                        </tr>#}
+                    {#                        <tr>#}
+                    {#                            <td><h5><span style="font-weight: bold">NCBI gene ID</span></h5></td>#}
+                    {#                            <td><a href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"#}
+                    {#                                   target="_blank">{{ entrezID|safe }} </a></td>#}
+                    {#                        </tr>#}
+                    {#                        <tr>#}
+                    {#                            <td><h5><span style="font-weight: bold">Ensembl</span></h5></td>#}
+                    {#                            <td><a href="https://www.ensembl.org/id/{{ gID|safe }}"#}
+                    {#                                   target="_blank"> {{ gID|safe }} </a>; <a#}
+                    {#                                    href="https://www.ensembl.org/id/{{ trID|safe }}"#}
+                    {#                                    target="_blank">{{ trID|safe }} </a>#}
+                    {#                            </td>#}
+                    {#                        </tr>#}
+                    {#                        </tbody>#}
+                    {#                    </table>#}
                 </div>
 
                 <!-- Tab content -->
