@@ -302,7 +302,7 @@
                                             nodeFilterSelector2.addEventListener("change", e => {
 
                                                 network2.setOptions({physics: true});
-                                                if (document.getElementById('checkbox2').checked) {
+                                                if (checkbox2.checked === false) {
 
                                                     setTimeout(function () {
                                                         network2.setOptions({physics: false});
@@ -769,7 +769,7 @@
                                         nodeFilterSelector3.addEventListener("change", e => {
 
                                             network3.setOptions({physics: true});
-                                            if (document.getElementById('checkbox').checked) {
+                                            if (checkbox3.checked === false) {
 
                                                 setTimeout(function () {
                                                     network3.setOptions({physics: false});
@@ -788,7 +788,9 @@
                                 </script>
 
                                 <div style="text-align: center;">
+                                <center>
                                     <img class="resize" src="{% static 'image/legend2.png' %}" alt="">
+                                  </center>
                                 </div>
 
 
