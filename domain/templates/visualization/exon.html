@@ -85,9 +85,12 @@
                     {% endif %}
 
                     {% if dis or dis3 %}
-                        <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction"
-                           role="tab"
-                           aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
+                        {% if not dis4 %}
+                            <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill"
+                               href="#v-pills-interaction"
+                               role="tab"
+                               aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
+                        {% endif %}
                     {% endif %}
 
                     <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
@@ -877,14 +880,14 @@
                         <h2 class="card-header">Proteins that use this exon</h2>
                         <div class="card-body">
                             <h5>Select a protein from the following table go to its page. </h5>
-                                <br><br>
-                                <p class="lead text-center"><span style="font-weight:bold">The selected exon region is translated  in the following proteins </span>
-                                </p>
-                                <h6 class>
-                                    {% autoescape off %}
-                                        {{ tb1 }}
-                                    {% endautoescape %}
-                                </h6>
+                            <br><br>
+                            <p class="lead text-center"><span style="font-weight:bold">The selected exon region is translated  in the following proteins </span>
+                            </p>
+                            <h6 class>
+                                {% autoescape off %}
+                                    {{ tb1 }}
+                                {% endautoescape %}
+                            </h6>
                         </div>
                     </div>
                 </div>
