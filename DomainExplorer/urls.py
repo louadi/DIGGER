@@ -15,14 +15,21 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import path, include
 
-
+from DomainExplorer import views
 
 urlpatterns = [
+    # Static pages for all the apps
+    path('', views.HomePageView.as_view(), name="home"),
+    path('download/', views.DownloadPageView.as_view(), name="download-page"),
+    path('documentation/', views.DocPageView.as_view(), name="doc-page"),
+    path('about/', views.AboutPageView.as_view(), name="about-page"),
+
+    # Include the DIGGER app
     path('', include("domain.urls")),
-    path('admin/', admin.site.urls),
+
+    path('dummy', views.TemplateView.as_view(template_name='base.html')),
 ]
 
 # Serve media files during debugging through the django server as well

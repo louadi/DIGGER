@@ -35,6 +35,7 @@ if not os.path.exists(jobs_path):
     os.makedirs(jobs_path)
 
 # or reference a template from templates folder
+""" NOT USED
 def home(request):
 
     
@@ -69,7 +70,7 @@ def home(request):
           return exon(request,search_query)
         
     return render(request,'domain/home.html' ) 
-
+"""
 
 
 #Display transcripts of a gene
@@ -84,7 +85,7 @@ def gene(request,gene_ID):
       'tb':transcript_table,
       'name':gene_name,
        }  
-   return render(request,'domain/gene.html',context)  
+   return render(request,'visualization/gene.html',context)
 
 
 
@@ -239,7 +240,7 @@ def exon(request,exon_ID):
     
     'enable_Proteinview': len(edges_domainV)>70 ,
        }  
-   return render(request,'domain/exon.html',context)  
+   return render(request,'visualization/exon.html',context)
 
 
 
@@ -257,7 +258,7 @@ def display(request,Pfam_id):
      'gene':gene,
      'domain':domain
        }  
-   return render(request,'domain/display.html',context)  
+   return render(request, 'trash/display.html', context)
 
 
 
@@ -403,7 +404,7 @@ def transcript(request,P_id):
     
     }
  
-    return render(request,'domain/transcr.html',context) 
+    return render(request, 'visualization/transcript.html', context)
 
 
 
@@ -432,7 +433,7 @@ def InteractionView(request,P_id,P2_id):
     
     }
  
-    return render(request,'domain/InteractionView.html',context)
+    return render(request, 'trash/InteractionView.html', context)
 
 
 def isoform_level(request):
@@ -459,14 +460,14 @@ def isoform_level(request):
             return redirect(gene, gene_ID=search_query)
             # return gene(request,search_query)
 
-    return render(request, 'domain/isoform_level.html', )
+    return render(request, 'setup/isoform_level.html', )
 
 
 
 
 
 
-def Exon_level(request):
+def exon_level(request):
     if "search 2" in request.GET :     # If the form is submitted
       #Input and Exon ID
       print('-----------------------------------------------------------')
@@ -514,7 +515,7 @@ def Exon_level(request):
                     return redirect(exon, exon_ID = exonID)
                     #return exon(request,exonID)   
                 else: return HttpResponse("<h1>No match</h1>")
-    return render(request,'domain/Exon_level.html',) 
+    return render(request, 'setup/exon_level.html', )
     
     
     
@@ -539,7 +540,7 @@ def network(request):
                              pickle.dump(input_query, fp)
                       return redirect(Multi_proteins,job=job_num)
                 
-    return render(request,'domain/network.html')  
+    return render(request, 'setup/network.html')
 
 
 
@@ -585,7 +586,7 @@ def Multi_proteins(request, job='0'):
     
     }
     
-    return render(request,'domain/vis_network.html',context) 
+    return render(request, 'visualization/network.html', context)
 
 # def example2(request):
 #
@@ -604,7 +605,7 @@ def Multi_proteins(request, job='0'):
 #                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
 #                              pickle.dump(input_query, fp)
 #                       return redirect(Multi_proteins,job=job_num)
-#     return render(request,'domain/Network_example2.html')
+#     return render(request,'domain/network-analysis-example-2.html')
 #
 #
 #
@@ -626,7 +627,7 @@ def Multi_proteins(request, job='0'):
 #                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
 #                              pickle.dump(input_query, fp)
 #                       return redirect(Multi_proteins,job=job_num)
-#     return render(request,'domain/Network_example1.html')
+#     return render(request,'domain/network-analysis-example-1.html')
 #
 # def example3(request):
 #
@@ -647,52 +648,33 @@ def Multi_proteins(request, job='0'):
 #                       return redirect(Multi_proteins,job=job_num)
 #     return render(request,'domain/Network_example4.html')
     
-    
+""" NOT USED
 def about(request):
  
     return render(request,'domain/about.html',) 
- 
+"""
 
- 
+""" NOT USED ???
 def graph(request):
     jdata = {
      'data':jsonData,
      'data2':jsonData2
        }
     return render(request,'domain/index.html',jdata) 
+"""
 
 
 
 
-
-
+""" NOT USED
 def doc(request):
  
-    return render(request,'domain/doc.html',) 
- 
+    return render(request,'domain/documentation.html',) 
+"""
+
   
-  
+""" NOT USED
 def download(request):
  
     return render(request,'domain/download.html',) 
- 
-  
-  
-  
-  
-  
-  
-  
-  
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
+"""

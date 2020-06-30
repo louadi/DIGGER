@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Network-Level Analysis{% endblock %}
+
+{% block header %}
+    <style type="text/css">
+        .tab {
+            margin-left: 30px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="jumbotron p-xl-5">
+        <h1 class="display-4">Network-Level Analysis</h1>
+        <h4 class="font-weight-light"><span style="font-weight:bold">Query interactions of proteins </span></h4>
+
+        <h5 class> Enter a list of Ensembl IDs (Genes/Transcripts or Proteins) </h5>
+        <h5 class='tab'><a href="{% url 'network-analysis-example-1' %}" class="test">[Example 1: Specific
+            interaction between two Isoforms]</a></h5>
+        <h5 class='tab'><a href="{% url 'network-analysis-example-2' %}" class="test">[Example 2: Interaction
+            between multiple isoforms]</a></h5>
+        <h5 class='tab'><a href="{% url 'network-analysis-example-3' %}" class="test">[Example 3: Transcriptomics
+            data from TCGA - PAN-Cancer (2000 most abundant transcripts]</a></h5>
+    </div>
+
+    <div class="card border-0 ">
+        <div class="card-body">
+            <form action="{% url 'network-analysis' %}" method="post">
+                {% csrf_token %}
+
+                <textarea name="input" rows="20" cols="20" class="form-control">
+                  {% block example_ids %}
+                  {% endblock example_ids %}
+                </textarea>
+
+                <br><br>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+            </form>
+
+        </div>
+    </div>
+
+{% endblock content %}

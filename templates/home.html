@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+    <div style="text-align: center;">
+        <img class="resize" src="{% static 'image/DIGGER.png' %}">
+    </div>
+    <div class="row mt-4">
+        <div class="card border-0 my-5">
+            <div class="card-body">
+                <h5 class="mb-4" style="text-align: justify;"><span style="font-weight:bold"> Domain Interaction Graph Guided ExploreR (DIGGER)</span>
+                    integrates protein-protein interactions and domain-domain interactions into a joint graph and
+                    maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually
+                    or as a set to visually explore their interactions. The following modes of DIGGER can be used
+                    interchangeably: </h5>
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="{% static 'image/Isoform_mode.svg' %}" alt="">
+                            <div class="card-body">
+                                <div style="text-align: center;">
+                                    <h4 class="card-title">Isoform-Level analysis</h4>
+                                </div>
+                                <p class="card-text" style="text-align: justify;">Visualize the interacting domains of
+                                    proteins and compare the interactions of different isoforms.</p>
+                            </div>
+                            <div class="card-footer">
+                                <div style="text-align: center;">
+                                    <a href="{% url 'isoform-level' %}" class="btn btn-secondary px-4 py-2 btn-sm">
+                                        Explore an isoform interaction</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="{% static 'image/exon_page.svg' %}" alt="">
+                            <div class="card-body">
+                                <div style="text-align: center;">
+                                    <h4 class="card-title">Exon-Level analysis </h4>
+                                </div>
+                                <p class="card-text" style="text-align: justify;">Input an exonic region to analyze the
+                                    effect of alternative splicing
+                                    events on protein interactions.</p>
+                            </div>
+                            <div class="card-footer">
+                                <div style="text-align: center;">
+                                    <a href="{% url 'exon-level' %}" class="btn btn-secondary px-4 py-2 btn-sm">Query an
+                                        exon</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="{% static 'image/net_page.svg' %}" alt="">
+                            <div class="card-body">
+                                <div style="text-align: center;">
+                                    <h4 class="card-title">Network-Level analysis</h4>
+                                </div>
+                                <p class="card-text" style="text-align: justify;">Explore interactions between multiple
+                                    isoforms and generate a specific
+                                    subnetwork from a list of protein variants or transcripts.</p>
+                            </div>
+                            <div class="card-footer">
+                                <div style="text-align: center;">
+                                    <a href="{% url 'network-analysis' %}" class="btn btn-secondary px-4 py-2 btn-sm">Build
+                                        your subnetwork</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+
+            <link rel="stylesheet" type="text/css" href="//wpcc.io/lib/1.0.2/cookieconsent.min.css"/>
+            <script src="//wpcc.io/lib/1.0.2/cookieconsent.min.js"></script>
+            <script>window.addEventListener("load", function () {
+                window.wpcc.init({
+                    "border": "thin",
+                    "corners": "small",
+                    "colors": {
+                        "popup": {"background": "#222222", "text": "#ffffff", "border": "#b5e1a0"},
+                        "button": {"background": "#b5e1a0", "text": "#000000"}
+                    },
+                    "position": "bottom-right",
+                    "content": {"message": "DIGGER uses cookies to ensure you get the best experience."}
+                })
+            });</script>
+
+        </div>
+    </div>
+{% endblock content %}
