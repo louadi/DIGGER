@@ -166,8 +166,9 @@
                                     style="font-weight:bold">Domain and exon architecture </span></p>
 
                             <img src="{% get_media_prefix %}images/{{ trID }}.png">
+                             <center>
                             <img class="resize2 text-center mt-2 img-fluid" src="{% static 'image/legend 3.png' %}">
-
+                             </center>
                             <!-- Exon Table-->
                             <h6 class="mt-5">
                                 <h5 class="mb-3">{{ text1 }}</h5>
@@ -395,7 +396,7 @@
                                             nodeFilterSelector.addEventListener("change", e => {
 
                                                 network.setOptions({physics: true});
-                                                if (document.getElementById('checkbox').checked) {
+                                                if (checkbox.checked === false) {
 
                                                     setTimeout(function () {
                                                         network.setOptions({physics: false});
@@ -593,7 +594,7 @@
                                     nodeFilterSelector2.addEventListener("change", e => {
 
                                         network2.setOptions({physics: true});
-                                        if (document.getElementById('checkbox2').checked) {
+                                        if (checkbox2.checked === false) {
 
                                             setTimeout(function () {
                                                 network2.setOptions({physics: false});
@@ -884,7 +885,7 @@
                                             nodeFilterSelector3.addEventListener("change", e => {
 
                                                 network3.setOptions({physics: true});
-                                                if (document.getElementById('checkbox').checked) {
+                                                if (checkbox3.checked === false) {
 
                                                     setTimeout(function () {
                                                         network3.setOptions({physics: false});
@@ -903,7 +904,9 @@
 
 
                                     </script>
+                                    <center>
                                     <img class="resize" src="{% static 'image/legend1.png' %}" alt="">
+                                      </center>
                                 </div>
 
                                 <div style="text-align: center;" class="mt-5">
