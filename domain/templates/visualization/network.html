@@ -4,6 +4,7 @@
 {% block title %}Generated Subnetwork{% endblock %}
 
 {% block header %}
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
     <style type="text/css">
         #interaction-network {
             position: relative;
@@ -11,23 +12,8 @@
             height: 900px;
             border: 1px solid lightgray;
         }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: center;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
     </style>
+
 {% endblock %}
 
 {% block content %}
