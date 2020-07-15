@@ -5,7 +5,8 @@ Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein int
 ## Deploying DIGGER
 To install DIGGER (running it for the first time) follow these steps:
 ```shell script
-# First, follow this link, if you want to install docker-compose: https://docs.docker.com/compose/install/
+# First, follow this link, if you want to install docker-compose: 
+# https://docs.docker.com/compose/install/
 
 #  Clone this repository and change into the created directory
 git clone https://github.com/louadi/DIGGER.git && cd DIGGER
