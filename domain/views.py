@@ -318,7 +318,7 @@ def transcript(request,P_id):
     
     #Get ID of missing domains with interactions
     if len(missed)!=0:
-      missing_domains=missed[missed['Interactions mediated by the domain']!='<center>0</center>']['Pfam ID'].unique()
+      missing_domains=missed['Pfam ID'].unique()
       missed=missed.to_html(escape=False, index=False)
       
     

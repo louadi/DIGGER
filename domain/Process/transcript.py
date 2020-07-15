@@ -85,15 +85,16 @@ def Protein_view(P_id):
             n=[]
             l=[]
             dom=[]
-            #h=reverse('home')+"graph/"
+            
             for d in missing_domain:
                 s=d.split('/')
                 dom.append(s[1])
+                l.append(' <a href="http://pfam.xfam.org/family/'+s[1]+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+s[1]+'"target="_blank">3did  </a>      </h5 class> ')
                 if DomainG.has_node(d):
                     n.append(len(DomainG[d]))
                     
                     
-                    #l.append('<a target="'+'_blank" href="'+h+entrezID+"."+s[1]+'">'+gene_name+'-'+s[1]+'</a>')
+                    
                     
                  
                     
@@ -102,8 +103,8 @@ def Protein_view(P_id):
                 else: 
                     n.append(0)
                 
-                l.append(' <a href="http://pfam.xfam.org/family/'+s[1]+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+s[1]+'"target="_blank">3did  </a>      </h5 class> ')
-                l.append('')
+                
+               
                     
                   
                   

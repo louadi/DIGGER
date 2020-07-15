@@ -258,9 +258,9 @@ def input_transcript(Ensemble_transID):
     h=reverse('home')+"graph/"
     h2='target="'
     h3='_blank"'
-    df_filter =domains['Interactions mediated by the domain']!=0
+    #df_filter =domains['Interactions mediated by the domain']!=0
     
-    domains.at[df_filter,"Link to other databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
+    domains["Link to other databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
     
     #domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+domains['Pfam ID']+'">'+gene_name+'-'+domains['Pfam ID']+'</a>'
     
