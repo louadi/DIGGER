@@ -5,7 +5,7 @@ Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein int
 Link: https://exbio.wzw.tum.de/digger
 
 
-Maintained by: Zakaria Louadi (louadi@wzw.tum.de) and Kevin Yuan.
+Maintained by: Zakaria Louadi and Kevin Yuan.
 
 If you use DIGGER, please cite:
 (Posted once published)
@@ -39,3 +39,15 @@ docker-compose exec web python manage.py import_datasets
 docker-compose exec web python manage.py collectstatic --no-input
 
 # Enjoy your instance of DIGGER
+
+```
+
+## Contact
+Zakaria Louadi
+louadi@wzw.tum.de
+
+Markus List
+markus.list@wzw.tum.de
+
+Tim Kacprowski
+tim.kacprowski@wzw.tum.de
