@@ -246,8 +246,7 @@ def exon(request,exon_ID):
 
 
 
-
-
+""" Not in use
 #Display a single node
 def display(request,Pfam_id):
   
@@ -259,6 +258,7 @@ def display(request,Pfam_id):
      'domain':domain
        }  
    return render(request, 'trash/display.html', context)
+"""
 
 
 
@@ -412,6 +412,7 @@ def transcript(request,P_id):
 
 
 
+""" Not in use
 #InteractionView
 def InteractionView(request,P_id,P2_id):
 
@@ -434,7 +435,7 @@ def InteractionView(request,P_id,P2_id):
     }
  
     return render(request, 'trash/InteractionView.html', context)
-
+"""
 
 def isoform_level(request):
     if "search" in request.GET:  # If the form is submitted
@@ -468,10 +469,10 @@ def isoform_level(request):
 
 
 def exon_level(request):
-    if "search 2" in request.GET :     # If the form is submitted
+    if "search" in request.GET:     # If the form is submitted
       #Input and Exon ID
       print('-----------------------------------------------------------')
-      search_query = request.GET['search 2']
+      search_query = request.GET['search']
       search_query=search_query.replace(" ", "")
       search_query=search_query.split("+")[0]
       search_query=search_query.split("%")[0]
@@ -487,13 +488,13 @@ def exon_level(request):
 
 
 
-    if "search" in request.GET :     # If the form is submitted
+    if "search 2" in request.GET :     # If the form is submitted
         #Input coordinate of the exon
         #Check if coordinate are correct
         #  Example   ' ENSG00000266028  206437964 206437042 '
     
         print('-----------------------------------------------------------')
-        search_query = request.GET['search']
+        search_query = request.GET['search 2']
         
         
         search_query=search_query.split(" ")

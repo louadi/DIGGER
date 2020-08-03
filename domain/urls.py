@@ -37,8 +37,8 @@ urlpatterns = [
     # path('graph/', views.graph, name="graph"),
     # <<< Not used anymore?
     # Domain view
-    path('graph/<str:Pfam_id>', views.display, name="Node_vis"),
+    # path('graph/<str:Pfam_id>', views.display, name="Node_vis"),
     # Interaction view
-    path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
+    # path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
     # >>>
 ]
