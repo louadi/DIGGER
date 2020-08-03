@@ -515,7 +515,13 @@ def exon_level(request):
                 if exonID!=[]:
                     return redirect(exon, exon_ID = exonID)
                     #return exon(request,exonID)   
-                else: return HttpResponse("<h1>No match</h1>")
+                else:
+                    return HttpResponse("<h1>No match</h1>")
+
+    if "search 3" in request.GET :     # If option 3 is selected
+        # ToDo Implement here :D
+        pass
+
     return render(request, 'setup/exon_level.html', )
     
     
