@@ -15,18 +15,13 @@
 
     <div class="jumbotron p-xl-5">
         <h1 class="display-4">Network-Level Analysis</h1>
-        <h4 class="font-weight-light"><span style="font-weight:bold">Query interactions of proteins </span></h4>
-
-        <h5 class> Enter a list of Ensembl IDs (Genes/Transcripts or Proteins) </h5>
-        <h5 class='tab'><a href="{% url 'network-analysis-example-1' %}" class="test">[Example 1: Specific
-            interaction between two Isoforms]</a></h5>
-        <h5 class='tab'><a href="{% url 'network-analysis-example-2' %}" class="test">[Example 2: Interaction
-            between multiple isoforms]</a></h5>
-        <h5 class='tab'><a href="{% url 'network-analysis-example-3' %}" class="test">[Example 3: Transcriptomics
-            data from TCGA - PAN-Cancer (2000 most abundant transcripts]</a></h5>
+        <h4 class="font-weight-light">Query interactions of proteins: TODO MORE DESCRIPTION</h4>
     </div>
 
-    <div class="card border-0 ">
+    <!-- Option 1: List of Ensembl IDs -->
+    <div class="card">
+        <h5 class="card-header"><span style="font-weight:bold">Option 1</span>: Enter a list of Ensembl IDs
+            (Genes/Transcripts or Proteins) </h5>
         <div class="card-body">
             <form action="{% url 'network-analysis' %}" method="post">
                 {% csrf_token %}
@@ -37,10 +32,49 @@
                 </textarea>
 
                 <br><br>
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                <button class="btn btn-outline-success my-2 my-sm-0" name="option1" type="submit" style="float: right;">
+                    Submit
+                </button>
             </form>
 
+            <h5 class='tab'><a href="{% url 'network-analysis-example-1' %}" class="test">[Example 1: Specific
+                interaction between two Isoforms]</a></h5>
+            <h5 class='tab'><a href="{% url 'network-analysis-example-2' %}" class="test">[Example 2: Interaction
+                between multiple isoforms]</a></h5>
+            <h5 class='tab'><a href="{% url 'network-analysis-example-3' %}" class="test">[Example 3: Transcriptomics
+                data from TCGA - PAN-Cancer (2000 most abundant transcripts]</a></h5>
         </div>
     </div>
+
+    <!-- Option2: Upload a file-->
+    <div class="card mt-4">
+        <h5 class="card-header"><span style="font-weight:bold">Option 2</span>: Upload a file containing gene counts
+        </h5>
+        <div class="card-body">
+            <form action="{% url 'network-analysis' %}" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="custom-file form-group">
+                    <input type="file" class="custom-file-input form-control" name="gene-count-file">
+                    <label class="custom-file-label" for="customFile">Upload gene count file</label>
+                </div>
+                <br>
+                <br>
+                <button class="btn btn-outline-success my-2 my-sm-0" name="option2" type="submit" style="float: right;">
+                    Submit
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Update the file upload label
+        $('.custom-file input').change(function (e) {
+            var files = [];
+            for (var i = 0; i < $(this)[0].files.length; i++) {
+                files.push($(this)[0].files[i].name);
+            }
+            $(this).next('.custom-file-label').html(files.join(', '));
+        })
+    </script>
 
 {% endblock content %}
