@@ -168,14 +168,14 @@ def Construct_network(proteins_id, missing,job_ID):
       
       
       #If the table is big, only show important Interactions
-      if len(pd_html)>10:
-          pd_html=pd_html[pd_html['Source of the interaction']=='PPI-DDI']
+      #if len(pd_html)>10:
+          #pd_html=pd_html[pd_html['Source of the interaction']=='PPI-DDI']
       
       #Max interaction to display in web page
-      max_disp=150
+      #max_disp=150
       
-      if len(pd_html)>max_disp:
-            pd_html=pd_html[:max_disp]
+      #if len(pd_html)>max_disp:
+           # pd_html=pd_html[:max_disp]
       
       pd_html.sort_values(by=['Source of the interaction'], ascending=[True])
       
@@ -195,7 +195,7 @@ def Construct_network(proteins_id, missing,job_ID):
       
       
       # Convert Table to HTML
-      pd_html=pd_html.to_html(escape=False, index=False)
+      pd_html=pd_html.to_html(escape=False, index=False,table_id='results',classes='dataTable')
       
       
       

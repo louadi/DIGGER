@@ -12,6 +12,12 @@
             height: 900px;
             border: 1px solid lightgray;
         }
+        
+        tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
     </style>
 
 {% endblock %}
@@ -72,9 +78,11 @@
                 of the
                 generated sub network. You can download the full table from link below.</h6>
             <h6 class="my-3">
+            <center>
                 {% autoescape off %}
                     {{ tab }}
                 {% endautoescape %}
+                            </center>
             </h6>
 
             <h6 class="font-weight-light">* The score represents the confidence of the PPI. A score of 0 means that all
@@ -179,4 +187,20 @@
 
         network.fit();
     </script>
+    
+    
+      <script>
+    $(document).ready( function () {
+    $('#results').DataTable(
+    {
+  columnDefs: [
+    {
+        targets: -1,
+        className: 'dt-body-right'
+    }
+  ]
+}
+    );
+} );
+  </script>
 {% endblock %}
