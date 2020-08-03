@@ -74,17 +74,16 @@
     <div class="card my-5">
         <h2 class="card-header">Interactions Table</h2>
         <div class="card-body">
-            <h6 class="font-weight-light">This an overview of the table and does not necessarily show all interactions
-                of the
-                generated sub network. You can download the full table from link below.</h6>
+            <h6 class="font-weight-light">This an interactive table with  sortable columns and a search box for filtering results. You can download the full table from link below.</h6>
+           
             <h6 class="my-3">
             <center>
                 {% autoescape off %}
                     {{ tab }}
                 {% endautoescape %}
-                            </center>
+                 </center>
             </h6>
-
+			
             <h6 class="font-weight-light">* The score represents the confidence of the PPI. A score of 0 means that all
                 known structurally resolved interfaces between the two proteins are missing in your list of
                 isoforms. </h6>
@@ -192,14 +191,7 @@
       <script>
     $(document).ready( function () {
     $('#results').DataTable(
-    {
-  columnDefs: [
-    {
-        targets: -1,
-        className: 'dt-body-right'
-    }
-  ]
-}
+    
     );
 } );
   </script>

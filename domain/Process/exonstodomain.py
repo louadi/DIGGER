@@ -274,7 +274,7 @@ def input_transcript(Ensemble_transID):
     
     #print(exons_in_interface)
     droped1=exon_info.merge(domains,how='left', left_on='Exon stable ID', right_on='Exon stable ID')
-    droped1=droped1.rename(columns={"Pfam ID": "Corresponding domain ID","Exon stable ID": "<center>Exon  ID</center>",
+    droped1=droped1.rename(columns={"Pfam ID": "Corresponding domain ID","Exon stable ID": "Exon  ID",
     "Exon rank in transcript_x":'Exon rank in transcript'})
  
     droped1=droped1.drop(columns=['CDS start','CDS end','Pfam start','Pfam end',"Link to other databases","Interactions mediated by the domain",'Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end",'Exon rank in transcript_y'])
@@ -292,16 +292,21 @@ def input_transcript(Ensemble_transID):
     
     h4=reverse('home')+"ID/exon/"
     
-    droped1["Protein features encoded by the exon"]='<a target="'+'_blank"href="'+h4+droped1["<center>Exon  ID</center>"]+'">Exon Page</a>'
-    droped1["Protein features encoded by the exon"]='<center>'+droped1["Protein features encoded by the exon"]+'</center>'
-    droped1["Corresponding domain ID"]='<center>'+droped1["Corresponding domain ID"]+'</center>'
-    droped1["Exon rank in transcript"]='<center>'+droped1["Exon rank in transcript"].astype(str)+'</center>'
+    droped1["Protein features encoded by the exon"]='<a target="'+'_blank"href="'+h4+droped1["Exon  ID"]+'">Exon Page</a>'
     
-    droped1["Number of interaction interface mapped to the exon"]='<center>'+droped1["Number of interaction interface mapped to the exon"].astype(str)+'</center>'
-    droped2["Interactions mediated by the domain"]='<center>'+droped2["Interactions mediated by the domain"].astype(int).astype(str)+'</center>'
-    #droped2["Link to other Databases"]='<center>'+droped2["Link to other Databases"]+'</center>'
+
+
+    droped1.loc[droped1["Corresponding domain ID"]!='-',"Corresponding domain ID"]='<a target="'+'_blank"href="'+'http://pfam.xfam.org/family/'+droped1["Corresponding domain ID"]+'">'+droped1["Corresponding domain ID"]+'</a>'
     
-    droped2=droped2.rename(columns={"Interactions mediated by the domain":"Interactions mediated by the domain"})
+    droped1["Number of interaction interface mapped to the exon"]=droped1["Number of interaction interface mapped to the exon"].astype(str)
+
+
+    #add domain name column here
+
+    droped2["Interactions mediated by the domain"]=droped2["Interactions mediated by the domain"].astype(int).astype(str)
+    
+    
+    
     
     
     return domains,unique_domains,exons,text1,domains.to_html(escape=False),Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1.to_html(escape=False, index=False),droped2.to_html(escape=False, index=False),exons_in_interface,co_partners
