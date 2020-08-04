@@ -134,8 +134,8 @@ def Protein_view(P_id):
           pd_interaction.to_csv(f'{table_path_2}/{trID}.csv', index=False,)
           
     
-          pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
-          pd_interaction["Lost DDIs"]='<center>&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;</center>'
+          pd_interaction["Retained DDIs"]='&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;'
+          pd_interaction["Lost DDIs"]='&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;'
           
           
           

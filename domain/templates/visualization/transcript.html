@@ -73,6 +73,7 @@
           <script>
     $(document).ready( function () {
     $('#Interaction_table').DataTable(
+  
     
     );
 } );
@@ -922,9 +923,11 @@
                                 <div style="text-align: center;" class="mt-5">
                                     <h4 class="lead"> Protein partners of the isoform {{ tran_name|safe }}  </h4>
                                     <h6 class="my-3">
+                                    	
                                         {% autoescape off %}
                                             {{ dt4 }}
                                         {% endautoescape %}
+                                    	
                                     </h6>
                                 </div>
 
