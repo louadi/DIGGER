@@ -505,6 +505,9 @@ def network(request):
                              pickle.dump(input_query, fp)
                       return redirect(Multi_proteins,job=job_num)
 
+
+
+
     # Option 2: Upload file
     if "option2" in request.POST and 'gene-count-file' in request.FILES:
         try:
@@ -512,9 +515,71 @@ def network(request):
             file_string = escape(request.FILES['gene-count-file'].read().decode('UTF-8'))
             file_buffer = StringIO(file_string)
             # Parse as pandas dataframe
-            gene_count_file = pd.read_csv(file_buffer)
-            print(gene_count_file)
-            # TODO Zakaria please insert the magic down below:)
+            transcript_count_file = pd.read_table(file_buffer)
+
+            #check if the file is alright:
+            if len(transcript_count_file)<2  or len(transcript_count_file)<2 : 
+
+            	#try to read it as an csv
+            	transcript_count_file = pd.read_csv(file_buffer)
+
+            if len(transcript_count_file)<2  or len(transcript_count_file)<2 :
+            	return HttpResponse("<h1>File format not supported</h1>")
+
+            else:
+	            
+	            # TODO Zakaria please insert the magic down below:)
+	            # Zaka: And this is where the magic happens :p
+
+	            #check if the first row corresponds to transcript Ensembl IDs
+
+	            #Max: the max number of isoforms to consider: 
+	            Max=1000
+
+	            frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+
+	            if frist_row[0][0:4]!='ENST' or frist_row[1][0:4]!='ENST' :return HttpResponse("<h1>File format not supported</h1>")
+
+	            #at this point we have at least two transcript :)
+	            
+	            print(frist_row)
+
+	            #then check if the column of  counts exist  (for cufflinks FPKM  column)
+
+	            if 'FPKM' in transcript_count_file :
+
+	            	#cufflinks file (or a similar thing)
+	            	
+	            	try:
+	            		transcript_count_file=transcript_count_file.sort_values(by=['FPKM'], ascending=False)
+
+	            		#if FPKM row exists> take the most expressed transcripts
+	            		frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+
+	            		print(frist_row)
+
+	            	except:
+	            		pass
+
+
+
+	            #try to find row of counts
+	            elif 'counts'	in transcript_count_file :
+
+	            	try: 
+	            		#try to find row of counts
+	            		transcript_count_file=transcript_count_file.sort_values(by=['counts'], ascending=False)
+	            		frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+
+	            	except:
+	            		pass	   			
+	            # and let DIGGER do the magic ;)
+	            job_num=str(random.randrange(500))
+	            with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:  pickle.dump(frist_row, fp)   #Pickling
+	            return redirect(Multi_proteins,job=job_num)
+	            	
+               	
+
 
         except UnicodeDecodeError:
             print("Could not decode uploaded file as text file")
