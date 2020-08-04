@@ -26,7 +26,7 @@ Graph=load_obj("DomainG")
 # PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
 DomainG=Graph
 
-#function for visulaization in the website
+#function for visulaization  DomainView
 def vis_node_(node):
       p_id='"'+node.split(".")[1]+'"'
       ppp=node.split(".")[1]
@@ -48,10 +48,13 @@ def vis_node_(node):
       for n in g.nodes:
           
           
+          
           #Domain node
           if len(n.split("/"))==1:
                       #print(n)
-                      N.append("{id: \""+n+ppp+"\", label:  \""+n+
+
+                      label_name=pr.Domain_name(n)[0]+' ('+n+')'
+                      N.append("{id: \""+n+ppp+"\", label:  \""+label_name+
                        "\" ,group: \"Domain\",physics:true ,"+" source: "+p_id+", value: \"4"+"\"},")
                   
           else:    
@@ -62,7 +65,9 @@ def vis_node_(node):
               #Main Domain of interest
               if n==node:
                   try:
-                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene)+"-"+n.split("/")[1]+
+                    domain_name=n.split("/")[1]
+                    domain_name=pr.Domain_name(domain_name)[0]+' ('+domain_name+')'
+                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene)+" - "+domain_name+
                              "\" ,group:  \"MDomain\",physics:false, "+" source: "+p_id+", value:\" 5"+"\"},")
                   except KeyError:
                     print(node)

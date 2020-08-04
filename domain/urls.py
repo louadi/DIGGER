@@ -22,6 +22,11 @@ urlpatterns = [
     # Interaction view page (select one transcript of gene)
     path('ID/gene/<str:gene_ID>/', views.gene, name="gene-overview"),
 
+    #exon selection page:
+    
+
+
+
     # --- Detailed Result Pages ---
     # Network interaction view
     path('vis_network/job/<str:job>', views.Multi_proteins, name="network-visualization"),

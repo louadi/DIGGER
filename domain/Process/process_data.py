@@ -132,6 +132,7 @@ def gene_to_all_transcripts(gene_ID):
     
     
     
+    
     return tdata
 
 def Domain_name(Pfam_id):

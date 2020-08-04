@@ -209,19 +209,7 @@ def exon(request,exon_ID):
 
 
 
-""" Not in use
-#Display a single node
-def display(request,Pfam_id):
-  
-   n,e,gene,domain=exd.vis_node_(Pfam_id)
-   context = {
-     'nodes':n,
-     'edges':e,
-     'gene':gene,
-     'domain':domain
-       }  
-   return render(request, 'trash/display.html', context)
-"""
+
 
 
 
@@ -308,6 +296,7 @@ def transcript(request,P_id):
 
 
 
+
     #DomainView for missing domains
 
     switcher_m=[]
@@ -373,31 +362,6 @@ def transcript(request,P_id):
 
 
 
-
-""" Not in use
-#InteractionView
-def InteractionView(request,P_id,P2_id):
-
-    
-    
-    
-    nodes,edges,interaction,tr,p_name=iv.int_view(P_id,P2_id)
-    
-  
-    
-    context={
-
-    'pv_nodes': nodes,
-    'pv_edges': edges,
-
-    'dt1' :interaction,
-    'pr':p_name,
-    'tr':tr,
-    
-    }
- 
-    return render(request, 'trash/InteractionView.html', context)
-"""
 
 def isoform_level(request):
 
@@ -487,11 +451,37 @@ def exon_level(request):
 
     if "search 3" in request.GET :     # If option 3 is selected
         # ToDo Implement here :D
-        pass
+
+
+
+        # Get and sanitize the search_query
+        search_query = request.GET['search 3'].strip()
+
+        # Try and parse the search_query as gene name from the database
+        query_set = Gene.objects.filter(gene_symbol__iexact=search_query)
+        if query_set:
+            search_query = query_set[0].ensembl_id
+
+        search_query = search_query.split("+")[0]
+        search_query = search_query.split("%")[0]
+        search_query = search_query.split(".")[0]
+        search_query = search_query[:15]
+
+        # Input search is a protein:
+        if search_query[:4] == 'ENST' or search_query[:4] == 'ENSP':
+            return redirect(transcript, P_id=search_query)
+
+
+        # Input search is an exon:
+        elif len(search_query) == 15 and search_query[:4] == 'ENSG':
+            return redirect(gene, gene_ID=search_query)
+
+
+
+
+        
 
     return render(request, 'setup/exon_level.html', )
-
-
 
 
 #PPI network analysis
