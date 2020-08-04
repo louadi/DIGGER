@@ -51,7 +51,7 @@ def load_datasets():
 
             # Domain
             elif table_name is Domain:
-                for _, row in tqdm(data.iterrows(), total=data.shape[0]):
+                for _, row in tqdm(data.iterrows(), total=data.shape[0]):   	
                     entry = Domain()
                     entry.pfam_id = row['PfamId']
                     entry.symbol = row['Symbol3']

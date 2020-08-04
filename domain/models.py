@@ -11,8 +11,8 @@ class Gene(models.Model):
 
 class Domain(models.Model):
     pfam_id = models.CharField(max_length=10, db_index=True, primary_key=True)
-    symbol = models.CharField(max_length=10)
+    symbol = models.CharField(max_length=20)
     description = models.CharField(max_length=150)
 
-    def __str__(self):
-        return f"Pfam: {self.pfam_id} - Symbol: {self.symbol}"
+    #def __str__(self):
+    #   return f"Pfam: {self.pfam_id} - Symbol: {self.symbol}"

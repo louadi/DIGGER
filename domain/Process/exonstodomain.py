@@ -260,7 +260,7 @@ def input_transcript(Ensemble_transID):
     h3='_blank"'
     #df_filter =domains['Interactions mediated by the domain']!=0
     
-    domains["Link to other databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
+    domains["Link to other databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
     
     #domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+domains['Pfam ID']+'">'+gene_name+'-'+domains['Pfam ID']+'</a>'
     
@@ -305,31 +305,15 @@ def input_transcript(Ensemble_transID):
 
     droped2["Interactions mediated by the domain"]=droped2["Interactions mediated by the domain"].astype(int).astype(str)
     
+    #s=[pr.Domain_name(x) for x  in droped1["Corresponding domain ID"].unique()]
     
     
+    droped2["Symbol"],droped2["Summary"]=zip(*droped2['Pfam ID'].map(pr.Domain_name))
     
+    droped2=droped2[['Pfam ID','Interactions mediated by the domain','Symbol','Summary','Link to other databases']]
     
     return domains,unique_domains,exons,text1,domains.to_html(escape=False),Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1.to_html(escape=False, index=False),droped2.to_html(escape=False, index=False),exons_in_interface,co_partners
 
 
 
-'''
-def input_exon(transcript_ID,exon_ID):
-    #check if transciprt ID is correct
-    domains,text1,domains.to_html,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons=input_transcript(transcript_ID)
-    
-    df_filter = domains['Exon stable ID'].isin([exon_ID])
-    domains=domains[df_filter]  
-    
-    if not exons['Exon stable ID'].isin([exon_ID]).values.any():
-        text2=" The exon "+exon_ID+" does not exists in the transcript "+tran_name+"."
-    
-    elif domains["Pfam ID"].isnull().values.all():
-        text2=" The exon "+exon_ID+" in the trascript "+tran_name+" does not code for any known domain in Pfam database."
 
-    else :
-        text2=" The exon "+exon_ID+" in the transcript "+tran_name+", codes for "+str(domains.shape[0])+" known Pfam domains."
-    return domains,text1,text2
-
-
-'''

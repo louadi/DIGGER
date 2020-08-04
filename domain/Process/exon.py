@@ -83,32 +83,32 @@ def input_exon(exon_ID):
                           
                           
                           h=reverse('home')+"graph/"
-                          #print(h)
-                          #table_domains["Link to other Databases"]=""
+                          
                           table_domains['Interactions mediated by the domain']=table_domains['Interactions mediated by the domain'].astype(int)
-                          #df_filter =table_domains['Interactions mediated by the domain']!=0
+                          
                           
                          
-                          #h=reverse('home')+"graph/"
                           
                           
                           
-                          table_domains["Link to other Databases"]='<a href="http://pfam.xfam.org/family/'+table_domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+table_domains['Pfam ID']+'"target="_blank">3did  </a>   </h5 class> '
+                          
+                          table_domains["Link to other Databases"]='<a href="http://pfam.xfam.org/family/'+table_domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+table_domains['Pfam ID']+'"target="_blank">3did  </a>   </h5 class> '
                          
                          
                          
-                          #table_domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+table_domains['Pfam ID']+'">'+gene_name+'-'+table_domains['Pfam ID']+'</a>'
-                          
-                          
+
                           
                           table_domains=table_domains.drop(columns=['Exon rank in transcript','Exon stable ID','CDS start','CDS end','Pfam start','Pfam end','Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end"])
                           table_domains=table_domains.drop_duplicates()
+
+                          table_domains["Symbol"],table_domains["Summary"]=zip(*table_domains['Pfam ID'].map(pr.Domain_name))
+                          table_domains=table_domains[['Pfam ID','Interactions mediated by the domain','Symbol','Summary','Link to other Databases']]
+
                           pd.set_option('display.max_colwidth',1000)
                           Total = table_domains['Interactions mediated by the domain'].sum()
                           
                           
-                          #table_domains["Pfam known interactions"]='<center>'+table_domains["Pfam known interactions"].astype(str)+'</center>'
-                          #table_domains["Visualization of the domain interactions"]='<center>'+table_domains["Visualization of the domain interactions"]+'</center>'
+                          
                           
                           
                           

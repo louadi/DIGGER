@@ -18,7 +18,7 @@ from .Process import InteractionView as  iv
 from .Process import gene as  g
 from .Process import network_analysis as nt
 
-from .models import Gene
+from .models import Gene, Domain
 
 '''
 def get_input(query=None):
@@ -33,42 +33,7 @@ if not os.path.exists(jobs_path):
     os.makedirs(jobs_path)
 
 # or reference a template from templates folder
-""" NOT USED
-def home(request):
 
-    
-    if "search" in request.GET :     # If the form is submitted
-    
-        search_query = request.GET['search']
-        search_query=search_query.replace(" ", "")
-        search_query=search_query.split("+")[0]
-        search_query=search_query.split("%")[0]
-        search_query=search_query.split(".")[0]
-        #Input search is a protein:
-        if len(search_query)==15 and search_query[:4]=='ENST' or search_query[:4]=='ENSP':
-          return transcript(request,search_query)
-          
-          
-          
-          
-        #Input search is an exon: 
-        elif search_query[:4]=='ENSG':
-          return gene(request,search_query)
-     
-     
-    if "search 2" in request.GET :     # If the form is submitted
-    
-        search_query = request.GET['search 2']
-        search_query=search_query.replace(" ", "")
-        search_query=search_query.split("+")[0]
-        search_query=search_query.split("%")[0]
-        search_query=search_query.split(".")[0]
-
-        if search_query[:4]=='ENSE':
-          return exon(request,search_query)
-        
-    return render(request,'domain/home.html' ) 
-"""
 
 
 #Display transcripts of a gene
@@ -263,8 +228,8 @@ def display(request,Pfam_id):
 #Dsiplay information of a transcript or a protein
 def transcript(request,P_id):
 
-
-    #print(P_id)
+   
+    
     out=tr.Protein_view(P_id)
     if out==0 :return HttpResponse(' Wrong entry or protein without any known Pfam domains')
     if out==1 :return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
@@ -435,6 +400,8 @@ def InteractionView(request,P_id,P2_id):
 """
 
 def isoform_level(request):
+
+
     if "search" in request.GET:  # If the form is submitted
         # Get and sanitize the search_query
         search_query = request.GET['search'].strip()
@@ -466,6 +433,9 @@ def isoform_level(request):
 
 
 def exon_level(request):
+    
+
+    
     if "search" in request.GET:     # If the form is submitted
       #Input and Exon ID
       print('-----------------------------------------------------------')
@@ -671,15 +641,6 @@ def Multi_proteins(request, job='0'):
 def about(request):
  
     return render(request,'domain/about.html',) 
-"""
-
-""" NOT USED ???
-def graph(request):
-    jdata = {
-     'data':jsonData,
-     'data2':jsonData2
-       }
-    return render(request,'domain/index.html',jdata) 
 """
 
 
