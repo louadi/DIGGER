@@ -4,6 +4,7 @@
 {% block title %}Exon-Level Analysis{% endblock %}
 
 {% block header %}
+    <link href="{% static 'domain/typeaheadjs.css' %}" rel="stylesheet">
     <style type="text/css">
         .tab {
             margin-left: 30px;
@@ -28,10 +29,10 @@
             <div class="col">
                 <input
                         class="form-control mr-sm-2"
-                        type="Ensembl ID"
+                        type="text"
                         placeholder="Input an Ensembl Exon ID "
-                        aria-label="Search 2 "
-                        name='search 2'
+                        aria-label="Search "
+                        name='search'
                         value="">
             </div>
             <!--end of col-->
@@ -47,7 +48,7 @@
 
     <form class="card card-sm mt-4">
         <h5 class="card-header"><span style="font-weight:bold">Option 2</span>: Input genomic coordinates of an
-            exon or an alternative splicing event</h5>
+            exon.</h5>
 
 
         <div class="card-body no-gutters row align-items-center">
@@ -55,10 +56,10 @@
             <div class="col">
                 <input
                         class="form-control mr-sm-2"
-                        type="Ensembl ID"
-                        placeholder="Input the coordinates of exon or AS event from human genome build hg38 (GRCh38)"
+                        type="text"
+                        placeholder="Input the genomic coordinates of an exon from human genome build hg38 (GRCh38)"
                         aria-label="Search"
-                        name='search'
+                        name='search 2'
                         value="">
             </div>
             <!--end of col-->
@@ -72,6 +73,62 @@
             &nbsp;&nbsp;&nbsp;&nbsp; End</h6>
         <h6 class="tab mt-2" style="margin-left:2.5em"><span style="font-weight:bold"> Example</span>: ENSG00000117036
             157135471 157135708 </h6>
-        </div>
     </form>
+
+    <form class="card card-sm mt-4" autocomplete="off">
+        <h5 class="card-header"><span style="font-weight:bold">Option 3</span>: Select an exon based of a transcript or
+            gene</h5>
+
+        <div class="card-body no-gutters row align-items-center" >
+            <!--end of col-->
+            <div class="col">
+                <div id="remote">
+                    <input
+                            class="form-control mr-sm-2 typeahead"
+                            type="text"
+                            placeholder="Input a Gene Symbol or an Ensembl ID ( Gene / Transcript / Protein )"
+                            aria-label="Search"
+                            name='search 3'
+                            value="">
+                </div>
+            </div>
+            <!--end of col-->
+            <div class="col-auto">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+            </div>
+            <!--end of col-->
+        </div>
+        <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold">  Examples</span> :
+            BAG1 ; ENSG00000058404 ; ENSP00000489057 ; ENST00000016946 ; ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6>
+        </h6>
+    </form>
+
+
+    <script src="{% static "domain/typeahead.bundle.js" %}"></script>
+
+    <!-- Derived from here https://stackoverflow.com/questions/45588138/typeahead-js-in-django-project -->
+    <script>
+        var gene_symbol = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('gene_symbol'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: '{% url "gene-symbol-autocomplete" %}?q=%QUERY',
+            remote: {
+                url: '{% url "gene-symbol-autocomplete" %}?q=%QUERY',
+                wildcard: '%QUERY'
+            }
+        });
+
+        $('#remote .typeahead').typeahead(null, {
+            name: 'gene-symbol',
+            display: 'gene_symbol',
+            source: gene_symbol,
+            templates: {
+                // Derived from here https://github.com/twitter/typeahead.js/issues/1031#issuecomment-66567928
+                suggestion: function (data) {
+                    return '<p><strong>' + data.gene_symbol + '</strong> - ' + data.ensembl_id + '</p>';
+                }
+            }
+
+        });
+    </script>
 {% endblock content %}

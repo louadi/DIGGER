@@ -216,4 +216,9 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Pybiomart files
 /.pybiomart.sqlite
+
+# IntelliJ like IDEs (e.g. PyCharm)
+.idea

@@ -25,6 +25,7 @@ g2d=exd.load_obj("g2d")
 #Join PPI-DDI network
 DomainG=exd.load_obj("DomainG")
 
+
 # PPI network confirmed by residue evidence
 #PPI_3D=exd.load_obj("Residue")
 
@@ -89,7 +90,7 @@ def Protein_view(P_id):
             for d in missing_domain:
                 s=d.split('/')
                 dom.append(s[1])
-                l.append(' <a href="http://pfam.xfam.org/family/'+s[1]+'  "target="_blank">Pfam  </a>   &nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+s[1]+'"target="_blank">3did  </a>      </h5 class> ')
+                l.append(' <a href="http://pfam.xfam.org/family/'+s[1]+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+s[1]+'"target="_blank">3did  </a>      </h5 class> ')
                 if DomainG.has_node(d):
                     n.append(len(DomainG[d]))
                     
@@ -110,14 +111,10 @@ def Protein_view(P_id):
                   
             dfff = pd.DataFrame(list(zip(dom,n,l)), columns=['Pfam ID','Interactions mediated by the domain','Link to other databases'])
             pd.set_option('display.max_colwidth',1000)
-            
-            
-            
-            #dfff["Interactions mediated by the domain"]='<center>'+dfff["Interactions mediated by the domain"].astype(str)+'</center>'
-            #dfff["Link to other Databases"]='<center>'+dfff["Link to other Databases"]+'</center>'
-            
+            dfff["Symbol"],dfff["Summary"]=zip(*dfff['Pfam ID'].map(pr.Domain_name))
+            dfff=dfff[['Pfam ID','Interactions mediated by the domain','Symbol','Summary','Link to other databases']]
             df_missed=dfff
-            #df_missed=dfff.to_html(escape=False, index=False)
+
     
             
     
@@ -127,27 +124,28 @@ def Protein_view(P_id):
     
     if len(protein_with_DDI)>1:
           pd_interaction=table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain)
-              
-              
+
+          pd_interaction["Score"] = (
+                      1 - ((pd_interaction["Percentage of lost domain-domain interactions"].astype(int) / 100)))
+          
           pd_interaction.insert(0,'Selected Protein variant','')
           pd_interaction["Selected Protein variant"]=tran_name
           pd_interaction.to_csv(f'{table_path_2}/{trID}.csv', index=False,)
           
     
-          pd_interaction["Retained DDIs"]='<center>&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;</center>'
-          pd_interaction["Lost DDIs"]='<center>&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;</center>'
+          pd_interaction["Retained DDIs"]='&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;'
+          pd_interaction["Lost DDIs"]='&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;'
           
           
           
           pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
           #h=reverse('home')+"ID/"+trID+'/InteractionView/'
-          pd_interaction["Score"]=(1-((pd_interaction["Percentage of lost domain-domain interactions"].astype(int)/100)))
+
           
           
           pd_interaction["Percentage of lost domain-domain interactions"]=pd_interaction["Percentage of lost domain-domain interactions"].astype(int)
           pd_interaction["Percentage of lost domain-domain interactions"]=pd_interaction["Percentage of lost domain-domain interactions"].astype(str)+' % '
           
-          #pd_interaction["Protein-protein interaction"]='<center>'+pd_interaction["Protein-protein interaction"]+'<a target="'+'_blank"href="'+h+pd_interaction["NCBI gene ID"]+'">'+" (Visualize) "+'</a>'+'</center>'
           
           
 

@@ -69,6 +69,15 @@
             max-height: 55%;
         }
     </style>
+
+          <script>
+    $(document).ready( function () {
+    $('#Interaction_table').DataTable(
+  
+    
+    );
+} );
+  </script>
 {% endblock %}
 
 {% block raw_content %}
@@ -163,21 +172,26 @@
                          aria-labelledby="v-pills-overview-tab">
                         <div class="card-body">
                             <p class="lead text-center"><span
-                                    style="font-weight:bold">Domain and exon architecture </span></p>
-
+                                    style="font-weight:bold">Domain and exon architecture</span>: {{ text1 }}</p>
+                                    
+                           
+                          
                             <img src="{% get_media_prefix %}images/{{ trID }}.png">
-                             <center>
+                              <center>
                             <img class="resize2 text-center mt-2 img-fluid" src="{% static 'image/legend 3.png' %}">
                              </center>
                             <!-- Exon Table-->
+
                             <h6 class="mt-5">
-                            <center>
-                                <h5 class="mb-3">{{ text1 }}</h5>
-                                 </center>
-                                {% autoescape off %}
-                                    {{ dt }}
-                                {% endautoescape %}
-                            </h6>
+                                
+                                <h5 class="mb-3">Select an exon from the table to assess the consequence of its skipping  or choose different tabs to explore  the isoform {{ tran_name }} interactions.</h5>
+                            
+                                <h6 class="mb-3">
+                                    {% autoescape off %}
+                                        {{ dt }}
+                                    {% endautoescape %}
+                                </h6>
+                             
                         </div>
                     </div>
 
@@ -914,9 +928,11 @@
                                 <div style="text-align: center;" class="mt-5">
                                     <h4 class="lead"> Protein partners of the isoform {{ tran_name|safe }}  </h4>
                                     <h6 class="my-3">
+                                    	
                                         {% autoescape off %}
                                             {{ dt4 }}
                                         {% endautoescape %}
+                                    	
                                     </h6>
                                 </div>
 

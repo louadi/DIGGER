@@ -22,6 +22,11 @@ urlpatterns = [
     # Interaction view page (select one transcript of gene)
     path('ID/gene/<str:gene_ID>/', views.gene, name="gene-overview"),
 
+    #exon selection page:
+    
+
+
+
     # --- Detailed Result Pages ---
     # Network interaction view
     path('vis_network/job/<str:job>', views.Multi_proteins, name="network-visualization"),
@@ -37,8 +42,8 @@ urlpatterns = [
     # path('graph/', views.graph, name="graph"),
     # <<< Not used anymore?
     # Domain view
-    path('graph/<str:Pfam_id>', views.display, name="Node_vis"),
+    # path('graph/<str:Pfam_id>', views.display, name="Node_vis"),
     # Interaction view
-    path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
+    # path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
     # >>>
 ]

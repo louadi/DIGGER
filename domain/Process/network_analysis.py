@@ -45,13 +45,20 @@ def Construct_network(proteins_id, missing,job_ID):
       p2_name=[]
       DDIs=[]
       missing_DDIs=[]
+
+
+      #DDIS with liknks for web display only:
+      DDIs2=[]
+      missing_DDIs2=[]
+
+
       #Score = (retained DDI/All interactions)
       score=[]
       source=[]
       home=reverse('home')
       # Get the subgraph:
       H = PPI.subgraph(proteins_id)
-      print('interactions:',H)
+      #print('interactions:',H)
       if len(H.edges())==0: return 0
       for e in H.edges():
           if e[0] not in N: N.append(e[0])
@@ -83,6 +90,15 @@ def Construct_network(proteins_id, missing,job_ID):
               DDIs_tmp=[]
               missing_DDIs_tmp=[]
 
+
+              #DDIS with liknks for web display only:
+
+              DDIs_tmp2=[]
+              missing_DDIs_tmp2=[]
+              
+
+
+
               for d1 in domains1:
                   for d2 in domains2:
                       if DDI.has_edge(d1,d2):
@@ -93,19 +109,23 @@ def Construct_network(proteins_id, missing,job_ID):
                            if (d1 in missing[gene1]) or (d2 in missing[gene2]):
                                   E.append("{from: '"+e[0]+"', to: '"+e[1]+"', dashes:  true,title:' Lost "+d1+'-'+d2+"', color: 'red'},") 
                                   #print('yeaaaaah')
-                                  print(d1,d2)
-                                  print(gene1,gene2)
+                                  #print(d1,d2)
+                                  #print(gene1,gene2)
                                   affected_nodes.append(e[0])
                                   affected_nodes.append(e[1])
                                   
                                   missing_DDIs_tmp.append(d1+'-'+d2)
+                                  missing_DDIs_tmp2.append(link(d1)+'-'+link(d2))
+
+
                            else:
                                   #Interaction retained
                                   E.append("{from: '"+e[0]+"', to: '"+e[1]+"',title:'"+d1+'-'+d2+"',  color: 'red'},") 
                                   DDI_nodes.append(e[0])
-                                  DDI_nodes.append(e[1])  
+                                  DDI_nodes.append(e[1]) 
+
                                   DDIs_tmp.append(d1+'-'+d2)
-                                  
+                                  DDIs_tmp2.append(link(d1)+'-'+link(d2))
                                   
               if inter:
                    # inter=True: a Domain-Domain Interaction was found:
@@ -114,10 +134,26 @@ def Construct_network(proteins_id, missing,job_ID):
                    p1_name.append(pr.entrez_to_name(e[0]))  
                    p2.append(e[1])
                    p2_name.append(pr.entrez_to_name(e[1]))
-                   if DDIs_tmp!=[]: DDIs.append(' ; '.join(DDIs_tmp))
-                   else: DDIs.append('-')
-                   if missing_DDIs_tmp!=[]: missing_DDIs.append(' ; '.join(missing_DDIs_tmp))
-                   else: missing_DDIs.append('-')
+
+                   if DDIs_tmp!=[]: 
+                      DDIs.append(' ; '.join(DDIs_tmp))
+                      DDIs2.append(' ; '.join(DDIs_tmp2))
+
+
+                   else: 
+                      DDIs.append('-')
+                      DDIs2.append('-')
+
+
+                   if missing_DDIs_tmp!=[]: 
+                      missing_DDIs.append(' ; '.join(missing_DDIs_tmp))
+                      missing_DDIs2.append(' ; '.join(missing_DDIs_tmp2))
+
+                   else: 
+                        missing_DDIs.append('-')
+                        missing_DDIs2.append('-')
+
+
                    score.append(str(float("{0:.2f}".format(len(DDIs_tmp)/(len(DDIs_tmp)+len(missing_DDIs_tmp))))))         
                    source.append('PPI-DDI')           
                               
@@ -127,8 +163,13 @@ def Construct_network(proteins_id, missing,job_ID):
                    p1_name.append(pr.entrez_to_name(e[0]))  
                    p2.append(e[1])
                    p2_name.append(pr.entrez_to_name(e[1]))
+
                    DDIs.append('-')
+                   DDIs2.append('-')
+
                    missing_DDIs.append('-')
+                   missing_DDIs2.append('-')
+
                    score.append('1.0')
                    source.append('PPI') 
           else : #Both genes have no domains
@@ -138,8 +179,13 @@ def Construct_network(proteins_id, missing,job_ID):
                    p1_name.append(pr.entrez_to_name(e[0]))  
                    p2.append(e[1])
                    p2_name.append(pr.entrez_to_name(e[1]))
+
                    DDIs.append('-')
+                   DDIs2.append('-')
                    missing_DDIs.append('-')
+                   missing_DDIs2.append('-')
+
+
                    score.append('1.0')
                    source.append('PPI')
       nodes=[]
@@ -156,26 +202,18 @@ def Construct_network(proteins_id, missing,job_ID):
       
       
       # Table of interactions
-      pd_interaction=pd.DataFrame( data=[p1,p1_name,p2,p2_name,DDIs,  missing_DDIs,score,source ], index=['Protein 1', 'Protein 1 name','Protein 2', 'Protein 2 name', 'Retained DDIs', 'Lost DDIs','Score','Source of the interaction'] ) 
+      pd_interaction=pd.DataFrame( data=[p1,p1_name,p2,p2_name,DDIs2,  missing_DDIs2,DDIs,missing_DDIs, score,source ], index=['Protein 1', 'Protein 1 name','Protein 2', 'Protein 2 name', "Retained domain-domain interactions","Missing domain-domain interactions",'Retained DDIs', 'Lost DDIs','Score','Source of the interaction'] ) 
       pd_interaction=pd_interaction.transpose()
       pd.set_option('display.max_colwidth',1000)
       
       
-      pd_interaction.to_csv(f'{jobs_table_path}/{job_ID}.csv', index=False)
+      pd_interaction.drop(columns=["Retained domain-domain interactions","Missing domain-domain interactions"]).to_csv(f'{jobs_table_path}/{job_ID}.csv', index=False)
       
       
-      pd_html=pd_interaction.drop(columns=['Protein 1', 'Protein 2'])
+      pd_html=pd_interaction.drop(columns=['Protein 1', 'Protein 2','Retained DDIs', 'Lost DDIs'])
       
       
-      #If the table is big, only show important Interactions
-      if len(pd_html)>10:
-          pd_html=pd_html[pd_html['Source of the interaction']=='PPI-DDI']
-      
-      #Max interaction to display in web page
-      max_disp=150
-      
-      if len(pd_html)>max_disp:
-            pd_html=pd_html[:max_disp]
+   
       
       pd_html.sort_values(by=['Source of the interaction'], ascending=[True])
       
@@ -185,17 +223,16 @@ def Construct_network(proteins_id, missing,job_ID):
       
       pd_html=pd_html.rename(columns={
 
-          "Source of the interaction": "Source of the interaction", 
+          
           "Score": "Score*",
-          "Retained DDIs": "Retained domain-domain interactions", 
-          "Lost DDIs": "Missing domain-domain interactions",
+
           
           })
       
       
       
       # Convert Table to HTML
-      pd_html=pd_html.to_html(escape=False, index=False)
+      pd_html=pd_html.to_html(escape=False, index=False,table_id='results', classes=[ 'display compact'])
       
       
       
@@ -206,7 +243,7 @@ def Construct_network(proteins_id, missing,job_ID):
           
           
       pd_interaction['weight']=pd_interaction['weight'].astype(float)     
-      edges =pd_interaction.drop(columns=['Protein 1 name', 'Protein 2 name','Retained DDIs','Lost DDIs','Source of the interaction'])
+      edges =pd_interaction.drop(columns=['Protein 1 name', 'Protein 2 name','Retained DDIs','Lost DDIs','Source of the interaction',"Retained domain-domain interactions","Missing domain-domain interactions"])
       edges.to_csv(f'{jobs_networks_path}/{job_ID}.sif', index=False,sep='\t')
       
       edges=edges.rename(columns={"Protein 1": "source",
@@ -217,7 +254,7 @@ def Construct_network(proteins_id, missing,job_ID):
        
       weighted_G=nx.from_pandas_edgelist(edges, edge_attr=True)
       
-      print(weighted_G.edges())
+      #print(weighted_G.edges())
       nx.write_graphml(weighted_G, f'{jobs_networks_path}/{job_ID}.graphml')  
       
       return nodes,E,pd_interaction,pd_html
@@ -230,7 +267,7 @@ def Construct_network(proteins_id, missing,job_ID):
 
         
 def analysis_input_isoforms(Inputs):
-        print(Inputs)
+
         filtred=filter_proteins_list(Inputs)
         print('-----------filtred--------------')
         
@@ -255,7 +292,7 @@ def analysis_input_isoforms(Inputs):
                           domains=tr_to_domain(tr)
                           
                           if len(domains)==0:
-                              print(tr,domains)
+                              #print(tr,domains)
                               gene_domains[gene]=[]
 
                           if len(domains)>0:
@@ -309,11 +346,11 @@ def analysis_input_genes(Inputs):
               #check if gene is coding:
               if  len(data[data['Gene stable ID'].isin([f])])!=0:
               
-                  print(f)
+                  #print(f)
                   #check PPI status:
                   
                   entrez_id=str(ensembl_to_entrez(f))
-                  print(entrez_id)
+                  #print(entrez_id)
                   if PPI.has_node(entrez_id):
                       print('yeaaaaaah')
                       protein_id.append(entrez_id)
@@ -417,5 +454,5 @@ def Remove(duplicate):
 
 
 
-
-
+def link(id):
+  return '<a href="http://pfam.xfam.org/family/'+id+'" target="_blank">'+id+' </a>'

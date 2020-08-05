@@ -11,7 +11,7 @@ import requests, sys
 from sqlalchemy import text
 
 from django.conf import settings
-
+from domain.models import  Domain
 server = "http://rest.ensembl.org"
 cwd = os.getcwd()
 
@@ -82,9 +82,9 @@ def transcript(transcript_ID):
     tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': transcript_ID})
     
     # tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
-     
     # df_filter = data['Transcript stable ID'].isin([transcript_ID])
     # tdata=data[df_filter].sort_values(by=['Exon rank in transcript'])
+    
     exons=tdata.drop(columns=["Pfam ID","Pfam start","Pfam end"]).drop_duplicates()
     D=tdata[tdata["Pfam ID"].notna()].drop_duplicates()
     p=D["Pfam ID"].unique()
@@ -126,17 +126,24 @@ def gene_to_all_transcripts(gene_ID):
 
     #df_filter = genes['Gene stable ID'].isin([gene_ID])
     #tdata=genes[df_filter]
-    
-    
-    
     #tdata=tdata["Transcript stable ID"].drop_duplicates()
+    
     tdata=tdata.unique()
+    
     
     
     
     return tdata
 
+def Domain_name(Pfam_id):
 
+    
+    
+	query=Domain.objects.filter(pfam_id=Pfam_id)
+	
+	if len(query)==0: return '-','-'
+	
+	else: return query[0].symbol,query[0].description
 
 
 
