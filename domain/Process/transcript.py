@@ -124,8 +124,10 @@ def Protein_view(P_id):
     
     if len(protein_with_DDI)>1:
           pd_interaction=table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain)
-              
-              
+
+          pd_interaction["Score"] = (
+                      1 - ((pd_interaction["Percentage of lost domain-domain interactions"].astype(int) / 100)))
+          
           pd_interaction.insert(0,'Selected Protein variant','')
           pd_interaction["Selected Protein variant"]=tran_name
           pd_interaction.to_csv(f'{table_path_2}/{trID}.csv', index=False,)
@@ -138,7 +140,7 @@ def Protein_view(P_id):
           
           pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
           #h=reverse('home')+"ID/"+trID+'/InteractionView/'
-          pd_interaction["Score"]=(1-((pd_interaction["Percentage of lost domain-domain interactions"].astype(int)/100)))
+
           
           
           pd_interaction["Percentage of lost domain-domain interactions"]=pd_interaction["Percentage of lost domain-domain interactions"].astype(int)

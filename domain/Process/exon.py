@@ -181,6 +181,9 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     pd_interaction=pd_interaction.rename(columns={
     "Protein name": "Partner Protein", })
+    pd_interaction["Percentage of lost domain-domain interactions"] = pd_interaction[
+        "Percentage of lost domain-domain interactions"].astype(int)
+    pd_interaction["Score"] = (1 - ((pd_interaction["Percentage of lost domain-domain interactions"] / 100)))
     pd_interaction.to_csv(f'{table_path}/{ExonID}.csv', index=False,)
     
     
@@ -193,8 +196,8 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
     h=reverse('home')+"ID/"+entrezID+'.'+ExonID+'/InteractionView/'
-    pd_interaction["Percentage of lost domain-domain interactions"]=pd_interaction["Percentage of lost domain-domain interactions"].astype(int)
-    pd_interaction["Score"]=(1-((pd_interaction["Percentage of lost domain-domain interactions"]/100)))
+
+
     
     #pd_interaction["Percentage of lost domain-domain interactions"]='<center>'+pd_interaction["Percentage of lost domain-domain interactions"].astype(int).astype(str)+' % '+'</center>'
     #pd_interaction["Affected Protein"]='<center>'+pd_interaction["Affected Protein"]+'</center>'

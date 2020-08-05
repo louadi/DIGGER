@@ -12,19 +12,13 @@ from io import StringIO
 from .Process import exonstodomain as exd
 from .Process import exon as ex
 from .Process import process_data as pr
-from .Process import proteininfo as  info
-from .Process import transcript as  tr
-from .Process import InteractionView as  iv
+from .Process import proteininfo as info
+from .Process import transcript as tr
+from .Process import InteractionView as iv
 from .Process import gene as  g
 from .Process import network_analysis as nt
 
 from .models import Gene, Domain
-
-'''
-def get_input(query=None):
-    queryset=[]
-    queries=query.split('')
-'''
 
 # --- Create folder
 # Global jobs path
