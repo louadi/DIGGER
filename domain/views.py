@@ -140,10 +140,6 @@ def exon(request,exon_ID):
                 first_victim=pd_interaction['NCBI gene ID'].tolist()[0]
 
 
-
-
-
-
                 pd_interaction=pd_interaction[["Affected Protein",'Partner Protein','NCBI gene ID','Retained DDIs','Lost DDIs','Percentage of lost domain-domain interactions','Residue evidence',"Protein-protein interaction",'Score']]
 
 
@@ -159,10 +155,10 @@ def exon(request,exon_ID):
                 })
 
 
-                pd_interaction=pd_interaction.to_html(escape=False, index=False, table_id='Interaction_table')
+                pd_interaction=pd_interaction.to_html(escape=False, index=False, table_id='Interaction_table', classes=[ 'display compact'])
 
    print(Interactiveview_switch)
-   table=table.to_html(escape=False, index=False,)
+   table=table.to_html(escape=False, index=False)
 
 
 
@@ -217,7 +213,7 @@ def exon(request,exon_ID):
 def transcript(request,P_id):
 
    
-    
+
     out=tr.Protein_view(P_id)
     if out==0 :return HttpResponse(' Wrong entry or protein without any known Pfam domains')
     if out==1 :return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
@@ -397,9 +393,9 @@ def isoform_level(request):
 
 
 def exon_level(request):
-    
 
-    
+
+
     if "search" in request.GET:     # If the form is submitted
       #Input and Exon ID
       print('-----------------------------------------------------------')
@@ -479,7 +475,7 @@ def exon_level(request):
 
 
 
-        
+
 
     return render(request, 'setup/exon_level.html', )
 
@@ -508,6 +504,8 @@ def network(request):
 
 
 
+
+
     # Option 2: Upload file
     if "option2" in request.POST and 'gene-count-file' in request.FILES:
         try:
@@ -518,67 +516,78 @@ def network(request):
             transcript_count_file = pd.read_table(file_buffer)
 
             #check if the file is alright:
-            if len(transcript_count_file)<2  or len(transcript_count_file)<2 : 
+            if len(transcript_count_file)<2  or len(transcript_count_file)<2 :
 
-            	#try to read it as an csv
-            	transcript_count_file = pd.read_csv(file_buffer)
+                #try to read it as an csv
+                transcript_count_file = pd.read_csv(file_buffer)
 
             if len(transcript_count_file)<2  or len(transcript_count_file)<2 :
-            	return HttpResponse("<h1>File format not supported</h1>")
+                return HttpResponse("<h1>File format not supported</h1>")
 
             else:
-	            
-	            # TODO Zakaria please insert the magic down below:)
-	            # Zaka: And this is where the magic happens :p
 
-	            #check if the first row corresponds to transcript Ensembl IDs
+                # TODO Zakaria please insert the magic down below:)
+                # Zaka: And this is where the magic happens :p
 
-	            #Max: the max number of isoforms to consider: 
-	            Max=1000
+                #check if the first row corresponds to transcript Ensembl IDs
 
-	            frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+                #Max: the max number of isoforms to consider:
+                Max=1000
 
-	            if frist_row[0][0:4]!='ENST' or frist_row[1][0:4]!='ENST' :return HttpResponse("<h1>File format not supported</h1>")
+                frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
 
-	            #at this point we have at least two transcript :)
-	            
-	            print(frist_row)
+                if frist_row[0][0:4]!='ENST' or frist_row[1][0:4]!='ENST' :
+                    return HttpResponse("<h1>File format not supported</h1>")
 
-	            #then check if the column of  counts exist  (for cufflinks FPKM  column)
 
-	            if 'FPKM' in transcript_count_file :
+                #at this point we have at least two transcript :)
+                frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
 
-	            	#cufflinks file (or a similar thing)
-	            	
-	            	try:
-	            		transcript_count_file=transcript_count_file.sort_values(by=['FPKM'], ascending=False)
+                #then check if the column of  counts exist  (for cufflinks FPKM  column)
+                 # if FPKM column exists  >>>> take the most expressed transcripts
+                try:
+                        transcript_count_file=transcript_count_file.sort_values(by=['FPKM'], ascending=False)
+                        frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+                        print('Input matches cufflinks output ')
 
-	            		#if FPKM row exists> take the most expressed transcripts
-	            		frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
-
-	            		print(frist_row)
-
-	            	except:
-	            		pass
+                except:
+                    pass
 
 
 
-	            #try to find row of counts
-	            elif 'counts'	in transcript_count_file :
 
-	            	try: 
-	            		#try to find row of counts
-	            		transcript_count_file=transcript_count_file.sort_values(by=['counts'], ascending=False)
-	            		frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+              #cufflinks file (or a similar thing)
+              #kallisto output counts in tpm
+                try:
+                    #try to find column of counts
+                    transcript_count_file=transcript_count_file.sort_values(by=['tpm'], ascending=False)
+                    frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+                    print('Input matches kallisto output ')
 
-	            	except:
-	            		pass	   			
-	            # and let DIGGER do the magic ;)
-	            job_num=str(random.randrange(500))
-	            with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:  pickle.dump(frist_row, fp)   #Pickling
-	            return redirect(Multi_proteins,job=job_num)
-	            	
-               	
+                except:
+                        pass
+
+
+
+
+                 #try to find row of counts
+                try:
+                    #try to find row of counts
+                    transcript_count_file=transcript_count_file.sort_values(by=['counts'], ascending=False)
+                    frist_row=transcript_count_file.iloc[:,0].unique()[:Max]
+                    print('Input with Counts column ')
+
+                except:
+                    pass
+
+
+
+                # and let DIGGER do the magic ;)
+                job_num=str(random.randrange(500))
+                with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:  pickle.dump(frist_row, fp)   #Pickling
+                return redirect(Multi_proteins,job=job_num)
+
+
 
 
         except UnicodeDecodeError:
@@ -632,84 +641,3 @@ def Multi_proteins(request, job='0'):
 
     return render(request, 'visualization/network.html', context)
 
-# def example2(request):
-#
-#     if "input" in request.GET :
-#           input_query = request.GET['input']
-#           print(input_query)
-#           #print(input_query)
-#           input_query=input_query.split("\r\n")
-#           #print(input_query)
-#           input_query[0]=input_query[0].replace(" ", "")
-#
-#           #max input IDs
-#           if len(input_query)<2000:
-#                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
-#                       job_num=str(random.randrange(500))
-#                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
-#                              pickle.dump(input_query, fp)
-#                       return redirect(Multi_proteins,job=job_num)
-#     return render(request,'domain/network-analysis-example-2.html')
-#
-#
-#
-#
-# def example1(request):
-#
-#     if "input" in request.POST :
-#           input_query = request.POST['input']
-#           print(input_query)
-#           #print(input_query)
-#           input_query=input_query.split("\r\n")
-#           #print(input_query)
-#           input_query[0]=input_query[0].replace(" ", "")
-#
-#           #max input IDs
-#           if len(input_query)<2000:
-#                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
-#                       job_num=str(random.randrange(500))
-#                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
-#                              pickle.dump(input_query, fp)
-#                       return redirect(Multi_proteins,job=job_num)
-#     return render(request,'domain/network-analysis-example-1.html')
-#
-# def example3(request):
-#
-#     if "input" in request.GET :
-#           input_query = request.GET['input']
-#           print(input_query)
-#           #print(input_query)
-#           input_query=input_query.split("\r\n")
-#           #print(input_query)
-#           input_query[0]=input_query[0].replace(" ", "")
-#
-#           #max input IDs
-#           if len(input_query)<2000:
-#                 if input_query[0][0:4]=='ENSG' or input_query[0][0:4]=='ENST' or input_query[0][0:4]=='ENSP':
-#                       job_num=str(random.randrange(500))
-#                       with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:   #Pickling
-#                              pickle.dump(input_query, fp)
-#                       return redirect(Multi_proteins,job=job_num)
-#     return render(request,'domain/Network_example4.html')
-
-""" NOT USED
-def about(request):
- 
-    return render(request,'domain/about.html',) 
-"""
-
-
-
-
-""" NOT USED
-def doc(request):
- 
-    return render(request,'domain/documentation.html',) 
-"""
-
-
-""" NOT USED
-def download(request):
- 
-    return render(request,'domain/download.html',) 
-"""

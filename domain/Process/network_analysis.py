@@ -58,7 +58,7 @@ def Construct_network(proteins_id, missing,job_ID):
       home=reverse('home')
       # Get the subgraph:
       H = PPI.subgraph(proteins_id)
-      print('interactions:',H)
+      #print('interactions:',H)
       if len(H.edges())==0: return 0
       for e in H.edges():
           if e[0] not in N: N.append(e[0])
@@ -109,8 +109,8 @@ def Construct_network(proteins_id, missing,job_ID):
                            if (d1 in missing[gene1]) or (d2 in missing[gene2]):
                                   E.append("{from: '"+e[0]+"', to: '"+e[1]+"', dashes:  true,title:' Lost "+d1+'-'+d2+"', color: 'red'},") 
                                   #print('yeaaaaah')
-                                  print(d1,d2)
-                                  print(gene1,gene2)
+                                  #print(d1,d2)
+                                  #print(gene1,gene2)
                                   affected_nodes.append(e[0])
                                   affected_nodes.append(e[1])
                                   
@@ -254,7 +254,7 @@ def Construct_network(proteins_id, missing,job_ID):
        
       weighted_G=nx.from_pandas_edgelist(edges, edge_attr=True)
       
-      print(weighted_G.edges())
+      #print(weighted_G.edges())
       nx.write_graphml(weighted_G, f'{jobs_networks_path}/{job_ID}.graphml')  
       
       return nodes,E,pd_interaction,pd_html
@@ -267,7 +267,7 @@ def Construct_network(proteins_id, missing,job_ID):
 
         
 def analysis_input_isoforms(Inputs):
-        print(Inputs)
+
         filtred=filter_proteins_list(Inputs)
         print('-----------filtred--------------')
         
@@ -292,7 +292,7 @@ def analysis_input_isoforms(Inputs):
                           domains=tr_to_domain(tr)
                           
                           if len(domains)==0:
-                              print(tr,domains)
+                              #print(tr,domains)
                               gene_domains[gene]=[]
 
                           if len(domains)>0:
@@ -346,11 +346,11 @@ def analysis_input_genes(Inputs):
               #check if gene is coding:
               if  len(data[data['Gene stable ID'].isin([f])])!=0:
               
-                  print(f)
+                  #print(f)
                   #check PPI status:
                   
                   entrez_id=str(ensembl_to_entrez(f))
-                  print(entrez_id)
+                  #print(entrez_id)
                   if PPI.has_node(entrez_id):
                       print('yeaaaaaah')
                       protein_id.append(entrez_id)
