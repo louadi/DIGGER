@@ -3,6 +3,7 @@ import os
 from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
 from domain.Process import proteininfo as  info
+from domain.Process import network_analysis as nt
 import pandas as pd
 from django.urls import reverse
 
@@ -130,8 +131,9 @@ def Protein_view(P_id):
           
           pd_interaction.insert(0,'Selected Protein variant','')
           pd_interaction["Selected Protein variant"]=tran_name
-          pd_interaction.to_csv(f'{table_path_2}/{trID}.csv', index=False,)
-          
+          pd_interaction.drop(columns=['Lost DDIs','Retained DDIs']).to_csv(f'{table_path_2}/{trID}.csv', index=False,)
+
+          pd_interaction=pd_interaction.drop(columns=['retained DDIs','missing DDIs'])
     
           pd_interaction["Retained DDIs"]='&emsp;'+pd_interaction["Retained DDIs"]+'&emsp;'
           pd_interaction["Lost DDIs"]='&emsp;'+pd_interaction["Lost DDIs"]+'&emsp;'
@@ -223,6 +225,8 @@ def Interacted_domain(p,g,entrezID,missing_domain):
         edges=[]
         DDI_edges=[]
         lost_edges=[]
+        DDI_edges2=[]
+        lost_edges2=[]
         for e in g.edges():
             gene1=e[0].split('/')[0]
             gene2=e[1].split('/')[0]
@@ -230,24 +234,28 @@ def Interacted_domain(p,g,entrezID,missing_domain):
                 edges.append(e)
                 if edge_dashes(e,entrezID,missing_domain)[0]!='false':
                     lost_edges.append(e[0].split('/')[1]+'-'+e[1].split('/')[1])
+                    lost_edges2.append(nt.link(e[0].split('/')[1]) + '-' + nt.link(e[1].split('/')[1]))
+
 
                 elif len(e[0].split('/'))==2 and len(e[1].split('/'))==2: 
                     DDI_edges.append(e[0].split('/')[1]+'-'+e[1].split('/')[1])
-        
-        return edges,DDI_edges,lost_edges     
+                    DDI_edges2.append(nt.link(e[0].split('/')[1]) + '-' +nt.link( e[1].split('/')[1]))
+        return edges,DDI_edges,lost_edges,DDI_edges2,lost_edges2
 
 def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain):
     Interactions=[]
     IDs=[]
     DDIs=[]
     lost_DDIs=[]
+    DDIs2=[]
+    lost_DDIs2=[]
     perc=[]
     status=[]
     for protein in protein_with_DDI:
         #select first protein
         if protein !=entrezID:
             #Search for interacted domains
-            edges,DDI_edges,lost_edges=Interacted_domain(protein,g,entrezID,missing_domain)
+            edges,DDI_edges,lost_edges,DDI_edges2,lost_edges2=Interacted_domain(protein,g,entrezID,missing_domain)
             
             IDs.append(protein)
             p=len(lost_edges)/(len(DDI_edges)+len(lost_edges))
@@ -263,7 +271,9 @@ def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain)
             Interactions.append(pr.entrez_to_name(protein))
             DDIs.append(' ; '.join(DDI_edges))
             lost_DDIs.append(' ; '.join(lost_edges))
-    return  pd.DataFrame(list(zip(Interactions, IDs,DDIs,lost_DDIs,perc,status)), columns =['Protein name', 'NCBI gene ID','Retained DDIs','Lost DDIs','Percentage of lost domain-domain interactions','Protein-protein interaction']) 
+            DDIs2.append(' ; '.join(DDI_edges2))
+            lost_DDIs2.append(' ; '.join(lost_edges2))
+    return  pd.DataFrame(list(zip(Interactions, IDs,DDIs2,lost_DDIs2,DDIs,lost_DDIs,perc,status)), columns =['Protein name', 'NCBI gene ID','Retained DDIs','Lost DDIs','retained DDIs','missing DDIs','Percentage of lost domain-domain interactions','Protein-protein interaction'])
 
 
 
