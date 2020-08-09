@@ -22,7 +22,7 @@
     <!-- Option 1: List of Ensembl IDs -->
     <div class="card">
         <h5 class="card-header"><span style="font-weight:bold">Option 1</span>: Enter a list of Ensembl IDs
-            (genes/rranscripts or proteins) </h5>
+            (genes, transcripts or proteins) </h5>
         <div class="card-body">
             <form action="{% url 'network-analysis' %}" method="post">
                 {% csrf_token %}
@@ -49,14 +49,14 @@
 
     <!-- Option2: Upload a file-->
     <div class="card mt-4">
-        <h5 class="card-header"><span style="font-weight:bold">Option 2</span>: Upload a file containing transcripts/ genes counts.
+        <h5 class="card-header"><span style="font-weight:bold">Option 2</span>: Upload a file with transcript counts.
         </h5>
         <div class="card-body">
             <form action="{% url 'network-analysis' %}" enctype="multipart/form-data" method="post">
                 {% csrf_token %}
                 <div class="custom-file form-group">
                     <input type="file" class="custom-file-input form-control" name="gene-count-file">
-                    <label class="custom-file-label" for="customFile">Upload transcripts/genes count file</label>
+                    <label class="custom-file-label" for="customFile">Upload transcript count file</label>
                 </div>
                 <br>
                 <br>
