@@ -8,6 +8,11 @@
         .tab {
             margin-left: 30px;
         }
+
+        {# Label text size #}
+        .label-size {
+            font-size: 16px;
+        }
     </style>
 {% endblock %}
 
@@ -15,7 +20,7 @@
 
     <div class="jumbotron p-xl-5">
         <h1 class="display-4">Network-Level Analysis</h1>
-        <h4 class="font-weight-light">Query interactions of  multiple isoforms
+        <h4 class="font-weight-light">Query interactions of multiple isoforms
             and generate a specific subnetwork from a list of protein variants or transcripts.</h4>
     </div>
 
@@ -26,61 +31,122 @@
         <div class="card-body">
             <form action="{% url 'network-analysis' %}" method="post">
                 {% csrf_token %}
-
-                <textarea name="input" rows="20" cols="20" class="form-control">
-                  {% block example_ids %}
-                  {% endblock example_ids %}
+                <div class="alert alert-secondary" role="alert">
+                    <h5><a href="{% url 'network-analysis-example-1' %}" class="test">[Example 1: Specific
+                        interaction between two Isoforms]</a>
+                        <br>
+                        <a href="{% url 'network-analysis-example-2' %}" class="test">[Example 2:
+                            Interaction
+                            between multiple isoforms]</a>
+                        <br>
+                        <a href="{% url 'network-analysis-example-3' %}" class="test">[Example 3:
+                            Transcriptomics
+                            data from TCGA - PAN-Cancer (2000 most abundant transcripts)]</a>
+                    </h5>
+                </div>
+                <div class="form-row mb-4">
+                <textarea name="input" rows="20" cols="20" class="form-control"
+                          id="network-ids">{% block example_ids %}{% endblock example_ids %}
                 </textarea>
+                </div>
 
-                <br><br>
-                <button class="btn btn-outline-success my-2 my-sm-0" name="option1" type="submit" style="float: right;">
-                    Submit
-                </button>
+                <div class="form-row">
+                    <button class="btn btn-outline-success my-2 my-sm-0" name="option1" type="submit"
+                            style="float: right;">
+                        Submit
+                    </button>
+                </div>
+
+
             </form>
-
-            <h5 class='tab'><a href="{% url 'network-analysis-example-1' %}" class="test">[Example 1: Specific
-                interaction between two Isoforms]</a></h5>
-            <h5 class='tab'><a href="{% url 'network-analysis-example-2' %}" class="test">[Example 2: Interaction
-                between multiple isoforms]</a></h5>
-            <h5 class='tab'><a href="{% url 'network-analysis-example-3' %}" class="test">[Example 3: Transcriptomics
-                data from TCGA - PAN-Cancer (2000 most abundant transcripts)]</a></h5>
         </div>
     </div>
 
     <!-- Option2: Upload a file-->
-    <div class="card mt-4">
-        <h5 class="card-header"><span style="font-weight:bold">Option 2</span>: Upload a file with transcript counts.
+    <div class="card mt-4" id="option2">
+        <h5 class="card-header"><span style="font-weight:bold">Option 2</span>: Upload a file with transcript counts
         </h5>
         <div class="card-body">
-            <form action="{% url 'network-analysis' %}" enctype="multipart/form-data" method="post">
+            <form method="post" action="{% url 'network-analysis' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="custom-file form-group">
-                    <input type="file" class="custom-file-input form-control" name="gene-count-file">
-                    <label class="custom-file-label" for="customFile">Upload transcript count file</label>
+                {% if error_message %}
+                    <div class="alert alert-danger">
+                        <p class="label-size">
+                            {{ error_message }}
+                        </p>
+                    </div>
+                {% endif %}
+
+                <!-- Transcript file -->
+                <div class="form-row mb-4">
+                    <label class="label-size">Upload a transcript count file</label>
+                    <div class="custom-file form-group">
+                        <input type="file" class="custom-file-input form-control" name="gene-count-file">
+                        <label class="custom-file-label" for="customFile">Select transcript count file</label>
+                    </div>
                 </div>
-                <br>
-                <br>
-                <button class="btn btn-outline-success my-2 my-sm-0" name="option2" type="submit" style="float: right;">
-                    Submit
-                </button>
-            </form>
 
-             <br><br>
-                        <h6 class='tab'>
+                <!-- Transcript count -->
+                <div class="form-row mb-4">
+                    <label class="label-size" for="transcript-count-range">Specify the maximum number of
+                        transcripts</label>
+                    <div class="input-group">
+                        <div class="col-9">
+                            <input type="range" class="custom-range" min="1" max="1000" step="1" value="500"
+                                   id="transcript-count-range" style="vertical-align: center">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="number" value="500" min="1" max="1000"
+                                   id="transcript-count-input" name="transcript-count-max">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-secondary" role="alert">
+                    <h6>
                         This option supports the output of tools such as Cufflinks and Kallisto
-                            (examples:
-                            <a href="https://zenodo.org/record/3973228/files/brain.fpkm_tracking?download=1" target="_blank" > 1 </a> or
-                             <a href="https://zenodo.org/record/3973267/files/abundance.tsv?download=1" target="_blank" > 2 </a>)
-                        </h6>
-
-                        <h6 class='tab'>
-                       The first column of your file should correspond to transcript ids and optionally a column named 'tpm', 'counts' or 'FPKM'.
-                        </h6>
-
+                        (examples:
+                        <a href="https://zenodo.org/record/3973228/files/brain.fpkm_tracking?download=1"
+                           target="_blank">
+                            1 </a>
+                        or
+                        <a href="https://zenodo.org/record/3973267/files/abundance.tsv?download=1" target="_blank">
+                            2</a>)
+                        <br>
+                        <br>
+                        The uploaded file can be either a comma or tab separated table containing Ensembl transcript IDs
+                        and counts. The first column of your file must correspond to Ensembl transcript IDs (can have
+                        any column name) and there must be a column named either 'tpm', 'counts' or 'FPKM'.
+                    </h6>
+                </div>
+                <div class="form-row">
+                    <button class="btn btn-outline-success my-2 my-sm-0" name="option2" type="submit"
+                            style="float: right;">
+                        Submit
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
+        // Jump to specific div
+        {% if jump_div %}
+            window.location.hash = '#{{jump_div}}';
+        {% endif %}
+
+        // Link range slider and input form
+        $(document).ready(function () {
+            $('#transcript-count-range').on('input', function (e) {
+                $('#transcript-count-input').val(e.target.value);
+
+            });
+
+            $('#transcript-count-input').on('change', function (e) {
+                $('#transcript-count-range').val(e.target.value);
+            });
+        });
+
         // Update the file upload label
         $('.custom-file input').change(function (e) {
             var files = [];

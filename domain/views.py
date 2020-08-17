@@ -9,6 +9,8 @@ from django.shortcuts import render, redirect
 from django.utils.html import escape
 from io import StringIO
 
+from pandas.errors import ParserError
+
 from .Process import exonstodomain as exd
 from .Process import exon as ex
 from .Process import process_data as pr
@@ -206,7 +208,7 @@ def exon(request,exon_ID):
 #Dsiplay information of a transcript or a protein
 def transcript(request,P_id):
 
-   
+
 
     out=tr.Protein_view(P_id)
     if out==0 :return HttpResponse(' Wrong entry or protein without any known Pfam domains')
@@ -476,6 +478,10 @@ def exon_level(request):
 
 #PPI network analysis
 def network(request):
+
+    error_message = ""
+    jump_div = ""
+
     # Option 1: List of Ensembl IDs
     if "option1" in request.POST:
         input_query = []
@@ -487,7 +493,7 @@ def network(request):
         input_query = list(set(input_query))
 
         # max input IDs
-        if len(input_query) < 2000 and len(input_query) > 1:
+        if 2000 > len(input_query) > 1:
             if input_query[0][0:4] == 'ENSG' or input_query[0][0:4] == 'ENST' or input_query[0][0:4] == 'ENSP':
                 job_num = str(random.randrange(500))
                 with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:  # Pickling
@@ -496,84 +502,82 @@ def network(request):
 
     # Option 2: Upload file
     if "option2" in request.POST and 'gene-count-file' in request.FILES:
+        error_message_suffix = ""
+
         try:
-            # Try to decode as UTF-8 and sanitize
-            file_string = escape(request.FILES['gene-count-file'].read().decode('UTF-8'))
-            file_buffer = StringIO(file_string)
-            # Parse as pandas dataframe
-            transcript_count_file = pd.read_table(file_buffer)
+            # --- Check input file for correct format
+            # Try to decode as UTF-8, sanitize and parse as table
+            try:
+                file_string = escape(request.FILES['gene-count-file'].read().decode('UTF-8'))
+                file_buffer = StringIO(file_string)
+                # Parse as pandas dataframe
+                transcript_count_df = pd.read_table(file_buffer)
+            except UnicodeDecodeError:
+                error_message_suffix = "could not be parsed as an text file"
+                raise RuntimeError
 
-            # check if the file is alright:
-            if len(transcript_count_file) < 2 or len(transcript_count_file) < 2:
-                # try to read it as an csv
-                transcript_count_file = pd.read_csv(file_buffer)
+            except ParserError:
+                error_message_suffix = f"could not be parsed as an table file (CSV or TSV)"
+                raise RuntimeError
 
-            if len(transcript_count_file) < 2 or len(transcript_count_file) < 2:
-                return HttpResponse("<h1>File format not supported</h1>")
+            # Check input shape
+            if transcript_count_df.shape[0] < 2 or transcript_count_df.shape[1] < 2:
+                error_message_suffix = f"could not be parsed as table or has less than two rows and columns"
+                raise RuntimeError
 
+            # Kevin: Zakaria please insert the magic down below:)
+            # Zaka: And this is where the magic happens :p
+
+            # Check if the first row corresponds to transcript Ensembl IDs
+            if not (str(transcript_count_df.iloc[0, 0]).startswith('ENST') or str(transcript_count_df.iloc[1, 0]).startswith('ENST')):
+                error_message_suffix = f"must have Ensembl transcript IDs in the first column starting with \"ENST\""
+                raise RuntimeError
+
+            # --- Try parsing counts for the different options (search for FPKM, tpm or counts)
+            # max_isoforms: the max number of isoforms to consider:
+            max_isoforms = int(request.POST['transcript-count-max'])
+
+            column_names = transcript_count_df.columns
+
+            # Cufflinks file (or a similar thing)
+            if "FPKM" in column_names:
+                transcript_count_df = transcript_count_df.sort_values(by=['FPKM'], ascending=False)
+                cut_rows = transcript_count_df.iloc[:, 0].unique()[:max_isoforms]
+                print('Input matches cufflinks output ')
+
+            # Kallisto output counts in tpm
+            elif "tpm" in column_names:
+                transcript_count_df = transcript_count_df.sort_values(by=['tpm'], ascending=False)
+                cut_rows = transcript_count_df.iloc[:, 0].unique()[:max_isoforms]
+                print('Input matches kallisto output ')
+
+            # Generic count matrix
+            elif "counts" in column_names:
+                transcript_count_df = transcript_count_df.sort_values(by=['counts'], ascending=False)
+                cut_rows = transcript_count_df.iloc[:, 0].unique()[:max_isoforms]
+                print('Input with counts column ')
+
+            # Could not find the row
             else:
+                error_message_suffix = "does not contain a column with the counts. The column must be named either \"FPKM\", \"tpm\" or \"counts\""
+                raise RuntimeError
 
-                # TODO Zakaria please insert the magic down below:)
-                # Zaka: And this is where the magic happens :p
+            # and let DIGGER do the magic ;)
+            job_num = str(random.randrange(500))
+            with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:
+                pickle.dump(cut_rows, fp)  # Pickling
+                print(f"Starting network analysis with {len(cut_rows)} rows")
+            return redirect(Multi_proteins, job=job_num)
 
-                # check if the first row corresponds to transcript Ensembl IDs
+        except RuntimeError:
+            print("Could not parse uploaded file acorrectly")
+            error_message = f"The uploaded file \"{request.FILES['gene-count-file']}\" {error_message_suffix}."
+            jump_div = 'option2'
 
-                # Max: the max number of isoforms to consider:
-                Max = 1000
-
-                frist_row = transcript_count_file.iloc[:, 0].unique()[:Max]
-
-                if frist_row[0][0:4] != 'ENST' or frist_row[1][0:4] != 'ENST':
-                    return HttpResponse("<h1>File format not supported</h1>")
-
-                # at this point we have at least two transcript :)
-                frist_row = transcript_count_file.iloc[:, 0].unique()[:Max]
-
-                # then check if the column of  counts exist  (for cufflinks FPKM  column)
-                # if FPKM column exists  >>>> take the most expressed transcripts
-                try:
-                    transcript_count_file = transcript_count_file.sort_values(by=['FPKM'], ascending=False)
-                    frist_row = transcript_count_file.iloc[:, 0].unique()[:Max]
-                    print('Input matches cufflinks output ')
-
-                except:
-                    pass
-
-                # cufflinks file (or a similar thing)
-                # kallisto output counts in tpm
-                try:
-                    # try to find column of counts
-                    transcript_count_file = transcript_count_file.sort_values(by=['tpm'], ascending=False)
-                    frist_row = transcript_count_file.iloc[:, 0].unique()[:Max]
-                    print('Input matches kallisto output ')
-
-                except:
-                    pass
-
-                # try to find row of counts
-                try:
-                    # try to find row of counts
-                    transcript_count_file = transcript_count_file.sort_values(by=['counts'], ascending=False)
-                    frist_row = transcript_count_file.iloc[:, 0].unique()[:Max]
-                    print('Input with Counts column ')
-
-                except:
-                    pass
-
-                # and let DIGGER do the magic ;)
-                job_num = str(random.randrange(500))
-                with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:
-                    pickle.dump(frist_row, fp)  # Pickling
-                return redirect(Multi_proteins, job=job_num)
-
-
-
-
-        except UnicodeDecodeError:
-            print("Could not decode uploaded file as text file")
-            pass
-
-    return render(request, 'setup/network.html')
+    return render(request, 'setup/network.html', context={
+        'error_message': error_message,
+        'jump_div': jump_div
+    })
 
 
 def Multi_proteins(request, job='0'):
