@@ -4,7 +4,6 @@
 {% block title %}Exonic Region From The Gene {{ name|safe }}{% endblock %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/table.css' %}">
     <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
 
     <style>
@@ -61,19 +60,21 @@
             max-height: 80%;
         }
 
+        .table {
+            text-align: center;
+        }
     </style>
-      <script>
-    $(document).ready( function () {
-    $('#Interaction_table').DataTable(
-    
-    );
-} );
-  </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Interaction_table').DataTable();
+        });
+    </script>
 {% endblock %}
 
-   
-    
-    
+
+
+
 
 
 
@@ -153,9 +154,11 @@
                                     </p>
 
                                     <h5 class>
-                                        {% autoescape off %}
-                                            {{ tb2 }}
-                                        {% endautoescape %}
+                                        <div class="table-responsive">
+                                            {% autoescape off %}
+                                                {{ tb2 }}
+                                            {% endautoescape %}
+                                        </div>
                                     </h5>
                                 </div>
 
@@ -800,44 +803,31 @@
                                 </script>
 
                                 <div style="text-align: center;">
-                                <center>
-                                    <img class="resize" src="{% static 'image/legend2.png' %}" alt="">
-                                  </center>
+                                    <center>
+                                        <img class="resize" src="{% static 'image/legend2.png' %}" alt="">
+                                    </center>
                                 </div>
 
 
 
                                 <br/>
 
-                                <div style="text-align: center;">
-                                    <h4 class=="lead"> Protein-Protein Interactions </h4>
-                                    <h6 class>
+                                <div style="text-align: center;" class="my-5">
+                                    <h3> Protein-Protein Interactions </h3>
+                                    <h6>
                                         {% autoescape off %}
                                             {{ tb3 }}
                                         {% endautoescape %}
-
-
                                     </h6>
-                                    <br>
+                                    <h6 class="mt-5" style="text-align: left">
+                                        *Residue-level evidence is checked &#9989; if there is structurally resolved
+                                        evidence at the residue level of the interaction. In that case, the selected
+                                        exon contains residues that lie on that PPI interface.
+                                    </h6>
 
                                     <a href="{% get_media_prefix %}table/{{ exon_ID|safe }}.csv"
-                                       class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
-
-
+                                       class="btn btn-secondary px-4 py-2 btn-sm my-3">Download csv</a>
                                 </div>
-
-                                <br>
-
-
-                                <h6> *Residue-level evidence is checked &#9989; if there is structurally resolved
-                                    evidence
-                                    at
-                                    the residue level of the interaction. In that case, the selected exon contains
-                                    residues
-                                    that
-                                    lie on that PPI interface. </h6>
-
-
                             {% endif %}
 
                             {% if  dis3 %}
@@ -852,23 +842,25 @@
                                 {% endif %}
 
                                 <br>
-                                <h2 class="font-weight-light"> The annotation of the exon in the structural context</h2>
+                                <h3 class="font-weight-light" style="text-align: center"> The annotation of the exon in
+                                    the structural context</h3>
 
 
 
-                                <h5 style="text-align: left;"> The exon contains residues that lie on the PPI interface
-                                    of
-                                    the
-                                    following protein-protein interactions. </h5>
+                                <h6 style="text-align: left;" class="mt-2"> The exon contains residues that lie on the
+                                    PPI interface
+                                    of the following protein-protein interactions.</h6>
 
                                 <br>
                                 <center>
-                                    <h4 class=="lead"> Overview of Protein-Protein Interactions Table </h4>
-                                    <h5 class>
-                                        {% autoescape off %}
-                                            {{ tb4 }}
-                                        {% endautoescape %}
-                                    </h5>
+                                    <h6 class=="lead"> Overview of Protein-Protein Interactions Table </h6>
+                                    <h6 class>
+                                        <div class="table-responsive">
+                                            {% autoescape off %}
+                                                {{ tb4 }}
+                                            {% endautoescape %}
+                                        </div>
+                                    </h6>
 
                                     {% if  long_table %}
                                         <h6 class="font-weight-light">This an overview of the table. You can download
@@ -898,9 +890,11 @@
                             <p class="lead text-center"><span style="font-weight:bold">The selected exon region is translated  in the following proteins </span>
                             </p>
                             <h6 class>
-                                {% autoescape off %}
-                                    {{ tb1 }}
-                                {% endautoescape %}
+                                <div class="table-responsive">
+                                    {% autoescape off %}
+                                        {{ tb1 }}
+                                    {% endautoescape %}
+                                </div>
                             </h6>
                         </div>
                     </div>
