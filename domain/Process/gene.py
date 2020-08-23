@@ -65,7 +65,7 @@ def TranscriptsID_to_table(transcripts):
                           pd.set_option('display.max_colwidth',1000)
                           
                           
-                          pd_isoforms=pd_isoforms.to_html(escape=False, index=False)
+                          pd_isoforms=pd_isoforms.to_html(**settings.TO_HTML_PARAMETERS)
               
             
     
