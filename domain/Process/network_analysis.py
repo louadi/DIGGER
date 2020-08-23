@@ -232,7 +232,7 @@ def Construct_network(proteins_id, missing,job_ID):
       
       
       # Convert Table to HTML
-      pd_html=pd_html.to_html(table_id='results', **settings.TO_HTML_PARAMETERS)
+      pd_html=pd_html.to_html(table_id='results', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
       
       
       
