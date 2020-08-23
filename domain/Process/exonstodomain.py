@@ -317,7 +317,7 @@ def input_transcript(Ensemble_transID):
     
     droped2=droped2[['Pfam ID','Interactions mediated by the domain','Symbol','Summary','Link to other databases']]
     
-    return domains,unique_domains,exons,text1,domains.to_html(escape=False),Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1.to_html(escape=False, index=False),droped2.to_html(escape=False, index=False),exons_in_interface,co_partners
+    return domains,unique_domains,exons,text1,domains.to_html(escape=False),Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1.to_html(**settings.TO_HTML_PARAMETERS),droped2.to_html(**settings.TO_HTML_PARAMETERS),exons_in_interface,co_partners
 
 
 

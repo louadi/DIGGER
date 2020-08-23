@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
 from domain.Process import proteininfo as  info
@@ -102,7 +104,7 @@ def int_view(P_id,P2_id):
                   
               
                   pd.set_option('display.max_colwidth',1000)
-                  pd_interaction=pd_interaction.to_html(escape=False, index=False)
+                  pd_interaction=pd_interaction.to_html(**settings.TO_HTML_PARAMETERS)
                   
                   return nodes,edges,pd_interaction,tran_name,p_name
                   
@@ -192,7 +194,7 @@ def int_view(P_id,P2_id):
       
       
       pd.set_option('display.max_colwidth',1000)
-      pd_interaction=pd_interaction.to_html(escape=False, index=False)
+      pd_interaction=pd_interaction.to_html(**settings.TO_HTML_PARAMETERS)
       
       return nodes,edges,pd_interaction,gene_name,p_name
 

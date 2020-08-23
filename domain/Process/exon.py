@@ -113,7 +113,7 @@ def input_exon(exon_ID):
                           
                           
                           
-                          table_domains=table_domains.to_html(escape=False, index=False)
+                          table_domains=table_domains.to_html(**settings.TO_HTML_PARAMETERS)
                           
                     
             
@@ -217,7 +217,7 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     
     pd.set_option('display.max_colwidth',1000)
     
-    #pd_interaction=pd_interaction.to_html(escape=False, index=False)
+    #pd_interaction=pd_interaction.to_html(**settings.TO_HTML_PARAMETERS)
     return nodes,edges,pd_interaction
     
     
@@ -289,7 +289,7 @@ def PPI_inter(exon_ID,gene_name):
             p1=p1[:max]
             #p1=p1[:10]
     pd.set_option('display.max_colwidth',1000)
-    #p_html=p1.to_html(escape=False, index=False)
+    #p_html=p1.to_html(**settings.TO_HTML_PARAMETERS)
     
     
     return p1,n
