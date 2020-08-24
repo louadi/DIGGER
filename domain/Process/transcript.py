@@ -203,7 +203,7 @@ def Protein_view(P_id):
             
             
             
-            pd_isoforms=pd_isoforms.to_html(escape=False, index=False)
+            pd_isoforms=pd_isoforms.to_html(**settings.TO_HTML_PARAMETERS)
             
     else: pd_isoforms=[]
     

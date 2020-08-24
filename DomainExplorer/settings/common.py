@@ -167,3 +167,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# === Other configurational things
+# Pandas Dataframe.to_html parameters
+TO_HTML_PARAMETERS = {
+    'escape': False, 'index': False, 'justify': 'unset',
+    'border': 0,
+    'classes': ['table', 'table-striped', 'table-bordered']
+}
+
+TO_HTML_RESPONSIVE_PARAMETERS = {
+    **TO_HTML_PARAMETERS,
+    'classes': ['table', 'table-striped', 'table-bordered', 'table-responsive']
+}

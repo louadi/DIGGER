@@ -147,6 +147,13 @@
             });
 
             $('#transcript-count-input').on('change', function (e) {
+                let value = e.target.value
+                if (value > 1000){
+                    e.target.value = 1000;
+                }
+                if (value < 1){
+                    e.target.value = 1;
+                }
                 $('#transcript-count-range').val(e.target.value);
             });
         });

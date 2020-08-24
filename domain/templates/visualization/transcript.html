@@ -4,7 +4,6 @@
 {% block title %}Transcript {{ tran_name }}{% endblock %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/table.css' %}">
     <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
 
     <style>
@@ -70,21 +69,18 @@
         }
     </style>
 
-          <script>
-    $(document).ready( function () {
-    $('#Interaction_table').DataTable(
-  
-    
-    );
-} );
-  </script>
+    <script>
+        $(document).ready(function () {
+            $('#Interaction_table').DataTable();
+        });
+    </script>
 {% endblock %}
 
 {% block raw_content %}
     <div class="wider-container my-3">
         <div class="row">
             <!-- Vertical pill selection menu-->
-            <div class="col-lg-3">
+            <div class="col-lg-3 mb-2">
                 {#                <h3 class="my-4">View selection</h3>#}
                 <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
                      aria-orientation="vertical">
@@ -173,25 +169,25 @@
                         <div class="card-body">
                             <p class="lead text-center"><span
                                     style="font-weight:bold">Domain and exon architecture</span>: {{ text1 }}</p>
-                                    
-                           
-                          
+
+
                             <img src="{% get_media_prefix %}images/{{ trID }}.png">
-                              <center>
-                            <img class="resize2 text-center mt-2 img-fluid" src="{% static 'image/legend 3.png' %}">
-                             </center>
+                            <center>
+                                <img class="resize2 text-center mt-2 img-fluid" src="{% static 'image/legend 3.png' %}">
+                            </center>
                             <!-- Exon Table-->
 
-                            <h6 class="mt-5">
-                                
-                                <h5 class="mb-3">Select an exon from the table to assess the consequence of its skipping  or choose different tabs to explore  the isoform {{ tran_name }} interactions.</h5>
-                            
-                                <h6 class="mb-3">
-                                    {% autoescape off %}
-                                        {{ dt }}
-                                    {% endautoescape %}
-                                </h6>
-                             
+                            <div class="mt-5">
+                                <h5 class="mb-3">Select an exon from the table to assess the consequence of its skipping
+                                    or choose different tabs to explore the isoform {{ tran_name }} interactions.</h5>
+                                <div class="table-responsive">
+                                    <h6 class="mb-3" style="text-align: center">
+                                        {% autoescape off %}
+                                            {{ dt }}
+                                        {% endautoescape %}
+                                    </h6>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -668,18 +664,24 @@
                             <!-- Tables-->
                             <div style="text-align: center;" class="mt-5">
                                 <h4 class="lead">Domains of the isoform {{ tran_name }}</h4>
+
+                                <div class="table-responsive">
+                                    <h6 class="mt-3">
+                                        {% autoescape off %}
+                                            {{ dt2 }}
+                                        {% endautoescape %}
+                                    </h6>
+                                </div>
                             </div>
-                            <h6 class="mt-3">
-                                {% autoescape off %}
-                                    {{ dt2 }}
-                                {% endautoescape %}
-                            </h6>
 
 
                             {% if dis1 %}
                                 <div style="text-align: center;" class="mt-5">
                                     <h4 class="lead"> Domains missing in the transcript but present in other
                                         isoforms.</h4>
+                                </div>
+
+                                <div class="table-responsive">
                                     <h6 class="mt-3">
                                         {% autoescape off %}
                                             {{ dt3 }}
@@ -921,18 +923,18 @@
 
                                     </script>
                                     <center>
-                                    <img class="resize" src="{% static 'image/legend1.png' %}" alt="">
-                                      </center>
+                                        <img class="resize" src="{% static 'image/legend1.png' %}" alt="">
+                                    </center>
                                 </div>
 
-                                <div style="text-align: center;" class="mt-5">
-                                    <h4 class="lead"> Protein partners of the isoform {{ tran_name|safe }}  </h4>
-                                    <h6 class="my-3">
-                                    	
+                                <div class="mt-5">
+                                    <h4 class="lead" style="text-align: center;"> Protein partners of the
+                                        isoform {{ tran_name|safe }}  </h4>
+
+                                    <h6 class="my-4">
                                         {% autoescape off %}
                                             {{ dt4 }}
                                         {% endautoescape %}
-                                    	
                                     </h6>
                                 </div>
 
@@ -945,7 +947,7 @@
                                     selected protein but present in other isoforms. You can check other variants of this
                                     gene 'Other isoforms' section. </h6>
 
-                                <div style="text-align: center;" class="mt-4">
+                                <div style="text-align: center;" class="mt-5">
                                     <a href="{% get_media_prefix %}/table 2/{{ trID|safe }}.csv"
                                        class="btn btn-secondary px-4 py-2 btn-sm">Download table as CSV</a>
                                 </div>
@@ -970,11 +972,13 @@
                                 <h5 class="tab1" style="text-align: left;"></h5>
                                 <div style="text-align: center;">
                                     <h4 class="lead"> List of isoforms </h4>
-                                    <h6 class="mt-3">
-                                        {% autoescape off %}
-                                            {{ dt5 }}
-                                        {% endautoescape %}
-                                    </h6>
+                                    <div class="table-responsive">
+                                        <h6 class="mt-3">
+                                            {% autoescape off %}
+                                                {{ dt5 }}
+                                            {% endautoescape %}
+                                        </h6>
+                                    </div>
                                 </div>
                             </div>
                         {% endif %}

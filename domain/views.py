@@ -151,10 +151,10 @@ def exon(request,exon_ID):
                 })
 
 
-                pd_interaction=pd_interaction.to_html(escape=False, index=False, table_id='Interaction_table', classes=[ 'display compact'])
+                pd_interaction=pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
    print(Interactiveview_switch)
-   table=table.to_html(escape=False, index=False)
+   table=table.to_html(**settings.TO_HTML_PARAMETERS)
 
 
 
@@ -255,13 +255,13 @@ def transcript(request,P_id):
             })
 
             pd_interaction=pd_interaction[["Selected Protein variant",'Partner Protein','NCBI gene ID','Retained domain-domain interactions','Missing domain-domain interactions','% of missing DDIs','Residue-level evidence',"Protein-protein interaction",'Score']]
-            pd_interaction=pd_interaction.to_html(escape=False, index=False, table_id='Interaction_table', classes=[ 'display compact'])
+            pd_interaction=pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
 
     #Get ID of missing domains with interactions
     if len(missed)!=0:
       missing_domains=missed['Pfam ID'].unique()
-      missed=missed.to_html(escape=False, index=False)
+      missed=missed.to_html(**settings.TO_HTML_PARAMETERS)
 
 
 
