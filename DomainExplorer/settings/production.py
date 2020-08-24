@@ -10,7 +10,7 @@ from .i18n import *
 __dummy = LANGUAGE_CODE
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False    # ToDo change for production
+DEBUG = True    # ToDo change for production
 
 # Restrict access to only the hostname that this service is deployed to
 ALLOWED_HOSTS = ['*']   # ToDo change for production

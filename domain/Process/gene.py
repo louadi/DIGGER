@@ -1,23 +1,30 @@
 from domain.Process import process_data as pr
-from domain.Process import exonstodomain as exd 
+from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as  info
 import pandas as pd
 from django.urls import reverse
 from sqlalchemy import text
 
 from django.conf import settings
+
+from domain.Process import network_analysis as nt
+
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE  
+
+#load DIGGER Join Graph
+DomainG=exd.load_obj("DomainG")
+
     
-    
-    
-    
-def TranscriptsID_to_table(transcripts):
+def TranscriptsID_to_table(transcripts,entrez='0'):
     if len(transcripts)>=1:
                 #print('1111111111') 
                 ID=[]
                 name=[]
                 pfams=[]
+                missing_PPI=[]
+
+                all_pfams=nt.g2d[entrez]
                 #print(transcripts)
                 for tr in transcripts :
                                            
@@ -48,13 +55,25 @@ def TranscriptsID_to_table(transcripts):
                               p=tdata["Pfam ID"].unique()
                               p = p[~pd.isnull(p)]
                               p=sorted(p)
+
+                              # look for interesting isoforms with missing PPI using the join graph
+                              missing=[ x for x in all_pfams if x not in p]
+                              missing=[ entrez + '/' + x  for x in missing]
+                              missing_interaction='-'
+                              if any(DomainG.has_node(x) for x in missing):
+                                      missing_interaction='&#9989;'
+                              missing_PPI.append(missing_interaction)
+
+                              # add hyperlink
+                              p = [nt.link(x) for x in p]
                               pfams.append(' ; '.join(p))
+
                 
                 
                 
                 if ID!=[]:
                                 
-                          pd_isoforms=pd.DataFrame(list(zip(name, ID,pfams)), columns =['Transcript name', 'Transcript ID','Pfam domains'])
+                          pd_isoforms=pd.DataFrame(list(zip(name, ID,pfams,missing_PPI)), columns =['Transcript name', 'Transcript ID','Pfam domains','Interacting domains are missing in the isoform'])
                           pd_isoforms['length'] = pd_isoforms['Pfam domains'].str.len()
                           pd_isoforms.sort_values('length', ascending=False, inplace=True)
                           pd_isoforms=pd_isoforms.drop(columns=['length'])
@@ -83,12 +102,12 @@ def input_gene(gene_ID):
           n=''
          
           transcripts=pr.gene_to_all_transcripts(gene_ID)
-          
+          entrez=str(nt.ensembl_to_entrez(gene_ID))
 
           if len(transcripts)==0:
               return [],[]
 
-          pd_isoforms,n=TranscriptsID_to_table(transcripts)
+          pd_isoforms,n=TranscriptsID_to_table(transcripts,entrez)
                  
          
           

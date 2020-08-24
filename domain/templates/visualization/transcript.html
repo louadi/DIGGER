@@ -930,12 +930,13 @@
                                 <div class="mt-5">
                                     <h4 class="lead" style="text-align: center;"> Protein partners of the
                                         isoform {{ tran_name|safe }}  </h4>
+                                        <h6 class="my-4">
+                                            {% autoescape off %}
+                                                {{ dt4 }}
+                                            {% endautoescape %}
+                                        </h6>
 
-                                    <h6 class="my-4">
-                                        {% autoescape off %}
-                                            {{ dt4 }}
-                                        {% endautoescape %}
-                                    </h6>
+
                                 </div>
 
                                 <h6 class="tab1" style="text-align: left;"><span
