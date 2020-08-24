@@ -59,15 +59,9 @@ def input_exon(exon_ID):
                     ## Table of Transcripts:
                     ## a function from gene page that give list of transcripts with links
                     ## The table is in HTML already formated.
-                    
 
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+                    tb_transc, _ = g.TranscriptsID_to_table(transcripts, str(entrezID))
+
                     #Table of domains
                     tb=tb[tb["Pfam ID"].notna()].drop_duplicates()
                     domains=tb["Pfam ID"].unique()
@@ -115,8 +109,7 @@ def input_exon(exon_ID):
                           
                           table_domains=table_domains.to_html(**settings.TO_HTML_PARAMETERS)
 
-                          tb_transc, _ = g.TranscriptsID_to_table(transcripts,str(entrezID))
-            
+
                           return transcripts,domains, gene_name,Ensemble_geneID,entrezID,tb_transc,table_domains,Total
                           
                           
