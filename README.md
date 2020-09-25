@@ -7,7 +7,8 @@ Protein-protein interaction (PPI) networks are a key resource for systems biolog
 If you use DIGGER, please cite:
 
 
-(Posted once published)
+Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga V Kalinina, Jan Baumbach, Tim Kacprowski*, Markus List*: DIGGER: exploring the functional role of alternative splicing in protein interactions, Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa768  (*joint last author)
+
 
 ## Deploying DIGGER
 To install DIGGER (running it for the first time) follow these steps:
@@ -40,3 +41,6 @@ docker-compose exec web python manage.py collectstatic --no-input
 
 ```
 
+
+## Contact us
+Zakaria Louadi: louadi@wzw.tum.de
