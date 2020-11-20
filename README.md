@@ -1,13 +1,13 @@
 # DIGGER
+<p align="center">
+  <img src="https://exbio.wzw.tum.de/digger/static/image/DIGGER.png" height="130">
+</p>
+
+
 
 Protein-protein interaction (PPI) networks are a key resource for systems biology. However, they do not consider the influence of alternative splicing, even though experimental evidence suggests that interaction partners are different for isoforms of the same protein. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein interactions and domain-domain interactions into a joint graph and maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or as a set to visually explore their interactions and it is available at: https://exbio.wzw.tum.de/digger
 
-## Cite
 
-If you use DIGGER, please cite:
-
-
-Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumbach, Tim Kacprowski*, Markus List*. DIGGER: exploring the functional role of alternative splicing in protein interactions, Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa768  (*joint last author)
 
 
 ## Deploying DIGGER
@@ -40,6 +40,15 @@ docker-compose exec web python manage.py collectstatic --no-input
 # Enjoy your instance of DIGGER
 
 ```
+
+
+## Cite
+
+If you use DIGGER, please cite:
+
+
+Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumbach, Tim Kacprowski*, Markus List*. DIGGER: exploring the functional role of alternative splicing in protein interactions, Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa768  (*joint last author)
+
 
 
 ## Contact us
