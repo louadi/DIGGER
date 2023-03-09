@@ -49,8 +49,13 @@
                           id="network-ids">{% block example_ids %}{% endblock example_ids %}
                 </textarea>
                 </div>
-
                 <div class="form-row">
+                    <div class="auto-col mr-1">
+                        <select id="org_select" name="organism" class="form-control ">
+                                <option value="human"> Homo sapiens</option>
+                                <option value="mouse"> Mus musculus</option>
+                        </select>
+                    </div>
                     <button class="btn btn-outline-success my-2 my-sm-0" name="option1" type="submit"
                             style="float: right;">
                         Submit
@@ -131,6 +136,12 @@
                     </h6>
                 </div>
                 <div class="form-row">
+                    <div class="auto-col mr-1">
+                        <select id="org_select2" name="organism" class="form-control ">
+                                <option value="human"> Homo sapiens</option>
+                                <option value="mouse"> Mus musculus</option>
+                        </select>
+                    </div>
                     <button class="btn btn-outline-success my-2 my-sm-0" name="option2" type="submit"
                             style="float: right;">
                         Submit

@@ -13,24 +13,30 @@ from domain.Process import network_analysis as nt
 engine = settings.DATABASE_ENGINE  
 
 #load DIGGER Join Graph
-DomainG=exd.load_obj("DomainG")
+DomainG_human=exd.load_obj("DomainG_human")
+DomainG_mouse=exd.load_obj("DomainG_mouse")
 
     
-def TranscriptsID_to_table(transcripts,entrez='0'):
+def TranscriptsID_to_table(transcripts,organism, entrez='0'):
     if len(transcripts)>=1:
                 #print('1111111111') 
                 ID=[]
                 name=[]
                 pfams=[]
                 missing_PPI=[]
+                if organism == "human":
+                    DomainG = DomainG_human
+                    g2d = nt.g2d_human
+                elif organism == "mouse":
+                    DomainG = DomainG_mouse
+                    g2d = nt.g2d_mouse
 
-                all_pfams=nt.g2d[entrez]
+                all_pfams=g2d[entrez]
                 #print(transcripts)
                 for tr in transcripts :
-                                           
                           query = """
                           SELECT * 
-                          FROM exons_to_domains_data 
+                          FROM exons_to_domains_data_"""+organism+""" 
                           WHERE "Transcript stable ID"=:transcript_id 
                           """
                           tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr})
@@ -47,7 +53,7 @@ def TranscriptsID_to_table(transcripts,entrez='0'):
                           #print(tdata)
                           if len(tdata)!=0  :
                               
-                              tmp=pr.tranID_convert(tr)
+                              tmp=pr.tranID_convert(tr,organism)
                               if tmp==0: continue
                               n=tmp[0]
                               name.append(n)
@@ -57,6 +63,7 @@ def TranscriptsID_to_table(transcripts,entrez='0'):
                               p=sorted(p)
 
                               # look for interesting isoforms with missing PPI using the join graph
+                              missing = []
                               missing=[ x for x in all_pfams if x not in p]
                               missing=[ entrez + '/' + x  for x in missing]
                               missing_interaction='-'
@@ -78,7 +85,7 @@ def TranscriptsID_to_table(transcripts,entrez='0'):
                           pd_isoforms.sort_values('length', ascending=False, inplace=True)
                           pd_isoforms=pd_isoforms.drop(columns=['length'])
                           
-                          h=reverse('home')+"ID/"
+                          h=reverse('home')+"ID/"+organism+"/"
                           pd_isoforms["Link"]='<a href="'+h+pd_isoforms["Transcript ID"]+'">'+" (Visualize) "+'</a>'
     
                           pd.set_option('display.max_colwidth',1000)
@@ -96,18 +103,18 @@ def TranscriptsID_to_table(transcripts,entrez='0'):
     
     
     #changed
-def input_gene(gene_ID):   
+def input_gene(gene_ID,organism):
       #get a list of all transcripts of the selected gene
           pd_isoforms=[]
           n=''
          
-          transcripts=pr.gene_to_all_transcripts(gene_ID)
-          entrez=str(nt.ensembl_to_entrez(gene_ID))
+          transcripts=pr.gene_to_all_transcripts(gene_ID,organism)
+          entrez=str(int(nt.ensembl_to_entrez(gene_ID,organism)))
 
           if len(transcripts)==0:
               return [],[]
 
-          pd_isoforms,n=TranscriptsID_to_table(transcripts,entrez)
+          pd_isoforms,n=TranscriptsID_to_table(transcripts, organism, entrez)
                  
          
           

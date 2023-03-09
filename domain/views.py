@@ -20,7 +20,7 @@ from .Process import InteractionView as iv
 from .Process import gene as  g
 from .Process import network_analysis as nt
 
-from .models import Gene, Domain
+from .models import Gene, Domain, GeneMouse
 
 # --- Create folder
 # Global jobs path
@@ -33,9 +33,9 @@ if not os.path.exists(jobs_path):
 
 
 #Display transcripts of a gene
-def gene(request,gene_ID):
+def gene(request,gene_ID,organism):
 
-   transcript_table,gene_name=g.input_gene(gene_ID)
+   transcript_table,gene_name=g.input_gene(gene_ID,organism)
 
    if transcript_table==[]:
        return HttpResponse(' wrong entry or protein without any known Pfam domains')
@@ -52,9 +52,9 @@ def gene(request,gene_ID):
 
 #Input is an exon:
 
-def exon(request,exon_ID):
+def exon(request,organism,exon_ID):
 
-   v=ex.input_exon(exon_ID)
+   v=ex.input_exon(exon_ID,organism)
 
    if v==True:
        return HttpResponse(' wrong entry or exon in a gene without any known Pfam domains')
@@ -83,13 +83,13 @@ def exon(request,exon_ID):
 
 
            #ProteinView
-           nodes,edges,pd_interaction=ex.vis_exon(domains,entrezID,gene_name,exon_ID)
+           nodes,edges,pd_interaction=ex.vis_exon(domains,entrezID,gene_name,exon_ID,organism)
 
 
            #DomainView
            first=domains[0]
            for pfams in domains:
-                  n,e,_,_=exd.vis_node_(entrezID+"."+pfams)
+                  n,e,_,_=exd.vis_node_(entrezID+"."+pfams,organism)
                   if len(e)>maxx:
                     maxx=len(e)
                     first=pfams
@@ -109,7 +109,7 @@ def exon(request,exon_ID):
    #table: HTML table with all PPIs that have res interface mapped to the exon
    #number_of_PPI: number of interactions
 
-   table,number_of_PPI=ex.PPI_inter(exon_ID,gene_name)
+   table,number_of_PPI=ex.PPI_inter(exon_ID,gene_name,organism)
 
 
 
@@ -206,17 +206,17 @@ def exon(request,exon_ID):
 
 
 #Dsiplay information of a transcript or a protein
-def transcript(request,P_id):
+def transcript(request,P_id,organism):
 
 
 
-    out=tr.Protein_view(P_id)
+    out=tr.Protein_view(P_id,organism)
     if out==0 :return HttpResponse(' Wrong entry or protein without any known Pfam domains')
     if out==1 :return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
 
 
 
-    nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,pd_interaction,isoforms,co_partners=tr.Protein_view(P_id)
+    nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,pd_interaction,isoforms,co_partners=tr.Protein_view(P_id,organism)
 
 
     #Interactionview
@@ -276,7 +276,7 @@ def transcript(request,P_id):
 
     #DomainView for retained domains
     for pfams in unique:
-      n,e,_,_=exd.vis_node_(entrezID+"."+pfams)
+      n,e,_,_=exd.vis_node_(entrezID+"."+pfams,organism)
       if len(e)>maxx:
         maxx=len(e)
         first=pfams
@@ -294,7 +294,7 @@ def transcript(request,P_id):
     switcher_m=[]
     if len(missed)!=0:
         for pfams in missing_domains:
-          n,e,_,_=exd.vis_node_(entrezID+"."+pfams)
+          n,e,_,_=exd.vis_node_(entrezID+"."+pfams,organism)
           if len(e)>maxx:
             maxx=len(e)
             first=pfams
@@ -357,29 +357,52 @@ def transcript(request,P_id):
 
 def isoform_level(request):
 
-
     if "search" in request.GET:  # If the form is submitted
         # Get and sanitize the search_query
         search_query = request.GET['search'].strip()
 
-        # Try and parse the search_query as gene name from the database
-        query_set = Gene.objects.filter(gene_symbol__iexact=search_query)
-        if query_set:
-            search_query = query_set[0].ensembl_id
+        # Get organism (human, mouse)
+        organism = request.GET.get('organism', None)
 
-        search_query = search_query.split("+")[0]
-        search_query = search_query.split("%")[0]
-        search_query = search_query.split(".")[0]
-        search_query = search_query[:15]
-        # Input search is a protein:
-        if search_query[:4] == 'ENST' or search_query[:4] == 'ENSP':
-            return redirect(transcript, P_id=search_query)
-            # return transcript(request,search_query)
+        # Search for human isoform
+        if organism == "human":
 
-        # Input search is an exon:
-        elif len(search_query) == 15 and search_query[:4] == 'ENSG':
-            return redirect(gene, gene_ID=search_query)
-            # return gene(request,search_query)
+            # Try and parse the search_query as gene name from the database
+            query_set = Gene.objects.filter(gene_symbol__iexact=search_query)
+
+            if query_set:
+                search_query = query_set[0].ensembl_id
+
+            search_query = search_query.split("+")[0]
+            search_query = search_query.split("%")[0]
+            search_query = search_query.split(".")[0]
+            search_query = search_query[:15]
+            # Input search is a protein:
+            if search_query[:4] == 'ENST' or search_query[:4] == 'ENSP':
+                return redirect(transcript, P_id=search_query, organism=organism)
+                # return transcript(request,search_query)
+
+            # Input search is an exon:
+            elif len(search_query) == 15 and search_query[:4] == 'ENSG':
+                return redirect(gene, gene_ID=search_query, organism=organism)
+                # return gene(request,search_query)
+
+        # search for mouse isoform
+        elif organism == "mouse":
+            query_set = GeneMouse.objects.filter(gene_symbol__iexact=search_query)
+            if query_set:
+                search_query = query_set[0].ensembl_id
+
+            search_query = search_query.split("+")[0]
+            search_query = search_query.split("%")[0]
+            search_query = search_query.split(".")[0]
+            search_query = search_query[:18]
+
+            if search_query[:7] == 'ENSMUST' or search_query[:7] == 'ENSMUSP':
+                return redirect(transcript, P_id=search_query, organism=organism)
+
+            elif len(search_query) == 18 and search_query[:7] == 'ENSMUSG':
+                return redirect(gene, gene_ID=search_query, organism=organism)
 
     return render(request, 'setup/isoform_level.html', )
 
@@ -396,15 +419,20 @@ def exon_level(request):
       #Input and Exon ID
       print('-----------------------------------------------------------')
       search_query = request.GET['search']
+      organism = request.GET.get('organism', None)
       search_query=search_query.replace(" ", "")
       search_query=search_query.split("+")[0]
       search_query=search_query.split("%")[0]
       search_query=search_query.split(".")[0]
-      search_query=search_query[:15]
-
+      # search_query=search_query[:15]
+      search_query=search_query[:18]
 
       if  search_query[:4]=='ENSE':
-          return redirect(exon, exon_ID = search_query)
+          return redirect(exon, organism=organism, exon_ID = search_query)
+          #return exon(request,search_query)
+
+      if  search_query[:7]=='ENSMUSE':
+          return redirect(exon, organism=organism, exon_ID = search_query)
           #return exon(request,search_query)
 
 
@@ -418,12 +446,12 @@ def exon_level(request):
 
         print('-----------------------------------------------------------')
         search_query = request.GET['search 2']
-
+        organism = request.GET.get('organism', None)
 
         search_query=search_query.split(" ")
         search_query =[x for x in search_query if x!='']
         #search_query[0]=search_query[0].split(".")[0]
-        if len(search_query)==3 and  len(search_query[0])==15 and search_query[0][:4]=='ENSG' and search_query[1].isdigit() and search_query[2].isdigit():
+        if len(search_query)==3 and  (len(search_query[0])==15 and search_query[0][:4]=='ENSG' or len(search_query[0])==18 and search_query[0][:7]=='ENSMUSG')   and search_query[1].isdigit() and search_query[2].isdigit():
 
             gene_ID=search_query[0]
             s1=int(search_query[1])
@@ -433,14 +461,13 @@ def exon_level(request):
             if abs(s1-e1)<3000:
 
                 #map coordinates to exon
-                exonID=pr.coordinate_to_exonID(gene_ID,s1,e1)
+                exonID=pr.coordinate_to_exonID(gene_ID,s1,e1,organism)
 
                 if exonID!=[]:
-                    return redirect(exon, exon_ID = exonID)
+                    return redirect(exon, organism=organism, exon_ID = exonID)
                     #return exon(request,exonID)
                 else:
                     return HttpResponse("<h1>No match</h1>")
-
     if "search 3" in request.GET :     # If option 3 is selected
         # ToDo Implement here :D
 
@@ -448,25 +475,49 @@ def exon_level(request):
 
         # Get and sanitize the search_query
         search_query = request.GET['search 3'].strip()
+        organism = request.GET.get('organism', None)
 
-        # Try and parse the search_query as gene name from the database
-        query_set = Gene.objects.filter(gene_symbol__iexact=search_query)
-        if query_set:
-            search_query = query_set[0].ensembl_id
+        if organism=="human":
 
-        search_query = search_query.split("+")[0]
-        search_query = search_query.split("%")[0]
-        search_query = search_query.split(".")[0]
-        search_query = search_query[:15]
+            # Try and parse the search_query as gene name from the database
+            query_set = Gene.objects.filter(gene_symbol__iexact=search_query)
+            if query_set:
+                search_query = query_set[0].ensembl_id
 
-        # Input search is a protein:
-        if search_query[:4] == 'ENST' or search_query[:4] == 'ENSP':
-            return redirect(transcript, P_id=search_query)
+            search_query = search_query.split("+")[0]
+            search_query = search_query.split("%")[0]
+            search_query = search_query.split(".")[0]
+            search_query = search_query[:15]
+
+            # Input search is a protein:
+            if search_query[:4] == 'ENST' or search_query[:4] == 'ENSP':
+                return redirect(transcript, organism=organism, P_id=search_query)
 
 
-        # Input search is an exon:
-        elif len(search_query) == 15 and search_query[:4] == 'ENSG':
-            return redirect(gene, gene_ID=search_query)
+            # Input search is an exon:
+            elif len(search_query) == 15 and search_query[:4] == 'ENSG':
+                return redirect(gene, organism=organism, gene_ID=search_query)
+
+        if organism=="mouse":
+
+            # Try and parse the search_query as gene name from the database
+            query_set = GeneMouse.objects.filter(gene_symbol__iexact=search_query)
+            if query_set:
+                search_query = query_set[0].ensembl_id
+
+            search_query = search_query.split("+")[0]
+            search_query = search_query.split("%")[0]
+            search_query = search_query.split(".")[0]
+            search_query = search_query[:18]
+
+            # Input search is a protein:
+            if search_query[:7] == 'ENSMUST' or search_query[:7] == 'ENSMUSP':
+                return redirect(transcript, organism=organism, P_id=search_query)
+
+
+            # Input search is an exon:
+            elif len(search_query) == 18 and search_query[:7] == 'ENSMUSG':
+                return redirect(gene, organism=organism, gene_ID=search_query)
 
 
 
@@ -484,6 +535,7 @@ def network(request):
 
     # Option 1: List of Ensembl IDs
     if "option1" in request.POST:
+        organism = request.POST.get('organism', None)
         input_query = []
         for element in request.POST['input'].split('\n'):
             element = element.strip()
@@ -494,16 +546,24 @@ def network(request):
 
         # max input IDs
         if 2000 > len(input_query) > 1:
-            if input_query[0][0:4] == 'ENSG' or input_query[0][0:4] == 'ENST' or input_query[0][0:4] == 'ENSP':
-                job_num = str(random.randrange(500))
-                with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:  # Pickling
-                    pickle.dump(input_query, fp)
-                return redirect(Multi_proteins, job=job_num)
+            if organism == "human":
+                if input_query[0][0:4] == 'ENSG' or input_query[0][0:4] == 'ENST' or input_query[0][0:4] == 'ENSP':
+                    job_num = str(random.randrange(500))
+                    with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:  # Pickling
+                        pickle.dump(input_query, fp)
+                    return redirect(Multi_proteins, organism=organism, job=job_num)
+
+            if organism == "mouse":
+                if input_query[0][0:7] == 'ENSMUSG' or input_query[0][0:7] == 'ENSMUST' or input_query[0][0:7] == 'ENSMUSP':
+                    job_num = str(random.randrange(500))
+                    with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:  # Pickling
+                        pickle.dump(input_query, fp)
+                    return redirect(Multi_proteins, organism=organism, job=job_num)
 
     # Option 2: Upload file
     if "option2" in request.POST and 'gene-count-file' in request.FILES:
         error_message_suffix = ""
-
+        organism = request.POST.get('organism', None)
         try:
             # --- Check input file for correct format
             # Try to decode as UTF-8, sanitize and parse as table
@@ -529,9 +589,14 @@ def network(request):
             # Zaka: And this is where the magic happens :p
 
             # Check if the first row corresponds to transcript Ensembl IDs
-            if not (str(transcript_count_df.iloc[0, 0]).startswith('ENST') or str(transcript_count_df.iloc[1, 0]).startswith('ENST')):
-                error_message_suffix = f"must have Ensembl transcript IDs in the first column starting with \"ENST\""
-                raise RuntimeError
+            if organism=="human":
+                if not (str(transcript_count_df.iloc[0, 0]).startswith('ENST') or str(transcript_count_df.iloc[1, 0]).startswith('ENST')):
+                    error_message_suffix = f"must have Ensembl transcript IDs in the first column starting with \"ENST\""
+                    raise RuntimeError
+            if organism=="mouse":
+                if not (str(transcript_count_df.iloc[0, 0]).startswith('ENSMUST') or str(transcript_count_df.iloc[1, 0]).startswith('ENSMUST')):
+                    error_message_suffix = f"must have Ensembl transcript IDs in the first column starting with \"ENSMUST\""
+                    raise RuntimeError
 
             # --- Try parsing counts for the different options (search for FPKM, tpm or counts)
             # max_isoforms: the max number of isoforms to consider:
@@ -567,7 +632,7 @@ def network(request):
             with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:
                 pickle.dump(cut_rows, fp)  # Pickling
                 print(f"Starting network analysis with {len(cut_rows)} rows")
-            return redirect(Multi_proteins, job=job_num)
+            return redirect(Multi_proteins, organism=organism, job=job_num)
 
         except RuntimeError:
             print("Could not parse uploaded file acorrectly")
@@ -580,17 +645,18 @@ def network(request):
     })
 
 
-def Multi_proteins(request, job='0'):
+def Multi_proteins(request, organism, job='0'):
 
     with open(f'{jobs_path}/{job}.txt', "rb") as fp:   # Unpickling
             inputs = pickle.load(fp)
 
 
-    if inputs[0][0:4]=='ENSG' :
-       info=nt.analysis_input_genes(inputs)
+    if inputs[0][0:4]=='ENSG' or inputs[0][0:7]=='ENSMUSG':
+       info=nt.analysis_input_genes(inputs,organism)
 
-    elif inputs[0][0:4]=='ENSG' or inputs[0][0:4]=='ENST' or inputs[0][0:4]=='ENSP':
-          info=nt.analysis_input_isoforms(inputs)
+    elif inputs[0][0:4]=='ENSG' or inputs[0][0:4]=='ENST' or inputs[0][0:4]=='ENSP' or\
+            inputs[0][0:7]=='ENSMUSG' or inputs[0][0:7]=='ENSMUST' or inputs[0][0:7]=='ENSMUSP':
+          info=nt.analysis_input_isoforms(inputs,organism)
     else:
            return HttpResponse("<h1>wrong entry</h1>")
 
@@ -600,7 +666,7 @@ def Multi_proteins(request, job='0'):
     else:
       genes, missing,num_isoforms=info
 
-      Net=nt.Construct_network(genes, missing,job)
+      Net=nt.Construct_network(genes, missing,job,organism)
 
       if Net==0:
           return HttpResponse("<h1>There is no known interaction between these proteins</h1>")

@@ -21,16 +21,19 @@ def load_obj(name):
     with open('domain/data/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
-
-Graph=load_obj("DomainG")
+Graph_human=load_obj("DomainG_human")
+Graph_mouse=load_obj("DomainG_mouse")
 # PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
-DomainG=Graph
 
 #function for visulaization  DomainView
-def vis_node_(node):
+def vis_node_(node,organism):
       p_id='"'+node.split(".")[1]+'"'
       ppp=node.split(".")[1]
       node=node.split(".")[0]+"/"+node.split(".")[1]
+      if organism == "human":
+          DomainG = Graph_human
+      elif organism == "mouse":
+          DomainG = Graph_mouse
       G= nx.Graph()
       if DomainG.has_node(node):
               G.add_edges_from(DomainG.edges(node))
@@ -67,14 +70,14 @@ def vis_node_(node):
                   try:
                     domain_name=n.split("/")[1]
                     domain_name=pr.Domain_name(domain_name)[0]+' ('+domain_name+')'
-                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene)+" - "+domain_name+
+                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene,organism)+" - "+domain_name+
                              "\" ,group:  \"MDomain\",physics:false, "+" source: "+p_id+", value:\" 5"+"\"},")
                   except KeyError:
                     print(node)
               #a gene node
               else:
                 try:
-                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene)+
+                    N.append("{id: \""+n+ppp+"\", label:  \""+pr.entrez_to_name(gene,organism)+
                              "\" ,group: \"protein\",physics:true , "+" source: "+p_id+", value: \"2"+"\"},")
                 except KeyError:
                     print(node)
@@ -87,7 +90,7 @@ def vis_node_(node):
               E.append("{from: \""+e[0]+ppp+"\", to: \""+e[1]+ppp+"\", length:  L2, color:  RED  "+"},")  
       
               
-      return N,E,pr.entrez_to_name(node.split("/")[0]),node.split("/")[1]
+      return N,E,pr.entrez_to_name(node.split("/")[0],organism),node.split("/")[1]
 
     
 
@@ -116,7 +119,12 @@ def vis_node(graph,node):
 
 
 
-def expand_table(table,unique_domains,entrezID)   :
+def expand_table(table,unique_domains,entrezID,organism)   :
+
+    if organism == "human":
+        Graph = Graph_human
+    elif organism == "mouse":
+        Graph = Graph_mouse
 
     # ADD information about Pfam domain later here:
     
@@ -145,7 +153,7 @@ def expand_table(table,unique_domains,entrezID)   :
     
     return table,Text_nodes,text_edges
 
-def exon_3D(exon_IDs,Ensemble_transID):
+def exon_3D(exon_IDs,Ensemble_transID,organism):
     #NUMBER OF INTERACTION IN EVERY EXON INTERFACE
     N=[]
     exons_in_interface=[]
@@ -153,10 +161,10 @@ def exon_3D(exon_IDs,Ensemble_transID):
     #p2=PPI[ PPI['Transcript stable ID_y']==Ensemble_transID]
    
     partners=[]
-    
+
     query = """
                   SELECT * 
-                  FROM ppi_data 
+                  FROM ppi_data_"""+organism+"""  
                   WHERE  "Transcript stable ID_x"=:ensemble_trans_id
                   """
     tr_1 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
@@ -165,7 +173,7 @@ def exon_3D(exon_IDs,Ensemble_transID):
     
     query = """   
                   SELECT * 
-                  FROM ppi_data 
+                  FROM ppi_data_"""+organism+"""  
                   WHERE "Transcript stable ID_y"=:ensemble_trans_id
                   """
     tr_2 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
@@ -179,7 +187,7 @@ def exon_3D(exon_IDs,Ensemble_transID):
             
             
             if len(partners)!=0:
-                partners=list(set([pr.tranID_convert(x)[3] for x in partners]))
+                partners=list(set([pr.tranID_convert(x,organism)[3] for x in partners]))
               
     
     for exon_ID in exon_IDs:
@@ -237,14 +245,14 @@ def exon_3D(exon_IDs,Ensemble_transID):
 
 # if the input is a transcript ID:
 
-def input_transcript(Ensemble_transID):
+def input_transcript(Ensemble_transID,organism):
     #check if the transcript have known domains:
     #********** If not just visualize the exons and proteins interection
     
     #if the transcript have known domains:
-    exons,domains,unique_domains=pr.transcript(Ensemble_transID)
+    exons,domains,unique_domains=pr.transcript(Ensemble_transID,organism)
     
-    output=pr.tranID_convert(Ensemble_transID)
+    output=pr.tranID_convert(Ensemble_transID,organism)
     if output==0: return 0
     if any(x ==False for x in output) : return 0  
     else: tran_name,gene_name,Ensemble_geneID,entrezID,gene_description=output
@@ -255,7 +263,7 @@ def input_transcript(Ensemble_transID):
     # HTML code to visualize the table
     
 
-    domains,Text_nodes,text_edges=expand_table(domains,unique_domains,entrezID)
+    domains,Text_nodes,text_edges=expand_table(domains,unique_domains,entrezID,organism)
     domains=domains.sort_values(['Exon rank in transcript', 'Pfam start'], ascending=[True, True])
     
     #Link to visualize the network
@@ -273,7 +281,7 @@ def input_transcript(Ensemble_transID):
 
 
     exon_info=exons[['Exon stable ID','Exon rank in transcript']]
-    n,exons_in_interface,co_partners=exon_3D(exon_info['Exon stable ID'].tolist(),Ensemble_transID)
+    n,exons_in_interface,co_partners=exon_3D(exon_info['Exon stable ID'].tolist(),Ensemble_transID,organism)
     exon_info['Number of interaction interface mapped to the exon']=n
     
     
@@ -295,7 +303,7 @@ def input_transcript(Ensemble_transID):
     #prepare the html table
     droped1["Corresponding domain ID"] = droped1["Corresponding domain ID"].fillna('-')
     
-    h4=reverse('home')+"ID/exon/"
+    h4=reverse('home')+"ID/exon/"+organism+"/"
     
     droped1["Protein features encoded by the exon"]='<a target="'+'_blank"href="'+h4+droped1["Exon  ID"]+'">Exon Page</a>'
     

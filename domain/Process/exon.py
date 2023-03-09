@@ -6,7 +6,7 @@ import numpy as np
 from django.conf import settings
 from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd
-from domain.Process import proteininfo as  info
+#from domain.Process import proteininfo as  info
 from domain.Process import transcript as  tr
 from domain.Process import gene as  g
 from sqlalchemy import text
@@ -27,11 +27,10 @@ if not os.path.exists(table_path):
 
 
 
-def input_exon(exon_ID):
-    
+def input_exon(exon_ID, organism):
             query = """
             SELECT * 
-            FROM exons_to_domains_data 
+            FROM exons_to_domains_data_"""+organism+""" 
             WHERE "Exon stable ID"=:exon_ID 
             ORDER BY "Exon rank in transcript"
             """
@@ -52,7 +51,7 @@ def input_exon(exon_ID):
             else:
                 
                     #get info about the gene
-                    _,gene_name,Ensemble_geneID,entrezID,gene_description=pr.tranID_convert(transcripts[0])
+                    _,gene_name,Ensemble_geneID,entrezID,gene_description=pr.tranID_convert(transcripts[0],organism)
                     
                     #print(gene_name,Ensemble_geneID,entrezID,gene_description)
                     
@@ -60,7 +59,7 @@ def input_exon(exon_ID):
                     ## a function from gene page that give list of transcripts with links
                     ## The table is in HTML already formated.
 
-                    tb_transc, _ = g.TranscriptsID_to_table(transcripts, str(entrezID))
+                    tb_transc, _ = g.TranscriptsID_to_table(transcripts, organism, str(entrezID))
 
                     #Table of domains
                     tb=tb[tb["Pfam ID"].notna()].drop_duplicates()
@@ -73,7 +72,7 @@ def input_exon(exon_ID):
                           return transcripts,domains, gene_name,Ensemble_geneID,entrezID,tb_transc,table_domains,-1
                     else:     
                           #function to count number of interactions of the domain:
-                          table_domains,_,_=exd.expand_table(tb,domains,entrezID)
+                          table_domains,_,_=exd.expand_table(tb,domains,entrezID,organism)
                           
                           
                           h=reverse('home')+"graph/"
@@ -115,9 +114,18 @@ def input_exon(exon_ID):
                           
                           
                     
-def vis_exon(missing_domain,entrezID,gene_name,ExonID):
+def vis_exon(missing_domain,entrezID,gene_name,ExonID,organism):
 
-   
+    #organism check
+    if organism == "human":
+        PPI = tr.PPI_human
+        g2d = tr.g2d_human
+        DomainG = tr.DomainG_human
+    elif organism == "mouse":
+        PPI = tr.PPI_mouse
+        g2d = tr.g2d_mouse
+        DomainG = tr.DomainG_mouse
+
     #missing domain: are the domains coded by the exon
     missing_domain = [entrezID+'/'+ e for e in missing_domain]
     
@@ -127,15 +135,15 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
    
     #only if the exon code for domains with known interactions
     
-    if tr.PPI.has_node(entrezID):
+    if PPI.has_node(entrezID):
         g = exd.nx.Graph()
-        g.add_edges_from(tr.PPI.edges(entrezID))
+        g.add_edges_from(PPI.edges(entrezID))
         
 
         
     #search for the protein domains interactions:
     # before coming here need to check if the protein have known domains
-    protein_domain=tr.g2d[entrezID]
+    protein_domain=g2d[entrezID]
     
 
     
@@ -145,8 +153,8 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
         
 
         #add domain interactions to the graph:       
-        if tr.DomainG.has_node(node):
-            g.add_edges_from(tr.DomainG.edges(node))
+        if DomainG.has_node(node):
+            g.add_edges_from(DomainG.edges(node))
             
             
         edges=[]
@@ -165,9 +173,9 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
             
         
     protein_with_DDI = list(set(protein_with_DDI))
-    nodes,edges,_=tr.vis_node_(g,entrezID,protein_with_DDI,gene_name,missing_domain,[])
+    nodes,edges,_=tr.vis_node_(g,entrezID,protein_with_DDI,gene_name,missing_domain,[],organism)
     
-    pd_interaction=tr.table_interaction(gene_name,entrezID,entrezID,g,protein_with_DDI,missing_domain)
+    pd_interaction=tr.table_interaction(gene_name,entrezID,entrezID,g,protein_with_DDI,missing_domain,organism)
     
     pd_interaction.insert(0,'Affected Protein','')
     pd_interaction["Affected Protein"]=gene_name
@@ -213,20 +221,19 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID):
     #pd_interaction=pd_interaction.to_html(**settings.TO_HTML_PARAMETERS)
     return nodes,edges,pd_interaction
     
-    
-    
-def PPI_inter(exon_ID,gene_name):
+
+def PPI_inter(exon_ID,gene_name,organism):
     # --- Get tables from database
     query = """
             SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
-            FROM ppi_data 
+            FROM ppi_data_"""+organism+""" 
             WHERE "Exon stable ID_x"=:exon_id
             """
     p1 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID})
 
     query = """
             SELECT DISTINCT "Transcript stable ID_x", "u_ac_1", "Transcript stable ID_y", "u_ac_2"
-            FROM ppi_data 
+            FROM ppi_data_"""+organism+"""  
             WHERE "Exon stable ID_y"=:exon_id
             """
     p2 = pd.read_sql_query(sql=text(query), con=engine, params={'exon_id': exon_ID})
@@ -259,7 +266,7 @@ def PPI_inter(exon_ID,gene_name):
             
             #Get the partner protein name
             transcripts=p1['Transcript stable ID_y'].tolist()
-            p1['Partner Protein']=tr_to_names(transcripts)
+            p1['Partner Protein']=tr_to_names(transcripts,organism)
             
             
             #DIspaly table in HTML
@@ -288,13 +295,13 @@ def PPI_inter(exon_ID,gene_name):
     return p1,n
 
 
-def tr_to_names(list_tr):
+def tr_to_names(list_tr,organism):
     names = []
     for tr in list_tr:
         # SQL
         query = """
                 SELECT "Transcript name" 
-                FROM gene_info 
+                FROM gene_info_"""+organism+""" 
                 WHERE "Transcript stable ID"=:transcript_id
                 LIMIT 1
                 """

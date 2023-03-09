@@ -20,7 +20,7 @@ urlpatterns = [
 
     # --- Selection Page
     # Interaction view page (select one transcript of gene)
-    path('ID/gene/<str:gene_ID>/', views.gene, name="gene-overview"),
+    path('ID/gene/<str:organism>/<str:gene_ID>/', views.gene, name="gene-overview"),
 
     #exon selection page:
     
@@ -29,11 +29,11 @@ urlpatterns = [
 
     # --- Detailed Result Pages ---
     # Network interaction view
-    path('vis_network/job/<str:job>', views.Multi_proteins, name="network-visualization"),
+    path('vis_network/job/<str:organism>/<str:job>', views.Multi_proteins, name="network-visualization"),
     # Transcript view
-    path('ID/<str:P_id>', views.transcript, name="transcript"),
+    path('ID/<str:organism>/<str:P_id>', views.transcript, name="transcript"),
     # Exon view
-    path('ID/exon/<str:exon_ID>/', views.exon, name="exon"),
+    path('ID/exon/<str:organism>/<str:exon_ID>/', views.exon, name="exon"),
 
     # --- Autocomplete views ---
     path('gene_symbol-autocomplete/', autocomplete.gene_symbol_autocomplete, name='gene-symbol-autocomplete', ),

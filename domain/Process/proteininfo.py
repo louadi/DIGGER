@@ -15,10 +15,10 @@ images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
 if not os.path.exists(images_path):
     os.makedirs(images_path)
 
-def get_protein_info(ID):
+def get_protein_info(ID,organism):
 
   #Get data about the input transcript or the protein 
-  info,trID=ID_mapper(ID) 
+  info,trID=ID_mapper(ID,organism)
   if info==0: return 0
   domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,exons_in_interface,co_partners=info
   #save Image of protein Structure
@@ -41,17 +41,22 @@ def get_protein_info2(ID):
 
 
 
-def ID_mapper(ID):
+def ID_mapper(ID,organism):
     # The use input ID of a transcript or protein:
-    
     #if the ID is a transcript ID:
-    if ID[3]=="T" :return exd.input_transcript(ID),ID
+    if organism=="human":
+        if ID[3]=="T" :return exd.input_transcript(ID,organism),ID
 
-    #if the ID is a protein ID:
-    trID=nt.pr_to_tr(ID)
-    if ID[3]=="P" :return exd.input_transcript(trID),trID
+        #if the ID is a protein ID:
+        trID=nt.pr_to_tr(ID,organism)
+        if ID[3]=="P" :return exd.input_transcript(trID,organism),trID
 
+    if organism=="mouse":
+        if ID[6] == "T": return exd.input_transcript(ID, organism), ID
 
+        # if the ID is a protein ID:
+        trID = nt.pr_to_tr(ID,organism)
+        if ID[6] == "P": return exd.input_transcript(trID,organism),trID
 
 
 

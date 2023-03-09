@@ -36,10 +36,9 @@ def load_obj(name):
         return pickle.load(f)
 
 
-
-
 #from Biomart":
-gid2name=load_obj("gid2name")
+gid2name_human=load_obj("gid2name_human")
+gid2name_mouse=load_obj("gid2name_mouse")
 
 
 def entrez_to_name_online(entrezID):
@@ -48,10 +47,12 @@ def entrez_to_name_online(entrezID):
     return out[0]['symbol']
 
 
-def entrez_to_name(entrezID):
+def entrez_to_name(entrezID, organism):
 
-    return gid2name[entrezID]
-
+    if organism == "human":
+        return gid2name_human[entrezID]
+    elif organism == "mouse":
+        return gid2name_mouse[entrezID]
 
 
 
@@ -66,7 +67,7 @@ def protein_to_transcript(Ensemble_prID):
 
 
 
-def transcript(transcript_ID):
+def transcript(transcript_ID,organism):
     # The input transcript ID
     # Outputs
         # Exons: all exons in the transcript
@@ -75,12 +76,13 @@ def transcript(transcript_ID):
 
     query = """
             SELECT * 
-            FROM exons_to_domains_data 
+            FROM exons_to_domains_data_"""+organism+"""
             WHERE "Transcript stable ID"=:transcript_id 
             ORDER BY "Exon rank in transcript"
             """
+
     tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': transcript_ID})
-    
+
     # tdata=tdata.drop(columns=["Unnamed: 0"]).drop_duplicates()
     # df_filter = data['Transcript stable ID'].isin([transcript_ID])
     # tdata=data[df_filter].sort_values(by=['Exon rank in transcript'])
@@ -114,11 +116,10 @@ def req(ext):
 
 
 # used !!
-def gene_to_all_transcripts(gene_ID):
-
+def gene_to_all_transcripts(gene_ID,organism):
     query = """
             SELECT DISTINCT "Transcript stable ID" 
-            FROM gene_info 
+            FROM gene_info_"""+organism+"""
             WHERE "Gene stable ID"=:Gene
             """
     tdata = pd.read_sql_query(sql=text(query), con=engine, params={'Gene': gene_ID})["Transcript stable ID"]
@@ -163,15 +164,16 @@ def gene_to_all_transcripts_online(gene_ID):
     
     
 # used    !!!!
-def tranID_convert(Ensemble_transID):
+
+
+def tranID_convert(Ensemble_transID,organism):
     print('ID...........',Ensemble_transID)
     query = """
             SELECT * 
-            FROM gene_info 
+            FROM gene_info_"""+organism+"""
             WHERE "Transcript stable ID"=:Ensemble_transID 
             """
     tdata = pd.read_sql_query(sql=text(query), con=engine, params={'Ensemble_transID': Ensemble_transID})
-    
     
     
     
@@ -262,15 +264,15 @@ def unitpr_to_Ensemble(Protein_ID):
     return Ensemble_trID,Ensemble_prID
 
 
-def coordinate_to_exonID(gene_id, s1, e1):
+def coordinate_to_exonID(gene_id, s1, e1,organism):
     exon_id = []
 
     query = """
                         SELECT * 
-                        FROM exons_to_domains_data 
+                        FROM exons_to_domains_data_"""+organism+""" 
                         WHERE "Transcript stable ID" IN
                             (SELECT DISTINCT "Transcript stable ID" 
-                            FROM gene_info 
+                            FROM gene_info_"""+organism+""" 
                             WHERE "Gene stable ID"=:gene_id )
                         """
     df = pd.read_sql_query(sql=text(query), con=engine, params={'gene_id': gene_id})

@@ -20,31 +20,41 @@ table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table 2')
 if not os.path.exists(table_path_2):
     os.makedirs(table_path_2)
 
-PPI=exd.load_obj("PPI")
-g2d=exd.load_obj("g2d")
+PPI_human=exd.load_obj("PPI_human")
+g2d_human=exd.load_obj("g2d_human")
+
+PPI_mouse=exd.load_obj("PPI_mouse")
+g2d_mouse=exd.load_obj("g2d_mouse")
 
 #Join PPI-DDI network
-DomainG=exd.load_obj("DomainG")
+DomainG_human=exd.load_obj("DomainG_human")
+DomainG_mouse=exd.load_obj("DomainG_mouse")
 
 
 # PPI network confirmed by residue evidence
 #PPI_3D=exd.load_obj("Residue")
 
 
-def Protein_view(P_id):
+def Protein_view(P_id,organism):
     
-    i=info.get_protein_info(P_id)
+    i=info.get_protein_info(P_id,organism)
     if i==0: return 0
     domains,unique_domains,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,co_partners=i
     
+    if organism == "human":
+        PPI = PPI_human
+        g2d = g2d_human
+        DomainG = DomainG_human
+    elif organism == "mouse":
+        PPI = PPI_mouse
+        g2d = g2d_mouse
+        DomainG = DomainG_mouse
 
-    
-        
     if PPI.has_node(entrezID):
         g = exd.nx.Graph()
         g.add_edges_from(PPI.edges(entrezID))
-        
-    else : 
+
+    else :
           print('no interactions')
           return 1
         
@@ -80,7 +90,7 @@ def Protein_view(P_id):
     
     
     protein_with_DDI = list(set(protein_with_DDI))
-    nodes,edges,_=vis_node_(g,entrezID,protein_with_DDI,tran_name,missing_domain,co_partners)
+    nodes,edges,_=vis_node_(g,entrezID,protein_with_DDI,tran_name,missing_domain,co_partners,organism)
     
     df_missed=[]
     if missing_domain!=[]:
@@ -124,7 +134,7 @@ def Protein_view(P_id):
     #interactionView:
     
     if len(protein_with_DDI)>1:
-          pd_interaction=table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain)
+          pd_interaction=table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain,organism)
 
           pd_interaction["Score"] = (
                       1 - ((pd_interaction["Percentage of lost domain-domain interactions"].astype(int) / 100)))
@@ -159,7 +169,7 @@ def Protein_view(P_id):
     
     #get a list of all Isoforms of the selected transcript
     gene_ID=Ensemble_geneID
-    transcripts=pr.gene_to_all_transcripts(gene_ID)
+    transcripts=pr.gene_to_all_transcripts(gene_ID,organism)
     
     if len(transcripts)>=1:
   
@@ -168,10 +178,10 @@ def Protein_view(P_id):
           pfams=[]
           
           for tr in transcripts :
-                
+
               query = """
               SELECT * 
-              FROM exons_to_domains_data 
+              FROM exons_to_domains_data_"""+organism+"""
               WHERE "Transcript stable ID"=:transcript_id 
               """
               tdata = pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr})
@@ -183,7 +193,7 @@ def Protein_view(P_id):
               
               if len(tdata)!=0  :
                   ID.append(tr)
-                  name.append(pr.tranID_convert(tr)[0])
+                  name.append(pr.tranID_convert(tr,organism)[0])
                   
                   p=tdata["Pfam ID"].unique()
                   p = p[~pd.isnull(p)]
@@ -197,7 +207,7 @@ def Protein_view(P_id):
             pd_isoforms.sort_values('length', ascending=False, inplace=True)
             pd_isoforms=pd_isoforms.drop(columns=['length'])
             
-            h=reverse('home')+"ID/"
+            h=reverse('home')+"ID/"+organism+"/"
             pd_isoforms["Link"]='<a href="'+h+pd_isoforms["Transcript ID"]+'">'+" (Visualize) "+'</a>'
             
             
@@ -242,7 +252,7 @@ def Interacted_domain(p,g,entrezID,missing_domain):
                     DDI_edges2.append(nt.link(e[0].split('/')[1]) + '-' +nt.link( e[1].split('/')[1]))
         return edges,DDI_edges,lost_edges,DDI_edges2,lost_edges2
 
-def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain):
+def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain,organism):
     Interactions=[]
     IDs=[]
     DDIs=[]
@@ -268,7 +278,7 @@ def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain)
             
             status.append(st)
             
-            Interactions.append(pr.entrez_to_name(protein))
+            Interactions.append(pr.entrez_to_name(protein,organism))
             DDIs.append(' ; '.join(DDI_edges))
             lost_DDIs.append(' ; '.join(lost_edges))
             DDIs2.append(' ; '.join(DDI_edges2))
@@ -303,7 +313,7 @@ def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain)
 
 
 
-def vis_node_(g,entrezID,protein_with_DDI,tran_name,missing_domain,co_partners):
+def vis_node_(g,entrezID,protein_with_DDI,tran_name,missing_domain,co_partners,organism):
 
     N=[]
     E=[]
@@ -311,7 +321,7 @@ def vis_node_(g,entrezID,protein_with_DDI,tran_name,missing_domain,co_partners):
         #node of a protein:
         if node!=entrezID and len(node.split('/'))==1:
                 try:
-                    label=pr.entrez_to_name(node)
+                    label=pr.entrez_to_name(node,organism)
                     N.append("{id: \""+node+"\", label:  \""+label+"\", group:  \""+group_node(node,entrezID)+"\", physics:"+physics(node,entrezID)+
                              ", source:  \""+source_node(node,entrezID,protein_with_DDI)+"\", value:  \""+value_node(node,entrezID)+"\"},")
                 except KeyError:

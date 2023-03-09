@@ -1,3 +1,5 @@
+
+
 import os
 
 from django.conf import settings
@@ -10,14 +12,16 @@ import networkx as nx
 from django.urls import reverse
 
 
+PPI_human=exd.load_obj("PPI_human")
+g2d_human=exd.load_obj("g2d_human")
 
+PPI_mouse=exd.load_obj("PPI_mouse")
+g2d_mouse=exd.load_obj("g2d_mouse")
 
-PPI=exd.load_obj("PPI")
 DDI=exd.load_obj("DDI")
-g2d=exd.load_obj("g2d")
 
-
-data = pd.read_csv( "domain/data/all_Proteins.csv")
+data_human = pd.read_csv( "domain/data/all_Proteins_human.csv")
+data_mouse = pd.read_csv( "domain/data/all_Proteins_mouse.csv")
 
 
 # --- Create folder
@@ -33,8 +37,16 @@ if not os.path.exists(jobs_networks_path):
 
 
 
-def Construct_network(proteins_id, missing,job_ID):
-    
+def Construct_network(proteins_id, missing,job_ID,organism):
+
+      #check organism for used files
+      if organism == "human":
+          PPI = PPI_human
+          g2d = g2d_human
+      elif organism == "mouse":
+          PPI = PPI_mouse
+          g2d = g2d_mouse
+
       E=[]
       N=[]
       affected_nodes=[]
@@ -64,8 +76,8 @@ def Construct_network(proteins_id, missing,job_ID):
           if e[0] not in N: N.append(e[0])
           if e[1] not in N: N.append(e[1])
       
-          gene1=entrez_to_ensembl(e[0])
-          gene2=entrez_to_ensembl(e[1])
+          gene1=entrez_to_ensembl(e[0],organism)
+          gene2=entrez_to_ensembl(e[1],organism)
           
           
           #check if gene is in missing dictionary
@@ -131,9 +143,9 @@ def Construct_network(proteins_id, missing,job_ID):
                    # inter=True: a Domain-Domain Interaction was found:
                    #for the table
                    p1.append(e[0])
-                   p1_name.append(pr.entrez_to_name(e[0]))  
+                   p1_name.append(pr.entrez_to_name(e[0],organism))
                    p2.append(e[1])
-                   p2_name.append(pr.entrez_to_name(e[1]))
+                   p2_name.append(pr.entrez_to_name(e[1],organism))
 
                    if DDIs_tmp!=[]: 
                       DDIs.append(' ; '.join(DDIs_tmp))
@@ -160,9 +172,9 @@ def Construct_network(proteins_id, missing,job_ID):
               if not inter:    
                    E.append("{from: '"+e[0]+"', to: '"+e[1]+"', title:'PPI',  color: CHOOSEN,       smooth: {type: 'continuous'}},") 
                    p1.append(e[0])
-                   p1_name.append(pr.entrez_to_name(e[0]))  
+                   p1_name.append(pr.entrez_to_name(e[0],organism))
                    p2.append(e[1])
-                   p2_name.append(pr.entrez_to_name(e[1]))
+                   p2_name.append(pr.entrez_to_name(e[1],organism))
 
                    DDIs.append('-')
                    DDIs2.append('-')
@@ -176,9 +188,9 @@ def Construct_network(proteins_id, missing,job_ID):
                    E.append("{from: '"+e[0]+"', to: '"+e[1]+"', title:'PPI evidence',  color: CHOOSEN,       smooth: {type: 'continuous'}},") 
                    E.append("{from: '"+e[0]+"', to: '"+e[1]+"', title:'PPI',  color: CHOOSEN,       smooth: {type: 'continuous'}},") 
                    p1.append(e[0])
-                   p1_name.append(pr.entrez_to_name(e[0]))  
+                   p1_name.append(pr.entrez_to_name(e[0],organism))
                    p2.append(e[1])
-                   p2_name.append(pr.entrez_to_name(e[1]))
+                   p2_name.append(pr.entrez_to_name(e[1],organism))
 
                    DDIs.append('-')
                    DDIs2.append('-')
@@ -190,15 +202,15 @@ def Construct_network(proteins_id, missing,job_ID):
                    source.append('PPI')
       nodes=[]
       for n in N:
-          ensembl=entrez_to_ensembl(n)
+          ensembl=entrez_to_ensembl(n,organism)
           if (n in affected_nodes) and (missing[ensembl]!=[]):
-              nodes.append("{id: \""+n+"\",url:  '"+home+"ID/gene/"+ensembl+"' , color: CHOOSEN2, label:  '"+pr.entrez_to_name(n)+"'}, ")
+              nodes.append("{id: \""+n+"\",url:  '"+home+"ID/gene/"+organism+"/"+ensembl+"' , color: CHOOSEN2, label:  '"+pr.entrez_to_name(n,organism)+"'}, ")
               
           elif n in DDI_nodes:
-              nodes.append("{id: \""+n+"\", url:  '"+home+"ID/gene/"+ensembl+"' , color: CHOOSEN3, label:  '"+pr.entrez_to_name(n)+"'},")
+              nodes.append("{id: \""+n+"\", url:  '"+home+"ID/gene/"+organism+"/"+ensembl+"' , color: CHOOSEN3, label:  '"+pr.entrez_to_name(n,organism)+"'},")
       
           else:    
-              nodes.append("{id: \""+n+"\", url:  '"+home+"ID/gene/"+ensembl+"' , label:  '"+pr.entrez_to_name(n)+"'},")    
+              nodes.append("{id: \""+n+"\", url:  '"+home+"ID/gene/"+organism+"/"+ensembl+"' , label:  '"+pr.entrez_to_name(n,organism)+"'},")
       
       
       # Table of interactions
@@ -266,9 +278,13 @@ def Construct_network(proteins_id, missing,job_ID):
 
 
         
-def analysis_input_isoforms(Inputs):
+def analysis_input_isoforms(Inputs,organism):
+        if organism == "human":
+            g2d = g2d_human
+        elif organism == "mouse":
+            g2d = g2d_mouse
 
-        filtred=filter_proteins_list(Inputs)
+        filtred=filter_proteins_list(Inputs,organism)
         print('-----------filtred--------------')
         
 
@@ -288,9 +304,8 @@ def analysis_input_isoforms(Inputs):
 
                 for tr in filtred:
                           #print(tr)
-                          gene=tr_to_gene(tr)
-                          domains=tr_to_domain(tr)
-                          
+                          gene=tr_to_gene(tr,organism)
+                          domains=tr_to_domain(tr,organism)
                           if len(domains)==0:
                               #print(tr,domains)
                               gene_domains[gene]=[]
@@ -309,8 +324,8 @@ def analysis_input_isoforms(Inputs):
 
       
                 for tr in filtred:
-                    ensembl=tr_to_gene(tr)
-                    entrez=str(ensembl_to_entrez(ensembl))
+                    ensembl=tr_to_gene(tr,organism)
+                    entrez=str(int(ensembl_to_entrez(ensembl,organism)))
                     proteins_id.append(entrez)
                     if entrez in g2d:
                         domains=g2d[entrez]
@@ -333,15 +348,20 @@ def analysis_input_isoforms(Inputs):
                 return proteins_id, missing,n
 
 
-def analysis_input_genes(Inputs):
-      
+def analysis_input_genes(Inputs,organism):
+    if organism == "human":
+        PPI = PPI_human
+        data = data_human
+    elif organism == "mouse":
+        PPI = PPI_mouse
+        data = data_mouse
     protein_id=[]
     missing={}
     for i in Inputs:
         f=i.replace(" ", "")
         f=f.split(".")[0]
         
-        if len(f)==15 and f[0:4]=='ENSG' :
+        if len(f)==15 and f[0:4]=='ENSG' or len(f)==18 and f[0:7]=='ENSMUSG' :
         
               #check if gene is coding:
               if  len(data[data['Gene stable ID'].isin([f])])!=0:
@@ -349,7 +369,7 @@ def analysis_input_genes(Inputs):
                   #print(f)
                   #check PPI status:
                   
-                  entrez_id=str(ensembl_to_entrez(f))
+                  entrez_id=str(int(ensembl_to_entrez(f,organism)))
                   #print(entrez_id)
                   if PPI.has_node(entrez_id):
                       print('yeaaaaaah')
@@ -368,31 +388,51 @@ def analysis_input_genes(Inputs):
 
 
 
-def pr_to_tr(pr):
+def pr_to_tr(pr,organism):
+    if organism == "human":
+        data = data_human
+    elif organism == "mouse":
+        data = data_mouse
     df_filter = data['Protein stable ID'].isin([pr])
     try: return data[df_filter]['Transcript stable ID'].unique()[0]
     except IndexError:
         return False
 
-def tr_to_gene(tr):
+def tr_to_gene(tr,organism):
+    if organism == "human":
+        data = data_human
+    elif organism == "mouse":
+        data = data_mouse
     df_filter = data['Transcript stable ID'].isin([tr])
     try: return data[df_filter]['Gene stable ID'].unique()[0]
     except IndexError:
         return False
 
-def ensembl_to_entrez(gene):
+def ensembl_to_entrez(gene,organism):
+    if organism == "human":
+        data = data_human
+    elif organism == "mouse":
+        data = data_mouse
     df_filter = data['Gene stable ID'].isin([gene])
     try: return data[df_filter]['NCBI gene ID'].unique()[0]
     except IndexError:
         return False
     
-def entrez_to_ensembl(gene):
+def entrez_to_ensembl(gene,organism):
+    if organism == "human":
+        data = data_human
+    elif organism == "mouse":
+        data = data_mouse
     df_filter = data['NCBI gene ID'].isin([gene])
     try: return data[df_filter]['Gene stable ID'].unique()[0]
     except IndexError:
         return False   
     
-def tr_to_domain(tr):
+def tr_to_domain(tr,organism):
+    if organism == "human":
+        data = data_human
+    elif organism == "mouse":
+        data = data_mouse
     df_filter = data['Transcript stable ID'].isin([tr])
     tdata=data[df_filter]
     tdata=tdata[tdata["Pfam ID"].notna()].drop_duplicates()
@@ -401,15 +441,25 @@ def tr_to_domain(tr):
         return False
 
 #add to view
-def check_PPI_status(tr):
+def check_PPI_status(tr,organism):
+    if organism == "human":
+        PPI = PPI_human
+        data = data_human
+    elif organism == "mouse":
+        PPI = PPI_mouse
+        data = data_mouse
     df_filter = data['Transcript stable ID'].isin([tr])
-    return PPI.has_node(data[df_filter]['NCBI gene ID'].astype('str').unique()[0]) 
+    return PPI.has_node(data[df_filter]['NCBI gene ID'].astype('int').astype('str').unique()[0])
 
 
-def tr_is_coding(tr):
+def tr_is_coding(tr,organism):
+    if organism == "human":
+        data = data_human
+    elif organism == "mouse":
+        data = data_mouse
     return  len(data[data['Transcript stable ID'].isin([tr])])!=0
 
-def filter_proteins_list(List):
+def filter_proteins_list(List,organism):
     filtred_list=[]
     for tr in List:
         #Correct spaces, dotsof version....
@@ -419,27 +469,26 @@ def filter_proteins_list(List):
         ftr=ftr.split("+")[0]
         #print(ftr)
         #make sure Correct ID
-        ftr=ftr[0:15]
+        ftr=ftr[0:18]
         if ftr[0:3]=='ENS':
             
             #Check if protein coding
             
             #input is a protein and coverted successfully 
-            if ftr[3]=='P' :
+            if ftr[3]=='P' or ftr[6]=='P':
                 
-                tmp= pr_to_tr(ftr)
+                tmp= pr_to_tr(ftr,organism)
                 
                 # The protein is converted to a transcript
                 if tmp!=False:
                         # Check PPI status
-                        if check_PPI_status(tmp):
+                        if check_PPI_status(tmp,organism):
                             filtred_list.append(tmp)
                 
             #check if transcript is a coding protein
-            elif ftr[3]=='T'and tr_is_coding(ftr) and check_PPI_status(ftr):
+            elif (ftr[6]=='T' and tr_is_coding(ftr,organism) and check_PPI_status(ftr,organism)):
                filtred_list.append(ftr)
 
-                
     return filtred_list
 
 

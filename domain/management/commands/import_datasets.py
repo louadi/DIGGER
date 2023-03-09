@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from tqdm import tqdm
 
-from domain.models import Gene, Domain
+from domain.models import Gene, Domain, GeneMouse
 
 # --- Get database connection aka 'SQLAlchemie engine'
 
@@ -22,12 +22,17 @@ def load_datasets():
     print('=' * 80)
     # Dictionary of table_name : (file_name, separator)
     datasets = {
-        'ppi_data': ('PPI_interface_mapped_to_exon.csv', ','),
-        'exons_to_domains_data': ('final.csv', ','),
-        'gene_info': ('gene_info.csv', ','),
-        Gene: ('gene_name2entrez_id.csv', ','),
+        'ppi_data_human': ('PPI_interface_mapped_to_exon_human.csv', ','),
+        'exons_to_domains_data_human': ('final_human.csv', ','),
+        'gene_info_human': ('gene_info_human.csv', ','),
+        Gene: ('gene_name2entrez_id_human.csv', ','),
         Domain: ('Pfam-A.clans.tsv', '\t'),
 
+        # --- Adding mouse data to database
+        GeneMouse: ('gene_name2entrez_id_mouse.csv', ','),
+        'ppi_data_mouse': ('PPI_interface_mapped_to_exon_mouse.csv', ','),
+        'exons_to_domains_data_mouse': ('final_mouse.csv', ','),
+        'gene_info_mouse': ('gene_info_mouse.csv', ','),
     }
 
     # --- Write dataframes to tables in database
@@ -56,6 +61,14 @@ def load_datasets():
                     entry.pfam_id = row['PfamId']
                     entry.symbol = row['Symbol3']
                     entry.description = row['Description']
+                    entry.save()
+
+            # Mouse gene
+            elif table_name is GeneMouse:
+                for _, row in tqdm(data.iterrows(), total=data.shape[0]):
+                    entry = GeneMouse()
+                    entry.gene_symbol = row['Gene name']
+                    entry.ensembl_id = row['Gene stable ID']
                     entry.save()
 
         # Write to database directly using Pandas to_sql method
