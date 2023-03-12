@@ -486,7 +486,8 @@ def filter_proteins_list(List,organism):
                             filtred_list.append(tmp)
                 
             #check if transcript is a coding protein
-            elif (ftr[6]=='T' and tr_is_coding(ftr,organism) and check_PPI_status(ftr,organism)):
+            elif (ftr[3] == 'T' and tr_is_coding(ftr, organism) and check_PPI_status(ftr, organism)) or \
+                    (ftr[6] == 'T' and tr_is_coding(ftr, organism) and check_PPI_status(ftr, organism)):
                filtred_list.append(ftr)
 
     return filtred_list
