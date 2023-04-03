@@ -101,7 +101,7 @@ def Protein_view(P_id,organism):
             for d in missing_domain:
                 s=d.split('/')
                 dom.append(s[1])
-                l.append(' <a href="http://pfam.xfam.org/family/'+s[1]+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+s[1]+'"target="_blank">3did  </a>      </h5 class> ')
+                l.append(' <a href="https://www.ebi.ac.uk/interpro/entry/pfam/'+s[1]+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+s[1]+'"target="_blank">3did  </a>      </h5 class> ')
                 if DomainG.has_node(d):
                     n.append(len(DomainG[d]))
                     

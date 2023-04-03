@@ -273,7 +273,7 @@ def input_transcript(Ensemble_transID,organism):
     h3='_blank"'
     #df_filter =domains['Interactions mediated by the domain']!=0
     
-    domains["Link to other databases"]=' <a href="http://pfam.xfam.org/family/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
+    domains["Link to other databases"]=' <a href="https://www.ebi.ac.uk/interpro/entry/pfam/'+domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+domains['Pfam ID']+'"target="_blank">3did  </a>      </h5 class> '
     
     #domains.at[df_filter,"Visualization of the domain interactions"]='<a target="'+'_blank"href="'+h+entrezID+"."+domains['Pfam ID']+'">'+gene_name+'-'+domains['Pfam ID']+'</a>'
     
@@ -309,7 +309,7 @@ def input_transcript(Ensemble_transID,organism):
     
 
 
-    droped1.loc[droped1["Corresponding domain ID"]!='-',"Corresponding domain ID"]='<a target="'+'_blank"href="'+'http://pfam.xfam.org/family/'+droped1["Corresponding domain ID"]+'">'+droped1["Corresponding domain ID"]+'</a>'
+    droped1.loc[droped1["Corresponding domain ID"]!='-',"Corresponding domain ID"]='<a target="'+'_blank"href="'+'https://www.ebi.ac.uk/interpro/entry/pfam/'+droped1["Corresponding domain ID"]+'">'+droped1["Corresponding domain ID"]+'</a>'
     
     droped1["Number of interaction interface mapped to the exon"]=droped1["Number of interaction interface mapped to the exon"].astype(str)
 

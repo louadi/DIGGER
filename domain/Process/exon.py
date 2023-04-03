@@ -85,7 +85,7 @@ def input_exon(exon_ID, organism):
                           
                           
                           
-                          table_domains["Link to other Databases"]='<a href="http://pfam.xfam.org/family/'+table_domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+table_domains['Pfam ID']+'"target="_blank">3did  </a>   </h5 class> '
+                          table_domains["Link to other Databases"]='<a href="https://www.ebi.ac.uk/interpro/entry/pfam/'+table_domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+table_domains['Pfam ID']+'"target="_blank">3did  </a>   </h5 class> '
                          
                          
                          
