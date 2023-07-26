@@ -52,4 +52,4 @@ Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumb
 
 
 ## Contact us
-Zakaria Louadi: louadi@wzw.tum.de
+Zakaria Louadi: zakaria.louadi@tum.de
