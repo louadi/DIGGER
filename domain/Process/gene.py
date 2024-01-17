@@ -13,8 +13,8 @@ from domain.Process import network_analysis as nt
 engine = settings.DATABASE_ENGINE  
 
 #load DIGGER Join Graph
-DomainG_human=exd.load_obj("DomainG_human")
-DomainG_mouse=exd.load_obj("DomainG_mouse")
+DomainG_human=exd.load_obj("Homo sapiens[human]/DomainG")
+DomainG_mouse=exd.load_obj("Mus musculus[mouse]/DomainG")
 
     
 def TranscriptsID_to_table(transcripts,organism, entrez='0'):

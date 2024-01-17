@@ -20,15 +20,18 @@ table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table 2')
 if not os.path.exists(table_path_2):
     os.makedirs(table_path_2)
 
-PPI_human=exd.load_obj("PPI_human")
-g2d_human=exd.load_obj("g2d_human")
 
-PPI_mouse=exd.load_obj("PPI_mouse")
-g2d_mouse=exd.load_obj("g2d_mouse")
+
+
+PPI_human=exd.load_obj("Homo sapiens[human]/PPI")
+g2d_human=exd.load_obj("Homo sapiens[human]/g2d")
+
+PPI_mouse=exd.load_obj("Mus musculus[mouse]/PPI")
+g2d_mouse=exd.load_obj("Mus musculus[mouse]/g2d")
 
 #Join PPI-DDI network
-DomainG_human=exd.load_obj("DomainG_human")
-DomainG_mouse=exd.load_obj("DomainG_mouse")
+DomainG_human=exd.load_obj("Homo sapiens[human]/DomainG")
+DomainG_mouse=exd.load_obj("Mus musculus[mouse]/DomainG")
 
 
 # PPI network confirmed by residue evidence

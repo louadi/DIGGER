@@ -12,16 +12,16 @@ import networkx as nx
 from django.urls import reverse
 
 
-PPI_human=exd.load_obj("PPI_human")
-g2d_human=exd.load_obj("g2d_human")
+PPI_human=exd.load_obj("Homo sapiens[human]/PPI")
+g2d_human=exd.load_obj("Homo sapiens[human]/g2d")
 
-PPI_mouse=exd.load_obj("PPI_mouse")
-g2d_mouse=exd.load_obj("g2d_mouse")
+PPI_mouse=exd.load_obj("Mus musculus[mouse]/PPI")
+g2d_mouse=exd.load_obj("Mus musculus[mouse]/g2d")
 
 DDI=exd.load_obj("DDI")
 
-data_human = pd.read_csv( "domain/data/all_Proteins_human.csv")
-data_mouse = pd.read_csv( "domain/data/all_Proteins_mouse.csv")
+data_human = pd.read_csv( "domain/data/Homo sapiens[human]/all_Proteins.csv")
+data_mouse = pd.read_csv( "domain/data/Mus musculus[mouse]/all_Proteins.csv")
 
 
 # --- Create folder

@@ -21,8 +21,8 @@ def load_obj(name):
     with open('domain/data/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
-Graph_human=load_obj("DomainG_human")
-Graph_mouse=load_obj("DomainG_mouse")
+Graph_human=load_obj("Homo sapiens[human]/DomainG")
+Graph_mouse=load_obj("Mus musculus[mouse]/DomainG")
 # PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
 
 #function for visulaization  DomainView

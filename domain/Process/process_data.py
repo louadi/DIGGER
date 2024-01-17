@@ -37,8 +37,8 @@ def load_obj(name):
 
 
 #from Biomart":
-gid2name_human=load_obj("gid2name_human")
-gid2name_mouse=load_obj("gid2name_mouse")
+gid2name_human=load_obj("Homo sapiens[human]/gid2name")
+gid2name_mouse=load_obj("Mus musculus[mouse]/gid2name")
 
 
 def entrez_to_name_online(entrezID):
