@@ -4,7 +4,7 @@ import random
 import pandas as pd
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.html import escape
 from io import StringIO
@@ -690,3 +690,20 @@ def Multi_proteins(request, organism, job='0'):
 
     return render(request, 'visualization/network.html', context)
 
+
+
+def get_organisms(request):
+    directory_path = os.path.join(settings.PROJECT_ROOT, 'domain/data')
+
+    if os.path.exists(directory_path) and os.path.isdir(directory_path):
+        organisms = os.listdir(directory_path)
+        true_organisms = []
+        trivial_names = []
+        for orga in organisms:
+            if not os.path.isdir(os.path.join(directory_path, orga)):
+                continue
+            true_organisms.append(orga.split("[")[0])
+            trivial_names.append(orga.split("[")[1][:-1])
+        return JsonResponse({'organisms': true_organisms, 'trivial_names': trivial_names})
+    else:
+        return JsonResponse({'organisms': directory_path, 'trivial_names': []})

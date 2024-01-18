@@ -10,7 +10,7 @@
 
 {% block content %}
         <div class="jumbotron">
-            <h1 class="display-4">Isoform-Level Analysis</h1>
+            <h1 class="display-4">Isoform-Level Analysis [TEST2]</h1>
             <p class="lead">Input a protein to visualize protein and domain interactions simultaneously. This mode is
                 useful
                 to identify isoform-specific interactions and to compare between different isoforms.</p>
@@ -33,9 +33,7 @@
                     <!--end of col-->
                     <div class="col-auto mr-1 ml-1">
                         <select class="form-control" id="org_select" name="organism">
-                                <option value="human"> Homo sapiens</option>
-                                <option value="mouse"> Mus musculus</option>
-                            </select>
+                        </select>
                     </div>
                     <!--end of col-->
                     <div class="col-auto">
@@ -77,6 +75,32 @@
                 }
             }
 
+        });
+
+        function addOptionsToSelect(data) {
+            var selectElement = document.getElementById('org_select');
+
+            // Add options from 'organisms' and use 'trivial_names' as values
+            data.organisms.forEach(function (organism, index) {
+                var optionElement = document.createElement('option');
+                optionElement.value = data.trivial_names[index];
+                optionElement.textContent = organism;
+
+                if (data.trivial_names[index] === 'human') {
+                optionElement.selected = true;
+                }
+
+                selectElement.appendChild(optionElement);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/get_organisms/')
+                .then(response => response.json())
+                .then(data => {
+                    addOptionsToSelect(data);
+                })
+                .catch(error => console.error('Error fetching organisms:', error));
         });
     </script>
 

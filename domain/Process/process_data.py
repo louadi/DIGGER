@@ -37,8 +37,12 @@ def load_obj(name):
 
 
 #from Biomart":
-gid2name_human=load_obj("Homo sapiens[human]/gid2name")
-gid2name_mouse=load_obj("Mus musculus[mouse]/gid2name")
+gid2name_all = {}
+for organism in os.listdir('domain/data'):
+    if not os.path.isdir('domain/data/' + organism):
+        continue
+    trivial_name = organism.split("[")[1][:-1]
+    gid2name_all[trivial_name] = load_obj(organism + '/gid2name')
 
 
 def entrez_to_name_online(entrezID):
@@ -48,11 +52,7 @@ def entrez_to_name_online(entrezID):
 
 
 def entrez_to_name(entrezID, organism):
-
-    if organism == "human":
-        return gid2name_human[entrezID]
-    elif organism == "mouse":
-        return gid2name_mouse[entrezID]
+    return gid2name_all[organism][entrezID]
 
 
 

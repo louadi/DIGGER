@@ -2,6 +2,7 @@ from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as  info
 import pandas as pd
+import os
 from django.urls import reverse
 from sqlalchemy import text
 
@@ -13,8 +14,14 @@ from domain.Process import network_analysis as nt
 engine = settings.DATABASE_ENGINE  
 
 #load DIGGER Join Graph
-DomainG_human=exd.load_obj("Homo sapiens[human]/DomainG")
-DomainG_mouse=exd.load_obj("Mus musculus[mouse]/DomainG")
+
+DomainG_all = {}
+for organism in os.listdir('domain/data'):
+    if not os.path.isdir('domain/data/' + organism):
+        continue
+    trivial_name = organism.split("[")[1][:-1]
+    DomainG_all[trivial_name] = exd.load_obj(organism + '/DomainG')
+
 
     
 def TranscriptsID_to_table(transcripts,organism, entrez='0'):
@@ -24,12 +31,9 @@ def TranscriptsID_to_table(transcripts,organism, entrez='0'):
                 name=[]
                 pfams=[]
                 missing_PPI=[]
-                if organism == "human":
-                    DomainG = DomainG_human
-                    g2d = nt.g2d_human
-                elif organism == "mouse":
-                    DomainG = DomainG_mouse
-                    g2d = nt.g2d_mouse
+
+                DomainG = DomainG_all[organism]
+                g2d = nt.g2d_all[organism]
 
                 all_pfams=g2d[entrez]
                 #print(transcripts)

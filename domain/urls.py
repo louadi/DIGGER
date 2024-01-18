@@ -39,6 +39,7 @@ urlpatterns = [
     path('gene_symbol-autocomplete/', autocomplete.gene_symbol_autocomplete, name='gene-symbol-autocomplete', ),
 
     # --- MISC ---
+    path('get_organisms/', views.get_organisms, name='get_organisms'),
     # path('graph/', views.graph, name="graph"),
     # <<< Not used anymore?
     # Domain view

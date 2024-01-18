@@ -30,20 +30,6 @@ for organism in os.listdir('domain/data'):
     elif trivial_name == 'mouse':
         datasets[GeneMouse] = (f'{organism}/gene_name2entrez_id.csv', ',')
 
-# datasets = {
-#     'ppi_data_human': ('PPI_interface_mapped_to_exon_human.csv', ','),
-#     'exons_to_domains_data_human': ('final_human.csv', ','),
-#     'gene_info_human': ('gene_info_human.csv', ','),
-#     Gene: ('gene_name2entrez_id_human.csv', ','),
-#     Domain: ('Pfam-A.clans.tsv', '\t'),
-#
-#     # --- Adding mouse data to database
-#     GeneMouse: ('gene_name2entrez_id_mouse.csv', ','),
-#     'ppi_data_mouse': ('PPI_interface_mapped_to_exon_mouse.csv', ','),
-#     'exons_to_domains_data_mouse': ('final_mouse.csv', ','),
-#     'gene_info_mouse': ('gene_info_mouse.csv', ','),
-# }
-
 
 def load_datasets(datasets):
     print('=' * 80)

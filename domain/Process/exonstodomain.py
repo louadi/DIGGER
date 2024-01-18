@@ -7,11 +7,13 @@ import networkx as nx
 import numpy as np
 import pickle
 import pandas as pd
+import os
 
 from django.conf import settings
 from domain.Process import process_data as pr
 from sqlalchemy import text
 from django.urls import reverse
+
 
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE
@@ -21,8 +23,13 @@ def load_obj(name):
     with open('domain/data/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
-Graph_human=load_obj("Homo sapiens[human]/DomainG")
-Graph_mouse=load_obj("Mus musculus[mouse]/DomainG")
+Graphs = {}
+for organism in os.listdir('domain/data'):
+    if not os.path.isdir('domain/data/' + organism):
+        continue
+    trivial_name = organism.split("[")[1][:-1]
+    Graphs[trivial_name] = load_obj(organism + '/DomainG')
+
 # PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
 
 #function for visulaization  DomainView
@@ -30,10 +37,7 @@ def vis_node_(node,organism):
       p_id='"'+node.split(".")[1]+'"'
       ppp=node.split(".")[1]
       node=node.split(".")[0]+"/"+node.split(".")[1]
-      if organism == "human":
-          DomainG = Graph_human
-      elif organism == "mouse":
-          DomainG = Graph_mouse
+      DomainG = Graphs[organism]
       G= nx.Graph()
       if DomainG.has_node(node):
               G.add_edges_from(DomainG.edges(node))
@@ -121,10 +125,7 @@ def vis_node(graph,node):
 
 def expand_table(table,unique_domains,entrezID,organism)   :
 
-    if organism == "human":
-        Graph = Graph_human
-    elif organism == "mouse":
-        Graph = Graph_mouse
+    Graph = Graphs[organism]
 
     # ADD information about Pfam domain later here:
     

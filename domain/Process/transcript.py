@@ -21,17 +21,17 @@ if not os.path.exists(table_path_2):
     os.makedirs(table_path_2)
 
 
-
-
-PPI_human=exd.load_obj("Homo sapiens[human]/PPI")
-g2d_human=exd.load_obj("Homo sapiens[human]/g2d")
-
-PPI_mouse=exd.load_obj("Mus musculus[mouse]/PPI")
-g2d_mouse=exd.load_obj("Mus musculus[mouse]/g2d")
-
-#Join PPI-DDI network
-DomainG_human=exd.load_obj("Homo sapiens[human]/DomainG")
-DomainG_mouse=exd.load_obj("Mus musculus[mouse]/DomainG")
+DomainG_all = {}
+PPI_all = {}
+g2d_all = {}
+for organism in os.listdir('domain/data'):
+    if not os.path.isdir('domain/data/' + organism):
+        continue
+    trivial_name = organism.split("[")[1][:-1]
+    # Join PPI-DDI network
+    DomainG_all[trivial_name] = exd.load_obj(f'{organism}/DomainG')
+    PPI_all[trivial_name] = exd.load_obj(f'{organism}/PPI')
+    g2d_all[trivial_name] = exd.load_obj(f'{organism}/g2d')
 
 
 # PPI network confirmed by residue evidence
@@ -43,15 +43,10 @@ def Protein_view(P_id,organism):
     i=info.get_protein_info(P_id,organism)
     if i==0: return 0
     domains,unique_domains,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,co_partners=i
-    
-    if organism == "human":
-        PPI = PPI_human
-        g2d = g2d_human
-        DomainG = DomainG_human
-    elif organism == "mouse":
-        PPI = PPI_mouse
-        g2d = g2d_mouse
-        DomainG = DomainG_mouse
+
+    PPI = PPI_all[organism]
+    g2d = g2d_all[organism]
+    DomainG = DomainG_all[organism]
 
     if PPI.has_node(entrezID):
         g = exd.nx.Graph()
