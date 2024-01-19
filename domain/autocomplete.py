@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-
+from django.db import connection
 from domain.models import Gene
 from django.views.decorators.http import require_http_methods
 
@@ -8,10 +8,24 @@ from django.views.decorators.http import require_http_methods
 @require_http_methods(['GET'])
 def gene_symbol_autocomplete(request):
     q = request.GET.get('q')
+    o = request.GET.get('o')
     data = {}
 
     if q:
-        qs = Gene.objects.filter(gene_symbol__istartswith=q)[:20]
-        data = [{'gene_symbol': gene.gene_symbol, 'ensembl_id': gene.ensembl_id} for gene in qs]
+        # Define the raw SQL query
+        raw_sql = """
+        SELECT gene_symbol, ensembl_id
+        FROM domain_gene_""" + o + """
+        WHERE gene_symbol ILIKE %s
+        LIMIT 20
+        """
+
+        # Execute the raw SQL query
+        with connection.cursor() as cursor:
+            cursor.execute(raw_sql, [q + '%'])  # Add the '%' wildcard to the query string
+            rows = cursor.fetchall()
+
+        # Format the results
+        data = [{'gene_symbol': row[0], 'ensembl_id': row[1]} for row in rows]
 
     return JsonResponse(data, safe=False)

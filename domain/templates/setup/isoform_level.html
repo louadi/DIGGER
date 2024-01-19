@@ -10,7 +10,7 @@
 
 {% block content %}
         <div class="jumbotron">
-            <h1 class="display-4">Isoform-Level Analysis [TEST2]</h1>
+            <h1 class="display-4">Isoform-Level Analysis [TEST3]</h1>
             <p class="lead">Input a protein to visualize protein and domain interactions simultaneously. This mode is
                 useful
                 to identify isoform-specific interactions and to compare between different isoforms.</p>
@@ -59,8 +59,12 @@
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             prefetch: '{% url "gene-symbol-autocomplete" %}?q=%QUERY',
             remote: {
-                url: '{% url "gene-symbol-autocomplete" %}?q=%QUERY',
-                wildcard: '%QUERY'
+                url: '{% url "gene-symbol-autocomplete" %}?q=%QUERY&o=%ORGANISM',
+                wildcard: '%QUERY',
+                replace: function(url, query) {
+                    var organism = $('#org_select').val();
+                    return url.replace('%QUERY', query).replace('%ORGANISM', organism);
+                }
             }
         });
 
