@@ -8,13 +8,13 @@ function addOptionsToSelect(data) {
         optionElement.value = data.trivial_names[index];
         optionElement.textContent = organism;
 
-        if (data.trivial_names[index] === 'human') {
-            optionElement.selected = true;
-        }
-
         // Add options to all select elements
         selectElements.forEach(function (selectElement) {
-            selectElement.appendChild(optionElement.cloneNode(true));
+            var clonedOptionElement = optionElement.cloneNode(true);
+            if (data.trivial_names[index] === 'human') {
+                clonedOptionElement.selected = true;
+            }
+            selectElement.appendChild(clonedOptionElement);
         });
     });
 }
