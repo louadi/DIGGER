@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 from django.db import connection
-from domain.models import Gene
 from django.views.decorators.http import require_http_methods
 
 
