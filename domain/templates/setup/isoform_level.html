@@ -22,6 +22,7 @@
                     <div class="col">
                         <div id="remote">
                             <input
+                                    id="input_field"
                                     class="form-control mr-sm-2 typeahead"
                                     type="text"
                                     placeholder="Input a Gene Symbol or an Ensembl ID ( Gene / Transcript / Protein )"
@@ -51,61 +52,7 @@
         </div>
 
     <script src="{% static "domain/typeahead.bundle.js" %}"></script>
-
-    <!-- Derived from here https://stackoverflow.com/questions/45588138/typeahead-js-in-django-project -->
-    <script>
-        var gene_symbol = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('gene_symbol'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            prefetch: '{% url "gene-symbol-autocomplete" %}?q=%QUERY',
-            remote: {
-                url: '{% url "gene-symbol-autocomplete" %}?q=%QUERY&o=%ORGANISM',
-                wildcard: '%QUERY',
-                replace: function(url, query) {
-                    var organism = $('#org_select').val();
-                    return url.replace('%QUERY', query).replace('%ORGANISM', organism);
-                }
-            }
-        });
-
-        $('#remote .typeahead').typeahead(null, {
-            name: 'gene-symbol',
-            display: 'gene_symbol',
-            source: gene_symbol,
-            templates: {
-                // Derived from here https://github.com/twitter/typeahead.js/issues/1031#issuecomment-66567928
-                suggestion: function (data) {
-                    return '<p><strong>' + data.gene_symbol + '</strong> - ' + data.ensembl_id + '</p>';
-                }
-            }
-
-        });
-
-        function addOptionsToSelect(data) {
-            var selectElement = document.getElementById('org_select');
-
-            // Add options from 'organisms' and use 'trivial_names' as values
-            data.organisms.forEach(function (organism, index) {
-                var optionElement = document.createElement('option');
-                optionElement.value = data.trivial_names[index];
-                optionElement.textContent = organism;
-
-                if (data.trivial_names[index] === 'human') {
-                optionElement.selected = true;
-                }
-
-                selectElement.appendChild(optionElement);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/get_organisms/')
-                .then(response => response.json())
-                .then(data => {
-                    addOptionsToSelect(data);
-                })
-                .catch(error => console.error('Error fetching organisms:', error));
-        });
-    </script>
+    <script src="{% static "domain/typeahead.js" %}"></script>
+    <script src="{% static "domain/organism_selector.js" %}"></script>
 
 {% endblock %}
