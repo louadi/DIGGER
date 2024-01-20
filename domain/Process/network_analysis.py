@@ -1,6 +1,7 @@
 
 
 import os
+import re
 
 from django.conf import settings
 
@@ -438,13 +439,13 @@ def filter_proteins_list(List,organism):
         ftr=ftr.split("+")[0]
         #print(ftr)
         #make sure Correct ID
-        ftr=ftr[0:18]
+        # ftr=ftr[0:18]
         if ftr[0:3]=='ENS':
             
             #Check if protein coding
             
             #input is a protein and coverted successfully 
-            if ftr[3]=='P' or ftr[6]=='P':
+            if re.match(r"^ENS.*P\d+", ftr):
                 
                 tmp= pr_to_tr(ftr,organism)
                 
@@ -455,9 +456,9 @@ def filter_proteins_list(List,organism):
                             filtred_list.append(tmp)
                 
             #check if transcript is a coding protein
-            elif (ftr[3] == 'T' and tr_is_coding(ftr, organism) and check_PPI_status(ftr, organism)) or \
-                    (ftr[6] == 'T' and tr_is_coding(ftr, organism) and check_PPI_status(ftr, organism)):
-               filtred_list.append(ftr)
+            elif re.match(r"^ENS.*T\d+", ftr) and tr_is_coding(ftr,organism) and check_PPI_status(ftr,organism):
+                    filtred_list.append(ftr)
+
 
     return filtred_list
 
