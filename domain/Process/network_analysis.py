@@ -57,7 +57,7 @@ def Construct_network(proteins_id, missing,job_ID,organism):
       missing_DDIs=[]
 
 
-      #DDIS with liknks for web display only:
+      #DDIS with links for web display only:
       DDIs2=[]
       missing_DDIs2=[]
 
@@ -101,7 +101,7 @@ def Construct_network(proteins_id, missing,job_ID,organism):
               missing_DDIs_tmp=[]
 
 
-              #DDIS with liknks for web display only:
+              #DDIS with links for web display only:
 
               DDIs_tmp2=[]
               missing_DDIs_tmp2=[]
@@ -118,7 +118,6 @@ def Construct_network(proteins_id, missing,job_ID,organism):
                            #Interacted domain is missing
                            if (d1 in missing[gene1]) or (d2 in missing[gene2]):
                                   E.append("{from: '"+e[0]+"', to: '"+e[1]+"', dashes:  true,title:' Lost "+d1+'-'+d2+"', color: 'red'},") 
-                                  #print('yeaaaaah')
                                   #print(d1,d2)
                                   #print(gene1,gene2)
                                   affected_nodes.append(e[0])
@@ -352,7 +351,8 @@ def analysis_input_genes(Inputs,organism):
     for i in Inputs:
         f=i.replace(" ", "")
         f=f.split(".")[0]
-        
+
+        # TODO: Change this to regex
         if len(f)==15 and f[0:4]=='ENSG' or len(f)==18 and f[0:7]=='ENSMUSG' :
         
               #check if gene is coding:

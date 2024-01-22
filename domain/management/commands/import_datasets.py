@@ -7,8 +7,6 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from tqdm import tqdm
 
-from domain.models import Gene, Domain
-
 # --- Get database connection aka 'SQLAlchemie engine'
 
 engine = settings.DATABASE_ENGINE

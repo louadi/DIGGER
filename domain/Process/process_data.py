@@ -12,7 +12,6 @@ from sqlalchemy import text
 
 from django.conf import settings
 from django.db import connection
-from domain.models import  Domain
 server = "http://rest.ensembl.org"
 cwd = os.getcwd()
 
