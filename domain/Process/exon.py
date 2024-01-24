@@ -28,88 +28,70 @@ if not os.path.exists(table_path):
 
 
 def input_exon(exon_ID, organism):
-            query = """
-            SELECT * 
-            FROM exons_to_domains_data_"""+organism+""" 
-            WHERE "Exon stable ID"=:exon_ID 
-            ORDER BY "Exon rank in transcript"
-            """
-            tb = pd.read_sql_query(sql=text(query), con=engine, params={'exon_ID': exon_ID})
-            
-            # tb=tb.drop(columns=["Unnamed: 0"]).drop_duplicates()
-    
-       
-            #tb=pr.data[pr.data['Exon stable ID'].isin([exon_ID])]  
-            
-            transcripts=tb['Transcript stable ID'].unique()
-            
-            if len(transcripts) == 0:
-            
-              # ID not found in the database
-              return True 
-              
-            else:
-                
-                    #get info about the gene
-                    _,gene_name,Ensemble_geneID,entrezID,gene_description=pr.tranID_convert(transcripts[0],organism)
-                    
-                    #print(gene_name,Ensemble_geneID,entrezID,gene_description)
-                    
-                    ## Table of Transcripts:
-                    ## a function from gene page that give list of transcripts with links
-                    ## The table is in HTML already formated.
+    query = """
+    SELECT * 
+    FROM exons_to_domains_data_"""+organism+""" 
+    WHERE "Exon stable ID"=:exon_ID 
+    ORDER BY "Exon rank in transcript"
+    """
+    tb = pd.read_sql_query(sql=text(query), con=engine, params={'exon_ID': exon_ID})
 
-                    tb_transc, _ = g.TranscriptsID_to_table(transcripts, organism, str(entrezID))
-
-                    #Table of domains
-                    tb=tb[tb["Pfam ID"].notna()].drop_duplicates()
-                    domains=tb["Pfam ID"].unique()
-                    table_domains=[]
-                    
-                    if len(domains)==0:
-                    
-                          #No domains found for the exon
-                          return transcripts,domains, gene_name,Ensemble_geneID,entrezID,tb_transc,table_domains,-1
-                    else:     
-                          #function to count number of interactions of the domain:
-                          table_domains,_,_=exd.expand_table(tb,domains,entrezID,organism)
-                          
-                          
-                          h=reverse('home')+"graph/"
-                          
-                          table_domains['Interactions mediated by the domain']=table_domains['Interactions mediated by the domain'].astype(int)
-                          
-                          
-                         
-                          
-                          
-                          
-                          
-                          table_domains["Link to other Databases"]='<a href="https://www.ebi.ac.uk/interpro/entry/pfam/'+table_domains['Pfam ID']+'  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+table_domains['Pfam ID']+'"target="_blank">3did  </a>   </h5 class> '
-                         
-                         
-                         
-
-                          
-                          table_domains=table_domains.drop(columns=['Exon rank in transcript','Exon stable ID','CDS start','CDS end','Pfam start','Pfam end','Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end"])
-                          table_domains=table_domains.drop_duplicates()
-
-                          table_domains["Symbol"],table_domains["Summary"]=zip(*table_domains['Pfam ID'].map(pr.Domain_name))
-                          table_domains=table_domains[['Pfam ID','Interactions mediated by the domain','Symbol','Summary','Link to other Databases']]
-
-                          pd.set_option('display.max_colwidth',1000)
-                          Total = table_domains['Interactions mediated by the domain'].sum()
-                          
-                          
-                          
-                          
-                          
-                          
-                          
-                          table_domains=table_domains.to_html(**settings.TO_HTML_PARAMETERS)
+    # tb=tb.drop(columns=["Unnamed: 0"]).drop_duplicates()
 
 
-                          return transcripts,domains, gene_name,Ensemble_geneID,entrezID,tb_transc,table_domains,Total
+    #tb=pr.data[pr.data['Exon stable ID'].isin([exon_ID])]
+
+    transcripts=tb['Transcript stable ID'].unique()
+
+    if len(transcripts) == 0:
+      # ID not found in the database
+        return True
+
+    #get info about the gene
+    _,gene_name,Ensemble_geneID,entrezID,gene_description=pr.tranID_convert(transcripts[0],organism)
+
+    #print(gene_name,Ensemble_geneID,entrezID,gene_description)
+
+    ## Table of Transcripts:
+    ## a function from gene page that give list of transcripts with links
+    ## The table is in HTML already formated.
+
+    tb_transc, _ = g.TranscriptsID_to_table(transcripts, organism, str(entrezID))
+
+    #Table of domains
+    tb=tb[tb["Pfam ID"].notna()].drop_duplicates()
+    domains=tb["Pfam ID"].unique()
+    table_domains=[]
+
+    if len(domains)==0:
+
+        #No domains found for the exon
+        return transcripts,domains, gene_name,Ensemble_geneID,entrezID,tb_transc,table_domains,-1
+
+    #function to count number of interactions of the domain:
+    table_domains,_,_=exd.expand_table(tb,domains,entrezID,organism)
+
+
+    h=reverse('home')+"graph/"
+
+    table_domains['Interactions mediated by the domain']=table_domains['Interactions mediated by the domain'].astype(int)
+
+    table_domains["Link to other Databases"]='<a href="https://www.ebi.ac.uk/interpro/entry/pfam/'+table_domains['Pfam ID']+\
+                                             '  "target="_blank">Pfam  </a>   &nbsp;&nbsp;&nbsp; <a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value='+table_domains['Pfam ID']+'"target="_blank">3did  </a>   </h5 class> '
+
+    table_domains=table_domains.drop(columns=['Exon rank in transcript','Exon stable ID','CDS start','CDS end','Pfam start','Pfam end','Transcript stable ID', 'Chromosome/scaffold name',"Strand","Genomic coding start","Genomic coding end"])
+    table_domains=table_domains.drop_duplicates()
+
+    table_domains["Symbol"],table_domains["Summary"]=zip(*table_domains['Pfam ID'].map(pr.Domain_name))
+    table_domains=table_domains[['Pfam ID','Interactions mediated by the domain','Symbol','Summary','Link to other Databases']]
+
+    pd.set_option('display.max_colwidth',1000)
+    Total = table_domains['Interactions mediated by the domain'].sum()
+
+    table_domains=table_domains.to_html(**settings.TO_HTML_PARAMETERS)
+
+
+    return transcripts,domains, gene_name,Ensemble_geneID,entrezID,tb_transc,table_domains,Total
                           
                           
                           
@@ -247,40 +229,35 @@ def PPI_inter(exon_ID,gene_name,organism):
     
     n=len(p1)
     if n!=0:
-   
-    
-            
         
-            p1['Protein with selected exonic region']=gene_name
-            
-            #Get the partner protein name
-            transcripts=p1['Transcript stable ID_y'].tolist()
-            p1['Partner Protein']=tr_to_names(transcripts,organism)
-            
-            
-            #DIspaly table in HTML
-            p1=p1.rename(columns= {
-                
-                'u_ac_2':'Uniprot ID of Protein 2',
-                'u_ac_1':'Uniprot ID of Protein 1',
-                
-            })
-            
-            p1[['Protein with selected exonic region','Partner Protein','Uniprot ID of Protein 1','Uniprot ID of Protein 2']].drop_duplicates().to_csv(f'{table_path}/{exon_ID}_interface.csv', index=False,)
-           
+        p1['Protein with selected exonic region']=gene_name
 
-               
-            
-            p1=p1[['Protein with selected exonic region','Partner Protein']].drop_duplicates()
-            
-            #max display in web page
-            max=25
-            p1=p1[:max]
-            #p1=p1[:10]
+        #Get the partner protein name
+        transcripts=p1['Transcript stable ID_y'].tolist()
+        p1['Partner Protein']=tr_to_names(transcripts,organism)
+
+
+        #DIspaly table in HTML
+        p1=p1.rename(columns= {
+
+            'u_ac_2':'Uniprot ID of Protein 2',
+            'u_ac_1':'Uniprot ID of Protein 1',
+
+        })
+
+        p1[['Protein with selected exonic region','Partner Protein','Uniprot ID of Protein 1','Uniprot ID of Protein 2']].drop_duplicates().to_csv(f'{table_path}/{exon_ID}_interface.csv', index=False,)
+
+
+
+
+        p1=p1[['Protein with selected exonic region','Partner Protein']].drop_duplicates()
+
+        #max display in web page
+        max=25
+        p1=p1[:max]
+        #p1=p1[:10]
     pd.set_option('display.max_colwidth',1000)
     #p_html=p1.to_html(**settings.TO_HTML_PARAMETERS)
-    
-    
     return p1,n
 
 

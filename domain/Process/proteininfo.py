@@ -74,15 +74,6 @@ def Visualize_transciript(exon_table,domain_table,exons_in_interface):
     return features1,features2,fend
 
 
-
-
-
-
-
-
-
-
-
 def Protein_structure(ID,exons,domains,path,trID,exons_in_interface):
     #save Image of protein Structure
     features1,features2,fend=Visualize_transciript(exons,domains,exons_in_interface)

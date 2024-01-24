@@ -17,9 +17,7 @@ from pandas.errors import ParserError
 from .Process import exonstodomain as exd
 from .Process import exon as ex
 from .Process import process_data as pr
-from .Process import proteininfo as info
 from .Process import transcript as tr
-from .Process import InteractionView as iv
 from .Process import gene as  g
 from .Process import network_analysis as nt
 
@@ -196,13 +194,6 @@ def exon(request,organism,exon_ID):
    return render(request,'visualization/exon.html',context)
 
 
-
-
-
-
-
-
-
 #Dsiplay information of a transcript or a protein
 def transcript(request,P_id,organism):
     print("Currently in transcript view")
@@ -262,9 +253,6 @@ def transcript(request,P_id,organism):
       missed=missed.to_html(**settings.TO_HTML_PARAMETERS)
 
 
-
-
-
     nodes_domainV=[]
     edges_domainV=[]
     switcher=[]
@@ -284,9 +272,6 @@ def transcript(request,P_id,organism):
             switcher.append('<option value="'+pfams+'"> '+pfams+'</option>')
             switcher_js.append('case "'+pfams+'": return node.source === "'+pfams+'";')
 
-
-
-
     #DomainView for missing domains
 
     switcher_m=[]
@@ -301,10 +286,6 @@ def transcript(request,P_id,organism):
                 edges_domainV=edges_domainV+e
                 switcher_m.append('<option value="'+pfams+'"> '+pfams+' (missing in the isoform) </option>')
                 switcher_js.append('case "'+pfams+'": return node.source === "'+pfams+'";')
-
-
-
-
 
     context={
     'dt':droped1,
@@ -346,11 +327,6 @@ def transcript(request,P_id,organism):
     }
 
     return render(request, 'visualization/transcript.html', context)
-
-
-
-
-
 
 
 def isoform_level(request):
