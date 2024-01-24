@@ -205,7 +205,7 @@ def exon(request,organism,exon_ID):
 
 #Dsiplay information of a transcript or a protein
 def transcript(request,P_id,organism):
-
+    print("Currently in transcript view")
 
 
     out=tr.Protein_view(P_id,organism)
@@ -375,11 +375,11 @@ def isoform_level(request):
         search_query = search_query.split(".")[0]
         print(search_query)
         # regex to check if search query starts with ENS and ends with T or P
-        if re.match(r'ENS.*[T,P]\d+', search_query):
+        if re.match(r'ENS\w*[T,P]\d+$', search_query):
             print("User input is a protein")
             return redirect(transcript, P_id=search_query, organism=organism)
 
-        elif re.match(r'ENS.*G\d+', search_query):
+        elif re.match(r'ENS\w*G\d+$', search_query):
             print("User input is a gene")
             return redirect(gene, gene_ID=search_query, organism=organism)
 
@@ -403,7 +403,7 @@ def exon_level(request):
       search_query=search_query.split(".")[0]
       print(search_query)
 
-      if re.match(r'ENS.*[E]\d+', search_query):
+      if re.match(r'ENS\w*[E]\d+$', search_query):
             return redirect(exon, organism=organism, exon_ID = search_query)
 
 
@@ -422,7 +422,7 @@ def exon_level(request):
         search_query=search_query.split(" ")
         search_query =[x for x in search_query if x!='']
         #search_query[0]=search_query[0].split(".")[0]
-        if len(search_query)==3 and  re.match(r'ENS.*[G]\d+', search_query[0]) and \
+        if len(search_query)==3 and  re.match(r'ENS\w*[G]\d+$', search_query[0]) and \
                 search_query[1].isdigit() and search_query[2].isdigit():
 
             gene_ID=search_query[0]
@@ -458,11 +458,11 @@ def exon_level(request):
         search_query = search_query.split(".")[0]
 
         # Input search is a protein:
-        if re.match(r'ENS.*[TP]\d+', search_query):
+        if re.match(r'ENS\w*[TP]\d+$', search_query):
             return redirect(transcript, organism=organism, P_id=search_query)
 
         # Input search is a gene:
-        elif re.match(r'ENS.*G\d+', search_query):
+        elif re.match(r'ENS\w*G\d+$', search_query):
             return redirect(gene, organism=organism, gene_ID=search_query)
 
     return render(request, 'setup/exon_level.html', )
@@ -487,7 +487,7 @@ def network(request):
 
         # max input IDs
         if 2000 > len(input_query) > 1:
-            if re.match(r'^ENS.*[GTP]', input_query[0]):
+            if re.match(r'^ENS\w*[GTP]', input_query[0]):
                 job_num = str(random.randrange(500))
                 with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:
                     pickle.dump(input_query, fp)
@@ -523,7 +523,7 @@ def network(request):
             # Elias: lets hope this magic still works after I changed the format checking
 
             # Check if the first row corresponds to transcript Ensembl IDs
-            if not (re.match(r'^ENS.*T', transcript_count_df.iloc[0, 0]) or re.match(r'^ENS.*T', transcript_count_df.iloc[1, 0])):
+            if not (re.match(r'^ENS\w*T', transcript_count_df.iloc[0, 0]) or re.match(r'^ENS\w*T', transcript_count_df.iloc[1, 0])):
                 error_message_suffix = f"must have Ensembl transcript IDs in the first column starting with \"ENST\""
                 raise RuntimeError
 
@@ -580,15 +580,15 @@ def Multi_proteins(request, organism, job='0'):
             inputs = pickle.load(fp)
 
 
-    if re.match(r'^ENS.*[G]', inputs[0]):
+    if re.match(r'^ENS\w*[G]', inputs[0]):
        info=nt.analysis_input_genes(inputs,organism)
 
-    elif re.match(r'^ENS.*[GTP]', inputs[0]):
+    elif re.match(r'^ENS\w*[TP]', inputs[0]):
           info=nt.analysis_input_isoforms(inputs,organism)
     else:
            return HttpResponse("<h1>wrong entry</h1>")
 
-    if info==False:
+    if not info:
         return HttpResponse("<h1>Too many inputs (max=2000 genes)</h1>")
 
     else:

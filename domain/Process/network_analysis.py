@@ -352,9 +352,10 @@ def analysis_input_genes(Inputs,organism):
         f=i.replace(" ", "")
         f=f.split(".")[0]
 
-        # TODO: Change this to regex
-        if len(f)==15 and f[0:4]=='ENSG' or len(f)==18 and f[0:7]=='ENSMUSG' :
-        
+        # starts with ENS, matches any other word characters (from different organisms), specifies G for gene
+        # and finally the ID ends with a string of numbers
+        if re.match(r"^ENS\w*G\d+$", f):
+
               #check if gene is coding:
               if  len(data[data['Gene stable ID'].isin([f])])!=0:
               
@@ -364,7 +365,6 @@ def analysis_input_genes(Inputs,organism):
                   entrez_id=str(int(ensembl_to_entrez(f,organism)))
                   #print(entrez_id)
                   if PPI.has_node(entrez_id):
-                      print('yeaaaaaah')
                       protein_id.append(entrez_id)
                       missing[f]=[]
     print(len(protein_id))
@@ -445,7 +445,7 @@ def filter_proteins_list(List,organism):
             #Check if protein coding
             
             #input is a protein and coverted successfully 
-            if re.match(r"^ENS.*P\d+", ftr):
+            if re.match(r"^ENS\w*P\d+$", ftr):
                 
                 tmp= pr_to_tr(ftr,organism)
                 
@@ -456,7 +456,7 @@ def filter_proteins_list(List,organism):
                             filtred_list.append(tmp)
                 
             #check if transcript is a coding protein
-            elif re.match(r"^ENS.*T\d+", ftr) and tr_is_coding(ftr,organism) and check_PPI_status(ftr,organism):
+            elif re.match(r"^ENS\w*T\d+$", ftr) and tr_is_coding(ftr,organism) and check_PPI_status(ftr,organism):
                     filtred_list.append(ftr)
 
 

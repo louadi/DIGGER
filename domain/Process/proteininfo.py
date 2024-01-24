@@ -1,3 +1,5 @@
+import re
+
 from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd 
 from domain.Process import network_analysis as nt 
@@ -40,24 +42,14 @@ def get_protein_info2(ID):
   return domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,co_partners
 
 
-
 def ID_mapper(ID,organism):
     # The use input ID of a transcript or protein:
     #if the ID is a transcript ID:
-    if organism=="human":
-        if ID[3]=="T" :return exd.input_transcript(ID,organism),ID
-
-        #if the ID is a protein ID:
-        trID=nt.pr_to_tr(ID,organism)
-        if ID[3]=="P" :return exd.input_transcript(trID,organism),trID
-
-    if organism=="mouse":
-        if ID[6] == "T": return exd.input_transcript(ID, organism), ID
-
-        # if the ID is a protein ID:
-        trID = nt.pr_to_tr(ID,organism)
-        if ID[6] == "P": return exd.input_transcript(trID,organism),trID
-
+    if re.match(r"ENS\w*T\d+$", ID):
+        return exd.input_transcript(ID,organism),ID
+    trID = nt.pr_to_tr(ID,organism)
+    if re.match(r"ENS\w*P\d+$", ID):
+        return exd.input_transcript(trID,organism),trID
 
 
 def Visualize_transciript(exon_table,domain_table,exons_in_interface):

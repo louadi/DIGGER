@@ -115,23 +115,12 @@ def input_exon(exon_ID, organism):
                           
                     
 def vis_exon(missing_domain,entrezID,gene_name,ExonID,organism):
-
-    #organism check
-    if organism == "human":
-        PPI = tr.PPI_human
-        g2d = tr.g2d_human
-        DomainG = tr.DomainG_human
-    elif organism == "mouse":
-        PPI = tr.PPI_mouse
-        g2d = tr.g2d_mouse
-        DomainG = tr.DomainG_mouse
+    PPI = tr.PPI_all[organism]
+    g2d = tr.g2d_all[organism]
+    DomainG = tr.DomainG_all[organism]
 
     #missing domain: are the domains coded by the exon
     missing_domain = [entrezID+'/'+ e for e in missing_domain]
-    
-    
-    
-   
    
     #only if the exon code for domains with known interactions
     
