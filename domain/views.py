@@ -200,13 +200,13 @@ def transcript(request,P_id,organism):
 
 
     out=tr.Protein_view(P_id,organism)
+
     if out==0 :return HttpResponse(' Wrong entry or protein without any known Pfam domains')
     if out==1 :return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
 
 
 
     nodes,edges,_,domains,unique,exons,text1,domainshtml,Text_nodes,text_edges,tran_name,gene_name,Ensemble_geneID,entrezID,gene_description,exons,droped1,droped2,trID,p,missed,pd_interaction,isoforms,co_partners=tr.Protein_view(P_id,organism)
-
 
     #Interactionview
     Interactiveview_selec=[]
