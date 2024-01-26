@@ -13,6 +13,7 @@ from django.urls import reverse
 PPI_all = {}
 g2d_all = {}
 data_all = {}
+DDI_all = {}
 for organism in os.listdir('domain/data'):
     if not os.path.isdir('domain/data/' + organism):
         continue
@@ -20,8 +21,7 @@ for organism in os.listdir('domain/data'):
     PPI_all[trivial_name] = exd.load_obj(organism + '/PPI')
     g2d_all[trivial_name] = exd.load_obj(organism + '/g2d')
     data_all[trivial_name] = pd.read_csv('domain/data/' + organism + '/all_Proteins.csv')
-
-DDI = exd.load_obj("DDI")
+    DDI_all[trivial_name] = exd.load_obj(organism + '/DDI')
 
 # --- Create folder
 # Global jobs table path
@@ -38,6 +38,7 @@ if not os.path.exists(jobs_networks_path):
 def Construct_network(proteins_id, missing, job_ID, organism):
     PPI = PPI_all[organism]
     g2d = g2d_all[organism]
+    DDI = DDI_all[organism]
 
     E = []
     N = []
