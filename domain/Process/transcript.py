@@ -132,7 +132,6 @@ def Protein_view(P_id,organism):
         pd_interaction=pd_interaction.sort_values(by=['Percentage of lost domain-domain interactions'])
         #h=reverse('home')+"ID/"+trID+'/InteractionView/'
 
-        print("all actions done, only converting now")
         pd_interaction["Percentage of lost domain-domain interactions"]=pd_interaction["Percentage of lost domain-domain interactions"].astype(int)
         pd_interaction["Percentage of lost domain-domain interactions"]=pd_interaction["Percentage of lost domain-domain interactions"].astype(str)+' % '
 
@@ -230,7 +229,6 @@ def table_interaction(tran_name,trID,entrezID,g,protein_with_DDI,missing_domain,
         #select first protein
         if protein !=entrezID:
             #Search for interacted domains
-            print(protein)
             edges,DDI_edges,lost_edges,DDI_edges2,lost_edges2=Interacted_domain(protein,g,entrezID,missing_domain)
 
             IDs.append(protein)

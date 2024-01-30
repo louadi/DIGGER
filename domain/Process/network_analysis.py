@@ -21,7 +21,8 @@ for organism in os.listdir('domain/data'):
     PPI_all[trivial_name] = exd.load_obj(organism + '/PPI')
     g2d_all[trivial_name] = exd.load_obj(organism + '/g2d')
     data_all[trivial_name] = pd.read_csv('domain/data/' + organism + '/all_Proteins.csv')
-    DDI_all[trivial_name] = exd.load_obj(organism + '/DDI')
+    if os.path.isfile('domain/data/' + organism + '/DDI.pkl'):
+        DDI_all[trivial_name] = exd.load_obj(organism + '/DDI')
 
 # --- Create folder
 # Global jobs table path
