@@ -42,25 +42,40 @@ def vis_node_(node, organism):
     DomainG = Graphs[organism]
     G = nx.Graph()
     if DomainG.has_node(node):
-        # add edges only if the edge has origin 'original'
+        # copy over the edges with their attributes
         for edge in DomainG.edges(node, data=True):
-            if edge[2]['origin'] == 'original':
-                G.add_edge(edge[0], edge[1])
-        # G.add_edges_from(DomainG.edges(node))
+            G.add_edge(edge[0], edge[1], **edge[2])
+
+    # get the amount of edges that are predicted and how many are original
+    predicted = 0
+    original = 0
+    for edge in G.edges(data=True):
+        if edge[2]['origin'] == 'predicted':
+            predicted += 1
+        else:
+            original += 1
+    print(f"Node {node} has {predicted} predicted edges and {original} original edges")
 
     g = nx.Graph()
     g.add_node(node)
     for n in G.nodes():
         domain = n.split("/")[1]
-        gene = n.split("/")[0]
         if n != node:
-            g.add_edge(n, domain)
-            g.add_edge(node, domain)
+            # add predicted attribute if it is predicted in G
+            if (G.has_edge(n, node) or G.has_edge(node, n)) \
+                    and (G[node][n]['origin'] == 'predicted' or G[n][node]['origin'] == 'predicted'):
+                if not g.has_edge(n, domain):
+                    g.add_edge(n, domain, origin='predicted')
+                if not g.has_edge(node, domain):
+                    g.add_edge(node, domain, origin='predicted')
+            else:
+                g.add_edge(n, domain, origin='original')
+                g.add_edge(node, domain, origin='original')
+
 
     N = []
     E = []
     for n in g.nodes:
-
         # Domain node
         if len(n.split("/")) == 1:
             # print(n)
@@ -68,12 +83,9 @@ def vis_node_(node, organism):
             label_name = pr.Domain_name(n)[0] + ' (' + n + ')'
             N.append("{id: \"" + n + ppp + "\", label:  \"" + label_name +
                      "\" ,group: \"Domain\",physics:true ," + " source: " + p_id + ", value: \"4" + "\"},")
-
         else:
-
             gene = n.split("/")[0]
             domain = n.split("/")[1]
-
             # Main Domain of interest
             if n == node:
                 try:
@@ -91,13 +103,20 @@ def vis_node_(node, organism):
                              "\" ,group: \"protein\",physics:true , " + " source: " + p_id + ", value: \"2" + "\"},")
                 except KeyError:
                     print("KeyError with", node)
-    for e in g.edges:
+
+    for e in g.edges(data=True):
 
         # edge to the main domain
         if any(x == node for x in e):
-            E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L1, color:  BLACK  " + "},")
+            if e[2]['origin'] == 'original':
+                E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L1, color:  BLACK  " + "},")
+            else:
+                E.append(f"{{from: \"{e[0] + ppp}\", to: \"{e[1] + ppp}\", length:  L1, color:  YELLOW }},")
         else:
-            E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L2, color:  RED  " + "},")
+            if e[2]['origin'] == 'original':
+                E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L2, color:  RED  " + "},")
+            else:
+                E.append(f"{{from: \"{e[0] + ppp}\", to: \"{e[1] + ppp}\", length:  L2, color:  YELLOW }},")
 
     return N, E, pr.entrez_to_name(node.split("/")[0], organism), node.split("/")[1]
 

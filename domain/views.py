@@ -240,6 +240,8 @@ def transcript(request, P_id, organism):
 
     nodes_domainV = []
     edges_domainV = []
+    nodes_domainV_pred = []
+    edges_domainV_pred = []
     switcher = []
     switcher_js = []
     first = unique[0]

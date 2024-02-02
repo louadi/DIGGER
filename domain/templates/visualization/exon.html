@@ -208,8 +208,8 @@
                       //ORANGE = "orange",
                       YELLOW = "orange",
                       WHITE = "EED5EB"
-                  //GRAY = '#666666',
-                  GRAY = "gray",
+                      //GRAY = '#666666',
+                      GRAY = "gray",
                       BLACK = "#2B1B17";
 
 
@@ -261,12 +261,12 @@
                               max: 32
                           }
                       },
+
                       edges: {
                           color: WHITE,
                           smooth: false,
 
                       },
-
 
                       groups: {
                           protein: {
@@ -297,7 +297,7 @@
 
 
                   function startNetwork(data2) {
-
+                      console.log("creating network");
                       var network2 = new vis.Network(container2, data2, options2);
 
                       checkbox2.addEventListener('change', function () {
@@ -321,6 +321,8 @@
                           }
                       });
                   };
+
+                  var checkboxPredicted = document.querySelector("input[name=predicted-checkbox-interaction]");
 
 
                   let nodeFilterValue2 = "";
