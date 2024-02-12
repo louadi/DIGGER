@@ -73,28 +73,25 @@ def vis_node_(node, organism):
                 g.add_edge(node, domain, origin='original')
 
     # nodes
-    N = []
+    N = {'original': [], 'predicted': []}
     # edges
-    E = []
+    E = {'original': [], 'predicted': []}
     # predicted edges
-    p_N = []
     p_E = []
+    p_N = []
     for n in g.nodes:
         # find if there is an edge connected to this node that is not predicted
-        orig_connection = False
+        origin = 'predicted'
         for e in g.edges(n, data=True):
             if e[2]['origin'] == 'original':
-                orig_connection = True
+                origin = 'original'
         # Domain node
         if len(n.split("/")) == 1:
             # print(n)
 
             label_name = pr.Domain_name(n)[0] + ' (' + n + ')'
 
-            if orig_connection:
-                N.append(f'{{id: "{n + ppp}", label: "{label_name}", group: "Domain", physics: true, source: {p_id}, value: "4"}},')
-            else:
-                p_N.append(f'{{id: "{n + ppp}", label: "{label_name}", group: "Domain", physics: true, source: {p_id}, value: "4"}},')
+            N[origin].append(f'{{id: "{n + ppp}", label: "{label_name}", group: "Domain", physics: true, source: {p_id}, value: "4"}},')
         else:
             gene = n.split("/")[0]
             domain = n.split("/")[1]
@@ -103,19 +100,13 @@ def vis_node_(node, organism):
                 try:
                     domain_name = n.split("/")[1]
                     domain_name = pr.Domain_name(domain_name)[0] + ' (' + domain_name + ')'
-                    if orig_connection:
-                        N.append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", physics: false, source: {p_id}, value: "5"}},')
-                    else:
-                        p_N.append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", physics: false, source: {p_id}, value: "5"}},')
+                    N[origin].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", physics: false, source: {p_id}, value: "5"}},')
                 except KeyError:
                     print("KeyError with", node)
             # a gene node
             else:
                 try:
-                    if orig_connection:
-                        N.append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)}", group: "protein", physics: true, source: {p_id}, value: "2"}},')
-                    else:
-                        p_N.append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)}", group: "protein", physics: true, source: {p_id}, value: "2"}},')
+                    N[origin].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)}", group: "protein", physics: true, source: {p_id}, value: "2"}},')
                 except KeyError:
                     print("KeyError with", node)
 
@@ -123,16 +114,17 @@ def vis_node_(node, organism):
 
         # edge to the main domain
         if any(x == node for x in e):
-            if e[2]['origin'] == 'original':
-                E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L1, color:  BLACK  " + "},")
-            else:
-                p_E.append(f"{{from: \"{e[0] + ppp}\", to: \"{e[1] + ppp}\", length:  L1, color:  YELLOW }},")
+            colour = 'BLACK' if e[2]['origin'] == 'original' else 'YELLOW'
+
+            # E[e[2]['origin']].append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L1, color:  {}  " + "},")
+            E[e[2]['origin']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, color:  {colour} }},')
+
         else:
-            if e[2]['origin'] == 'original':
-                E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L2, color:  RED  " + "},")
-            else:
-                p_E.append(f"{{from: \"{e[0] + ppp}\", to: \"{e[1] + ppp}\", length:  L2, color:  YELLOW }},")
-                # P.append(f"{{from: \"{e[0] + ppp}\", to: \"{e[1] + ppp}\", length:  L2, color:  YELLOW }},")
+            colour = 'RED' if e[2]['origin'] == 'original' else 'YELLOW'
+
+            # E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L2, color:  RED  " + "},")
+            E[e[2]['origin']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, color:  {colour} }},')
+
 
     return N, E, p_N, p_E, pr.entrez_to_name(node.split("/")[0], organism), node.split("/")[1]
 

@@ -513,36 +513,24 @@
                                     GRAY = "gray",
                                     BLACK = "#2B1B17";
 
-
-                                // create an array with nodes
-                                var nodes2 = [
-                                    {% for node in Domainview_nodes %}
-                                        {{  node|safe }}
+                                // create singular dictionary
+                                var nodes_dict = {
+                                    {% for key, value in Domainview_nodes.items %}
+                                        "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                     {% endfor %}
-                                ];
+                                };
 
-                                var nodes_pred = [
-                                    {% for node in Domainview_nodes_pred %}
-                                        {{  node|safe }}
+                                // create singular dictionary
+                                var edges_dict = {
+                                    {% for key, value in Domainview_edges.items %}
+                                        "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                     {% endfor %}
-                                ];
+                                };
 
-                                // create an array with edges
-                                var edges2 = [
-                                    {% for edge in Domainview_edges %}
-                                        {{ edge|safe }}
-                                    {% endfor %}
-                                ];
-
-                                var edges_pred = [
-                                    {% for edge in Domainview_edges_pred %}
-                                        {{ edge|safe }}
-                                    {% endfor %}];
-
-                                var edges_pred = new vis.DataSet(edges2.concat(edges_pred));
-                                var edges2 = new vis.DataSet(edges2);
-                                var nodes_pred = new vis.DataSet(nodes2.concat(nodes_pred));
-                                var nodes2 = new vis.DataSet(nodes2);
+                                var edges2 = new vis.DataSet(edges_dict['original']);
+                                var nodes2 = new vis.DataSet(nodes_dict['original']);
+                                var edges_pred = new vis.DataSet(edges_dict['original'].concat(edges_dict['predicted']));
+                                var nodes_pred = new vis.DataSet(nodes_dict['original'].concat(nodes_dict['predicted']));
 
 
                                 const nodeFilterSelector2 = document.getElementById("nodeFilterSelect2");
@@ -550,14 +538,6 @@
 
                                 // create a network
                                 var container2 = document.getElementById('domain-network');
-                                var data2 = {
-                                    nodes2: nodes2,
-                                    edges2: edges2
-                                };
-                                var data_pred = {
-                                    nodes2: nodes_pred,
-                                    edges2: edges_pred
-                                }
 
 
                                 var options2 = {

@@ -238,8 +238,8 @@ def transcript(request, P_id, organism):
         missing_domains = missed['Pfam ID'].unique()
         missed = missed.to_html(**settings.TO_HTML_PARAMETERS)
 
-    nodes_domainV = []
-    edges_domainV = []
+    nodes_domainV = {}
+    edges_domainV = {}
     edges_domainV_pred = []
     nodes_domainV_pred = []
     switcher = []
@@ -250,17 +250,23 @@ def transcript(request, P_id, organism):
     # DomainView for retained domains
     for pfams in unique:
         n, e, p_n, p_e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
-        if len(e) > maxx:
+        if len(e['original']) > maxx:
             maxx = len(e)
             first = pfams
-        if len(e) != 0:
-            nodes_domainV = nodes_domainV + n
-            edges_domainV = edges_domainV + e
+        if len([val for sublist in e.values() for val in sublist]) != 0:
+            # initialise keys with empty list if they don't exist
+            for key in n.keys():
+                if key not in nodes_domainV:
+                    nodes_domainV[key] = []
+            for key in e.keys():
+                if key not in edges_domainV:
+                    edges_domainV[key] = []
+
+            nodes_domainV = {k: nodes_domainV[k] + v for k, v in n.items()}
+            edges_domainV = {k: edges_domainV[k] + v for k, v in e.items()}
+
             switcher.append('<option value="' + pfams + '"> ' + pfams + '</option>')
             switcher_js.append('case "' + pfams + '": return node.source === "' + pfams + '";')
-        if len(p_e) != 0:
-            edges_domainV_pred = edges_domainV_pred + p_e
-            nodes_domainV_pred = nodes_domainV_pred + p_n
 
     # DomainView for missing domains
 
