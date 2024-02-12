@@ -50,10 +50,10 @@ def vis_node_(node, organism):
     predicted = 0
     original = 0
     for edge in G.edges(data=True):
-        if edge[2]['origin'] == 'predicted':
-            predicted += 1
-        else:
+        if edge[2]['origin'] == 'original':
             original += 1
+        else:
+            predicted += 1
     print(f"Node {node} has {predicted} predicted edges and {original} original edges")
 
     g = nx.Graph()
@@ -116,13 +116,11 @@ def vis_node_(node, organism):
         if any(x == node for x in e):
             colour = 'BLACK' if e[2]['origin'] == 'original' else 'YELLOW'
 
-            # E[e[2]['origin']].append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L1, color:  {}  " + "},")
             E[e[2]['origin']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, color:  {colour} }},')
 
         else:
             colour = 'RED' if e[2]['origin'] == 'original' else 'YELLOW'
 
-            # E.append("{from: \"" + e[0] + ppp + "\", to: \"" + e[1] + ppp + "\", length:  L2, color:  RED  " + "},")
             E[e[2]['origin']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, color:  {colour} }},')
 
 

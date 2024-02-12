@@ -514,23 +514,18 @@
                                     BLACK = "#2B1B17";
 
                                 // create singular dictionary
-                                var nodes_dict = {
+                                const nodes_dict = {
                                     {% for key, value in Domainview_nodes.items %}
                                         "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                     {% endfor %}
                                 };
 
                                 // create singular dictionary
-                                var edges_dict = {
+                                const edges_dict = {
                                     {% for key, value in Domainview_edges.items %}
                                         "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                     {% endfor %}
                                 };
-
-                                var edges2 = new vis.DataSet(edges_dict['original']);
-                                var nodes2 = new vis.DataSet(nodes_dict['original']);
-                                var edges_pred = new vis.DataSet(edges_dict['original'].concat(edges_dict['predicted']));
-                                var nodes_pred = new vis.DataSet(nodes_dict['original'].concat(nodes_dict['predicted']));
 
 
                                 const nodeFilterSelector2 = document.getElementById("nodeFilterSelect2");
@@ -596,17 +591,29 @@
 
                                 var checkboxPredicted = document.querySelector("input[name=predicted-checkbox-interaction]");
 
+                                function setNodes(nodes, edges) {
+                                    data2 = {nodes: new vis.DataSet(nodes['original']),
+                                             edges: new vis.DataSet(edges['original'])};
 
-                                function startNetwork(data2, data_pred) {
+                                    if (checkboxPredicted.checked) {
+                                        // go through each key in the object and concatenate the arrays
+                                        nodes2 = new vis.DataSet(Object.values(nodes).flat());
+                                        edges2 = new vis.DataSet(Object.values(edges).flat());
+                                        console.log(nodes2, edges2)
+                                        data2 = {nodes: nodes2, edges: edges2};
+                                    }
+
+                                    data2['nodes'] = new vis.DataView(data2['nodes'], {filter: nodesFilter2});
+                                    return data2;
+                                }
+
+
+                                function startNetwork(data2) {
 
                                     var network2 = new vis.Network(container2, data2, options2);
 
                                     checkboxPredicted.addEventListener('change', function () {
-                                        if (this.checked) {
-                                            network2.setData(data_pred);
-                                        } else {
-                                            network2.setData(data2);
-                                        }
+                                        network2.setData(setNodes(nodes_dict, edges_dict));
                                     });
 
                                     checkbox2.addEventListener('change', function () {
@@ -614,32 +621,21 @@
                                             network2.setOptions({physics: true});
                                         } else {
                                             network2.setOptions({physics: false});
-
                                         }
                                     });
 
-
-                                    nodeFilterSelector2.addEventListener("change", e => {
-
-                                        network2.setOptions({physics: true});
-                                        if (checkbox2.checked === false) {
-
-                                            setTimeout(function () {
-                                                network2.setOptions({physics: false});
-                                            }, 10000);
-
-
-                                        }
-
+                                    nodeFilterSelector2.addEventListener("change", function(e) {
+                                    // set new value to filter variable
+                                    nodeFilterValue2 = e.target.value;
+                                    network2.setData(setNodes(nodes_dict, edges_dict));
                                     });
                                     network2.fit();
-                                };
+                                }
 
 
                                 let nodeFilterValue2 = "";
 
-
-                                const nodesFilter2 = node => {
+                                function nodesFilter2(node) {
                                     if (nodeFilterValue2 === "") {
                                         return node.source === "{{ first_domain|safe}}";
                                     }
@@ -652,26 +648,9 @@
                                         default:
                                             return true;
                                     }
-                                };
+                                }
 
-
-                                const nodesView2 = new vis.DataView(nodes2, {filter: nodesFilter2});
-                                const nodesView_pred = new vis.DataView(nodes_pred, {filter: nodesFilter2});
-
-
-                                nodeFilterSelector2.addEventListener("change", e => {
-                                    // set new value to filter variable
-                                    nodeFilterValue2 = e.target.value;
-                                    /*
-                                          refresh DataView,
-                                          so that its filter function is re-calculated with the new variable
-                                        */
-                                    nodesView2.refresh();
-
-
-                                });
-
-                                startNetwork({nodes: nodesView2, edges: edges2}, {nodes: nodesView_pred, edges: edges_pred});
+                                startNetwork(setNodes(nodes_dict, edges_dict));
 
 
                             </script>

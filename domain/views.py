@@ -312,8 +312,6 @@ def transcript(request, P_id, organism):
         'switch1': switcher,
         'switch1_missing': switcher_m,
         'switch2': switcher_js,
-        'Domainview_edges_pred': edges_domainV_pred,
-        'Domainview_nodes_pred': nodes_domainV_pred,
         'Domainview_edges': edges_domainV,
         'Domainview_nodes': nodes_domainV,
 
