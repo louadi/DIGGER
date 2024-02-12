@@ -183,16 +183,23 @@
                   </div>
                 </div>
                 <div class="form-group row">
-                  <div class="col-sm-2">Physics</div>
-                  <div class="col-sm-10">
-                    <div class="custom-control custom-switch">
-                      <input type="checkbox" class="custom-control-input"
-                             id="physicsSwitchDomain"
-                             name="physics-checkbox-domain" checked>
-                      <label class="custom-control-label" for="physicsSwitchDomain">Enable
-                        physics</label>
+                    <div class="col-sm-2">Options</div>
+                    <div class="col-sm-2">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
+                                   name="physics-checkbox-domain" checked>
+                            <label class="custom-control-label" for="physicsSwitchDomain">Enable
+                                physics</label>
+                        </div>
                     </div>
-                  </div>
+                     <div class="col-sm-3">
+                          <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input"
+                                       id="predictedSwitchInteraction"
+                                       name="predicted-checkbox-interaction">
+                                <label class="custom-control-label" for="predictedSwitchInteraction">Predicted interactions</label>
+                            </div>
+                     </div>
                 </div>
               </h5>
 
@@ -229,6 +236,13 @@
                       {% endfor %}
                   ]);
 
+                  var edges_pred = new vis.DataSet([
+
+                      {% for edge in Domainview_edges_pred %}
+                          {{ edge|safe }}
+                      {% endfor %}
+                  ]);
+
 
                   const nodeFilterSelector2 = document.getElementById("nodeFilterSelect2");
 
@@ -237,7 +251,7 @@
                   var container2 = document.getElementById('domain-network');
                   var data2 = {
                       nodes2: nodes2,
-                      edges2: edges2
+                      edges2: edges2,
                   };
 
 
@@ -294,6 +308,7 @@
 
 
                   var checkbox2 = document.querySelector("input[name=physics-checkbox-domain]");
+                  var checkboxPredicted = document.querySelector("input[name=predicted-checkbox-interaction]");
 
 
                   function startNetwork(data2) {
@@ -320,10 +335,17 @@
                               }, 10000);
                           }
                       });
+
+
+                      checkboxPredicted.addEventListener('change', function () {
+                       /* Set hidden option to false when buttion is pressed so all edges and nodes are shown */
+                          if (this.checked) {
+                              network2.setOptions({hidden: true});
+                          } else {
+                              network2.setOptions({hidden: false});
+                          }
+                      });
                   };
-
-                  var checkboxPredicted = document.querySelector("input[name=predicted-checkbox-interaction]");
-
 
                   let nodeFilterValue2 = "";
 

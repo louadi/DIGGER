@@ -78,7 +78,7 @@ def exon(request, organism, exon_ID):
         # DomainView
         first = domains[0]
         for pfams in domains:
-            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+            n, e, p, _, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
             if len(e) > maxx:
                 maxx = len(e)
                 first = pfams
@@ -240,8 +240,8 @@ def transcript(request, P_id, organism):
 
     nodes_domainV = []
     edges_domainV = []
-    nodes_domainV_pred = []
     edges_domainV_pred = []
+    nodes_domainV_pred = []
     switcher = []
     switcher_js = []
     first = unique[0]
@@ -249,7 +249,7 @@ def transcript(request, P_id, organism):
 
     # DomainView for retained domains
     for pfams in unique:
-        n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+        n, e, p_n, p_e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
         if len(e) > maxx:
             maxx = len(e)
             first = pfams
@@ -258,13 +258,16 @@ def transcript(request, P_id, organism):
             edges_domainV = edges_domainV + e
             switcher.append('<option value="' + pfams + '"> ' + pfams + '</option>')
             switcher_js.append('case "' + pfams + '": return node.source === "' + pfams + '";')
+        if len(p_e) != 0:
+            edges_domainV_pred = edges_domainV_pred + p_e
+            nodes_domainV_pred = nodes_domainV_pred + p_n
 
     # DomainView for missing domains
 
     switcher_m = []
     if len(missed) != 0:
         for pfams in missing_domains:
-            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+            n, e, p, _, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
             if len(e) > maxx:
                 maxx = len(e)
                 first = pfams
@@ -303,6 +306,8 @@ def transcript(request, P_id, organism):
         'switch1': switcher,
         'switch1_missing': switcher_m,
         'switch2': switcher_js,
+        'Domainview_edges_pred': edges_domainV_pred,
+        'Domainview_nodes_pred': nodes_domainV_pred,
         'Domainview_edges': edges_domainV,
         'Domainview_nodes': nodes_domainV,
 

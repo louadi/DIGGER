@@ -489,7 +489,7 @@
                                           <div class="custom-control custom-switch">
                                                 <input type="checkbox" class="custom-control-input"
                                                        id="predictedSwitchInteraction"
-                                                       name="predicted-checkbox-interaction" checked>
+                                                       name="predicted-checkbox-interaction">
                                                 <label class="custom-control-label" for="predictedSwitchInteraction">Predicted interactions</label>
                                             </div>
                                      </div>
@@ -509,26 +509,40 @@
                                     //ORANGE = "orange",
                                     YELLOW = "orange",
                                     WHITE = "EED5EB"
-                                //GRAY = '#666666',
-                                GRAY = "gray",
+                                    //GRAY = '#666666',
+                                    GRAY = "gray",
                                     BLACK = "#2B1B17";
 
 
                                 // create an array with nodes
-                                var nodes2 = new vis.DataSet([
-
+                                var nodes2 = [
                                     {% for node in Domainview_nodes %}
                                         {{  node|safe }}
                                     {% endfor %}
+                                ];
 
-                                ]);
+                                var nodes_pred = [
+                                    {% for node in Domainview_nodes_pred %}
+                                        {{  node|safe }}
+                                    {% endfor %}
+                                ];
+
                                 // create an array with edges
-                                var edges2 = new vis.DataSet([
-
+                                var edges2 = [
                                     {% for edge in Domainview_edges %}
                                         {{ edge|safe }}
                                     {% endfor %}
-                                ]);
+                                ];
+
+                                var edges_pred = [
+                                    {% for edge in Domainview_edges_pred %}
+                                        {{ edge|safe }}
+                                    {% endfor %}];
+
+                                var edges_pred = new vis.DataSet(edges2.concat(edges_pred));
+                                var edges2 = new vis.DataSet(edges2);
+                                var nodes_pred = new vis.DataSet(nodes2.concat(nodes_pred));
+                                var nodes2 = new vis.DataSet(nodes2);
 
 
                                 const nodeFilterSelector2 = document.getElementById("nodeFilterSelect2");
@@ -540,6 +554,10 @@
                                     nodes2: nodes2,
                                     edges2: edges2
                                 };
+                                var data_pred = {
+                                    nodes2: nodes_pred,
+                                    edges2: edges_pred
+                                }
 
 
                                 var options2 = {
@@ -596,10 +614,20 @@
 
                                 var checkbox2 = document.querySelector("input[name=physics-checkbox-domain]");
 
+                                var checkboxPredicted = document.querySelector("input[name=predicted-checkbox-interaction]");
 
-                                function startNetwork(data2) {
+
+                                function startNetwork(data2, data_pred) {
 
                                     var network2 = new vis.Network(container2, data2, options2);
+
+                                    checkboxPredicted.addEventListener('change', function () {
+                                        if (this.checked) {
+                                            network2.setData(data_pred);
+                                        } else {
+                                            network2.setData(data2);
+                                        }
+                                    });
 
                                     checkbox2.addEventListener('change', function () {
                                         if (this.checked) {
@@ -624,7 +652,6 @@
                                         }
 
                                     });
-
                                     network2.fit();
                                 };
 
@@ -649,6 +676,7 @@
 
 
                                 const nodesView2 = new vis.DataView(nodes2, {filter: nodesFilter2});
+                                const nodesView_pred = new vis.DataView(nodes_pred, {filter: nodesFilter2});
 
 
                                 nodeFilterSelector2.addEventListener("change", e => {
@@ -663,8 +691,7 @@
 
                                 });
 
-
-                                startNetwork({nodes: nodesView2, edges: edges2});
+                                startNetwork({nodes: nodesView2, edges: edges2}, {nodes: nodesView_pred, edges: edges_pred});
 
 
                             </script>
