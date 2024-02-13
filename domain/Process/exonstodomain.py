@@ -50,7 +50,7 @@ def vis_node_(node, organism):
     predicted = 0
     original = 0
     for edge in G.edges(data=True):
-        if edge[2]['origin'] == 'original':
+        if edge[2]['confidence'] == 'original':
             original += 1
         else:
             predicted += 1
@@ -60,53 +60,50 @@ def vis_node_(node, organism):
     g.add_node(node)
     for n in G.nodes():
         domain = n.split("/")[1]
-        if n != node:
-            # add predicted attribute if it is predicted in G
-            if (G.has_edge(n, node) or G.has_edge(node, n)) \
-                    and (G[node][n]['origin'] == 'predicted' or G[n][node]['origin'] == 'predicted'):
-                if not g.has_edge(n, domain):
-                    g.add_edge(n, domain, origin='predicted')
-                if not g.has_edge(node, domain):
-                    g.add_edge(node, domain, origin='predicted')
-            else:
-                g.add_edge(n, domain, origin='original')
-                g.add_edge(node, domain, origin='original')
+        if n == node:
+            continue
+        # add confidence attribute if it is not original in G, this is done seperately as to not overwrite the original
+        if G.has_edge(n, node) and G[node][n]['confidence'] != 'original':
+            if not g.has_edge(n, domain):
+                g.add_edge(n, domain, confidence=G[n][node]['confidence'])
+            if not g.has_edge(node, domain):
+                g.add_edge(node, domain, confidence=G[n][node]['confidence'])
+        else:
+            g.add_edge(n, domain, confidence='original')
+            g.add_edge(node, domain, confidence='original')
+
 
     # nodes
-    N = {'original': [], 'predicted': []}
+    N = {'original': [], 'high': [], 'mid': [], 'low': []}
     # edges
-    E = {'original': [], 'predicted': []}
-    # predicted edges
-    p_E = []
-    p_N = []
+    E = {'original': [], 'high': [], 'mid': [], 'low': []}
     for n in g.nodes:
         # find if there is an edge connected to this node that is not predicted
-        origin = 'predicted'
+        confidence = set()
         for e in g.edges(n, data=True):
-            if e[2]['origin'] == 'original':
-                origin = 'original'
-        # Domain node
-        if len(n.split("/")) == 1:
-            # print(n)
+            confidence.add(e[2]['confidence'])
 
-            label_name = pr.Domain_name(n)[0] + ' (' + n + ')'
+        for confid in confidence:
+            # Domain node
+            if len(n.split("/")) == 1:
+                # print(n)
+                label_name = pr.Domain_name(n)[0] + ' (' + n + ')'
+                N[confid].append(f'{{id: "{n + ppp}", label: "{label_name}", group: "Domain", physics: true, source: {p_id}, value: "4"}},')
+                continue
 
-            N[origin].append(f'{{id: "{n + ppp}", label: "{label_name}", group: "Domain", physics: true, source: {p_id}, value: "4"}},')
-        else:
             gene = n.split("/")[0]
-            domain = n.split("/")[1]
             # Main Domain of interest
             if n == node:
                 try:
                     domain_name = n.split("/")[1]
                     domain_name = pr.Domain_name(domain_name)[0] + ' (' + domain_name + ')'
-                    N[origin].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", physics: false, source: {p_id}, value: "5"}},')
+                    N[confid].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", physics: false, source: {p_id}, value: "5"}},')
                 except KeyError:
                     print("KeyError with", node)
             # a gene node
             else:
                 try:
-                    N[origin].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)}", group: "protein", physics: true, source: {p_id}, value: "2"}},')
+                    N[confid].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)}", group: "protein", physics: true, source: {p_id}, value: "2"}},')
                 except KeyError:
                     print("KeyError with", node)
 
@@ -114,17 +111,17 @@ def vis_node_(node, organism):
 
         # edge to the main domain
         if any(x == node for x in e):
-            colour = 'BLACK' if e[2]['origin'] == 'original' else 'YELLOW'
+            colour = 'BLACK' if e[2]['confidence'] == 'original' else 'YELLOW'
 
-            E[e[2]['origin']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, color:  {colour} }},')
+            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, color:  {colour} }},')
 
         else:
-            colour = 'RED' if e[2]['origin'] == 'original' else 'YELLOW'
+            colour = 'RED' if e[2]['confidence'] == 'original' else 'YELLOW'
 
-            E[e[2]['origin']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, color:  {colour} }},')
+            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, color:  {colour} }},')
 
 
-    return N, E, p_N, p_E, pr.entrez_to_name(node.split("/")[0], organism), node.split("/")[1]
+    return N, E, pr.entrez_to_name(node.split("/")[0], organism), node.split("/")[1]
 
 
 # internal fucntion to get info about node

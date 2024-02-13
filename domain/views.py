@@ -78,7 +78,7 @@ def exon(request, organism, exon_ID):
         # DomainView
         first = domains[0]
         for pfams in domains:
-            n, e, p, _, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
             if len(e) > maxx:
                 maxx = len(e)
                 first = pfams
@@ -240,8 +240,6 @@ def transcript(request, P_id, organism):
 
     nodes_domainV = {}
     edges_domainV = {}
-    edges_domainV_pred = []
-    nodes_domainV_pred = []
     switcher = []
     switcher_js = []
     first = unique[0]
@@ -249,7 +247,7 @@ def transcript(request, P_id, organism):
 
     # DomainView for retained domains
     for pfams in unique:
-        n, e, p_n, p_e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+        n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
         if len(e['original']) > maxx:
             maxx = len(e)
             first = pfams
@@ -273,13 +271,21 @@ def transcript(request, P_id, organism):
     switcher_m = []
     if len(missed) != 0:
         for pfams in missing_domains:
-            n, e, p, _, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
-            if len(e) > maxx:
+            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+            if len(e['original']) > maxx:
                 maxx = len(e)
                 first = pfams
-            if len(e) != 0:
-                nodes_domainV = nodes_domainV + n
-                edges_domainV = edges_domainV + e
+            if len([val for sublist in e.values() for val in sublist]) != 0:
+                # initialise keys with empty list if they don't exist
+                for key in n.keys():
+                    if key not in nodes_domainV:
+                        nodes_domainV[key] = []
+                for key in e.keys():
+                    if key not in edges_domainV:
+                        edges_domainV[key] = []
+
+                nodes_domainV = {k: nodes_domainV[k] + v for k, v in n.items()}
+                edges_domainV = {k: edges_domainV[k] + v for k, v in e.items()}
                 switcher_m.append('<option value="' + pfams + '"> ' + pfams + ' (missing in the isoform) </option>')
                 switcher_js.append('case "' + pfams + '": return node.source === "' + pfams + '";')
 

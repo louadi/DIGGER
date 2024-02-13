@@ -456,8 +456,8 @@
                             <!-- View options -->
                             <h5>
                                 <div class="form-group row">
-                                    <label for="nodeFilterSelect2" class="col-sm-2 col-form-label">Pfam domain
-                                        ID</label>
+                                    <label for="nodeFilterSelect2" class="col-sm-2 col-form-label"><b>Pfam domain
+                                      ID</b></label>
                                     <div class="col-sm-10">
                                         <select id="nodeFilterSelect2" class="form-control">
                                             <optgroup label="Domains of the isoform">
@@ -476,7 +476,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-2">Options</div>
+                                    <div class="col-sm-2"><b>Options</b></div>
                                     <div class="col-sm-2">
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
@@ -485,12 +485,29 @@
                                                 physics</label>
                                         </div>
                                     </div>
-                                     <div class="col-sm-3">
-                                          <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="predictedSwitchInteraction"
-                                                       name="predicted-checkbox-interaction">
-                                                <label class="custom-control-label" for="predictedSwitchInteraction">Predicted interactions</label>
+                                  <div class="col-sm-2"><b>Predicted DDIs</b></div>
+                                    <div class="col-sm-2">
+                                         <div class="custom-control custom-switch">
+                                               <input type="checkbox" class="custom-control-input predicted-checkbox"
+                                                      id="high"
+                                                      name="predicted-checkbox-high">
+                                               <label class="custom-control-label" for="high">High</label>
+                                           </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="custom-control custom-switch">
+                                              <input type="checkbox" class="custom-control-input predicted-checkbox"
+                                                     id="mid"
+                                                     name="predicted-checkbox-mid">
+                                              <label class="custom-control-label" for="mid">Medium</label>
+                                        </div>
+                                     </div>
+                                     <div class="col-sm-2">
+                                          <div class="custom-control custom-switch predicted">
+                                                <input type="checkbox" class="custom-control-input predicted-checkbox"
+                                                       id="low"
+                                                       name="predicted-checkbox-low">
+                                                <label class="custom-control-label" for="low">Low (confidence)</label>
                                             </div>
                                      </div>
                                 </div>
@@ -514,14 +531,14 @@
                                     BLACK = "#2B1B17";
 
                                 // create singular dictionary
-                                const nodes_dict = {
+                                const domainViewNodes = {
                                     {% for key, value in Domainview_nodes.items %}
                                         "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                     {% endfor %}
                                 };
 
                                 // create singular dictionary
-                                const edges_dict = {
+                                const domainViewEdges = {
                                     {% for key, value in Domainview_edges.items %}
                                         "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                     {% endfor %}
@@ -589,22 +606,48 @@
 
                                 var checkbox2 = document.querySelector("input[name=physics-checkbox-domain]");
 
-                                var checkboxPredicted = document.querySelector("input[name=predicted-checkbox-interaction]");
+                                var enablePredicted = document.querySelector("input[name=predicted-checkbox-high]");
+                                var predictedCheckboxes = document.querySelectorAll(".predicted-checkbox");
 
                                 function setNodes(nodes, edges) {
-                                    data2 = {nodes: new vis.DataSet(nodes['original']),
-                                             edges: new vis.DataSet(edges['original'])};
+                                    neededNodes = nodes['original'].slice()
+                                    neededEdges = edges['original'].slice()
 
-                                    if (checkboxPredicted.checked) {
+                                    let seenIds = new Set();
+                                    nodes['original'].forEach(node => {
+                                        seenIds.add(node.id);
+                                    });
+
+                                    predictedCheckboxes.forEach(checkbox => {
+                                        if (checkbox.checked) {
+                                            nodes[checkbox.id].forEach(node => {
+                                                if (!seenIds.has(node.id)) {
+                                                    neededNodes.push(node);
+                                                    seenIds.add(node.id);
+                                                }
+                                            });
+                                            neededEdges = neededEdges.concat(edges[checkbox.id]);
+                                        }
+                                    })
+                                    console.log(seenIds)
+                                    /*
+                                    if (enablePredicted.checked) {
                                         // go through each key in the object and concatenate the arrays
-                                        nodes2 = new vis.DataSet(Object.values(nodes).flat());
+                                        nodes2 = new vis.DataSet();
+
+                                        // Go through each key in the object and concatenate the arrays
+                                        Object.values(nodes).flat().forEach(node => {
+                                            // Check if the node with the same id exists in nodes2
+                                            if (!nodes2.get(node.id)) {
+                                                nodes2.add(node);
+                                            }
+                                        });
                                         edges2 = new vis.DataSet(Object.values(edges).flat());
-                                        console.log(nodes2, edges2)
                                         data2 = {nodes: nodes2, edges: edges2};
                                     }
-
-                                    data2['nodes'] = new vis.DataView(data2['nodes'], {filter: nodesFilter2});
-                                    return data2;
+                                     */
+                                    return {nodes: new vis.DataView(new vis.DataSet(neededNodes), {filter: nodesFilter2}),
+                                            edges: new vis.DataSet(neededEdges)};
                                 }
 
 
@@ -612,8 +655,10 @@
 
                                     var network2 = new vis.Network(container2, data2, options2);
 
-                                    checkboxPredicted.addEventListener('change', function () {
-                                        network2.setData(setNodes(nodes_dict, edges_dict));
+                                    predictedCheckboxes.forEach(checkbox => {
+                                        checkbox.addEventListener('change', function () {
+                                            network2.setData(setNodes(domainViewNodes, domainViewEdges));
+                                        });
                                     });
 
                                     checkbox2.addEventListener('change', function () {
@@ -627,7 +672,7 @@
                                     nodeFilterSelector2.addEventListener("change", function(e) {
                                     // set new value to filter variable
                                     nodeFilterValue2 = e.target.value;
-                                    network2.setData(setNodes(nodes_dict, edges_dict));
+                                    network2.setData(setNodes(domainViewNodes, domainViewEdges));
                                     });
                                     network2.fit();
                                 }
@@ -650,7 +695,7 @@
                                     }
                                 }
 
-                                startNetwork(setNodes(nodes_dict, edges_dict));
+                                startNetwork(setNodes(domainViewNodes, domainViewEdges));
 
 
                             </script>
