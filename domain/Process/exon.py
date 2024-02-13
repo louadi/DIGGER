@@ -144,7 +144,7 @@ def vis_exon(missing_domain,entrezID,gene_name,ExonID,organism):
             
         
     protein_with_DDI = list(set(protein_with_DDI))
-    nodes,edges,_=tr.vis_node_(g,entrezID,protein_with_DDI,gene_name,missing_domain,[],organism)
+    nodes,edges,_=tr.vis_pv_node_(g, entrezID, protein_with_DDI, gene_name, missing_domain, [], organism)
     
     pd_interaction=tr.table_interaction(gene_name,entrezID,entrezID,g,protein_with_DDI,missing_domain,organism)
     

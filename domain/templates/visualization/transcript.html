@@ -199,12 +199,12 @@
                         <h2 class="card-header"> ProteinView </h2>
                         <div class="card-body">
 
-                            {% if enable_Proteinview %}
+                            {% if disable_Proteinview %}
                                 <h5 class="tab1"> ProteinView is not available for this protein because of its high
                                     number of partners in the PPI. Please check InteractionView or DomainView.</h5>
                             {% endif %}
 
-                            {% if not enable_Proteinview %}
+                            {% if not disable_Proteinview %}
 
                                 <h5 class="tab1"> ProteinView provides a general visualization of the protein and its
                                     domains interactions. Please select your view mode:</h5>
@@ -290,13 +290,8 @@
 
                                         const nodeFilterSelector = document.getElementById("nodeFilterSelect");
 
-
                                         // create a network
                                         var container = document.getElementById('protein-network');
-                                        var data = {
-                                            nodes: nodes,
-                                            edges: edges
-                                        };
 
 
                                         var options = {
@@ -547,10 +542,8 @@
 
                                 const nodeFilterSelector2 = document.getElementById("nodeFilterSelect2");
 
-
                                 // create a network
                                 var container2 = document.getElementById('domain-network');
-
 
                                 var options2 = {
 
@@ -603,11 +596,12 @@
                                     }
                                 };
 
-
                                 var checkbox2 = document.querySelector("input[name=physics-checkbox-domain]");
 
-                                var enablePredicted = document.querySelector("input[name=predicted-checkbox-high]");
                                 var predictedCheckboxes = document.querySelectorAll(".predicted-checkbox");
+
+                                let nodeFilterValue2 = "";
+
 
                                 function setNodes(nodes, edges) {
                                     neededNodes = nodes['original'].slice()
@@ -629,23 +623,7 @@
                                             neededEdges = neededEdges.concat(edges[checkbox.id]);
                                         }
                                     })
-                                    console.log(seenIds)
-                                    /*
-                                    if (enablePredicted.checked) {
-                                        // go through each key in the object and concatenate the arrays
-                                        nodes2 = new vis.DataSet();
 
-                                        // Go through each key in the object and concatenate the arrays
-                                        Object.values(nodes).flat().forEach(node => {
-                                            // Check if the node with the same id exists in nodes2
-                                            if (!nodes2.get(node.id)) {
-                                                nodes2.add(node);
-                                            }
-                                        });
-                                        edges2 = new vis.DataSet(Object.values(edges).flat());
-                                        data2 = {nodes: nodes2, edges: edges2};
-                                    }
-                                     */
                                     return {nodes: new vis.DataView(new vis.DataSet(neededNodes), {filter: nodesFilter2}),
                                             edges: new vis.DataSet(neededEdges)};
                                 }
@@ -677,8 +655,6 @@
                                     network2.fit();
                                 }
 
-
-                                let nodeFilterValue2 = "";
 
                                 function nodesFilter2(node) {
                                     if (nodeFilterValue2 === "") {
@@ -760,10 +736,12 @@
                                         <label for="inputEmail3" class="col-sm-2 col-form-label">Interaction</label>
                                         <div class="col-sm-10">
                                             <select id="nodeFilterSelect3" class="form-control">
-                                                {% for s in Interactiveview_selec %}
+                                              <!-- TODO: insert another bit here to differentiate predicted/original interactions -->
+                                            <optgroup label="Original interactions">
+                                                {% for s in Interactiveview_select %}
                                                     {{ s|safe }}
                                                 {% endfor %}
-
+                                            </optgroup>
                                             </select>
                                         </div>
                                     </div>
@@ -829,16 +807,11 @@
 
                                         ]);
 
-
                                         const nodeFilterSelector3 = document.getElementById("nodeFilterSelect3");
-
 
                                         // create a network
                                         var container3 = document.getElementById('interaction-network');
-                                        var data3 = {
-                                            nodes3: nodes3,
-                                            edges3: edges3
-                                        };
+
 
 
                                         var options3 = {

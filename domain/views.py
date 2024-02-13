@@ -185,11 +185,11 @@ def transcript(request, P_id, organism):
     if out == 0: return HttpResponse(' Wrong entry or protein without any known Pfam domains')
     if out == 1: return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
 
-    nodes, edges, _, domains, unique, exons, text1, domainshtml, Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID, entrezID, gene_description, exons, droped1, droped2, trID, p, missed, pd_interaction, isoforms, co_partners = tr.Protein_view(
-        P_id, organism)
+    nodes, edges, unique, text1, tran_name, Ensemble_geneID, entrezID, gene_description, droped1, droped2, trID, p, \
+        missed, pd_interaction, isoforms, co_partners = out
 
     # Interactionview
-    Interactiveview_selec = []
+    Interactiveview_select = []
     Interactiveview_switch = []
     first_victim = []
 
@@ -212,7 +212,7 @@ def transcript(request, P_id, organism):
             str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
                                          'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
 
-        Interactiveview_selec = pd_interaction['selector'].tolist()
+        Interactiveview_select = pd_interaction['selector'].tolist()
         Interactiveview_switch = pd_interaction['switcher'].tolist()
         # the first protein to show
         first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
@@ -289,6 +289,9 @@ def transcript(request, P_id, organism):
                 switcher_m.append('<option value="' + pfams + '"> ' + pfams + ' (missing in the isoform) </option>')
                 switcher_js.append('case "' + pfams + '": return node.source === "' + pfams + '";')
 
+    # get total length of edges_domainV to determine disable_Proteinview
+    len_edges_domainV = len([val for sublist in edges_domainV.values() for val in sublist])
+
     context = {
         'dt': droped1,
         'text1': text1,
@@ -310,7 +313,7 @@ def transcript(request, P_id, organism):
 
         'dis3': isoforms != [],
 
-        'Interactiveview_selec': Interactiveview_selec,
+        'Interactiveview_select': Interactiveview_select,
         'first_vict': first_victim,
         'Interactiveview_switch': Interactiveview_switch,
 
@@ -321,10 +324,8 @@ def transcript(request, P_id, organism):
         'Domainview_edges': edges_domainV,
         'Domainview_nodes': nodes_domainV,
 
-        # define max edges in ProteinView here
-        'enable_Proteinview': (len(edges_domainV) > 90) or (
-                    len(edges_domainV) > 130 and len(unique) + len(missed) == 1),
-
+        # make it make sense
+        'disable_Proteinview': (len_edges_domainV > 200) or (len_edges_domainV > 130 and len(unique) + len(missed) == 1),
     }
 
     return render(request, 'visualization/transcript.html', context)
