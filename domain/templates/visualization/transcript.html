@@ -74,6 +74,7 @@
             $('#Interaction_table').DataTable();
         });
     </script>
+    <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block raw_content %}
@@ -236,17 +237,44 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <div class="col-sm-2">Physics</div>
-                                        <div class="col-sm-10">
-                                            <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="physicsSwitchProtein"
-                                                       name="physics-checkbox-protein" checked>
-                                                <label class="custom-control-label" for="physicsSwitchProtein">Enable
-                                                    physics</label>
-                                            </div>
+                                    <div class="col-sm-2"><b>Options</b></div>
+                                    <div class="col-sm-2">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
+                                                   name="physics-checkbox-domain" checked>
+                                            <label class="custom-control-label" for="physicsSwitchDomain">Enable
+                                                physics</label>
                                         </div>
                                     </div>
+                                  <div class="col-sm-2"><b>Predicted DDIs</b></div>
+                                    <div class="col-sm-2">
+                                         <div class="custom-control custom-switch">
+                                               <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                                                      id="high_protein"
+                                                      name="predicted-checkbox-high"
+                                                      value="high">
+                                               <label class="custom-control-label" for="high_protein">High</label>
+                                           </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="custom-control custom-switch">
+                                              <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                                                     id="mid_protein"
+                                                     name="predicted-checkbox-mid"
+                                                      value="mid">
+                                              <label class="custom-control-label" for="mid_protein">Medium</label>
+                                        </div>
+                                     </div>
+                                     <div class="col-sm-2">
+                                          <div class="custom-control custom-switch predicted">
+                                                <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                                                       id="low_protein"
+                                                       name="predicted-checkbox-low"
+                                                        value="low">
+                                                <label class="custom-control-label" for="low_protein">Low (confidence)</label>
+                                            </div>
+                                     </div>
+                                </div>
                                 </h5>
 
                                 <center>
@@ -268,33 +296,24 @@
                                             BLACK = "#2B1B17";
                                         missing = '#C70039';
                                         Residue = '#DA70D6';
-                                        // create an array with nodes
-                                        var nodes = new vis.DataSet([
 
-                                            {% for node in pv_nodes %}
-                                                {{ node|safe }}
+                                        var proteinViewNodes = {
+                                            {% for key, value in pv_nodes.items %}
+                                                "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                             {% endfor %}
+                                        };
 
-
-
-                                        ]);
-                                        // create an array with edges
-                                        var edges = new vis.DataSet([
-
-                                            {% for edge in pv_edges %}
-                                                {{ edge|safe }}
+                                        var proteinViewEdges = {
+                                            {% for key, value in pv_edges.items %}
+                                                "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                             {% endfor %}
+                                        };
 
-                                        ]);
-
-
-                                        const nodeFilterSelector = document.getElementById("nodeFilterSelect");
-
+                                        const proteinViewSelector = document.getElementById("nodeFilterSelect");
                                         // create a network
-                                        var container = document.getElementById('protein-network');
+                                        var proteinViewContainer = document.getElementById('protein-network');
 
-
-                                        var options = {
+                                        var proteinViewOptions = {
 
 
                                             interaction: {
@@ -345,15 +364,20 @@
                                             }
                                         };
 
+                                        var proteinViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-protein]");
+                                        var proteinViewPredictedCheckboxes = document.querySelectorAll(".predicted-checkbox-protein");
 
-                                        let nodeFilterValue = "";
+                                        let proteinViewFilterValue = { value: "" };
 
+                                        // interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
+                                        // interactionViewPhysicsCheckbox, interactionViewSelector, proteinViewFilterValue,
+                                        // interactionViewNodes, interactionViewEdges, interactionViewFilter
 
-                                        const nodesFilter = node => {
-                                            if (nodeFilterValue === "") {
+                                        function proteinViewFilter(node) {
+                                            if (proteinViewFilterValue.value === "") {
                                                 return node.group === "protein";
                                             }
-                                            switch (nodeFilterValue) {
+                                            switch (proteinViewFilterValue.value) {
 
                                                 case "PPI-DDI":
                                                     return node.source === "DDI";
@@ -364,61 +388,11 @@
                                                 default:
                                                     return true;
                                             }
-                                        };
-
-
-                                        const nodesView = new vis.DataView(nodes, {filter: nodesFilter});
-
-
-                                        nodeFilterSelector.addEventListener("change", e => {
-                                            // set new value to filter variable
-                                            nodeFilterValue = e.target.value;
-                                            /*
-                                                  refresh DataView,
-                                                  so that its filter function is re-calculated with the new variable
-                                                */
-                                            nodesView.refresh();
-
-
-                                        });
-
-
-                                        var checkbox = document.querySelector("input[name=physics-checkbox-protein]");
-
-                                        function startNetwork(data) {
-
-                                            var network = new vis.Network(container, data, options);
-
-
-                                            checkbox.addEventListener('change', function () {
-                                                if (this.checked) {
-                                                    network.setOptions({physics: true});
-                                                } else {
-                                                    network.setOptions({physics: false});
-
-                                                }
-                                            });
-
-
-                                            nodeFilterSelector.addEventListener("change", e => {
-
-                                                network.setOptions({physics: true});
-                                                if (checkbox.checked === false) {
-
-                                                    setTimeout(function () {
-                                                        network.setOptions({physics: false});
-                                                    }, 5000);
-
-                                                    network.fit();
-                                                }
-
-                                            });
-
-
                                         }
 
-
-                                        startNetwork({nodes: nodesView, edges: edges});
+                                        startNetwork(proteinViewContainer, proteinViewOptions, proteinViewPredictedCheckboxes,
+                                            proteinViewPhysicsCheckbox, proteinViewSelector, proteinViewFilterValue,
+                                            proteinViewNodes, proteinViewEdges, proteinViewFilter);
 
 
                                     </script>
@@ -483,26 +457,29 @@
                                   <div class="col-sm-2"><b>Predicted DDIs</b></div>
                                     <div class="col-sm-2">
                                          <div class="custom-control custom-switch">
-                                               <input type="checkbox" class="custom-control-input predicted-checkbox"
-                                                      id="high"
-                                                      name="predicted-checkbox-high">
-                                               <label class="custom-control-label" for="high">High</label>
+                                               <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                                                      id="high_domain"
+                                                      name="predicted-checkbox-high"
+                                                      value="high">
+                                               <label class="custom-control-label" for="high_domain">High</label>
                                            </div>
                                     </div>
                                     <div class="col-sm-2">
                                         <div class="custom-control custom-switch">
-                                              <input type="checkbox" class="custom-control-input predicted-checkbox"
-                                                     id="mid"
-                                                     name="predicted-checkbox-mid">
-                                              <label class="custom-control-label" for="mid">Medium</label>
+                                              <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                                                     id="mid_domain"
+                                                     name="predicted-checkbox-mid"
+                                                      value="mid">
+                                              <label class="custom-control-label" for="mid_domain">Medium</label>
                                         </div>
                                      </div>
                                      <div class="col-sm-2">
                                           <div class="custom-control custom-switch predicted">
-                                                <input type="checkbox" class="custom-control-input predicted-checkbox"
-                                                       id="low"
-                                                       name="predicted-checkbox-low">
-                                                <label class="custom-control-label" for="low">Low (confidence)</label>
+                                                <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                                                       id="low_domain"
+                                                       name="predicted-checkbox-low"
+                                                        value="low">
+                                                <label class="custom-control-label" for="low_domain">Low (confidence)</label>
                                             </div>
                                      </div>
                                 </div>
@@ -539,13 +516,12 @@
                                     {% endfor %}
                                 };
 
+                                // initiate all the variables needed for the network
+                                const domainViewFilterSelector = document.getElementById("nodeFilterSelect2");
 
-                                const nodeFilterSelector2 = document.getElementById("nodeFilterSelect2");
+                                var domainViewContainer = document.getElementById('domain-network');
 
-                                // create a network
-                                var container2 = document.getElementById('domain-network');
-
-                                var options2 = {
+                                var domainViewOptions = {
 
 
                                     interaction: {
@@ -596,71 +572,17 @@
                                     }
                                 };
 
-                                var checkbox2 = document.querySelector("input[name=physics-checkbox-domain]");
+                                var domainViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-domain]");
 
-                                var predictedCheckboxes = document.querySelectorAll(".predicted-checkbox");
+                                var domainViewCheckboxes = document.querySelectorAll(".predicted-checkbox-domain");
 
-                                let nodeFilterValue2 = "";
+                                let domainViewNodeFilter = { value: "" };
 
-
-                                function setNodes(nodes, edges) {
-                                    neededNodes = nodes['original'].slice()
-                                    neededEdges = edges['original'].slice()
-
-                                    let seenIds = new Set();
-                                    nodes['original'].forEach(node => {
-                                        seenIds.add(node.id);
-                                    });
-
-                                    predictedCheckboxes.forEach(checkbox => {
-                                        if (checkbox.checked) {
-                                            nodes[checkbox.id].forEach(node => {
-                                                if (!seenIds.has(node.id)) {
-                                                    neededNodes.push(node);
-                                                    seenIds.add(node.id);
-                                                }
-                                            });
-                                            neededEdges = neededEdges.concat(edges[checkbox.id]);
-                                        }
-                                    })
-
-                                    return {nodes: new vis.DataView(new vis.DataSet(neededNodes), {filter: nodesFilter2}),
-                                            edges: new vis.DataSet(neededEdges)};
-                                }
-
-
-                                function startNetwork(data2) {
-
-                                    var network2 = new vis.Network(container2, data2, options2);
-
-                                    predictedCheckboxes.forEach(checkbox => {
-                                        checkbox.addEventListener('change', function () {
-                                            network2.setData(setNodes(domainViewNodes, domainViewEdges));
-                                        });
-                                    });
-
-                                    checkbox2.addEventListener('change', function () {
-                                        if (this.checked) {
-                                            network2.setOptions({physics: true});
-                                        } else {
-                                            network2.setOptions({physics: false});
-                                        }
-                                    });
-
-                                    nodeFilterSelector2.addEventListener("change", function(e) {
-                                    // set new value to filter variable
-                                    nodeFilterValue2 = e.target.value;
-                                    network2.setData(setNodes(domainViewNodes, domainViewEdges));
-                                    });
-                                    network2.fit();
-                                }
-
-
-                                function nodesFilter2(node) {
-                                    if (nodeFilterValue2 === "") {
+                                function domainViewFilter(node) {
+                                    if (domainViewNodeFilter.value === "") {
                                         return node.source === "{{ first_domain|safe}}";
                                     }
-                                    switch (nodeFilterValue2) {
+                                    switch (domainViewNodeFilter.value) {
 
                                         {% for s in switch2 %}
                                             {{ s|safe }}
@@ -671,8 +593,10 @@
                                     }
                                 }
 
-                                startNetwork(setNodes(domainViewNodes, domainViewEdges));
-
+                                // start network from createNetwork.js file
+                                startNetwork(domainViewContainer, domainViewOptions, domainViewCheckboxes,
+                                    domainViewPhysicsCheckbox, domainViewFilterSelector, domainViewNodeFilter,
+                                    domainViewNodes, domainViewEdges, domainViewFilter);
 
                             </script>
 
@@ -746,25 +670,44 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <div class="col-sm-2">Options</div>
-                                        <div class="col-sm-2">
-                                            <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="physicsSwitchInteraction"
-                                                       name="physics-checkbox-interaction" checked>
-                                                <label class="custom-control-label" for="physicsSwitchInteraction">Enable
-                                                    physics</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                          <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input"
-                                                       id="predictedSwitchInteraction"
-                                                       name="predicted-checkbox-interaction" checked>
-                                                <label class="custom-control-label" for="predictedSwitchInteraction">Predicted interactions</label>
-                                            </div>
+                                    <div class="col-sm-2"><b>Options</b></div>
+                                    <div class="col-sm-2">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="physicsSwitchInteraction"
+                                                   name="physics-checkbox-interaction" checked>
+                                            <label class="custom-control-label" for="physicsSwitchInteraction">Enable
+                                                physics</label>
                                         </div>
                                     </div>
+                                  <div class="col-sm-2"><b>Predicted DDIs</b></div>
+                                    <div class="col-sm-2">
+                                         <div class="custom-control custom-switch">
+                                               <input type="checkbox" class="custom-control-input predicted-checkbox-interaction"
+                                                      id="high_interaction"
+                                                      name="predicted-checkbox-high"
+                                                      value="high">
+                                               <label class="custom-control-label" for="high_interaction">High</label>
+                                           </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="custom-control custom-switch">
+                                              <input type="checkbox" class="custom-control-input predicted-checkbox-interaction"
+                                                     id="mid_interaction"
+                                                     name="predicted-checkbox-mid"
+                                                     value="mid">
+                                              <label class="custom-control-label" for="mid_interaction">Medium</label>
+                                        </div>
+                                     </div>
+                                     <div class="col-sm-2">
+                                          <div class="custom-control custom-switch predicted">
+                                                <input type="checkbox" class="custom-control-input predicted-checkbox-interaction"
+                                                       id="low_interaction"
+                                                       name="predicted-checkbox-low"
+                                                       value="low">
+                                                <label class="custom-control-label" for="low_interaction">Low (confidence)</label>
+                                            </div>
+                                     </div>
+                                </div>
                                 </h5>
 
                                 <div style="text-align: center;">
@@ -789,32 +732,25 @@
                                         Residue = '#DA70D6';
 
 
-                                        var nodes3 = new vis.DataSet([
-
-                                            {% for node in pv_nodes %}
-                                                {{ node|safe }}
+                                        var interactionViewNodes = {
+                                            {% for key, value in pv_nodes.items %}
+                                                "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                             {% endfor %}
+                                        };
 
-
-
-                                        ]);
                                         // create an array with edges
-                                        var edges3 = new vis.DataSet([
-
-                                            {% for edge in pv_edges %}
-                                                {{ edge|safe }}
+                                        var interactionViewEdges = {
+                                            {% for key, value in pv_edges.items %}
+                                                "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
                                             {% endfor %}
+                                        };
 
-                                        ]);
-
-                                        const nodeFilterSelector3 = document.getElementById("nodeFilterSelect3");
+                                        const interactionViewSelector = document.getElementById("nodeFilterSelect3");
 
                                         // create a network
-                                        var container3 = document.getElementById('interaction-network');
+                                        var interactionViewContainer = document.getElementById('interaction-network');
 
-
-
-                                        var options3 = {
+                                        var interactionViewOptions = {
 
 
                                             interaction: {
@@ -865,80 +801,31 @@
                                             }
                                         };
 
+                                        let interactionViewFilterValue = { value: "" };
 
-                                        let nodeFilterValue3 = "";
+                                        var interactionViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-interaction]");
 
+                                        var interactionViewCheckboxes = document.querySelectorAll(".predicted-checkbox-interaction");
 
-                                        const nodesFilter3 = node => {
-                                            if (nodeFilterValue3 === "") {
+                                        function interactionViewFilter(node) {
+                                            if (interactionViewFilterValue.value === "") {
                                                 return (node.id === "{{ entrezID|safe }}") || (node.id === "{{ first_vict|safe }}") || (node.origin === "{{ first_vict|safe }}") || (node.origin === "{{ entrezID|safe }}");
                                             }
-                                            switch (nodeFilterValue3) {
+                                            switch (interactionViewFilterValue.value) {
 
                                                 {% for s in Interactiveview_switch %}
                                                     {{ s|safe }}
                                                 {% endfor %}
 
-
-
                                                 default:
                                                     return true;
                                             }
-                                        };
-
-
-                                        const nodesView3 = new vis.DataView(nodes3, {filter: nodesFilter3});
-
-
-                                        nodeFilterSelector3.addEventListener("change", e => {
-                                            // set new value to filter variable
-                                            nodeFilterValue3 = e.target.value;
-                                            /*
-                                                  refresh DataView,
-                                                  so that its filter function is re-calculated with the new variable
-                                                */
-                                            nodesView3.refresh();
-
-
-                                        });
-
-                                        var checkbox3 = document.querySelector("input[name=physics-checkbox-interaction]");
-
-                                        function startNetwork(data3) {
-
-                                            var network3 = new vis.Network(container3, data3, options3);
-
-                                            network3.fit()
-
-                                            checkbox3.addEventListener('change', function () {
-                                                if (this.checked) {
-                                                    network3.setOptions({physics: true});
-                                                } else {
-                                                    network3.setOptions({physics: false});
-                                                    network3.fit()
-                                                }
-                                            });
-
-
-                                            nodeFilterSelector3.addEventListener("change", e => {
-
-                                                network3.setOptions({physics: true});
-                                                if (checkbox3.checked === false) {
-
-                                                    setTimeout(function () {
-                                                        network3.setOptions({physics: false});
-                                                    }, 2500);
-                                                    network3.fit()
-
-                                                }
-
-                                            });
-
-
                                         }
 
 
-                                        startNetwork({nodes: nodesView3, edges: edges3});
+                                        startNetwork(interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
+                                    interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterValue,
+                                    interactionViewNodes, interactionViewEdges, interactionViewFilter);
 
 
                                     </script>

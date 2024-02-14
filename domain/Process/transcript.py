@@ -40,7 +40,8 @@ for organism in os.listdir('domain/data'):
 def Protein_view(P_id, organism):
     i = info.get_protein_info(P_id, organism)
     if i == 0: return 0
-    domains, unique_domains, exons, text1, domainshtml, Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID, entrezID, gene_description, exons, droped1, droped2, trID, p, co_partners = i
+    domains, unique_domains, exons, text1, domainshtml, Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID,\
+        entrezID, gene_description, exons, droped1, droped2, trID, p, co_partners = i
 
     PPI = PPI_all[organism]
     g2d = g2d_all[organism]
@@ -68,7 +69,7 @@ def Protein_view(P_id, organism):
 
         # add domain interactions to the graph:
         if DomainG.has_node(node):
-            g.add_edges_from(DomainG.edges(node))
+            g.add_edges_from(DomainG.edges(node, data=True))
 
     edges = []
     # list contains protein confirmed by both PPI and DDI (for visualization)
@@ -253,26 +254,39 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
 
 
 def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_partners, organism):
-    N = []
-    E = []
+    # convert N and E to dictionaries to accommodate for different confidence interactions
+    N = {'original': [], 'high': [], 'mid': [], 'low': []}
+    E = {'original': [], 'high': [], 'mid': [], 'low': []}
     for node in g.nodes():
-        # node of a protein:
-        if node != entrezID and len(node.split('/')) == 1:
+        confidence = set()
+        for e in g.edges(node, data=True):
             try:
-                label = pr.entrez_to_name(node, organism)
-                N.append(f'{{id: "{node}", label: "{label}", group: "{group_node(node, entrezID)}", '
-                         f'physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
+                confidence.add(e[2]['confidence'])
             except KeyError:
-                print(' ')
+                confidence.add('original')
 
-        else:
-            color = ''
-            if node in missing_domain:  color = 'color: missing, '
-            label = node_label(node, entrezID, tran_name)
-            N.append(f'{{id: "{node}", label: "{label}", {color} group: "{group_node(node, entrezID)}", physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
+        for c in confidence:
+            # node of a protein:
+            if node != entrezID and len(node.split('/')) == 1:
+                try:
+                    label = pr.entrez_to_name(node, organism)
+                    N[c].append(f'{{id: "{node}", label: "{label}", group: "{group_node(node, entrezID)}", '
+                             f'physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
+                except KeyError:
+                    print(' ')
 
-    for e in g.edges():
-        E.append(f'{{from: "{e[0]}", to: "{e[1]}", dashes:  {edge_dashes(e, entrezID, missing_domain)[0]}, {edge_option(e, entrezID, co_partners)}}},')
+            else:
+                color = ''
+                if node in missing_domain:  color = 'color: missing, '
+                label = node_label(node, entrezID, tran_name)
+                N[c].append(f'{{id: "{node}", label: "{label}", {color} group: "{group_node(node, entrezID)}", physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
+
+    for e in g.edges(data=True):
+        try:
+            confidence = e[2]['confidence']
+        except KeyError:
+            confidence = 'original'
+        E[confidence].append(f'{{from: "{e[0]}", to: "{e[1]}", dashes:  {edge_dashes(e, entrezID, missing_domain)[0]}, {edge_option(e, entrezID, co_partners)}}},')
 
     return N, E, len(g) - 1
 
