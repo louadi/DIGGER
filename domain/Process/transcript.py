@@ -133,8 +133,7 @@ def Protein_view(P_id, organism):
 
         pd_interaction["Percentage of lost domain-domain interactions"] = pd_interaction[
             "Percentage of lost domain-domain interactions"].astype(int)
-        pd_interaction["Percentage of lost domain-domain interactions"] = pd_interaction[
-                                                                              "Percentage of lost domain-domain interactions"].astype(
+        pd_interaction["Percentage of lost domain-domain interactions"] = pd_interaction["Percentage of lost domain-domain interactions"].astype(
             str) + ' % '
 
     else:
@@ -199,19 +198,19 @@ def Interacted_domain(p, g, entrezID, missing_domain):
     lost_edges = []
     DDI_edges2 = []
     lost_edges2 = []
-    for e in g.edges():
+    for e in g.edges(data=True):
         gene1 = e[0].split('/')[0]
         gene2 = e[1].split('/')[0]
         if p in [gene1, gene2]:
-            edges.append(e)
             if edge_dashes(e, entrezID, missing_domain)[0] != 'false':
                 lost_edges.append(e[0].split('/')[1] + '-' + e[1].split('/')[1])
                 lost_edges2.append(nt.link(e[0].split('/')[1]) + '-' + nt.link(e[1].split('/')[1]))
-
+                edges.append(e)
 
             elif len(e[0].split('/')) == 2 and len(e[1].split('/')) == 2:
                 DDI_edges.append(e[0].split('/')[1] + '-' + e[1].split('/')[1])
                 DDI_edges2.append(nt.link(e[0].split('/')[1]) + '-' + nt.link(e[1].split('/')[1]))
+                edges.append(e)
     return edges, DDI_edges, lost_edges, DDI_edges2, lost_edges2
 
 
@@ -224,6 +223,7 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
     lost_DDIs2 = []
     perc = []
     status = []
+    predicted = []
     for protein in protein_with_DDI:
         # select first protein
         if protein != entrezID:
@@ -231,6 +231,18 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
             edges, DDI_edges, lost_edges, DDI_edges2, lost_edges2 = Interacted_domain(protein, g, entrezID,
                                                                                       missing_domain)
 
+            # check if any edge 'confidence' is original and add to the list
+            curr_predicted = 'predicted'
+            for e in edges:
+                try:
+                    if e[2]['confidence'] == 'original':
+                        curr_predicted = 'original'
+                        break
+                except KeyError:
+                    curr_predicted = 'original'
+                    break
+
+            predicted.append(curr_predicted)
             IDs.append(protein)
             p = len(lost_edges) / (len(DDI_edges) + len(lost_edges))
             p = float("{0:.2f}".format(p))
@@ -247,10 +259,12 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
             lost_DDIs.append(' ; '.join(lost_edges))
             DDIs2.append(' ; '.join(DDI_edges2))
             lost_DDIs2.append(' ; '.join(lost_edges2))
-    return pd.DataFrame(list(zip(Interactions, IDs, DDIs2, lost_DDIs2, DDIs, lost_DDIs, perc, status)),
+    print(len(Interactions), len(IDs), len(DDIs2), len(lost_DDIs2), len(DDIs), len(lost_DDIs), len(perc), len(status),
+          len(predicted))
+    return pd.DataFrame(list(zip(Interactions, IDs, DDIs2, lost_DDIs2, DDIs, lost_DDIs, perc, status, predicted)),
                         columns=['Protein name', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs', 'retained DDIs',
                                  'missing DDIs', 'Percentage of lost domain-domain interactions',
-                                 'Protein-protein interaction'])
+                                 'Protein-protein interaction', 'Origin'])
 
 
 def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_partners, organism):

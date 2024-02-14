@@ -189,7 +189,7 @@ def transcript(request, P_id, organism):
         missed, pd_interaction, isoforms, co_partners = out
 
     # Interactionview
-    Interactiveview_select = []
+    Interactiveview_select = {}
     Interactiveview_switch = []
     first_victim = []
 
@@ -212,7 +212,8 @@ def transcript(request, P_id, organism):
             str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
                                          'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
 
-        Interactiveview_select = pd_interaction['selector'].tolist()
+        Interactiveview_select['original'] = pd_interaction[pd_interaction['Origin'] == 'original']['selector'].tolist()
+        Interactiveview_select['predicted'] = pd_interaction[pd_interaction['Origin'] == 'predicted']['selector'].tolist()
         Interactiveview_switch = pd_interaction['switcher'].tolist()
         # the first protein to show
         first_victim = pd_interaction['NCBI gene ID'].tolist()[0]

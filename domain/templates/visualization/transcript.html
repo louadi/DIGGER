@@ -369,10 +369,6 @@
 
                                         let proteinViewFilterValue = { value: "" };
 
-                                        // interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
-                                        // interactionViewPhysicsCheckbox, interactionViewSelector, proteinViewFilterValue,
-                                        // interactionViewNodes, interactionViewEdges, interactionViewFilter
-
                                         function proteinViewFilter(node) {
                                             if (proteinViewFilterValue.value === "") {
                                                 return node.group === "protein";
@@ -660,12 +656,15 @@
                                         <label for="inputEmail3" class="col-sm-2 col-form-label">Interaction</label>
                                         <div class="col-sm-10">
                                             <select id="nodeFilterSelect3" class="form-control">
-                                              <!-- TODO: insert another bit here to differentiate predicted/original interactions -->
                                             <optgroup label="Original interactions">
-                                                {% for s in Interactiveview_select %}
+                                                {% for s in Interactiveview_select.original %}
                                                     {{ s|safe }}
                                                 {% endfor %}
                                             </optgroup>
+                                            <optgroup label="Interactions with predicted DDIs">
+                                                {% for s in Interactiveview_select.predicted %}
+                                                    {{ s|safe }}
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
