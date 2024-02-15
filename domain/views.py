@@ -231,7 +231,7 @@ def transcript(request, P_id, organism):
         pd_interaction = pd_interaction[
             ["Selected Protein variant", 'Partner Protein', 'NCBI gene ID', 'Retained domain-domain interactions',
              'Missing domain-domain interactions', '% of missing DDIs', 'Residue-level evidence',
-             "Protein-protein interaction", 'Score']]
+             "Protein-protein interaction", 'Score', 'Origin']]
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     # Get ID of missing domains with interactions

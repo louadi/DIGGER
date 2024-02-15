@@ -61,11 +61,82 @@ function compareDataSets(data1, data2) {
 
 }
 
+// unfortunate function that removes nodes that have no edges connected to them
+function filterProteinView(networkData, filterValue) {
+    if (filterValue !== "PPI" && filterValue !== "PPI-DDI") {
+        return networkData;
+    }
+    nodes = networkData.nodes.get();
+    edges = networkData.edges.get();
+
+    if (filterValue === "PPI-DDI") {
+        // filter nodes that contain / in their id,
+        depthNotReached = nodes.filter(node => connectedToMainNetwork(edges, node.id));
+        nodes = nodes.filter(node => !depthNotReached.includes(node));
+    } else {
+        // get all the ids of the nodes that are in edges
+        let seenIds = new Set();
+        edges.forEach(edge => {
+            // skip edges with / in them
+            if (edge.from.includes("/") && filterValue === 'PPI') {
+                return;
+            }
+            seenIds.add(edge.from);
+
+            if (edge.to.includes("/") && filterValue === 'PPI') {
+                return;
+            }
+            seenIds.add(edge.to)
+
+        });
+        // filter out nodes that are not in edges
+        nodes = nodes.filter(node => seenIds.has(node.id));
+    }
+
+    return {nodes: new vis.DataSet(nodes), edges: networkData.edges};
+}
+
+
+function connectedToMainNetwork(edges, startNode) {
+    const visited = new Set();
+    let depthReached = false;
+    // I'm not proud of what I'm about to do
+    const requiredDepth = startNode.includes("/") ? 3 : 2;
+
+
+    function dfs(node, depth) {
+        visited.add(node);
+        if (depth > requiredDepth) {
+            depthReached = true;
+            return true;
+        }
+        edges.forEach(edge => {
+            if (edge.from === node && !visited.has(edge.to)) {
+                if (dfs(edge.to, depth + 1)) {
+                    return true;
+                }
+            }
+            if (edge.to === node && !visited.has(edge.from)) {
+                if (dfs(edge.from, depth + 1)) {
+                    return true;
+                }
+            }
+        });
+        return false;
+    }
+
+    dfs(startNode, 0);
+    return !depthReached;
+}
+
 
 function startNetwork(container, options, predictedCheckboxes, physicsCheckbox,
                       nodeFilterSelector, nodeFilterValue, nodes, edges, graphFilter) {
 
-    const initialData = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
+    let initialData = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
+    if (nodeFilterValue.value === "PPI" || nodeFilterValue.value === "PPI-DDI") {
+        initialData = filterProteinView(initialData, nodeFilterValue.value);
+    }
     let previousData = initialData;
     var network2 = new vis.Network(container, initialData, options);
 
@@ -74,6 +145,9 @@ function startNetwork(container, options, predictedCheckboxes, physicsCheckbox,
             // check if length of edges[checkbox.value] is greater than 0, if not do nothing
             if (edges[checkbox.value].length > 0) {
                 data = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
+                if (nodeFilterValue.value === "PPI" || nodeFilterValue.value === "PPI-DDI") {
+                    data = filterProteinView(data, nodeFilterValue.value);
+                }
                 // check if the nodes and edges are the same as the previous ones, if not update the network
                 if (!compareDataSets(data, previousData)) {
                     previousData = data;
@@ -94,7 +168,11 @@ function startNetwork(container, options, predictedCheckboxes, physicsCheckbox,
     nodeFilterSelector.addEventListener("change", function(e) {
     // set new value to filter variable
     nodeFilterValue.value = e.target.value;
-    network2.setData(setNodes(nodes, edges, predictedCheckboxes, graphFilter));
+    data = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
+    if (nodeFilterValue.value === "PPI" || nodeFilterValue.value === "PPI-DDI") {
+        data = filterProteinView(data, nodeFilterValue.value);
+    }
+    network2.setData(data);
     });
     network2.fit();
 }
