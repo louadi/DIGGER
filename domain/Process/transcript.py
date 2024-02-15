@@ -274,6 +274,7 @@ def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_pa
     for node in g.nodes():
         confidence = set()
         for e in g.edges(node, data=True):
+            print(f"For node {node} this is edge: {e}")
             try:
                 confidence.add(e[2]['confidence'])
             except KeyError:
