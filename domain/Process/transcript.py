@@ -259,8 +259,7 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
             lost_DDIs.append(' ; '.join(lost_edges))
             DDIs2.append(' ; '.join(DDI_edges2))
             lost_DDIs2.append(' ; '.join(lost_edges2))
-    print(len(Interactions), len(IDs), len(DDIs2), len(lost_DDIs2), len(DDIs), len(lost_DDIs), len(perc), len(status),
-          len(predicted))
+
     return pd.DataFrame(list(zip(Interactions, IDs, DDIs2, lost_DDIs2, DDIs, lost_DDIs, perc, status, predicted)),
                         columns=['Protein name', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs', 'retained DDIs',
                                  'missing DDIs', 'Percentage of lost domain-domain interactions',
@@ -274,7 +273,6 @@ def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_pa
     for node in g.nodes():
         confidence = set()
         for e in g.edges(node, data=True):
-            print(f"For node {node} this is edge: {e}")
             try:
                 confidence.add(e[2]['confidence'])
             except KeyError:

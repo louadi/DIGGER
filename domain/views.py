@@ -29,8 +29,6 @@ if not os.path.exists(jobs_path):
     os.makedirs(jobs_path)
 
 
-# or reference a template from templates folder
-
 
 # Display transcripts of a gene
 def gene(request, gene_ID, organism):
@@ -46,8 +44,7 @@ def gene(request, gene_ID, organism):
     return render(request, 'visualization/gene.html', context)
 
 
-# Input is an exon:
-
+# Display information of an exon (Exon-Level Analysis)
 def exon(request, organism, exon_ID):
     v = ex.input_exon(exon_ID, organism)
 
@@ -58,15 +55,15 @@ def exon(request, organism, exon_ID):
 
     # only if the exon code for domains with known interactions
 
-    nodes_domainV = []
-    edges_domainV = []
+    nodes_domainV = {}
+    edges_domainV = {}
     switcher = []
     switcher_js = []
     first = []
     maxx = 0
 
     # Interactionview
-    Interactiveview_selec = []
+    Interactiveview_select = {}
     Interactiveview_switch = []
     first_victim = []
 
@@ -79,17 +76,25 @@ def exon(request, organism, exon_ID):
         first = domains[0]
         for pfams in domains:
             n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
-            if len(e) > maxx:
+            if len(e['original']) > maxx:
                 maxx = len(e)
                 first = pfams
-            if len(e) != 0:
-                nodes_domainV = nodes_domainV + n
-                edges_domainV = edges_domainV + e
+            if len([val for sublist in e.values() for val in sublist]) != 0:
+                # initialise keys with empty list if they don't exist
+                for key in n.keys():
+                    if key not in nodes_domainV:
+                        nodes_domainV[key] = []
+                for key in e.keys():
+                    if key not in edges_domainV:
+                        edges_domainV[key] = []
+
+                nodes_domainV = {k: nodes_domainV[k] + v for k, v in n.items()}
+                edges_domainV = {k: edges_domainV[k] + v for k, v in e.items()}
                 switcher.append('<option value="' + pfams + '"> ' + pfams + '</option>')
                 switcher_js.append('case "' + pfams + '": return node.source === "' + pfams + '";')
 
     else:
-        nodes, edges, pd_interaction = [], [], []
+        nodes, edges, pd_interaction = {}, {}, []
 
     # PPI res interfaces on the exon:
     # table: HTML table with all PPIs that have res interface mapped to the exon
@@ -116,7 +121,8 @@ def exon(request, organism, exon_ID):
             str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
                                          'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
 
-        Interactiveview_selec = pd_interaction['selector'].tolist()
+        Interactiveview_select['original'] = pd_interaction[pd_interaction['Origin'] == 'original']['selector'].tolist()
+        Interactiveview_select['predicted'] = pd_interaction[pd_interaction['Origin'] == 'predicted']['selector'].tolist()
         Interactiveview_switch = pd_interaction['switcher'].tolist()
         # the first protein to show
         first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
@@ -124,7 +130,7 @@ def exon(request, organism, exon_ID):
         pd_interaction = pd_interaction[
             ["Affected Protein", 'Partner Protein', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs',
              'Percentage of lost domain-domain interactions', 'Residue evidence', "Protein-protein interaction",
-             'Score']]
+             'Score', 'Origin']]
 
         pd_interaction = pd_interaction.rename(columns={
 
@@ -137,7 +143,6 @@ def exon(request, organism, exon_ID):
 
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
-    print(Interactiveview_switch)
     table = table.to_html(**settings.TO_HTML_PARAMETERS)
 
     context = {
@@ -167,7 +172,7 @@ def exon(request, organism, exon_ID):
         'Domainview_edges': edges_domainV,
         'Domainview_nodes': nodes_domainV,
 
-        'Interactiveview_selec': Interactiveview_selec,
+        'Interactiveview_selec': Interactiveview_select,
         'first_vict': first_victim,
         'Interactiveview_switch': Interactiveview_switch,
 
@@ -176,7 +181,7 @@ def exon(request, organism, exon_ID):
     return render(request, 'visualization/exon.html', context)
 
 
-# Dsiplay information of a transcript or a protein
+# Display information of a transcript or a protein (Isoform-Level Analysis)
 def transcript(request, P_id, organism):
     print("Currently in transcript view")
 
@@ -332,6 +337,7 @@ def transcript(request, P_id, organism):
     return render(request, 'visualization/transcript.html', context)
 
 
+# isoform_level search box
 def isoform_level(request):
     if "search" in request.GET:  # If the form is submitted
         # Get and sanitize the search_query
@@ -352,7 +358,6 @@ def isoform_level(request):
         search_query = search_query.split("+")[0]
         search_query = search_query.split("%")[0]
         search_query = search_query.split(".")[0]
-        print(search_query)
         # regex to check if search query starts with ENS and ends with T or P
         if re.match(r'ENS\w*[T,P]\d+$', search_query):
             print("User input is a protein")
@@ -365,6 +370,7 @@ def isoform_level(request):
     return render(request, 'setup/isoform_level.html', )
 
 
+# exon_level search box
 def exon_level(request):
     if "search" in request.GET:  # If the form is submitted
         # Input and Exon ID
@@ -461,6 +467,10 @@ def network(request):
                 job_num = str(random.randrange(500))
                 with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:
                     pickle.dump(input_query, fp)
+                return redirect(Multi_proteins, organism=organism, job=job_num)
+        else:
+            error_message = f"The input list must contain between 2 and 2000 Ensembl IDs."
+            jump_div = 'option1'
 
     # Option 2: Upload file
     if "option2" in request.POST and 'gene-count-file' in request.FILES:
@@ -534,7 +544,7 @@ def network(request):
             return redirect(Multi_proteins, organism=organism, job=job_num)
 
         except RuntimeError:
-            print("Could not parse uploaded file acorrectly")
+            print("Could not parse uploaded file correctly")
             error_message = f"The uploaded file \"{request.FILES['gene-count-file']}\" {error_message_suffix}."
             jump_div = 'option2'
 
@@ -548,7 +558,7 @@ def Multi_proteins(request, organism, job='0'):
     with open(f'{jobs_path}/{job}.txt', "rb") as fp:  # Unpickling
         inputs = pickle.load(fp)
 
-    if re.match(r'^ENS\w*[G]', inputs[0]):
+    if re.match(r'^ENS\w*G', inputs[0]):
         info = nt.analysis_input_genes(inputs, organism)
 
     elif re.match(r'^ENS\w*[TP]', inputs[0]):

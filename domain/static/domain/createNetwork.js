@@ -1,3 +1,6 @@
+// Description: This file contains the functions to create the network visualizations using vis.js
+
+// Set the vis.js dataset based on the predictedCheckboxes and the filterFunction
 function setNodes(nodes, edges, predictedCheckboxes, filterFunction) {
     neededNodes = nodes['original'].slice()
     neededEdges = edges['original'].slice()
@@ -61,7 +64,8 @@ function compareDataSets(data1, data2) {
 
 }
 
-// unfortunate function that removes nodes that have no edges connected to them
+// unfortunately, ProteinView must be filtered in the frontend to avoid floating nodes while retaining floating nodes
+// in the InteractionView. This is a trade-off to keep the sent data small
 function filterProteinView(networkData, filterValue) {
     if (filterValue !== "PPI" && filterValue !== "PPI-DDI") {
         return networkData;
@@ -97,11 +101,14 @@ function filterProteinView(networkData, filterValue) {
 }
 
 
+// function that checks if a node is connected to the main network (to avoid random floating nodes)
 function connectedToMainNetwork(edges, startNode) {
     const visited = new Set();
     let depthReached = false;
     // I'm not proud of what I'm about to do
-    const requiredDepth = startNode.includes("/") ? 3 : 2;
+    // For nodes that are a Domain belonging to a protein, the depth is 2 since proteins with >1 domain allow for a
+    // depth of 2, however if the protein is connected to the main network, it must at least be 3
+    const requiredDepth = startNode.includes("/") ? 2 : 1;
 
 
     function dfs(node, depth) {
@@ -130,6 +137,7 @@ function connectedToMainNetwork(edges, startNode) {
 }
 
 
+// start the network as dynamically as possible to avoid code duplication
 function startNetwork(container, options, predictedCheckboxes, physicsCheckbox,
                       nodeFilterSelector, nodeFilterValue, nodes, edges, graphFilter) {
 

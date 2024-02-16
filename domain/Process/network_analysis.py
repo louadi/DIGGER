@@ -79,6 +79,7 @@ def Construct_network(proteins_id, missing, job_ID, organism):
         # one of the gene have a domain
         if (gene1 in missing) and (gene2 in missing):
             inter = False
+            pred = True
 
             if e[0] in g2d:
                 domains1 = g2d[e[0]]
@@ -101,13 +102,17 @@ def Construct_network(proteins_id, missing, job_ID, organism):
                 for d2 in domains2:
                     if DDI.has_edge(d1, d2):
                         inter = True
+                        color = 'green'
+                        confidence = f"({DDI[d1][d2]['confidence']} confidence)"
+                        if DDI[d1][d2]['confidence'] == 'original':
+                            pred = False
+                            color = 'red'
+                            confidence = ''
+
 
                         # Interacted domain is missing
                         if (d1 in missing[gene1]) or (d2 in missing[gene2]):
-                            E.append("{from: '" + e[0] + "', to: '" + e[
-                                1] + "', dashes:  true,title:' Lost " + d1 + '-' + d2 + "', color: 'red'},")
-                            # print(d1,d2)
-                            # print(gene1,gene2)
+                            E.append(f'{{from: "{e[0]}", to: "{e[1]}", dashes: true, title:"Lost {d1} - {d2} {confidence}", color: "{color}"}},')
                             affected_nodes.append(e[0])
                             affected_nodes.append(e[1])
 
@@ -117,14 +122,14 @@ def Construct_network(proteins_id, missing, job_ID, organism):
 
                         else:
                             # Interaction retained
-                            E.append("{from: '" + e[0] + "', to: '" + e[
-                                1] + "',title:'" + d1 + '-' + d2 + "',  color: 'red'},")
+                            E.append(f'{{from: "{e[0]}", to: "{e[1]}", title:"{d1} - {d2} {confidence}", color: "{color}"}},')
                             DDI_nodes.append(e[0])
                             DDI_nodes.append(e[1])
 
                             DDIs_tmp.append(d1 + '-' + d2)
                             DDIs_tmp2.append(link(d1) + '-' + link(d2))
 
+            # inter=True: a Domain-Domain Interaction was found:
             if inter:
                 # inter=True: a Domain-Domain Interaction was found:
                 # for the table
@@ -151,11 +156,11 @@ def Construct_network(proteins_id, missing, job_ID, organism):
                     missing_DDIs2.append('-')
 
                 score.append(str(float("{0:.2f}".format(len(DDIs_tmp) / (len(DDIs_tmp) + len(missing_DDIs_tmp))))))
-                source.append('PPI-DDI')
+                source.append('PPI-DDI (Predicted)' if pred else 'PPI-DDI')
 
             if not inter:
                 E.append("{from: '" + e[0] + "', to: '" + e[
-                    1] + "', title:'PPI',  color: CHOOSEN,       smooth: {type: 'continuous'}},")
+                    1] + "', title:'PPI',  color: CHOOSEN, smooth: {type: 'continuous'}},")
                 p1.append(e[0])
                 p1_name.append(pr.entrez_to_name(e[0], organism))
                 p2.append(e[1])
@@ -170,10 +175,8 @@ def Construct_network(proteins_id, missing, job_ID, organism):
                 score.append('1.0')
                 source.append('PPI')
         else:  # Both genes have no domains
-            E.append("{from: '" + e[0] + "', to: '" + e[
-                1] + "', title:'PPI evidence',  color: CHOOSEN,       smooth: {type: 'continuous'}},")
-            E.append("{from: '" + e[0] + "', to: '" + e[
-                1] + "', title:'PPI',  color: CHOOSEN,       smooth: {type: 'continuous'}},")
+            E.append("{from: '" + e[0] + "', to: '" + e[1] + "', title:'PPI evidence',  color: CHOOSEN, smooth: {type: 'continuous'}},")
+            E.append("{from: '" + e[0] + "', to: '" + e[1] + "', title:'PPI',  color: CHOOSEN, smooth: {type: 'continuous'}},")
             p1.append(e[0])
             p1_name.append(pr.entrez_to_name(e[0], organism))
             p2.append(e[1])
