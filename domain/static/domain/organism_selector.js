@@ -20,7 +20,7 @@ function addOptionsToSelect(data) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('/get_organisms/')
+    fetch('get_organisms/')
         .then(response => response.json())
         .then(data => {
             addOptionsToSelect(data);
