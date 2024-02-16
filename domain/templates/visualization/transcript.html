@@ -200,12 +200,12 @@
           <h2 class="card-header"> ProteinView </h2>
           <div class="card-body">
 
-            {% if disable_Proteinview %}
+            {% if enable_Proteinview %}
               <h5 class="tab1"> ProteinView is not available for this protein because of its high
                 number of partners in the PPI. Please check InteractionView or DomainView.</h5>
             {% endif %}
 
-            {% if not disable_Proteinview %}
+            {% if not enable_Proteinview %}
 
               <h5 class="tab1"> ProteinView provides a general visualization of the protein and its
                 domains interactions. Please select your view mode:</h5>

@@ -144,6 +144,8 @@ def exon(request, organism, exon_ID):
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     table = table.to_html(**settings.TO_HTML_PARAMETERS)
+    len_edges_domainV = len([val for sublist in edges_domainV.values() for val in sublist])
+
 
     context = {
 
@@ -176,7 +178,7 @@ def exon(request, organism, exon_ID):
         'first_vict': first_victim,
         'Interactiveview_switch': Interactiveview_switch,
 
-        'enable_Proteinview': len(edges_domainV) > 70,
+        'enable_Proteinview': len_edges_domainV > 200,
     }
     return render(request, 'visualization/exon.html', context)
 
@@ -331,7 +333,7 @@ def transcript(request, P_id, organism):
         'Domainview_nodes': nodes_domainV,
 
         # make it make sense
-        'disable_Proteinview': (len_edges_domainV > 200) or (len_edges_domainV > 130 and len(unique) + len(missed) == 1),
+        'enable_Proteinview': (len_edges_domainV > 200) or (len_edges_domainV > 130 and len(unique) + len(missed) == 1),
     }
 
     return render(request, 'visualization/transcript.html', context)
