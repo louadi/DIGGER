@@ -3,11 +3,11 @@ import pickle
 import networkx as nx
 
 def load_obj(name):
-    with open('../domain/data/Homo sapiens[human]/' + name + '.pkl', 'rb') as f:
+    with open('../domain/data/Mus musculus[mouse]/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
 def save_obj(name, obj):
-    with open('../domain/data/Homo sapiens[human]/' + name + '.pkl', 'wb') as f:
+    with open('../domain/data/Mus musculus[mouse]/' + name + '.pkl', 'wb') as f:
         pickle.dump(obj, f)
 
 def read_ddi_tsv(filename):
@@ -71,16 +71,24 @@ def read_interactions():
     return all_interactions
 
 
-if __name__ == '__main__':
-    domain_g_original: nx.Graph = load_obj('DomainG_original')
-    predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi.tsv')
-    domain_g = new_graph(predicted_edges)
-    domain_g = annotate_graph(domain_g_original, domain_g)
-    # save_obj("Domain_G_ext", domain_g)
+def dummy_attribute(graph):
+    # add 'original' attribute to all edges
+    for edge in graph.edges(data=True):
+        graph[edge[0]][edge[1]]['confidence'] = 'original'
+    return graph
 
-    DDI_original: nx.Graph = load_obj('DDI_orig')
-    predicted_interactions = read_interactions()
-    DDI = new_graph(predicted_interactions)
-    DDI = annotate_graph(DDI_original, DDI)
-    save_obj("DDI_ext", DDI)
+
+if __name__ == '__main__':
+    graphs = ['DomainG', 'DDI']
+    for graph in graphs:
+        # load original graph
+        original_graph = load_obj(graph)
+        annotated_graph = dummy_attribute(original_graph)
+        save_obj(graph + '_annotated', original_graph)
+
+    # domain_g_original: nx.Graph = load_obj('DomainG_original')
+    # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi.tsv')
+    # domain_g = new_graph(predicted_edges)
+    # domain_g = annotate_graph(domain_g_original, domain_g)
+    # save_obj("Domain_G_ext", domain_g)
 

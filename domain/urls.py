@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from django.views.generic import TemplateView
 
 from domain import views, autocomplete
@@ -39,6 +39,7 @@ urlpatterns = [
     path('gene_symbol-autocomplete/', autocomplete.gene_symbol_autocomplete, name='gene-symbol-autocomplete', ),
 
     # --- MISC ---
+    re_path(r'^.*?/get_organisms/', views.get_organisms, name='get_organisms'),
     path('get_organisms/', views.get_organisms, name='get_organisms'),
     # path('graph/', views.graph, name="graph"),
     # <<< Not used anymore?
