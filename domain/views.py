@@ -121,8 +121,18 @@ def exon(request, organism, exon_ID):
             str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
                                          'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
 
-        Interactiveview_select['original'] = pd_interaction[pd_interaction['Origin'] == 'original']['selector'].tolist()
-        Interactiveview_select['predicted'] = pd_interaction[pd_interaction['Origin'] == 'predicted']['selector'].tolist()
+        # set interactive view select box by confidence
+        tmp_interactive_select = {k.capitalize(): v.tolist() for k, v in
+                                  pd_interaction.groupby('Confidence')['selector']}
+        for key in tmp_interactive_select.keys():
+            if key != 'Original':
+                Interactiveview_select[key + ' confidence'] = tmp_interactive_select[key]
+            else:
+                Interactiveview_select[key] = tmp_interactive_select[key]
+        order = {'Original': 3, 'High confidence': 2, 'Mid confidence': 1, 'Low confidence': 0}
+        Interactiveview_select = dict(
+            sorted(Interactiveview_select.items(), key=lambda x: order.get(x[0], 0), reverse=True))
+
         Interactiveview_switch = pd_interaction['switcher'].tolist()
         # the first protein to show
         first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
@@ -130,7 +140,7 @@ def exon(request, organism, exon_ID):
         pd_interaction = pd_interaction[
             ["Affected Protein", 'Partner Protein', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs',
              'Percentage of lost domain-domain interactions', 'Residue evidence', "Protein-protein interaction",
-             'Score', 'Origin']]
+             'Score', 'Confidence']]
 
         pd_interaction = pd_interaction.rename(columns={
 
@@ -144,7 +154,6 @@ def exon(request, organism, exon_ID):
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     table = table.to_html(**settings.TO_HTML_PARAMETERS)
-    len_edges_domainV = len([val for sublist in edges_domainV.values() for val in sublist])
 
 
     context = {
@@ -174,11 +183,11 @@ def exon(request, organism, exon_ID):
         'Domainview_edges': edges_domainV,
         'Domainview_nodes': nodes_domainV,
 
-        'Interactiveview_selec': Interactiveview_select,
+        'Interactiveview_select': Interactiveview_select,
         'first_vict': first_victim,
         'Interactiveview_switch': Interactiveview_switch,
 
-        'enable_Proteinview': len_edges_domainV > 200,
+        'enable_Proteinview': len(edges_domainV['original']) > 70,
     }
     return render(request, 'visualization/exon.html', context)
 
@@ -219,8 +228,16 @@ def transcript(request, P_id, organism):
             str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
                                          'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
 
-        Interactiveview_select['original'] = pd_interaction[pd_interaction['Origin'] == 'original']['selector'].tolist()
-        Interactiveview_select['predicted'] = pd_interaction[pd_interaction['Origin'] == 'predicted']['selector'].tolist()
+        # dicitionary to display the select box in the interaction view with the prediction confidences, sorted and named appropriately
+        tmp_interactive_select = {k.capitalize(): v.tolist() for k, v in pd_interaction.groupby('Confidence')['selector']}
+        for key in tmp_interactive_select.keys():
+            if key != 'Original':
+                Interactiveview_select[key + ' confidence'] = tmp_interactive_select[key]
+            else:
+                Interactiveview_select[key] = tmp_interactive_select[key]
+        order = {'Original': 3, 'High confidence': 2, 'Mid confidence': 1, 'Low confidence': 0}
+        Interactiveview_select = dict(sorted(Interactiveview_select.items(), key=lambda x: order.get(x[0], 0), reverse=True))
+
         Interactiveview_switch = pd_interaction['switcher'].tolist()
         # the first protein to show
         first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
@@ -238,7 +255,7 @@ def transcript(request, P_id, organism):
         pd_interaction = pd_interaction[
             ["Selected Protein variant", 'Partner Protein', 'NCBI gene ID', 'Retained domain-domain interactions',
              'Missing domain-domain interactions', '% of missing DDIs', 'Residue-level evidence',
-             "Protein-protein interaction", 'Score', 'Origin']]
+             "Protein-protein interaction", 'Score', 'Confidence']]
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     # Get ID of missing domains with interactions

@@ -232,16 +232,20 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
                                                                                       missing_domain)
 
             # check if any edge 'confidence' is original and add to the list
-            curr_predicted = 'predicted'
+            curr_predicted = set()
             for e in edges:
                 try:
                     if e[2]['confidence'] == 'original':
-                        curr_predicted = 'original'
+                        curr_predicted.add('original')
                         break
+                    curr_predicted.add(e[2]['confidence'])
                 except KeyError:
-                    curr_predicted = 'original'
+                    curr_predicted.add('original')
                     break
 
+            # get the best confidence
+            confidences = {'original': 3, 'high': 2, 'mid': 1, 'low': 0}
+            curr_predicted = max(curr_predicted, key=lambda x: confidences[x])
             predicted.append(curr_predicted)
             IDs.append(protein)
             p = len(lost_edges) / (len(DDI_edges) + len(lost_edges))
@@ -263,7 +267,7 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
     return pd.DataFrame(list(zip(Interactions, IDs, DDIs2, lost_DDIs2, DDIs, lost_DDIs, perc, status, predicted)),
                         columns=['Protein name', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs', 'retained DDIs',
                                  'missing DDIs', 'Percentage of lost domain-domain interactions',
-                                 'Protein-protein interaction', 'Origin'])
+                                 'Protein-protein interaction', 'Confidence'])
 
 
 def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_partners, organism):
