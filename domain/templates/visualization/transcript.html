@@ -81,13 +81,13 @@
 <div class="wider-container my-3">
   <div class="row">
     <!-- Vertical pill selection menu-->
-    <div class="col-lg-2 mb-2 shadow rounded" style="background: white">
-      {#                <h3 class="my-4">View selection</h3>#}
-      <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
+    <div class="col-lg-2 mb-2 rounded">
+      <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+        <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
            aria-orientation="vertical">
         <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
            role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
-
+        <hr class="border-bottom" style="width: 100%;">
         <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
            aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
 
@@ -106,6 +106,7 @@
 
       </div>
     </div>
+    </div>
     <!-- /Vertical pill selection menu -->
 
     <!-- Page content -->
@@ -113,24 +114,24 @@
       <!-- Jumbotron overview-->
       <div class="jumbotron p-xl-4">
         <h1 class="display-4">Transcript {{ tran_name }}</h1>
-        <br>
+        <hr>
         <h5 class="lead"><span
-                style="font-weight:bold">Gene name</span>: {{ gene_description|safe }}
+                style="font-weight:bold; display: inline-block; width: 180px">Gene name:</span>{{ gene_description|safe }}
         </h5>
 
         <h5 class="lead">
-          <span style="font-weight:bold">Transcript name</span>: {{ tran_name|safe }}
+          <span style="font-weight:bold; display: inline-block; width: 180px">Transcript name:</span>{{ tran_name|safe }}
         </h5>
 
         <h5 class="lead">
-          <span style="font-weight:bold">NCBI gene ID</span>: <a
+          <span style="font-weight:bold; display: inline-block; width: 180px">NCBI gene ID:</span><a
                 href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
                 target="_blank">{{ entrezID|safe }} </a>
         </h5>
 
-        <h5 class="lead"><span style="font-weight:bold">Ensembl</span>: <a
+        <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px">Ensembl:</span><a
                 href="https://www.ensembl.org/id/{{ gID|safe }}"
-                target="_blank"> {{ gID|safe }} </a>; <a
+                target="_blank">{{ gID|safe }} </a>; <a
                 href="https://www.ensembl.org/id/{{ trID|safe }}"
                 target="_blank">{{ trID|safe }} </a>
         </h5>
@@ -140,7 +141,7 @@
       <!-- Tab content -->
       <div class="tab-content" id="v-pills-tabContent">
         <!-- Overview content -->
-        <div class="tab-pane fade show active card shadow" id="v-pills-overview" role="tabpanel"
+        <div class="tab-pane fade show active card shadow rounded" id="v-pills-overview" role="tabpanel"
              aria-labelledby="v-pills-overview-tab">
           <div class="card-body">
             <p class="lead text-center"><span
@@ -169,7 +170,7 @@
 
 
         <!-- ProteinView content -->
-        <div class="tab-pane fade card shadow" id="v-pills-protein" role="tabpanel"
+        <div class="tab-pane fade card shadow rounded" id="v-pills-protein" role="tabpanel"
              aria-labelledby="v-pills-protein-tab">
 
           <h2 class="card-header"> ProteinView </h2>
@@ -398,7 +399,7 @@
 
 
         <!-- DomainView content -->
-        <div class="tab-pane fade card shadow" id="v-pills-domain" role="tabpanel"
+        <div class="tab-pane fade card shadow rounded" id="v-pills-domain" role="tabpanel"
              aria-labelledby="v-pills-domain-tab">
 
           <h2 class="card-header"> DomainView </h2>
@@ -620,7 +621,7 @@
 
 
         <!-- InteractionView content -->
-        <div class="tab-pane fade card shadow" id="v-pills-interaction" role="tabpanel"
+        <div class="tab-pane fade card shadow rounded" id="v-pills-interaction" role="tabpanel"
              aria-labelledby="v-pills-interaction-tab">
 
           <h2 class="card-header"> InteractionView </h2>
@@ -858,7 +859,7 @@
 
 
         <!-- Compare with other isoforms content -->
-        <div class="tab-pane fade card shadow" id="v-pills-compare" role="tabpanel"
+        <div class="tab-pane fade card shadow rounded" id="v-pills-compare" role="tabpanel"
              aria-labelledby="v-pills-compare-tab">
 
           {% if dis2 %}
