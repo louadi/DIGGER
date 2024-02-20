@@ -42,7 +42,7 @@ def input_exon(exon_ID, organism):
 
     if len(transcripts) == 0:
         # ID not found in the database
-        return True
+        return None
 
     # get info about the gene
     _, gene_name, Ensemble_geneID, entrezID, gene_description = pr.tranID_convert(transcripts[0], organism)

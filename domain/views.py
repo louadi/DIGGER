@@ -46,9 +46,10 @@ def gene(request, gene_ID, organism):
 
 # Display information of an exon (Exon-Level Analysis)
 def exon(request, organism, exon_ID):
+    print("Currently in exon view")
     v = ex.input_exon(exon_ID, organism)
 
-    if v == True:
+    if v is None:
         return HttpResponse(' wrong entry or exon in a gene without any known Pfam domains')
     else:
         _, domains, gene_name, Ensemble_geneID, entrezID, tb_transc, table_domains, number = v
@@ -187,7 +188,8 @@ def exon(request, organism, exon_ID):
         'first_vict': first_victim,
         'Interactiveview_switch': Interactiveview_switch,
 
-        'enable_Proteinview': len(edges_domainV['original']) > 70,
+        'enable_Proteinview': len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True
+,
     }
     return render(request, 'visualization/exon.html', context)
 
