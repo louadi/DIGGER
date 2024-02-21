@@ -71,6 +71,11 @@ table {
     border-radius: 10px !important;
 }
 
+.example_value:hover {
+    color: #5e5d5d;
+    cursor: pointer;
+}
+
 
 img.resize {
     max-width: 70%;

@@ -43,10 +43,20 @@
                     <!--end of col-->
 
                 </div>
-                <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold">  Examples</span> :
-                    BAG1  ; NCK2 ; TP53 ; MDM4 ; ENSG00000058404 ; ENST00000066544 ; ENST00000623693 ; ENSP00000358396 ;
-                    ENSP00000489057 ;
-                    ENST00000016946 ; ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6>
+                <h6 class="tab mb-3" style="margin-left:2.5em"><span style="font-weight:bold">Examples:</span>
+                  <span class="example_value" data-input-field="input_field">BAG1</span>,
+                  <span class="example_value" data-input-field="input_field">NCK2</span>,
+                  <span class="example_value" data-input-field="input_field">TP53</span>,
+                  <span class="example_value" data-input-field="input_field">MDM4</span>,
+                  <span class="example_value" data-input-field="input_field">ENSG00000058404</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000066544</span>,
+                  <span class="example_value" data-input-field="input_field">ENSP00000489057</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000623693</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000016946</span>,
+                  <span class="example_value" data-input-field="input_field">ENSP00000358396</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000346342</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000409330</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000557508</span>
                 </h6>
             </form>
         </div>
@@ -54,5 +64,8 @@
     <script src="{% static "domain/typeahead.bundle.js" %}"></script>
     <script src="{% static "domain/typeahead.js" %}"></script>
     <script src="{% static "domain/organism_selector.js" %}"></script>
+    <script src="{% static "domain/exampleSelector.js" %}">
+
+    </script>
 
 {% endblock %}

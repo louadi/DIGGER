@@ -32,6 +32,7 @@
             <div class="col">
                 <input
                         class="form-control mr-sm-2"
+                        id="input_field1"
                         type="text"
                         placeholder="Input an Ensembl Exon ID "
                         aria-label="Search "
@@ -49,8 +50,14 @@
             </div>
             <!--end of col-->
         </div>
-        <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold"> Examples</span> : ENSE00002224211 ;
-            ENSE00003467097 ; ENSE00003586509 ; ENSE00001830743 ; ENSE00003652625 ; ENSE00003557822 </span> </h6>
+        <h6 class="tab mb-3" style="margin-left:2.5em"><span style="font-weight:bold">Examples:</span>
+          <span class="example_value" data-input-field="input_field1">ENSE00002224211</span>,
+          <span class="example_value" data-input-field="input_field1">ENSE00003467097</span>,
+          <span class="example_value" data-input-field="input_field1">ENSE00003586509</span>,
+          <span class="example_value" data-input-field="input_field1">ENSE00001830743</span>,
+          <span class="example_value" data-input-field="input_field1">ENSE00003652625</span>,
+          <span class="example_value" data-input-field="input_field1">ENSE00003557822</span>
+         </h6>
     </form>
 
 
@@ -64,6 +71,7 @@
             <div class="col">
                 <input
                         class="form-control mr-sm-2"
+                        id="input_field2"
                         type="text"
                         placeholder="Input the genomic coordinates of an exon from human genome build hg38 (GRCh38)"
                         aria-label="Search"
@@ -84,8 +92,9 @@
         <h6 class="tab" style="margin-left:2.5em">Input format:&nbsp;&nbsp;&nbsp;&nbsp; Ensembl Gene ID &nbsp;&nbsp;&nbsp;&nbsp;
             Start
             &nbsp;&nbsp;&nbsp;&nbsp; End</h6>
-        <h6 class="tab mt-2" style="margin-left:2.5em"><span style="font-weight:bold"> Example</span>: ENSG00000117036
-            157135471 157135708 </h6>
+        <h6 class="tab mt-2 mb-3" style="margin-left:2.5em"><span style="font-weight:bold"> Example:</span>
+          <span class="example_value" data-input-field="input_field2">ENSG00000117036 157135471 157135708</span>
+        </h6>
     </form>
 
     <form class="card card-sm mt-4 rounded" autocomplete="off">
@@ -98,6 +107,7 @@
                 <div id="remote">
                     <input
                             class="form-control mr-sm-2 typeahead"
+                            id="input_field3"
                             type="text"
                             placeholder="Input a Gene Symbol or an Ensembl ID ( Gene / Transcript / Protein )"
                             aria-label="Search"
@@ -116,8 +126,15 @@
             </div>
             <!--end of col-->
         </div>
-        <h6 class="tab" style="margin-left:2.5em"><span style="font-weight:bold">  Examples</span> :
-            BAG1 ; ENSG00000058404 ; ENSP00000489057 ; ENST00000016946 ; ENST00000346342 ; ENST00000409330 ; ENST00000557508</span> </h6>
+        <h6 class="tab mb-3" style="margin-left:2.5em"><span style="font-weight:bold">  Examples:</span>
+          <span class="example_value" data-input-field="input_field3">BAG1</span>,
+          <span class="example_value" data-input-field="input_field3">ENSG00000058404</span>,
+          <span class="example_value" data-input-field="input_field3">ENSP00000489057</span>,
+          <span class="example_value" data-input-field="input_field3">ENST00000016946</span>,
+          <span class="example_value" data-input-field="input_field3">ENST00000346342</span>,
+          <span class="example_value" data-input-field="input_field3">ENST00000409330</span>,
+          <span class="example_value" data-input-field="input_field3">ENST00000557508</span>
+        </h6>
         </h6>
     </form>
 
@@ -125,5 +142,6 @@
     <script src="{% static "domain/typeahead.bundle.js" %}"></script>
     <script src="{% static "domain/typeahead.js" %}"></script>
     <script src="{% static "domain/organism_selector.js" %}"></script>
+    <script src="{% static "domain/exampleSelector.js" %}"></script>
 
 {% endblock content %}
