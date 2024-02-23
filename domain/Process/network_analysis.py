@@ -448,4 +448,4 @@ def Remove(duplicate):
 
 
 def link(id):
-    return '<a href="https://www.ebi.ac.uk/interpro/entry/pfam/' + id + '" target="_blank">' + id + ' </a>'
+    return '<a href="https://www.ebi.ac.uk/interpro/entry/pfam/' + id + '" target="_blank">' + id + '</a>'

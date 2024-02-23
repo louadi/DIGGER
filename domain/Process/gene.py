@@ -72,7 +72,7 @@ def TranscriptsID_to_table(transcripts, organism, entrez='0'):
 
                 # add hyperlink
                 p = [nt.link(x) for x in p]
-                pfams.append(' ; '.join(p))
+                pfams.append(', '.join(p))
 
         if ID != []:
             pd_isoforms = pd.DataFrame(list(zip(name, ID, pfams, missing_PPI)),
@@ -83,7 +83,7 @@ def TranscriptsID_to_table(transcripts, organism, entrez='0'):
             pd_isoforms = pd_isoforms.drop(columns=['length'])
 
             h = reverse('home') + "ID/" + organism + "/"
-            pd_isoforms["Link"] = '<a href="' + h + pd_isoforms["Transcript ID"] + '">' + " (Visualize) " + '</a>'
+            pd_isoforms["Link"] = '<a class="visualize" href="' + h + pd_isoforms["Transcript ID"] + '">' + " Visualize " + '</a>'
 
             pd.set_option('display.max_colwidth', 1000)
 

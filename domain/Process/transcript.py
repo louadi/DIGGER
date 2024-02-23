@@ -170,7 +170,7 @@ def Protein_view(P_id, organism):
                 p = tdata["Pfam ID"].unique()
                 p = p[~pd.isnull(p)]
                 p = sorted(p)
-                pfams.append(' ; '.join(p))
+                pfams.append(', '.join(p))
 
         if ID != []:
             pd_isoforms = pd.DataFrame(list(zip(name, ID, pfams)),
@@ -180,7 +180,7 @@ def Protein_view(P_id, organism):
             pd_isoforms = pd_isoforms.drop(columns=['length'])
 
             h = reverse('home') + "ID/" + organism + "/"
-            pd_isoforms["Link"] = '<a href="' + h + pd_isoforms["Transcript ID"] + '">' + " (Visualize) " + '</a>'
+            pd_isoforms["Link"] = '<a href="' + h + pd_isoforms["Transcript ID"] + '">' + " Visualize " + '</a>'
 
             pd_isoforms = pd_isoforms.to_html(**settings.TO_HTML_PARAMETERS)
 
@@ -320,12 +320,16 @@ def edge_option(edge, entrezID, co_partners):
 
         option = 'length: PR_LENGTH,' + edge_color + ' width: WIDTH_SCALE * 4'
 
-
-
-
     # domain to domain
     elif len(e1) == 2 and len(e2) == 2:
-        option = 'length: PR_DM, color: GREEN, width: WIDTH_SCALE * 2'
+        try:
+            if edge[2]['confidence'] != 'original':
+                color = 'LIGHTGREEN'
+            else:
+                color = 'GREEN'
+        except KeyError:
+            color = 'GREEN'
+        option = f'length: PR_DM, color: {color}, width: WIDTH_SCALE * 2'
 
     # domain to protein
     else:

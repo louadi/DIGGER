@@ -50,4 +50,19 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    g2n_orig = pickle.load(open('/home/elias/tmp/DIGGER/domain/data/gid2name.pkl', 'rb'))
+    g2n = pickle.load(open('../domain/data/Homo sapiens[human]/gid2name.pkl', 'rb'))
+    g2n.update(g2n_orig)
+    pickle.dump(g2n, open('../domain/data/Homo sapiens[human]/gid2name.pkl', 'wb'))
+
+    print(f"keys in original: {len(g2n_orig.keys())}, keys in curr: {len(g2n_orig.keys())}")
+    print(f"keys not in new: {set(g2n_orig.keys()) - set(g2n.keys())}")
+    c = 0
+    for key, val in g2n_orig.items():
+        try:
+            if val != g2n[key]:
+                print(f"Unequal for {key}: {val}, {g2n[key]}")
+                c += 1
+        except KeyError:
+            continue
