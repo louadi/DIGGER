@@ -117,7 +117,7 @@ def Protein_view(P_id, organism):
         pd_interaction = table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_domain, organism)
 
         pd_interaction["Score"] = (
-                1 - ((pd_interaction["Percentage of lost domain-domain interactions"].astype(int) / 100)))
+                100 - ((pd_interaction["Percentage of lost domain-domain interactions"].astype(int))))
 
         pd_interaction.insert(0, 'Selected Protein variant', '')
         pd_interaction["Selected Protein variant"] = tran_name

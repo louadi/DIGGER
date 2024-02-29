@@ -111,6 +111,7 @@
 
     <!-- Page content -->
     <div class="col-lg-10">
+
       <!-- Jumbotron overview-->
       <div class="jumbotron p-xl-4">
         <h1 class="display-4">Transcript {{ tran_name }}</h1>
@@ -482,6 +483,7 @@
                     PR_DM = 400,
                     LENGTH_SUB = 50,
                     WIDTH_SCALE = 2,
+                    LIGHTGREEN = "lightgreen",
                     GREEN = "green",
                     RED = "#C5000B",
                     //ORANGE = "orange",
@@ -646,8 +648,8 @@
             <!-- View options -->
             <h5>
               <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-2 col-form-label">Interaction</label>
-                <div class="col-sm-10">
+                <div class="col-sm-2 d-flex align-items-center"><b>Interaction partner</b></div>
+                <div class="col-sm-5">
                   <select id="nodeFilterSelect3" class="form-control">
                     {% for key, value in Interactiveview_select.items %}
                       <optgroup label="{{ key }} interactions">
@@ -658,6 +660,7 @@
                     {% endfor %}
                   </select>
                 </div>
+                <div id="score" class="col-sm-4  d-flex align-items-center">Retained DDIs: 100%</div>
               </div>
               <div class="form-group row">
                 <div class="col-sm-2"><b>Options</b></div>
@@ -710,6 +713,7 @@
                       PR_DM = 400,
                       LENGTH_SUB = 50,
                       WIDTH_SCALE = 2,
+                      LIGHTGREEN = "lightgreen"
                       GREEN = "green",
                       RED = "#C5000B",
                       //ORANGE = "orange",
@@ -732,6 +736,12 @@
                   var interactionViewEdges = {
                       {% for key, value in pv_edges.items %}
                           "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                      {% endfor %}
+                  };
+
+                  const interactionViewScores = {
+                      {% for key, value in InteractionView_scores.items %}
+                          "{{ key }}": "{{ value }}",
                       {% endfor %}
                   };
 
@@ -812,6 +822,15 @@
                       }
                   }
 
+                  // add event listener to nodeFilterSelect3 to change the score according to the selected
+                  // interaction partner
+
+
+                  const score = document.getElementById("score");
+                  interactionViewSelector.addEventListener("change", function () {
+                      var selected = interactionViewSelector.value;
+                      score.innerHTML = "Retained DDIs: " + interactionViewScores[selected] + "%";
+                  });
 
                   startNetwork(interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
                       interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterValue,

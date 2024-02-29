@@ -65,6 +65,7 @@ def exon(request, organism, exon_ID):
 
     # Interactionview
     Interactiveview_select = {}
+    InteractiveView_scores = {}
     Interactiveview_switch = []
     first_victim = []
 
@@ -111,11 +112,14 @@ def exon(request, organism, exon_ID):
             pd_interaction.loc[f, 'Residue evidence'] = '<center>&#9989;</center>'
 
         # InteractionView
-        pd_interaction['_'] = 'Interaction with &nbsp;&nbsp;' + pd_interaction[
-            "Partner Protein"] + '&nbsp;&nbsp; ( Score ' + pd_interaction["Score"].round(2).astype(str) + ' )'
+        pd_interaction['_'] = pd_interaction["Partner Protein"]
 
-        pd_interaction['selector'] = '<option value="' + pd_interaction['NCBI gene ID'].astype(str) + '"> ' + \
+        pd_interaction['selector'] = '<option title="Retained DDIs: ' + pd_interaction['Score'].astype(str) + \
+                                     '%" value="' + pd_interaction['NCBI gene ID'].astype(str) + '"> ' + \
                                      pd_interaction['_'] + '</option>'
+
+        InteractiveView_scores = {k: v for k, v in zip(pd_interaction['NCBI gene ID'], pd_interaction['Score'])}
+
 
         pd_interaction['switcher'] = 'case "' + pd_interaction['NCBI gene ID'].astype(
             str) + '": return (node.id === "' + pd_interaction['NCBI gene ID'].astype(
@@ -185,6 +189,7 @@ def exon(request, organism, exon_ID):
         'Domainview_nodes': nodes_domainV,
 
         'Interactiveview_select': Interactiveview_select,
+        'InteractionView_scores': InteractiveView_scores,
         'first_vict': first_victim,
         'Interactiveview_switch': Interactiveview_switch,
 
@@ -209,6 +214,7 @@ def transcript(request, P_id, organism):
     # Interactionview
     Interactiveview_select = {}
     Interactiveview_switch = []
+    InteractiveView_scores = {}
     first_victim = []
 
     if len(pd_interaction) != 0:
@@ -218,17 +224,20 @@ def transcript(request, P_id, organism):
             pd_interaction["NCBI gene ID"].isin(co_partners), 'Residue evidence'] = '<span>&#9733;</span>'
 
         pd_interaction = pd_interaction.sort_values('Protein name')
-        pd_interaction['_'] = '&nbsp;Interaction &nbsp; with &nbsp;' + pd_interaction[
-            "Protein name"] + '&nbsp;&nbsp; ( Score ' + pd_interaction["Score"].round(2).astype(str) + ')&nbsp;&nbsp;' + \
-                              pd_interaction['Residue evidence'] + '&nbsp;&nbsp;'
+        pd_interaction['_'] = pd_interaction['Protein name'] + " " + pd_interaction['Residue evidence']
 
-        pd_interaction['selector'] = '<option value="' + pd_interaction['NCBI gene ID'].astype(str) + '"> ' + \
-                                     pd_interaction['_'] + '</option>'
+
+        pd_interaction['selector'] = '<option title="Retained DDIs: ' + pd_interaction['Score'].astype(str) + '%" value="' + \
+                                    pd_interaction['NCBI gene ID'].astype(str) + '"> ' + pd_interaction['_'] + \
+                                    '</option>'
 
         pd_interaction['switcher'] = 'case "' + pd_interaction['NCBI gene ID'].astype(
             str) + '": return (node.id === "' + pd_interaction['NCBI gene ID'].astype(
             str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
                                          'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
+
+        # dictionary of gene id and the corresponding score
+        InteractiveView_scores = {k: v for k, v in zip(pd_interaction['NCBI gene ID'], pd_interaction['Score'])}
 
         # dicitionary to display the select box in the interaction view with the prediction confidences, sorted and named appropriately
         tmp_interactive_select = {k.capitalize(): v.tolist() for k, v in pd_interaction.groupby('Confidence')['selector']}
@@ -251,19 +260,21 @@ def transcript(request, P_id, organism):
             "Percentage of lost domain-domain interactions": "% of missing DDIs",
             "Retained DDIs": "Retained domain-domain interactions",
             "Lost DDIs": "Missing domain-domain interactions",
-            "Protein-protein interaction": "Protein-protein interaction"
+            "Protein-protein interaction": "Protein-protein interaction",
+            "Score": "% of retained DDIs",
         })
 
         pd_interaction = pd_interaction[
             ["Selected Protein variant", 'Partner Protein', 'NCBI gene ID', 'Retained domain-domain interactions',
              'Missing domain-domain interactions', '% of missing DDIs', 'Residue-level evidence',
-             "Protein-protein interaction", 'Score', 'Confidence']]
+             "Protein-protein interaction", '% of retained DDIs', 'Confidence']]
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     # Get ID of missing domains with interactions
     if len(missed) != 0:
         missing_domains = missed['Pfam ID'].unique()
         missed = missed.to_html(**settings.TO_HTML_PARAMETERS)
+
 
     nodes_domainV = {}
     edges_domainV = {}
@@ -341,6 +352,7 @@ def transcript(request, P_id, organism):
         'dis3': isoforms != [],
 
         'Interactiveview_select': Interactiveview_select,
+        'InteractionView_scores': InteractiveView_scores,
         'first_vict': first_victim,
         'Interactiveview_switch': Interactiveview_switch,
 
