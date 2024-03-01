@@ -12,7 +12,7 @@ services:
     volumes:
       - static_volume:/code/run/static
       - media_volume:/code/run/media
-      - ./domain/data:/code/domain/data
+      - ./container:/code
     networks:
       - digger_database_network
       - digger_nginx_network
