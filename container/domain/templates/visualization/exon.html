@@ -1,0 +1,883 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Exonic Region From The Gene {{ name|safe }}{% endblock %}
+
+{% block header %}
+  <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
+
+  <style>
+      .sticky-offset {
+          top: 56px
+      }
+
+      .tab-content > .tab-pane:not(.active) {
+          display: block;
+          height: 0;
+          overflow-y: hidden;
+      }
+
+      div {
+          text-align: justify;
+          text-justify: inter-word;
+      }
+
+      .select-css option {
+          font-weight: normal;
+      }
+
+      #protein-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #domain-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #interaction-network {
+          position: relative;
+          height: 600px;
+          border: 2px solid lightgray;
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+          display: block; /* remove extra space below image */
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+      }
+
+      img.resize {
+          max-width: 80%;
+          max-height: 80%;
+      }
+  </style>
+
+  <script>
+      $(document).ready(function () {
+          $('#Interaction_table').DataTable();
+      });
+  </script>
+  <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
+
+{% endblock %}
+
+
+
+{% block raw_content %}
+<div class="wider-container my-3">
+  <div class="row">
+    <!-- Vertical pill selection menu-->
+    <div class="col-lg-2 mb-2 rounded">
+      <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+      <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
+           aria-orientation="vertical">
+
+        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-domain"
+           role="tab"
+           aria-controls="v-pills-domain" aria-selected="true">DomainView</a>
+
+        {% if dis %}
+          <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein"
+             role="tab"
+             aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
+        {% endif %}
+
+        {% if dis or dis3 %}
+          {% if not dis4 %}
+            <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill"
+               href="#v-pills-interaction"
+               role="tab"
+               aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
+          {% endif %}
+        {% endif %}
+
+        <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
+           role="tab"
+           aria-controls="v-pills-interaction" aria-selected="false">Proteins that use this exon</a>
+      </div>
+            </div>
+    </div>
+    <!-- /Vertical pill selection menu -->
+
+    <!-- Page content -->
+    <div class="col-lg-10">
+      <!-- Jumbotron overview-->
+      <div class="jumbotron p-xl-4">
+        <h1 class="display-4"> Exon Information {{ name }}</h1>
+        <hr>
+        <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px"> Exon ID:</span>{{ exon_ID|safe }}  </h5>
+        <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px"> Gene name:</span>{{ name|safe }} </h5>
+
+        <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px">NCBI gene ID:</span><a
+                href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
+                target="_blank">{{ entrezID|safe }} </a></h5>
+        <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px">Ensembl gene ID:</span><a
+                href="https://www.ensembl.org/id/{{ gID|safe }}" target="_blank">{{ gID|safe }} </a></h5>
+      </div>
+
+      <!-- Tab content -->
+      <div class="tab-content" id="v-pills-tabContent">
+        <!-- DomainView content -->
+        <div class="tab-pane fade card show shadow rounded active" id="v-pills-domain" role="tabpanel"
+             aria-labelledby="v-pills-domain-tab">
+
+          <h2 class="card-header">DomainView</h2>
+
+          <div class="card-body">
+            {% if not dis2 %}
+
+            <h5 class>A list of Pfam domains coded by the selected exon and a graphical
+              visualization
+              for
+              their interactions is provided in this view. Each domain is shown only once, and all
+              proteins containing the domain are linked to this domain node. Select your domain of
+              interest to visualize affected interactions. </h5>
+
+
+            <div style="text-align: center;" class="mt-4">
+              <p class="lead"><span
+                      style="font-weight:bold">The exon Codes for the following Pfam domains </span>
+              </p>
+
+              <h5 class>
+                <div class="table-responsive">
+                  {% autoescape off %}
+                  {{ tb2 }}
+                  {% endautoescape %}
+                </div>
+              </h5>
+            </div>
+
+            {% if dis %}
+              <hr style="height: 2px;" class="mt-4">
+              <!-- View options -->
+              <h5>
+                <div class="form-group row">
+                  <label for="nodeFilterSelect2" class="col-sm-2 col-form-label">Pfam domain
+                    ID</label>
+                  <div class="col-sm-10">
+                    <select id="nodeFilterSelect2" class="form-control">
+                      <optgroup label="Domains of the exon">
+                        {% for s in switch1 %}
+                          {{ s|safe }}
+                        {% endfor %}
+                      </optgroup>
+                      {% if dis1 %}
+                        <optgroup label="Domains missing in the isoform">
+                          {% for s in switch1_missing %}
+                            {{ s|safe }}
+                          {% endfor %}
+                        </optgroup>
+                      {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                <div class="col-sm-2"><b>Options</b></div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
+                           name="physics-checkbox-domain" checked>
+                    <label class="custom-control-label" for="physicsSwitchDomain">Enable
+                      physics</label>
+                  </div>
+                </div>
+                <div class="col-sm-2"><b>Predicted DDIs</b></div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                           id="high_domain"
+                           name="predicted-checkbox-high"
+                           value="high">
+                    <label class="custom-control-label" for="high_domain">High</label>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                           id="mid_domain"
+                           name="predicted-checkbox-mid"
+                           value="mid">
+                    <label class="custom-control-label" for="mid_domain">Medium</label>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch predicted">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                           id="low_domain"
+                           name="predicted-checkbox-low"
+                           value="low">
+                    <label class="custom-control-label" for="low_domain">Low (confidence)</label>
+                  </div>
+                </div>
+              </div>
+              </h5>
+
+              <div id="domain-network"></div>
+              <script type="text/javascript">
+                  var L1 = 300,
+                      L2 = 30,
+                      PR_DM = 400,
+                      LENGTH_SUB = 50,
+                      WIDTH_SCALE = 2,
+                      GREEN = "green",
+                      RED = "#C5000B",
+                      //ORANGE = "orange",
+                      YELLOW = "orange",
+                      WHITE = "EED5EB"
+                      //GRAY = '#666666',
+                      GRAY = "gray",
+                      BLACK = "#2B1B17";
+
+
+                  // create an array with nodes
+                  const domainViewNodes = {
+                      {% for key, value in Domainview_nodes.items %}
+                          "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                      {% endfor %}
+                  };
+
+                  // create singular dictionary
+                  const domainViewEdges = {
+                      {% for key, value in Domainview_edges.items %}
+                          "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                      {% endfor %}
+                  };
+
+
+                const domainViewFilterSelector = document.getElementById("nodeFilterSelect2");
+
+                var domainViewContainer = document.getElementById('domain-network');
+
+                var domainViewOptions = {
+
+
+                      interaction: {
+                          navigationButtons: true,
+
+                      },
+
+                      physics: {
+                          barnesHut: {gravitationalConstant: -10000},
+                          stabilization: {iterations: 15},
+
+                      },
+
+                      nodes: {
+                          scaling: {
+                              min: 16,
+                              max: 32
+                          }
+                      },
+
+                      edges: {
+                          color: WHITE,
+                          smooth: false,
+
+                      },
+
+                      groups: {
+                          protein: {
+                              shape: "dot",
+                              color: GRAY, // orange
+                              font:
+                                  {
+                                      size: 18, // px
+                                  }
+                          },
+
+
+                          Domain: {
+                              shape: "triangle",
+                              color: "#2B7CE9" // blue
+                          },
+
+
+                          MDomain: {
+                              shape: "triangle",
+                              color: "#109618" // green
+                          }
+                      }
+                  };
+
+                var domainViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-domain]");
+
+                var domainViewCheckboxes = document.querySelectorAll(".predicted-checkbox-domain");
+
+                let domainViewNodeFilter = {value: ""};
+
+
+                function domainViewFilter(node) {
+                    if (domainViewNodeFilter.value === "") {
+                        return node.source === "{{ first_domain|safe}}";
+                    }
+                    switch (domainViewNodeFilter.value) {
+
+                        {% for s in switch2 %}
+                            {{ s|safe }}
+                        {% endfor %}
+
+                        default:
+                            return true;
+                    }
+                }
+
+
+                startNetwork(domainViewContainer, domainViewOptions, domainViewCheckboxes,
+                    domainViewPhysicsCheckbox, domainViewFilterSelector, domainViewNodeFilter,
+                    domainViewNodes, domainViewEdges, domainViewFilter);
+
+
+
+              </script>
+
+            {% else %}
+              <h5 class="mt-4"> The domains coded by selected exon do not have any known
+                interactions from the available database. </h5>
+            {% endif %}
+
+            {% else %}
+            <h5 class="mt-4"> The selected exon does not code for any known Pfam domain </h5>
+            {% endif %}
+          </div>
+        </div>
+
+
+        <!-- ProteinView content -->
+        <div class="tab-pane fade card shadow rounded" id="v-pills-protein" role="tabpanel"
+             aria-labelledby="v-pills-protein-tab">
+          <h2 class="card-header"> ProteinView </h2>
+          <div class="card-body">
+
+            {% if dis %}
+              {% if enable_Proteinview %}
+
+                <h5 class="tab1"> ProteinView is not available for this protein because of its high
+                  number of partners in the PPI. Please check the InteractionView or
+                  DomainView.</h5>
+
+              {% else %}
+
+                <h5 class> ProteinView provides a general visualization of the protein interactions
+                  and its domains interactions. Proteins (circular nodes) are shown together with
+                  their (triangles) and domains-domains interactions. The interactions of the
+                  <span style="font-weight:bold"> spliced domains </span> are shown in
+                  <span style="font-weight:bold">dashed edges</span> to illustrate the effect of
+                  splicing in these interactions. </h5>
+                <br>
+                <hr>
+                <!-- View options -->
+                <h5>
+                  <div class="form-group row">
+                  <label for="nodeFilterSelect" class="col-sm-2 col-form-label">View Mode</label>
+                  <div class="col-sm-10">
+                    <select id="nodeFilterSelect" class="form-control">
+                      <option value="PPI"> PPI View</option>
+                      <option value="PPI-DDI"> PPI-DDI View</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-2"><b>Options</b></div>
+                  <div class="col-sm-2">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="physicsSwitchProtein"
+                             name="physics-checkbox-protein" checked>
+                      <label class="custom-control-label" for="physicsSwitchProtein">Enable
+                        physics</label>
+                    </div>
+                  </div>
+                    <!-- Hide predicted DDI options in ProteinView since they have no impact anyway -->
+                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden"><b>Predicted DDIs</b></div>
+                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                               id="high_protein"
+                               name="predicted-checkbox-high"
+                               value="high">
+                        <label class="custom-control-label" for="high_protein">High</label>
+                      </div>
+                    </div>
+                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                               id="mid_protein"
+                               name="predicted-checkbox-mid"
+                               value="mid">
+                        <label class="custom-control-label" for="mid_protein">Medium</label>
+                      </div>
+                    </div>
+                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
+                      <div class="custom-control custom-switch predicted">
+                        <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                               id="low_protein"
+                               name="predicted-checkbox-low"
+                               value="low">
+                        <label class="custom-control-label" for="low_protein">Low (confidence)</label>
+                      </div>
+                    </div>
+                </div>
+                </h5>
+
+                <center>
+
+                  <div id="protein-network"></div>
+
+                  <script type="text/javascript">
+
+                    var PR_LENGTH = 500,
+                        LENGTH_domain = 20,
+                        PR_DM = 400,
+                        LENGTH_SUB = 50,
+                        WIDTH_SCALE = 2,
+                        GREEN = "green",
+                        LIGHTGREEN = "lightgreen",
+                        RED = "#C5000B",
+                        //ORANGE = "orange",
+                        YELLOW = "orange",
+                        WHITE = "EED5EB"
+                    //GRAY = '#666666',
+                    GRAY = "gray",
+                        BLACK = "#2B1B17";
+                    missing = '#C70039';
+                    Residue = '#DA70D6';
+
+                    var proteinViewNodes = {
+                        {% for key, value in pv_nodes.items %}
+                            "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                        {% endfor %}
+                    };
+
+                    var proteinViewEdges = {
+                        {% for key, value in pv_edges.items %}
+                            "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                        {% endfor %}
+                    };
+
+                    const proteinViewSelector = document.getElementById("nodeFilterSelect");
+                    // create a network
+                    var proteinViewContainer = document.getElementById('protein-network');
+
+                    var proteinViewOptions = {
+
+
+                        interaction: {
+                            navigationButtons: true,
+
+                        },
+                        physics: {
+                            enabled: true,
+                            barnesHut: {gravitationalConstant: -10000},
+                            stabilization: {iterations: 20},
+                        },
+
+
+                        nodes: {
+                            scaling: {
+                                min: 16,
+                                max: 32
+                            }
+                        },
+                        edges: {
+                            color: WHITE,
+                            smooth: false,
+
+                        },
+
+
+                        groups: {
+                            protein: {
+                                shape: "dot",
+                                color: GRAY, // orange
+                                font:
+                                    {
+                                        size: 18, // px
+                                    }
+                            },
+
+
+                            domain: {
+                                shape: "triangle",
+                                color: "#2B7CE9" // blue
+                            },
+
+
+                            transcript: {
+                                shape: "square",
+                                color: "#109618" // green
+                            }
+                        }
+                    };
+
+                    var proteinViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-protein]");
+                    var proteinViewPredictedCheckboxes = document.querySelectorAll(".predicted-checkbox-protein");
+
+                    let proteinViewFilterValue = {value: "PPI"};
+
+                    var predictedItems = document.querySelectorAll(".protein-view-predicted");
+
+                    // hide predicted items if proteinViewFilterValue is PPI
+                    proteinViewSelector.addEventListener("change", function () {
+                        if (proteinViewSelector.value === "PPI") {
+                            predictedItems.forEach(function (item) {
+                                item.style.visibility = "hidden";
+                            });
+                        } else {
+                            predictedItems.forEach(function (item) {
+                                item.style.visibility = "visible";
+                            });
+                        }
+                    });
+
+                    function proteinViewFilter(node) {
+                        if (proteinViewFilterValue.value === "") {
+                            return node.group === "protein";
+                        }
+                        switch (proteinViewFilterValue.value) {
+
+                            case "PPI-DDI":
+                                return node.source === "DDI";
+
+                            case "PPI":
+                                return node.group === "protein";
+
+                            default:
+                                return true;
+                        }
+                    }
+
+                    startNetwork(proteinViewContainer, proteinViewOptions, proteinViewPredictedCheckboxes,
+                        proteinViewPhysicsCheckbox, proteinViewSelector, proteinViewFilterValue,
+                        proteinViewNodes, proteinViewEdges, proteinViewFilter);
+
+
+                  </script>
+
+                  <img class="resize" src="{% static 'image/legend2.png' %}" alt="">
+                </center>
+
+                <br/>
+
+              {% endif %}
+
+            {% endif %}
+          </div>
+        </div>
+
+
+        <!-- InteractionView content -->
+        <div class="tab-pane fade card shadow rounded" id="v-pills-interaction" role="tabpanel"
+             aria-labelledby="v-pills-interaction-tab">
+          <h2 class="card-header"> InteractionView </h2>
+          <div class="card-body">
+
+            {% if dis %}
+            <h5 style="text-align: left;"> InteractionView provides interactive visualization and an
+              analysis of the effect of the spliced region for every interaction individually. The
+              interactions of the <span style="font-weight:bold"> spliced domains </span> are
+              shown in
+              <span style="font-weight:bold">dashed edges</span> to illustrate the effect of
+              splicing
+              in
+              these interactions. </h5>
+            <br>
+            <hr>
+            <!-- View options -->
+            <h5>
+              <div class="form-group row">
+                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Interaction Partner</b></label>
+                <div class="col-sm-5">
+                  <select id="nodeFilterSelect3" class="form-control">
+                    {% for key, value in Interactiveview_select.items %}
+                      <optgroup label="{{ key }} interactions">
+                        {% for s in value %}
+                          {{ s|safe }}
+                        {% endfor %}
+                      </optgroup>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div id="score" class="col-sm-4  d-flex align-items-center">Retained DDIs: 100%</div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-2"><b>Options</b></div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="physicsSwitchInteraction"
+                           name="physics-checkbox-interaction" checked>
+                    <label class="custom-control-label" for="physicsSwitchInteraction">Enable
+                      physics</label>
+                  </div>
+                </div>
+                <div class="col-sm-2"><b>Predicted DDIs</b></div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-interaction"
+                           id="high_interaction"
+                           name="predicted-checkbox-high"
+                           value="high">
+                    <label class="custom-control-label" for="high_interaction">High</label>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-interaction"
+                           id="mid_interaction"
+                           name="predicted-checkbox-mid"
+                           value="mid">
+                    <label class="custom-control-label" for="mid_interaction">Medium</label>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch predicted">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-interaction"
+                           id="low_interaction"
+                           name="predicted-checkbox-low"
+                           value="low">
+                    <label class="custom-control-label" for="low_interaction">Low (confidence)</label>
+                  </div>
+                </div>
+              </div>
+            </h5>
+
+
+            <div id="interaction-network"></div>
+            <script type="text/javascript">
+
+                  var PR_LENGTH = 500,
+                      LENGTH_domain = 20,
+                      PR_DM = 400,
+                      LENGTH_SUB = 50,
+                      WIDTH_SCALE = 2,
+                      GREEN = "green",
+                      RED = "#C5000B",
+                      //ORANGE = "orange",
+                      YELLOW = "orange",
+                      WHITE = "EED5EB"
+                  //GRAY = '#666666',
+                  GRAY = "gray",
+                      BLACK = "#2B1B17";
+                  missing = '#C70039';
+                  Residue = '#DA70D6';
+
+
+                  var interactionViewNodes = {
+                      {% for key, value in pv_nodes.items %}
+                          "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                      {% endfor %}
+                  };
+
+                  // create an array with edges
+                  var interactionViewEdges = {
+                      {% for key, value in pv_edges.items %}
+                          "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                      {% endfor %}
+                  };
+
+                  const interactionViewScores = {
+                      {% for key, value in InteractionView_scores.items %}
+                          "{{ key }}": "{{ value }}",
+                      {% endfor %}
+                  };
+
+                  const interactionViewSelector = document.getElementById("nodeFilterSelect3");
+
+                  // create a network
+                  var interactionViewContainer = document.getElementById('interaction-network');
+
+                  var interactionViewOptions = {
+
+
+                      interaction: {
+                          navigationButtons: true,
+
+                      },
+                      physics: {
+                          enabled: true,
+                          barnesHut: {gravitationalConstant: -10000},
+                          stabilization: {iterations: 20},
+                      },
+
+
+                      nodes: {
+                          scaling: {
+                              min: 16,
+                              max: 32
+                          }
+                      },
+                      edges: {
+                          color: WHITE,
+                          smooth: false,
+
+                      },
+
+
+                      groups: {
+                          protein: {
+                              shape: "dot",
+                              color: GRAY, // orange
+                              font:
+                                  {
+                                      size: 18, // px
+                                  }
+                          },
+
+
+                          domain: {
+                              shape: "triangle",
+                              color: "#2B7CE9" // blue
+                          },
+
+
+                          transcript: {
+                              shape: "square",
+                              color: "#109618" // green
+                          }
+                      }
+                  };
+
+                  let interactionViewFilterValue = {value: ""};
+
+                  var interactionViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-interaction]");
+
+                  var interactionViewCheckboxes = document.querySelectorAll(".predicted-checkbox-interaction");
+
+                  function interactionViewFilter(node) {
+                      if (interactionViewFilterValue.value === "") {
+                          return (node.id === "{{ entrezID|safe }}") || (node.id === "{{ first_vict|safe }}") || (node.origin === "{{ first_vict|safe }}") || (node.origin === "{{ entrezID|safe }}");
+                      }
+                      switch (interactionViewFilterValue.value) {
+
+                          {% for s in Interactiveview_switch %}
+                              {{ s|safe }}
+                          {% endfor %}
+
+                          default:
+                              return true;
+                      }
+                  }
+
+                  const score = document.getElementById("score");
+                  interactionViewSelector.addEventListener("change", function () {
+                      var selected = interactionViewSelector.value;
+                      score.innerHTML = "Retained DDIs: " + interactionViewScores[selected] + "%";
+                  });
+
+                  startNetwork(interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
+                      interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterValue,
+                      interactionViewNodes, interactionViewEdges, interactionViewFilter);
+
+              </script>
+
+            <div style="text-align: center;">
+              <center>
+                <img class="resize" src="{% static 'image/legend2.png' %}" alt="">
+              </center>
+            </div>
+
+
+            <br/>
+
+            <div style="text-align: center;" class="my-5">
+              <h3> Protein-Protein Interactions </h3>
+              <h6>
+                {% autoescape off %}
+                {{ tb3 }}
+                {% endautoescape %}
+              </h6>
+              <h6 class="mt-5" style="text-align: left">
+                *Residue-level evidence is checked &#9989; if there is structurally resolved
+                evidence at the residue level of the interaction. In that case, the selected
+                exon contains residues that lie on that PPI interface.
+              </h6>
+
+              <a href="{% get_media_prefix %}table/{{ exon_ID|safe }}.csv"
+                 class="btn btn-secondary px-4 py-2 btn-sm my-3">Download csv</a>
+            </div>
+            {% endif %}
+
+            {% if  dis3 %}
+
+            {% if  dis3 and not dis %}
+              <h5 class> The selected exon does not code for any known Pfam domain, but
+                residue-level
+                annotation of the exon exist. </h5>
+
+
+
+            {% endif %}
+
+            <br>
+            <h3 class="font-weight-light" style="text-align: center"> The annotation of the exon in
+              the structural context</h3>
+
+
+            <h6 style="text-align: left;" class="mt-2"> The exon contains residues that lie on the
+              PPI interface
+              of the following protein-protein interactions.</h6>
+
+            <br>
+            <center>
+              <h6 class=="lead"> Overview of Protein-Protein Interactions Table </h6>
+              <h6 class>
+                <div class="table-responsive">
+                  {% autoescape off %}
+                  {{ tb4 }}
+                  {% endautoescape %}
+                </div>
+              </h6>
+
+              {% if  long_table %}
+                <h6 class="font-weight-light">This an overview of the table. You can download
+                  the
+                  full
+                  table with the specific interacting variants from this link.</h6>
+              {% endif %}
+              <a href="{% get_media_prefix %}table/{{ exon_ID|safe }}_interface.csv"
+                 class="btn btn-secondary px-4 py-2 btn-sm">Download csv</a>
+            </center>
+            <br><br> <br><br>
+
+            {% endif %}
+
+
+          </div>
+        </div>
+
+
+        <!-- Compare with other isoforms content -->
+        <div class="tab-pane fade card shadow rounded" id="v-pills-compare" role="tabpanel"
+             aria-labelledby="v-pills-compare-tab">
+          <h2 class="card-header">Proteins that use this exon</h2>
+          <div class="card-body">
+            <h5>You can select a protein from the following table. </h5>
+            <br><br>
+            <p class="lead text-center"><span style="font-weight:bold">The selected exon region is translated  in the following proteins </span>
+            </p>
+            <h6 class>
+              <div class="table-responsive">
+                {% autoescape off %}
+                {{ tb1 }}
+                {% endautoescape %}
+              </div>
+            </h6>
+          </div>
+        </div>
+      </div>
+      <!-- /.col-lg-9 -->
+
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

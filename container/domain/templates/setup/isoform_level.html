@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Isoform-Level Analysis{% endblock %}
+
+{% block header %}
+    <link href="{% static 'domain/typeaheadjs.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+        <div class="jumbotron">
+            <h1 class="display-4">Isoform-Level Analysis</h1>
+            <p class="lead">Input a protein to visualize protein and domain interactions simultaneously. This mode is
+                useful
+                to identify isoform-specific interactions and to compare between different isoforms.</p>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="Section3">
+            <form class="card card-sm shadow" autocomplete="off">
+                <div class="card-body row no-gutters align-items-center">
+                    <div class="col">
+                        <div id="remote">
+                            <input
+                                    id="input_field"
+                                    class="form-control mr-sm-2 typeahead"
+                                    type="text"
+                                    placeholder="Input a Gene Symbol or an Ensembl ID ( Gene / Transcript / Protein )"
+                                    aria-label="Search"
+                                    name='search'
+                                    value="">
+                        </div>
+                    </div>
+                    <!--end of col-->
+                    <div class="col-auto mr-1 ml-1">
+                        <select class="form-control" id="org_select" name="organism">
+                        </select>
+                    </div>
+                    <!--end of col-->
+                    <div class="col-auto">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                    </div>
+                    <!--end of col-->
+
+                </div>
+                <h6 class="tab mb-3" style="margin-left:2.5em"><span style="font-weight:bold">Examples:</span>
+                  <span class="example_value" data-input-field="input_field">BAG1</span>,
+                  <span class="example_value" data-input-field="input_field">NCK2</span>,
+                  <span class="example_value" data-input-field="input_field">TP53</span>,
+                  <span class="example_value" data-input-field="input_field">MDM4</span>,
+                  <span class="example_value" data-input-field="input_field">ENSG00000058404</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000066544</span>,
+                  <span class="example_value" data-input-field="input_field">ENSP00000489057</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000623693</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000016946</span>,
+                  <span class="example_value" data-input-field="input_field">ENSP00000358396</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000346342</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000409330</span>,
+                  <span class="example_value" data-input-field="input_field">ENST00000557508</span>
+                </h6>
+            </form>
+            <div id="wait_alert" class="alert alert-warning my-5" style="display: none">
+              This analysis might take a few seconds. Please be patient.
+        </div>
+        </div>
+
+    <script src="{% static "domain/typeahead.bundle.js" %}"></script>
+    <script src="{% static "domain/typeahead.js" %}"></script>
+    <script src="{% static "domain/organism_selector.js" %}"></script>
+    <script src="{% static "domain/exampleSelector.js" %}"></script>
+    <script>
+      // show the wait alert iff the value of the input field begins with ENS and ends with a number and it was submitted
+      $('form').submit(function() {
+        var input = $('#input_field').val();
+        if (input.match(/^ENS[TP].*\d+$/)) {
+          $('#wait_alert').show();
+        }
+      });
+    </script>
+
+{% endblock %}
