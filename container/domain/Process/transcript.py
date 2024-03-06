@@ -10,6 +10,8 @@ from django.urls import reverse
 from sqlalchemy import text
 
 from django.conf import settings
+from django.db import connection
+
 
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE
@@ -392,3 +394,41 @@ def node_label(node, entrezID, tran_name):
     else:
         label = node
     return label
+
+
+def transcript_table(transcript_id, organism, protein_ID=False):
+    if protein_ID:
+        transcript_id = nt.pr_to_tr(transcript_id, organism)
+    sql_pfam = f"""SELECT DISTINCT "Pfam ID" FROM exons_to_domains_data_{organism} 
+                   WHERE "Transcript stable ID" = %s"""
+    sql_trans_name = f"""SELECT DISTINCT "Transcript name", "Gene stable ID" FROM gene_info_{organism} 
+                         WHERE "Transcript stable ID" = %s"""
+    trans_pfams = []
+    all_pfams = []
+    transcript_name = ""
+    missing = "-"
+    with connection.cursor() as cursor:
+        cursor.execute(sql_pfam, [transcript_id])
+        pfam = cursor.fetchall()
+        trans_pfams.extend([x[0] for x in pfam if x[0] is not None])
+        cursor.execute(sql_trans_name, [transcript_id])
+        transcript_name, gene = cursor.fetchone()
+        all_transcripts = pr.gene_to_all_transcripts(gene, organism)
+        for trans in all_transcripts:
+            cursor.execute(sql_pfam, [trans])
+            pfam = cursor.fetchall()
+            all_pfams.extend([x[0] for x in pfam if x[0] is not None])
+    if len(set(all_pfams) - set(trans_pfams)) > 0:
+        missing = "&#9989;"
+
+    h = reverse('home') + "ID/" + organism + "/"
+    link = '<a class="visualize" href="' + h + transcript_id + '">' + " Visualize " + '</a>'
+    trans_pfams = [nt.link(x) for x in trans_pfams]
+    domains = ', '.join(trans_pfams)
+    # make a dataframe
+    transcript_data = pd.DataFrame(columns=['Transcript name', 'Transcript ID', 'Pfam domains', 'Interacting domains are missing in the isoform', 'Link'])
+    transcript_data = transcript_data.append({'Transcript name': transcript_name, 'Transcript ID': transcript_id,
+                                              'Pfam domains': domains,
+                                              'Interacting domains are missing in the isoform': missing,
+                                              'Link': link}, ignore_index=True)
+    return transcript_data.to_html(**settings.TO_HTML_PARAMETERS)

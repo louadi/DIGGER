@@ -29,9 +29,9 @@ if not os.path.exists(jobs_path):
     os.makedirs(jobs_path)
 
 
-
 # Display transcripts of a gene
 def gene(request, gene_ID, organism):
+    print("Currently in gene view")
     transcript_table, gene_name = g.input_gene(gene_ID, organism)
 
     if transcript_table == []:
@@ -42,6 +42,37 @@ def gene(request, gene_ID, organism):
         'name': gene_name,
     }
     return render(request, 'visualization/gene.html', context)
+
+
+def multiple_queries(request, inputs, organism):
+    print("Currently in multiple queries view")
+    # retrieve get data from the form which (for now is only gene names)
+    input_names = [x.strip() for x in inputs.split(",")]
+    print(input_names)
+    transcript_table = ""
+
+    for query in input_names:
+        try:
+            if re.match(r'ENS\w*T\d+$', query):
+                transcript_table += tr.transcript_table(query, organism)
+            elif re.match(r'ENS\w*P\d+$', query):
+                transcript_table += tr.transcript_table(query, organism, True)
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
+                                   [query])
+                    row = cursor.fetchone()
+                    if row:
+                        query = row[0]
+                    transcript_table += g.input_gene(query, organism)[0]
+        except Exception as e:
+            print(e)
+            continue
+
+    context = {
+        'tb': transcript_table,
+    }
+    return render(request, 'visualization/multiple_queries.html', context)
 
 
 # Display information of an exon (Exon-Level Analysis)
@@ -380,6 +411,11 @@ def isoform_level(request):
         # Get organism (human, mouse)
         organism = request.GET.get('organism', None)
 
+        # allow user to input multiple queries separated by commas
+        multiple = search_query.split(",")
+        if len(multiple) > 1:
+            return redirect(multiple_queries, inputs=search_query, organism=organism)
+
         # Try and parse the search_query as gene name from the database
         with connection.cursor() as cursor:
             cursor.execute("""SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
@@ -392,6 +428,7 @@ def isoform_level(request):
         search_query = search_query.split("+")[0]
         search_query = search_query.split("%")[0]
         search_query = search_query.split(".")[0]
+
         # regex to check if search query starts with ENS and ends with T or P
         if re.match(r'ENS\w*[T,P]\d+$', search_query):
             print("User input is a protein")

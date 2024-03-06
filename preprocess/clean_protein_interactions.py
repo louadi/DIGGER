@@ -1,8 +1,8 @@
-import json
+# This script cleans protein interaction data from various sources that can then be used in the ppidm-check project
+# found at https://github.com/Eeeeelias/ppidm-check. This enables adding predicted domain-domain interactions
 import os
 import mygene
 import pandas as pd
-import requests
 
 
 def mygene_query(ensembl_prot_ids, field='uniprot'):
@@ -20,12 +20,15 @@ def mygene_query(ensembl_prot_ids, field='uniprot'):
     return mygene_mapping
 
 
-def clean_mitab(source, target, other_spelling=False):
+def clean_mitab(source, target, other_spelling=None):
     interactions = set()
     df = pd.read_csv(source, sep='\t')
-    if other_spelling:
+    if other_spelling == 'intact':
         df = df.rename(columns={'Alt. ID(s) interactor A': 'Alt IDs Interactor A',
                                 'Alt. ID(s) interactor B': 'Alt IDs Interactor B'})
+    if other_spelling == 'dip':
+        df = df.rename(columns={'ID interactor A': 'Alt IDs Interactor A',
+                                'ID interactor B': 'Alt IDs Interactor B'})
     print(df.columns)
     for index, row in df.iterrows():
         interactor_a = row['Alt IDs Interactor A'].split('|')
@@ -155,7 +158,7 @@ def read_all_interactions(path, unique=True):
 
 if __name__ == '__main__':
     # target path
-    target_path = "/home/elias/mouse_sources/"
+    target_path = "/home/elias/hamburg/ppidm-check/sourcedata/"
     target_path_human = "/mnt/d/programming/bachelor_projects/ppidm-check/sourcedata/"
 
     # source paths
@@ -163,15 +166,19 @@ if __name__ == '__main__':
     mint_source = "/mnt/d/Downloads/mouse_datasets/mint.txt"
     string_source = "/mnt/d/Downloads/mouse_datasets/string_10090.protein.links.v12.0.txt"
     intact_source = "/mnt/d/Downloads/mouse_datasets/intact.txt"
+    dip_source = "/mnt/d/Downloads/mouse_datasets/Mmusc20170205.txt"
+
     mippie_source = "/mnt/d/Downloads/mouse_datasets/mippie_ppi_v1_0.tsv"
 
     # mapping
     biomart_mapping = "/mnt/d/Downloads/mouse_datasets/mart_export.txt"
     # clean_mitab(biogrid_source, target_path + "source_biogrid")
+    # clean_mitab(intact_source, target_path + "source_intact", 'intact')
+    clean_mitab(dip_source, target_path + "source_dip", 'dip')
     # clean_mint(mint_source, target_path)
     # clean_string(string_source, target_path, biomart_mapping)
-    # clean_mitab(intact_source, target_path + "source_intact", True)
     # clean_mippie(mippie_source, target_path, biomart_mapping)
+
 
     read_all_interactions(target_path, True)
     # read_all_interactions(target_path_human, False)

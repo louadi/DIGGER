@@ -21,6 +21,7 @@ urlpatterns = [
     # --- Selection Page
     # Interaction view page (select one transcript of gene)
     path('ID/gene/<str:organism>/<str:gene_ID>/', views.gene, name="gene-overview"),
+    path('ID/gene/<str:organism>/multiple/<str:inputs>/', views.multiple_queries, name="multiple-queries"),
 
     #exon selection page:
     

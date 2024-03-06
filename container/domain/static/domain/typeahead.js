@@ -9,6 +9,11 @@ var gene_symbol = new Bloodhound({
                 wildcard: '%QUERY',
                 replace: function(url, query) {
                     var organism = $('#org_select').val();
+                    // only consider the last characters after any comma if there is one (support for multi input)
+                    var last_query = query.split(',').pop().trim();
+                    if (last_query.length > 0) {
+                        query = last_query;
+                    }
                     return url.replace('%QUERY', query).replace('%ORGANISM', organism);
                 }
             }

@@ -8,7 +8,7 @@ spanElements.forEach(function(spanElement) {
         const inputFieldId = spanElement.getAttribute('data-input-field');
         // Get the corresponding input field
         const inputField = document.getElementById(inputFieldId);
-        // Set the value of the input field to the text content of the clicked span element
-        inputField.value = spanElement.textContent;
+        // Add the value of the span element to the input field seperated by a comma
+        inputField.value = inputField.value + (inputField.value ? ', ' : '') + spanElement.textContent;
     });
 });
