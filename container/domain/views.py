@@ -258,11 +258,6 @@ def transcript(request, P_id, organism):
         pd_interaction = pd_interaction.sort_values('Protein name')
         pd_interaction['_'] = pd_interaction['Protein name'] + " " + pd_interaction['Residue evidence']
 
-        pd_interaction['switcher'] = 'case "' + pd_interaction['NCBI gene ID'].astype(
-            str) + '": return (node.id === "' + pd_interaction['NCBI gene ID'].astype(
-            str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
-                                         'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
-
         Interactiveview_select = {'Original': [], 'High confidence': [], 'Mid confidence': [], 'Low confidence': []}
         pd_interaction['Confidence'] = pd_interaction['Confidence'].str.capitalize()
         # go through pd_interaction and create a dictionary with the select box options
@@ -277,7 +272,6 @@ def transcript(request, P_id, organism):
         Interactiveview_select = dict(sorted(Interactiveview_select.items(), key=lambda x: order.get(x[0], 0), reverse=True))
 
 
-        Interactiveview_switch = pd_interaction['switcher'].tolist()
         # the first protein to show
         first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
         first_name = pd_interaction['_'].tolist()[0]
@@ -383,7 +377,6 @@ def transcript(request, P_id, organism):
         'Interactiveview_select': Interactiveview_select,
         'first_vict': first_victim,
         'first_name': first_name,
-        'Interactiveview_switch': Interactiveview_switch,
 
         'first_domain': first,
         'switch1': switcher,

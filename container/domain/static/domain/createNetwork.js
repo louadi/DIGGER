@@ -175,10 +175,20 @@ function startNetwork(container, options, predictedCheckboxes, physicsCheckbox,
 
     nodeFilterSelector.addEventListener("change", function(e) {
     // set new value to filter variable
-    nodeFilterValue.value = e.target.value;
+    // if nodeFilterValue is instance of Set then add the value to the set else set it to the value
+    if (nodeFilterValue instanceof Set) {
+        nodeFilterValue = new Set(e.target.value);
+    } else {
+        nodeFilterValue = e.target.value;
+    }
     data = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
-    if (nodeFilterValue.value === "PPI" || nodeFilterValue.value === "PPI-DDI") {
-        data = filterProteinView(data, nodeFilterValue.value);
+
+    try {
+        if (nodeFilterValue.value === "PPI" || nodeFilterValue.value === "PPI-DDI") {
+            data = filterProteinView(data, nodeFilterValue.value);
+        }
+    } catch (e) {
+        console.log(e);
     }
     network2.setData(data);
     });
