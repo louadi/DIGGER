@@ -84,28 +84,28 @@
     <div class="col-lg-2 mb-2 rounded">
       <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
         <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
-           aria-orientation="vertical">
-        <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
-           role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
-        <hr class="border-bottom" style="width: 100%;">
-        <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
-           aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
+             aria-orientation="vertical">
+          <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
+             role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
+          <hr class="border-bottom" style="width: 100%;">
+          <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
+             aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
 
-        <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction"
-           role="tab"
-           aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
-
-        {% if dis2 %}
-          <a class="nav-link" id="v-pills-domain-tab" data-toggle="pill" href="#v-pills-domain" role="tab"
-             aria-controls="v-pills-domain" aria-selected="false">DomainView</a>
-
-          <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
+          <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction"
              role="tab"
-             aria-controls="v-pills-interaction" aria-selected="false">Other isoforms</a>
-        {% endif %}
+             aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
 
+          {% if dis2 %}
+            <a class="nav-link" id="v-pills-domain-tab" data-toggle="pill" href="#v-pills-domain" role="tab"
+               aria-controls="v-pills-domain" aria-selected="false">DomainView</a>
+
+            <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
+               role="tab"
+               aria-controls="v-pills-interaction" aria-selected="false">Other isoforms</a>
+          {% endif %}
+
+        </div>
       </div>
-    </div>
     </div>
     <!-- /Vertical pill selection menu -->
 
@@ -223,35 +223,35 @@
                         physics</label>
                     </div>
                   </div>
-                    <!-- Hide predicted DDI options in ProteinView since they have no impact anyway -->
-                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden"><b>Predicted DDIs</b></div>
-                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
-                      <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
-                               id="high_protein"
-                               name="predicted-checkbox-high"
-                               value="high">
-                        <label class="custom-control-label" for="high_protein">High</label>
-                      </div>
+                  <!-- Hide predicted DDI options in ProteinView since they have no impact anyway -->
+                  <div class="col-sm-2 protein-view-predicted" style="visibility: hidden"><b>Predicted DDIs</b></div>
+                  <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                             id="high_protein"
+                             name="predicted-checkbox-high"
+                             value="high">
+                      <label class="custom-control-label" for="high_protein">High</label>
                     </div>
-                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
-                      <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
-                               id="mid_protein"
-                               name="predicted-checkbox-mid"
-                               value="mid">
-                        <label class="custom-control-label" for="mid_protein">Medium</label>
-                      </div>
+                  </div>
+                  <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                             id="mid_protein"
+                             name="predicted-checkbox-mid"
+                             value="mid">
+                      <label class="custom-control-label" for="mid_protein">Medium</label>
                     </div>
-                    <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
-                      <div class="custom-control custom-switch predicted">
-                        <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
-                               id="low_protein"
-                               name="predicted-checkbox-low"
-                               value="low">
-                        <label class="custom-control-label" for="low_protein">Low (confidence)</label>
-                      </div>
+                  </div>
+                  <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
+                    <div class="custom-control custom-switch predicted">
+                      <input type="checkbox" class="custom-control-input predicted-checkbox-protein"
+                             id="low_protein"
+                             name="predicted-checkbox-low"
+                             value="low">
+                      <label class="custom-control-label" for="low_protein">Low (confidence)</label>
                     </div>
+                  </div>
                 </div>
               </h5>
 
@@ -270,11 +270,11 @@
                         //ORANGE = "orange",
                         YELLOW = "orange",
                         WHITE = "EED5EB"
-                        //GRAY = '#666666',
-                        GRAY = "gray",
+                    //GRAY = '#666666',
+                    GRAY = "gray",
                         BLACK = "#2B1B17";
-                        missing = '#C70039';
-                        Residue = '#DA70D6';
+                    missing = '#C70039';
+                    Residue = '#DA70D6';
 
                     var proteinViewNodes = {
                         {% for key, value in pv_nodes.items %}
@@ -647,21 +647,57 @@
             <hr>
             <!-- View options -->
             <h5>
+              <!-- Interaction partner menu -->
               <div class="form-group row">
-                <div class="col-sm-2 d-flex align-items-center"><b>Interaction partner</b></div>
+                <label for="inputEmail3" class="col-sm-2 d-flex align-items-center" style="vertical-align: middle"><b>Interaction
+                  partner</b></label>
+                <!-- modal button -->
                 <div class="col-sm-5">
-                  <select id="nodeFilterSelect3" class="form-control">
-                    {% for key, value in Interactiveview_select.items %}
-                      <optgroup label="{{ key }} interactions">
-                        {% for s in value %}
-                          {{ s|safe }}
-                        {% endfor %}
-                      </optgroup>
-                    {% endfor %}
-                  </select>
+                  <button type="button" class="btn btn-light border col" data-toggle="modal" data-target="#exampleModal"
+                          style="background: white; color: #495057; font-size: 1rem;">
+                    Select interaction partner
+                  </button>
                 </div>
-                <div id="score" class="col-sm-4  d-flex align-items-center">Retained DDIs: 100%</div>
+                <div class="col-sm-4 d-flex align-items-center">
+                  <!-- Currently selected info -->
+                  Currently selected: &nbsp; <b id="selectedInteractionView"> {{ first_name | safe }}</b>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Interactions + % retained DDIs</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="row" id="nodeFilterSelect3">
+                            {% for key, value in Interactiveview_select.items %}
+                              <div class="col">
+                              <p><b>{{ key }}</b></p>
+                              {% for s in value %}
+                                <div class="form-check my-1">
+                                  <input class="form-check-input" type="radio" name="InteractionRadios" id="{{ s.1 }}"
+                                         value="{{ s.1 }}">
+                                  <label class="form-check-label" style="width: 50%" for="{{ s.1 }}">{{ s.0 }}</label>
+                                  <label class="form-check-label" style="text-align: right" id="{{ s.1 }}Label"
+                                         for="{{ s.1 }}Radio">{{ s.2 }}%</label>
+                                </div>
+                              {% endfor %}
+                              </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
+
+
+              <!-- Option menu -->
               <div class="form-group row">
                 <div class="col-sm-2"><b>Options</b></div>
                 <div class="col-sm-2">
@@ -714,7 +750,7 @@
                       LENGTH_SUB = 50,
                       WIDTH_SCALE = 2,
                       LIGHTGREEN = "lightgreen"
-                      GREEN = "green",
+                  GREEN = "green",
                       RED = "#C5000B",
                       //ORANGE = "orange",
                       YELLOW = "orange",
@@ -736,12 +772,6 @@
                   var interactionViewEdges = {
                       {% for key, value in pv_edges.items %}
                           "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
-                      {% endfor %}
-                  };
-
-                  const interactionViewScores = {
-                      {% for key, value in InteractionView_scores.items %}
-                          "{{ key }}": "{{ value }}",
                       {% endfor %}
                   };
 
@@ -811,10 +841,12 @@
                       if (interactionViewFilterValue.value === "") {
                           return (node.id === "{{ entrezID|safe }}") || (node.id === "{{ first_vict|safe }}") || (node.origin === "{{ first_vict|safe }}") || (node.origin === "{{ entrezID|safe }}");
                       }
+                      //TODO: Change this part to be able to filter when value is a list rather than a single value
                       switch (interactionViewFilterValue.value) {
 
                           {% for s in Interactiveview_switch %}
                               {{ s|safe }}
+                              console.log({{ s|safe }})
                           {% endfor %}
 
                           default:
@@ -822,20 +854,16 @@
                       }
                   }
 
-                  // add event listener to nodeFilterSelect3 to change the score according to the selected
-                  // interaction partner
-
-
-                  const score = document.getElementById("score");
-                  interactionViewSelector.addEventListener("change", function () {
-                      var selected = interactionViewSelector.value;
-                      score.innerHTML = "Retained DDIs: " + interactionViewScores[selected] + "%";
-                  });
 
                   startNetwork(interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
                       interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterValue,
                       interactionViewNodes, interactionViewEdges, interactionViewFilter);
 
+                  // change the selectedInteractionView text according to the selected interaction partner
+                  const selectedInteractionView = document.getElementById("selectedInteractionView");
+                  interactionViewSelector.addEventListener("change", function () {
+                      selectedInteractionView.innerHTML = interactionViewSelector.querySelector("input:checked + label").textContent;
+                  });
 
               </script>
               <center>

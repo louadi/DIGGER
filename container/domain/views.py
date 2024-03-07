@@ -246,8 +246,8 @@ def transcript(request, P_id, organism):
     # Interactionview
     Interactiveview_select = {}
     Interactiveview_switch = []
-    InteractiveView_scores = {}
     first_victim = []
+    first_name = []
 
     if len(pd_interaction) != 0:
         pd_interaction['Residue evidence'] = ''
@@ -258,32 +258,29 @@ def transcript(request, P_id, organism):
         pd_interaction = pd_interaction.sort_values('Protein name')
         pd_interaction['_'] = pd_interaction['Protein name'] + " " + pd_interaction['Residue evidence']
 
-
-        pd_interaction['selector'] = '<option title="Retained DDIs: ' + pd_interaction['Score'].astype(str) + '%" value="' + \
-                                    pd_interaction['NCBI gene ID'].astype(str) + '"> ' + pd_interaction['_'] + \
-                                    '</option>'
-
         pd_interaction['switcher'] = 'case "' + pd_interaction['NCBI gene ID'].astype(
             str) + '": return (node.id === "' + pd_interaction['NCBI gene ID'].astype(
             str) + '")   || (node.id === "' + entrezID + '")     ||  (node.origin==="' + pd_interaction[
                                          'NCBI gene ID'].astype(str) + '") ||  (node.origin==="' + entrezID + '")  ;'
 
-        # dictionary of gene id and the corresponding score
-        InteractiveView_scores = {k: v for k, v in zip(pd_interaction['NCBI gene ID'], pd_interaction['Score'])}
-
-        # dicitionary to display the select box in the interaction view with the prediction confidences, sorted and named appropriately
-        tmp_interactive_select = {k.capitalize(): v.tolist() for k, v in pd_interaction.groupby('Confidence')['selector']}
-        for key in tmp_interactive_select.keys():
-            if key != 'Original':
-                Interactiveview_select[key + ' confidence'] = tmp_interactive_select[key]
+        Interactiveview_select = {'Original': [], 'High confidence': [], 'Mid confidence': [], 'Low confidence': []}
+        pd_interaction['Confidence'] = pd_interaction['Confidence'].str.capitalize()
+        # go through pd_interaction and create a dictionary with the select box options
+        for index, row in pd_interaction.iterrows():
+            if row['Confidence'] == 'Original':
+                Interactiveview_select[row['Confidence']].append([row['_'], row['NCBI gene ID'], row['Score']])
             else:
-                Interactiveview_select[key] = tmp_interactive_select[key]
+                Interactiveview_select[row['Confidence'] + " confidence"].append([row['_'], row['NCBI gene ID'], row['Score']])
+        # print(Interactiveview_select)
+
         order = {'Original': 3, 'High confidence': 2, 'Mid confidence': 1, 'Low confidence': 0}
         Interactiveview_select = dict(sorted(Interactiveview_select.items(), key=lambda x: order.get(x[0], 0), reverse=True))
+
 
         Interactiveview_switch = pd_interaction['switcher'].tolist()
         # the first protein to show
         first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
+        first_name = pd_interaction['_'].tolist()[0]
 
         pd_interaction = pd_interaction.rename(columns={
 
@@ -384,8 +381,8 @@ def transcript(request, P_id, organism):
         'dis3': isoforms != [],
 
         'Interactiveview_select': Interactiveview_select,
-        'InteractionView_scores': InteractiveView_scores,
         'first_vict': first_victim,
+        'first_name': first_name,
         'Interactiveview_switch': Interactiveview_switch,
 
         'first_domain': first,

@@ -116,6 +116,7 @@ def remove_nan_nodes(graph):
             graph.remove_node(node)
     return graph
 
+
 if __name__ == '__main__':
     ppi_graph: nx.Graph = pickle.load(open('../domain/data/Homo sapiens[human]/DomainG.pkl', 'rb'))
     print(len(ppi_graph.nodes))
