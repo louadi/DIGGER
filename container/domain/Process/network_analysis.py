@@ -148,8 +148,8 @@ def Construct_network(proteins_id, missing, job_ID, organism):
                     DDIs2.append('-')
 
                 if missing_DDIs_tmp != []:
-                    missing_DDIs.append(' ; '.join(missing_DDIs_tmp))
-                    missing_DDIs2.append(' ; '.join(missing_DDIs_tmp2))
+                    missing_DDIs.append(', '.join(missing_DDIs_tmp))
+                    missing_DDIs2.append(', '.join(missing_DDIs_tmp2))
 
                 else:
                     missing_DDIs.append('-')
@@ -223,7 +223,7 @@ def Construct_network(proteins_id, missing, job_ID, organism):
 
     pd_html.sort_values(by=['Source of the interaction'], ascending=[True])
 
-    pd_html = pd_html.rename(columns={"Score": "Score*", })
+    pd_html = pd_html.rename(columns={"Score": "% retained DDIs*", })
 
     # Convert Table to HTML
     pd_html = pd_html.to_html(table_id='results', **settings.TO_HTML_RESPONSIVE_PARAMETERS)

@@ -593,21 +593,62 @@
             <hr>
             <!-- View options -->
             <h5>
+              <!-- Interaction partner menu -->
               <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Interaction Partner</b></label>
+                <label for="inputEmail3" class="col-sm-2 d-flex align-items-center" style="vertical-align: middle"><b>Interaction
+                  partner</b></label>
+                <!-- modal button -->
                 <div class="col-sm-5">
-                  <select id="nodeFilterSelect3" class="form-control">
-                    {% for key, value in Interactiveview_select.items %}
-                      <optgroup label="{{ key }} interactions">
-                        {% for s in value %}
-                          {{ s|safe }}
-                        {% endfor %}
-                      </optgroup>
-                    {% endfor %}
-                  </select>
+                  <button type="button" class="btn btn-light border col" data-toggle="modal" data-target="#exampleModal"
+                          style="background: white; color: #495057; font-size: 1rem;">
+                    Select interaction partner
+                  </button>
                 </div>
-                <div id="score" class="col-sm-4  d-flex align-items-center">Retained DDIs: 100%</div>
+                <div class="col-sm-4 d-flex align-items-center">
+                  <!-- Currently selected info -->
+                  Currently selected: &nbsp; <b id="selectedInteractionView"> {{ first_name | safe }}</b>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <div  class="col">
+                          <h5 class="modal-title" id="exampleModalLabel">Interactions + % retained DDIs</h5>
+                        </div>
+                        <div class="col">
+                          <button class="btn btn-primary" id="interactionViewDeselect">Deselect all</button>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <div class="row" id="nodeFilterSelect3">
+                            {% for key, value in Interactiveview_select.items %}
+                              <div class="col">
+                              <p><b>{{ key }}</b></p>
+                              {% for s in value %}
+                                <div class="form-check my-1">
+                                  <input class="form-check-input" type="checkbox" name="InteractionChecks" id="{{ s.1 }}"
+                                         value="{{ s.1 }}">
+                                  <label class="form-check-label" style="width: 50%" for="{{ s.1 }}">{{ s.0 }}</label>
+                                  <label class="form-check-label" style="text-align: right" id="{{ s.1 }}Label"
+                                         for="{{ s.1 }}Radio">{{ s.2 }}%</label>
+                                </div>
+                              {% endfor %}
+                              </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
+
+
+              <!-- Option menu -->
               <div class="form-group row">
                 <div class="col-sm-2"><b>Options</b></div>
                 <div class="col-sm-2">
@@ -683,12 +724,6 @@
                       {% endfor %}
                   };
 
-                  const interactionViewScores = {
-                      {% for key, value in InteractionView_scores.items %}
-                          "{{ key }}": "{{ value }}",
-                      {% endfor %}
-                  };
-
                   const interactionViewSelector = document.getElementById("nodeFilterSelect3");
 
                   // create a network
@@ -745,35 +780,53 @@
                       }
                   };
 
-                  let interactionViewFilterValue = {value: ""};
+                  const interactionViewEntrezID = "{{ entrezID|safe }}";
+
+                  let interactionViewFilterSet = new Set([interactionViewEntrezID]);
 
                   var interactionViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-interaction]");
 
                   var interactionViewCheckboxes = document.querySelectorAll(".predicted-checkbox-interaction");
 
                   function interactionViewFilter(node) {
-                      if (interactionViewFilterValue.value === "") {
-                          return (node.id === "{{ entrezID|safe }}") || (node.id === "{{ first_vict|safe }}") || (node.origin === "{{ first_vict|safe }}") || (node.origin === "{{ entrezID|safe }}");
+                      if (interactionViewFilterSet.size === 1) {
+                          return (node.id === "{{ entrezID|safe }}") || (node.id === "{{ first_vict|safe }}")
+                              || (node.origin === "{{ first_vict|safe }}") || (node.origin === "{{ entrezID|safe }}");
                       }
-                      switch (interactionViewFilterValue.value) {
-
-                          {% for s in Interactiveview_switch %}
-                              {{ s|safe }}
-                          {% endfor %}
-
-                          default:
-                              return true;
-                      }
+                      return interactionViewFilterSet.has(node.id) || interactionViewFilterSet.has(node.origin);
                   }
 
-                  const score = document.getElementById("score");
+                  const selectedInteractionView = document.getElementById("selectedInteractionView");
+                  // change the FilterSet and the Names when a partner is selected
                   interactionViewSelector.addEventListener("change", function () {
-                      var selected = interactionViewSelector.value;
-                      score.innerHTML = "Retained DDIs: " + interactionViewScores[selected] + "%";
+                      console.log(interactionViewSelector)
+                      const interactionViewPartners = document.querySelectorAll("input[name=InteractionChecks]:checked");
+                      // get the labels of all partners
+                      const names = Array.from(interactionViewPartners).map(function (partner) {
+                          return partner.labels[0].innerText;
+                      });
+                      // add all partners as a comma seperated string list
+                      // selectedInteractionView.innerHTML = names.map(function (name) {return name;}).join(", ");
+                      selectedInteractionView.innerHTML = names.join(", ");
+                      // set the values of the interactionViewFilterSet and add the entrezID of the original transcript
+                      interactionViewFilterSet = new Set(Array.from(interactionViewPartners).map(function (partner) {
+                          return partner.value;
+                      }));
+                      interactionViewFilterSet.add(interactionViewEntrezID);
+                  });
+
+                  // Deselect all button
+                  const interactionViewDeselect = document.getElementById("interactionViewDeselect");
+                  interactionViewDeselect.addEventListener("click", function () {
+                      interactionViewFilterSet = new Set([interactionViewEntrezID]);
+                      selectedInteractionView.innerHTML = "{{ first_name | safe }}";
+                      interactionViewSelector.querySelectorAll("input[name=InteractionChecks]:checked").forEach(function (input) {
+                          input.checked = false;
+                      });
                   });
 
                   startNetwork(interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
-                      interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterValue,
+                      interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterSet,
                       interactionViewNodes, interactionViewEdges, interactionViewFilter);
 
               </script>
