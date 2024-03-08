@@ -53,7 +53,10 @@ def multiple_queries(request, inputs, organism):
 
     for query in input_names:
         try:
-            if re.match(r'ENS\w*T\d+$', query):
+            if re.match(r'ENS\w*E\d+$', query):
+                print("Checking exon")
+                transcript_table += ex.exon_table(query, organism)
+            elif re.match(r'ENS\w*T\d+$', query):
                 transcript_table += tr.transcript_table(query, organism)
             elif re.match(r'ENS\w*P\d+$', query):
                 transcript_table += tr.transcript_table(query, organism, True)
@@ -406,6 +409,11 @@ def exon_level(request):
         search_query = search_query.split(".")[0]
         print(search_query)
 
+        # allow user to input multiple queries separated by commas
+        multiple = search_query.split(",")
+        if len(multiple) > 1:
+            return redirect(multiple_queries, inputs=search_query, organism=organism)
+
         if re.match(r'ENS\w*[E]\d+$', search_query):
             return redirect(exon, organism=organism, exon_ID=search_query)
 
@@ -417,6 +425,10 @@ def exon_level(request):
         print('-----------------------------------------------------------')
         search_query = request.GET['search 2']
         organism = request.GET.get('organism', None)
+
+        multiple = search_query.split(",")
+        if len(multiple) > 1:
+            search_query = multiple[0]
 
         search_query = search_query.split(" ")
         search_query = [x for x in search_query if x != '']
@@ -444,6 +456,11 @@ def exon_level(request):
         # Get and sanitize the search_query
         search_query = request.GET['search 3'].strip()
         organism = request.GET.get('organism', None)
+
+        # allow user to input multiple queries separated by commas
+        multiple = search_query.split(",")
+        if len(multiple) > 1:
+            return redirect(multiple_queries, inputs=search_query, organism=organism)
 
         with connection.cursor() as cursor:
             cursor.execute("""SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
