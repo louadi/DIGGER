@@ -416,7 +416,6 @@ def exon_level(request):
 
         if re.match(r'ENS\w*[E]\d+$', search_query):
             return redirect(exon, organism=organism, exon_ID=search_query)
-
     if "search 2" in request.GET:  # If the form is submitted
         # Input coordinate of the exon
         # Check if coordinate are correct
