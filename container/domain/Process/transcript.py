@@ -134,9 +134,7 @@ def Protein_view(P_id, organism):
         # h=reverse('home')+"ID/"+trID+'/InteractionView/'
 
         pd_interaction["Percentage of lost domain-domain interactions"] = pd_interaction[
-            "Percentage of lost domain-domain interactions"].astype(int)
-        pd_interaction["Percentage of lost domain-domain interactions"] = pd_interaction["Percentage of lost domain-domain interactions"].astype(
-            str) + ' % '
+            "Percentage of lost domain-domain interactions"].astype(int).astype(str)
 
     else:
         pd_interaction = []
@@ -172,6 +170,7 @@ def Protein_view(P_id, organism):
                 p = tdata["Pfam ID"].unique()
                 p = p[~pd.isnull(p)]
                 p = sorted(p)
+                p = [nt.link(x) for x in p]
                 pfams.append(', '.join(p))
 
         if ID != []:
@@ -261,10 +260,10 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
             status.append(st)
 
             Interactions.append(pr.entrez_to_name(protein, organism))
-            DDIs.append(' ; '.join(DDI_edges))
-            lost_DDIs.append(' ; '.join(lost_edges))
-            DDIs2.append(' ; '.join(DDI_edges2))
-            lost_DDIs2.append(' ; '.join(lost_edges2))
+            DDIs.append(', '.join(DDI_edges))
+            lost_DDIs.append(', '.join(lost_edges))
+            DDIs2.append(', '.join(DDI_edges2))
+            lost_DDIs2.append(', '.join(lost_edges2))
 
     return pd.DataFrame(list(zip(Interactions, IDs, DDIs2, lost_DDIs2, DDIs, lost_DDIs, perc, status, predicted)),
                         columns=['Protein name', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs', 'retained DDIs',
