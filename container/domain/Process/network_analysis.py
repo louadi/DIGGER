@@ -139,8 +139,8 @@ def Construct_network(proteins_id, missing, job_ID, organism):
                 p2_name.append(pr.entrez_to_name(e[1], organism))
 
                 if DDIs_tmp != []:
-                    DDIs.append(' ; '.join(DDIs_tmp))
-                    DDIs2.append(' ; '.join(DDIs_tmp2))
+                    DDIs.append(', '.join(DDIs_tmp))
+                    DDIs2.append(', '.join(DDIs_tmp2))
 
 
                 else:

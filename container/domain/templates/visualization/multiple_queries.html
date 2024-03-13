@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Gene {{ name }}{% endblock %}
+{% block title %}Multiple queries {{ name }}{% endblock %}
 
 {% block content %}
 <div id="wait_alert" class="alert alert-warning my-5" style="display: none">
@@ -10,27 +10,39 @@
 <div class="card border-0 shadow my-5">
   <div class="card-body p-3">
     <h3 class="font-weight-light card-title"> List of the gene transcripts with known Pfam domains. </h3>
-    <div class="table-responsive">
-      <h6 class="mt-4">
-        {% autoescape off %}
-        {{ tb }}
-        {% endautoescape %}
-      </h6>
+    {% for key, value in tb.items %}
+    <div class="row mx-1 mb-1 mt-3 inHead" data-toggle="collapse" href="#collapse{{ key }}" role="button"
+          aria-expanded="true">
+      <h5 class="font-weight"> Input: <b>{{ key|safe }}</b></h5>
     </div>
+    <div class="row mx-1 collapse" id="collapse{{ key }}">
+      <div class="table-responsive">
+        <h6>
+        {% autoescape off %}
+        {{ value }}
+        {% endautoescape %}
+          </h6>
+      </div>
+    </div>
+    {% endfor %}
   </div>
 </div>
 
 
 <script>
     // show the wait alert if the user clicks on the link with the class "visualize"
-    $(document).ready(function() {
-        $(".visualize").click(function() {
+    $(document).ready(function () {
+        $(".visualize").click(function () {
             // sleep for 800ms before showing the alert
-            setTimeout(function() {
+            setTimeout(function () {
                 $("#wait_alert").show();
             }, 800);
         });
+        $(".collapse").collapse('show');
     });
+
+    // change mouse button of all inHead elements to pointer
+    $(".inHead").css("cursor", "pointer");
 </script>
 
 {% endblock content %}

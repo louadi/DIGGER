@@ -49,25 +49,24 @@ def multiple_queries(request, inputs, organism):
     # retrieve get data from the form which (for now is only gene names)
     input_names = [x.strip() for x in inputs.split(",")]
     print(input_names)
-    transcript_table = ""
+    transcript_table = {}
 
     for query in input_names:
         try:
             if re.match(r'ENS\w*E\d+$', query):
                 print("Checking exon")
-                transcript_table += ex.exon_table(query, organism)
+                transcript_table[query] = ex.exon_table(query, organism)
             elif re.match(r'ENS\w*T\d+$', query):
-                transcript_table += tr.transcript_table(query, organism)
+                transcript_table[query] = tr.transcript_table(query, organism)
             elif re.match(r'ENS\w*P\d+$', query):
-                transcript_table += tr.transcript_table(query, organism, True)
+                transcript_table[query] = tr.transcript_table(query, organism, True)
             else:
                 with connection.cursor() as cursor:
                     cursor.execute("""SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
                                    [query])
                     row = cursor.fetchone()
-                    if row:
-                        query = row[0]
-                    transcript_table += g.input_gene(query, organism)[0]
+                    query_id = row[0] if row else query
+                    transcript_table[query] = g.input_gene(query_id, organism)[0]
         except Exception as e:
             print(e)
             continue
