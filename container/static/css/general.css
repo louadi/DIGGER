@@ -114,3 +114,7 @@ img.resize {
 .shadow {
     box-shadow: var(--shadow-elevation-medium) !important;
 }
+
+.rotate {
+    transform: rotate(90deg);
+}
