@@ -22,7 +22,10 @@ def mygene_query(ensembl_prot_ids, field='uniprot'):
 
 def clean_mitab(source, target, other_spelling=None):
     interactions = set()
-    df = pd.read_csv(source, sep='\t')
+    if other_spelling is 'dip':
+        df = pd.read_csv(source, sep='\t', index_col=False)
+    else:
+        df = pd.read_csv(source, sep='\t')
     if other_spelling == 'intact':
         df = df.rename(columns={'Alt. ID(s) interactor A': 'Alt IDs Interactor A',
                                 'Alt. ID(s) interactor B': 'Alt IDs Interactor B'})
