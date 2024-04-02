@@ -1,10 +1,6 @@
 import pickle
 import networkx as nx
-import pandas as pd
-import requests
-import json
 
-from preprocess.graph_attributes import load_obj
 
 def vis_node_(node, DomainG):
     DomainG = DomainG

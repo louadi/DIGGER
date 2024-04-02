@@ -2,13 +2,16 @@
 import pickle
 import networkx as nx
 
-def load_obj(name):
-    with open('../domain/data/Mus musculus[mouse]/' + name + '.pkl', 'rb') as f:
+
+def load_obj(organism, name):
+    with open(f'../../container/domain/data/{organism}/{name}.pkl', 'rb') as f:
         return pickle.load(f)
 
-def save_obj(name, obj):
-    with open('../domain/data/Mus musculus[mouse]/' + name + '.pkl', 'wb') as f:
+
+def save_obj(organism, name, obj):
+    with open(f'../../container/domain/data/{organism}/{name}_ext.pkl', 'wb') as f:
         pickle.dump(obj, f)
+
 
 def read_ddi_tsv(filename):
     interactions = []
@@ -60,17 +63,6 @@ def new_graph(edge_list):
     return G
 
 
-def read_interactions():
-    all_interactions = []
-    for i in ['gold', 'silver', 'bronze']:
-        with open(f'/mnt/d/programming/bachelor_projects/ppidm-check/resultdata/interactions_{i}', 'r') as f:
-            print(f"Interactions for {i} confidence")
-            for line in f.readlines():
-                # replace the first letter in i with the uppercase version
-                all_interactions.append(line.strip().split("\t") + [i[0].upper() + i[1:]])
-    return all_interactions
-
-
 def dummy_attribute(graph):
     # add 'original' attribute to all edges
     for edge in graph.edges(data=True):
@@ -78,13 +70,33 @@ def dummy_attribute(graph):
     return graph
 
 
-if __name__ == '__main__':
+def add_predicted_nodes(graph, predicted_ddis_path, graph_type):
+    with open(predicted_ddis_path, 'r') as f:
+        for line in f.readlines():
+            line = line.strip().split("\t")
+            if not graph.has_edge(line[0], line[1]):
+                graph.add_edge(line[0], line[1], confidence=line[2])
+    return graph
+
+
+def main(organism):
     graphs = ['DomainG', 'DDI']
     for graph in graphs:
         # load original graph
-        original_graph = load_obj(graph)
+        try:
+            original_graph = load_obj(organism, graph)
+        except FileNotFoundError:
+            continue
         annotated_graph = dummy_attribute(original_graph)
-        save_obj(graph + '_annotated', original_graph)
+        # add predicted nodes
+        extended_graph = add_predicted_nodes(annotated_graph,
+                                             f'../resultdata/predicted_ddi_ppi.tsv', graph)
+
+        save_obj(organism, graph, extended_graph)
+
+
+if __name__ == '__main__':
+    main('Homo Sapiens[human]')
 
     # domain_g_original: nx.Graph = load_obj('DomainG_original')
     # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi.tsv')
