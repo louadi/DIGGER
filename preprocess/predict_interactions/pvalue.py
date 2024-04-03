@@ -6,7 +6,7 @@ import sys
 
 def pvalue_calculation(source, seqDom, pdbchainDom, source_address, result_address):
     start = datetime.datetime.now()
-    print("P-value calculation for %s (around 2 secs)" % source)
+    print("P-value calculation for %s" % source)
 
     allPPI = set()
     file1 = open(source_address + source, 'r')

@@ -267,7 +267,7 @@ def best_coefficients_rand(info: dict, gold_standard: set, background_data: list
 
 def create_wrong_assocations(sources, source_address, result_address):
     start = datetime.datetime.now()
-    print("Create NEGATIVE assocaitions from all inputs (around ? mins)")
+    print("Create NEGATIVE associations from all inputs")
 
     # removed kbdock from here
 
@@ -370,7 +370,7 @@ def create_wrong_assocations(sources, source_address, result_address):
 
 def assign_interaction(sources, result_address):
     start = datetime.datetime.now()
-    print("Filtering associations for Interactions(around ? mins)")
+    print("Filtering associations for Interactions")
     interactions_3did, pfam_3did = read_interactions(result_address + '3did')
     # interactions_kbdock, pfam_kbdock = read_interactions(result_address + 'kbdock')
     # interactions_domine, pfam_domine = read_interactions(result_address + 'domine')

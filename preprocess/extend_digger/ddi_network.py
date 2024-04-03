@@ -24,6 +24,8 @@ inter_predicted = set()
 def read_interactions(file_path: str, third_col=None):
     interactions = []
     with open(file_path, 'r') as f:
+        # skip header
+        f.readline()
         for line in f.readlines():
             line = line.strip().split("\t")
             if third_col is not None:
@@ -102,8 +104,6 @@ def process_line(line, predicted_int, uniprot_entrez_map):
 def worker(chunk):
     global chunks
     results = []
-    total_length = len(chunk)
-    start = timeit.default_timer()
     for line in chunk:
         result = process_line(line, inter_predicted, uniprot_to_entrez_dict)
         if result is not None:
@@ -113,6 +113,7 @@ def worker(chunk):
 
 
 def main():
+    print("Starting the DDI & PPI combination")
     # also needed is a mart export file from ensembl with the following columns:
     # Gene stable ID, UniProtKB/Swiss-Prot ID, NCBI gene (formerly Entrezgene) ID
     # result combined from bash combining all seven sources:

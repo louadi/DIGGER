@@ -9,7 +9,7 @@ def load_obj(organism, name):
 
 
 def save_obj(organism, name, obj):
-    with open(f'../../container/domain/data/{organism}/{name}_ext.pkl', 'wb') as f:
+    with open(f'../../container/domain/data/{organism}/{name}.pkl', 'wb') as f:
         pickle.dump(obj, f)
 
 
@@ -87,16 +87,18 @@ def main(organism):
             original_graph = load_obj(organism, graph)
         except FileNotFoundError:
             continue
+        print(f"Original graph has {len(original_graph.edges)} edges and {len(original_graph.nodes)} nodes")
         annotated_graph = dummy_attribute(original_graph)
+        save_obj(organism, f"{graph}.bak", annotated_graph)
         # add predicted nodes
         extended_graph = add_predicted_nodes(annotated_graph,
                                              f'../resultdata/predicted_ddi_ppi.tsv', graph)
-
+        print(f"Extended graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
         save_obj(organism, graph, extended_graph)
 
 
 if __name__ == '__main__':
-    main('Homo Sapiens[human]')
+    main('Mus musculus[human]')
 
     # domain_g_original: nx.Graph = load_obj('DomainG_original')
     # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi.tsv')
