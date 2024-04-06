@@ -1,6 +1,4 @@
-import multiprocessing
 import os
-from multiprocessing import current_process
 import re
 import timeit
 
@@ -18,12 +16,9 @@ uniprot_to_entrez_dict = mart_table.set_index('UniProtID')['EntrezID'].to_dict()
 
 pattern = re.compile(r"(PF.*\d)\t(.*)_(.*)\t(PF.*)")
 
-inter_predicted = set()
 
-seq_dom = dict()
-
-
-def get_seq_dom(source_address: str):
+def get_dom_seq(source_address: str):
+    # first get seq_dom and then invert it
     seqDom = dict()
     for src in ['pfam-seq-sp', 'pfam-seq-tr']:
         file1 = open(source_address + src, 'r')
@@ -37,7 +32,15 @@ def get_seq_dom(source_address: str):
                 seqDom[seq] = set()
                 seqDom[seq].add(dom)
         print(f"Read {src}")
-    return seqDom
+    # reverse the dictionary
+    dom_seq = dict()
+    for seq in seqDom:
+        for dom in seqDom[seq]:
+            if dom in dom_seq:
+                dom_seq[dom].add(seq)
+            else:
+                dom_seq[dom] = {seq}
+    return dom_seq
 
 
 def read_interactions(file_path: str, third_col=None):
@@ -98,80 +101,61 @@ def add_classification(file_path: str, classifications_info: str):
             f.write(f"{interact[0]}\t{interact[1]}\t{interact[2]}\n")
 
 
-def process_line(line, predicted_int, uniprot_entrez_map):
-    line = line.strip()
-    match = pattern.match(line)
-    if match is None:
-        return None
-
-    domain1, prot1, prot2, domain2 = match.groups()
-
+def process_interaction(dd_interaction: tuple, dom_seq: dict, all_ppis: set):
     try:
-        if domain1 not in seq_dom[prot1] or domain2 not in seq_dom[prot2]:
-            return None
+        proteins_a = dom_seq[dd_interaction[0]]
+        proteins_b = dom_seq[dd_interaction[1]]
     except KeyError:
-        return None
+        return set()
 
-    if '_' in domain1 or '_' in domain2:
-        return None
+    # replace uniprot ids with entrez ids
+    proteins_a = {(protein, uniprot_to_entrez_dict.get(protein)) for protein in proteins_a}
+    proteins_b = {(protein, uniprot_to_entrez_dict.get(protein)) for protein in proteins_b}
 
-    interaction = (domain1, domain2) if domain1 < domain2 else (domain2, domain1)
-    if interaction not in predicted_int:
-        return None
-
-    prot1 = uniprot_entrez_map.get(prot1)
-    prot2 = uniprot_entrez_map.get(prot2)
-    if prot1 is None or prot2 is None:
-        return None
-    return f"{prot1}/{domain1}", f"{prot2}/{domain2}"
-
-
-def worker(chunk):
-    global chunks
-    results = set()
-    for line in chunk:
-        result = process_line(line, inter_predicted, uniprot_to_entrez_dict)
-        if result is not None:
-            results.add(result)
-    print(f"chunk complete by worker {current_process().name}")
-    return results
+    dd_pp_interaction = set()
+    for prot_a in proteins_a:
+        for prot_b in proteins_b:
+            # no mapping = can't be used
+            if prot_a[1] is None or prot_b[1] is None:
+                continue
+            # not a ppi = can't have a ddi
+            if (prot_a[0], prot_b[0]) not in all_ppis and (prot_b[0], prot_a[0]) not in all_ppis:
+                continue
+            dd_pp_interaction.add(tuple([f"{prot_a[1]}/{dd_interaction[0]}", f"{prot_b[1]}/{dd_interaction[1]}"]))
+    return dd_pp_interaction
 
 
 def main():
     print("Starting the DDI & PPI combination")
-    if not os.path.isfile("../resultdata/source_pfam_combined"):
-        os.system("cat ../resultdata/source*pfam | sort | uniq > ../resultdata/source_pfam_combined")
-    file_path = "../resultdata/source_pfam_combined"
-    global inter_predicted
-    global seq_dom
+    if not os.path.isfile("../resultdata/source_combined"):
+        print("Combining source files for available PPIs")
+        os.system("cat ../sourcedata/source* | sort | uniq > ../resultdata/source_combined")
+    file_path = "../resultdata/source_combined"
     inter_predicted = read_interactions("../resultdata/result-all")
-    seq_dom = get_seq_dom("../sourcedata/")
+    dom_seq = get_dom_seq("../sourcedata/")
+    all_ppis = read_interactions(file_path)
+    print("Read all the necessary data")
 
     start = timeit.default_timer()
 
-    num_processes = multiprocessing.cpu_count()
-    print(f"initializing {num_processes} cores")
-    with multiprocessing.Pool(processes=num_processes) as pool, open(file_path, 'r') as f:
-        lines = f.readlines()
-        chunk_size = len(lines) // num_processes  # Split into roughly equal chunks
-        chunks = [lines[i:i + chunk_size] for i in range(0, len(lines), chunk_size)]
-        print(f"chunk size: {chunk_size:,} lines per chunk")
+    combined_interactions = set()
+    tmp_interactions = []
+    c = 0
 
-        results_sets = pool.map(worker, chunks)
+    for dd_interaction in inter_predicted:
+        if c % 1000 == 0:
+            print(f"Processed {c}/{len(inter_predicted)} interactions in {round((timeit.default_timer() - start) / 60, 3)} minutes")
+        dd_pp_interaction = process_interaction(dd_interaction, dom_seq, all_ppis)
+        tmp_interactions.append(dd_pp_interaction)
+        c += 1
 
-    # Combine results from all chunks
-    combined_results = [result for sublist in results_sets for result in sublist]
+    for interaction in tmp_interactions:
+        combined_interactions.update(interaction)
 
-    # get the results
-    interactions = set()
-    for i in combined_results:
-        interactions.add(i)
-
-    print(f"Read {len(interactions)} interactions in {round((timeit.default_timer() - start) / 60, 3)} minutes from "
-          f"{file_path}")
+    print(f"Read {len(combined_interactions)} interactions in {round((timeit.default_timer() - start) / 60, 3)} minutes")
 
     with open("../resultdata/predicted_ddi_ppi.tsv", 'w') as f:
-        for ddi in interactions:
+        for ddi in combined_interactions:
             f.write(f'{ddi[0]}\t{ddi[1]}\n')
 
     add_classification("../resultdata/predicted_ddi_ppi.tsv", "../resultdata/result-all")

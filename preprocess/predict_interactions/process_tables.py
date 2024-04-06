@@ -32,29 +32,18 @@ def read_chain_dom(source_address):
     print("Read pdb_chain_pfam.tsv")
 
     seqDom = dict()
-    file1 = open(source_address + 'pfam-seq-sp', 'r')
-    for line in file1:
-        line_sp = line.rstrip().split('\t')
-        dom = line_sp[0]
-        seq = line_sp[1]
-        if seq in seqDom:
-            seqDom[seq].append(dom)
-        else:
-            seqDom[seq] = list()
-            seqDom[seq].append(dom)
-    print("Read pfam-seq-sp")
-
-    file1 = open(source_address + 'pfam-seq-tr', 'r')
-    for line in file1:
-        line_sp = line.rstrip().split('\t')
-        dom = line_sp[0]
-        seq = line_sp[1]
-        if seq in seqDom:
-            seqDom[seq].append(dom)
-        else:
-            seqDom[seq] = list()
-            seqDom[seq].append(dom)
-    print("Read pfam-seq-tr")
+    for src in ['pfam-seq-sp', 'pfam-seq-tr']:
+        file1 = open(source_address + src, 'r')
+        for line in file1:
+            line_sp = line.rstrip().split('\t')
+            dom = line_sp[0]
+            seq = line_sp[1]
+            if seq in seqDom:
+                seqDom[seq].append(dom)
+            else:
+                seqDom[seq] = list()
+                seqDom[seq].append(dom)
+        print(f"Read {src}")
 
     file1.close()
     print("Iterating through files took", round(timeit.default_timer() - start1, 1), "seconds")
