@@ -10,6 +10,7 @@ def parse(file):
     # extract mapping to decide what functions to call
     sources_to_parse = data['sources']
     tasks = []
+    additional_params = {}
     for source in sources_to_parse['mitab']:
         try:
             name = list(source.keys())[0]
@@ -90,4 +91,8 @@ def parse(file):
         tasks.append(("clean_mint", path, f"../sourcedata/source{counter}_{name}"))
         counter += 1
 
-    return tasks, data['organism'], data['functions']
+    if 'params' in data:
+        for param in data['params']:
+            additional_params[list(param.keys())[0]] = list(param.values())[0]
+
+    return tasks, data['organism'], data['functions'], additional_params

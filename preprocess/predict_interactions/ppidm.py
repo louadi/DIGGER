@@ -12,7 +12,7 @@ result_address = '../resultdata/'
 source_address = '../sourcedata/'
 
 
-def main():
+def main(threshold_ignore):
     sources = [x for x in os.listdir(source_address) if x.startswith('source')]
     print("Sources:", sources)
 
@@ -36,7 +36,7 @@ def main():
     filtering.create_wrong_assocations(sources, source_address, result_address)
 
     # This function assigns the interactions. It also does all the "hyperparameter optimization"
-    filtering.assign_interaction(sources, result_address)
+    filtering.assign_interaction(sources, result_address, continue_flag=threshold_ignore)
 
     ic3k.kbdock_union_3did(source_address, result_address)
 

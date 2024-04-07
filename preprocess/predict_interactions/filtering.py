@@ -368,7 +368,7 @@ def create_wrong_assocations(sources, source_address, result_address):
     print("Running Time: " + str(end - start) + "\n")
 
 
-def assign_interaction(sources, result_address):
+def assign_interaction(sources, result_address, continue_flag=False):
     start = datetime.datetime.now()
     print("Filtering associations for Interactions")
     interactions_3did, pfam_3did = read_interactions(result_address + '3did')
@@ -623,10 +623,12 @@ def assign_interaction(sources, result_address):
 
     if best_fmeasure_test < 0.8:
         print(f"Best threshold ({best_fmeasure_test}) is not very good, this may result in poor quality interactions.")
-        continue_flag = input("Do you want to continue anyway? (y/n): ")
-        if continue_flag == 'n':
-            sys.exit()
-
+        if not continue_flag:
+            continue_user = input("Do you want to continue anyway? (y/n): ")
+            if continue_user == 'n':
+                sys.exit()
+        else:
+            print("Threshold ignore flag set. Continuing anyway")
     result_calculated = open(result_address + 'pfam-pfam-interaction-calculated', 'w')
     result_merged = open(result_address + 'pfam-pfam-interaction-merged', 'w')
     header = 'domain1\tdomain2\t' + '\t'.join(source_names) + '\tscore\n'
