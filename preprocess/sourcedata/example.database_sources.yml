@@ -9,9 +9,12 @@ functions:
   - cumulate # cumulate the ddis with ppis to be able to extend the graph
   - extend # extend the graph with the cumulated ddis
 params:
-  - ignore_threshold: true # to ignore the threshold for bad F1 scores
+  - ignore_threshold: true  # to ignore the threshold for bad F1 scores
   - redo_similarities: true # to redo the similarity calculations
-  - backup_domain_g: true # to backup the domain graph
+  - backup_domain_g: true   # to backup the domain graph
+  # the coefficients to be used for the threshold generation. Must be a tuple of integers with length # of sources
+  # if you are not 100% sure, do not use this parameter
+  # - coefficients: (1,1,1,1,1,1,1,1)
 
 sources:
   mitab:

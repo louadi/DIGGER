@@ -125,6 +125,9 @@ def plot_score_density(positive_scores: list, negative_scores: list, v_lines=Fal
     # Displaying the plot
     plt.tight_layout()
     ax1.legend()
+    # get time for filename
+    now = timeit.default_timer()
+    plt.savefig(f"score_density_{now}.png")
     plt.show()
 
 
@@ -368,7 +371,7 @@ def create_wrong_assocations(sources, source_address, result_address):
     print("Running Time: " + str(end - start) + "\n")
 
 
-def assign_interaction(sources, result_address, continue_flag=False):
+def assign_interaction(sources, result_address, continue_flag=False, coefficients=None):
     start = datetime.datetime.now()
     print("Filtering associations for Interactions")
     interactions_3did, pfam_3did = read_interactions(result_address + '3did')
@@ -425,7 +428,22 @@ def assign_interaction(sources, result_address, continue_flag=False):
     print("Length of background data:", len(background_data))
 
     print("Calculating coefficients, this will take a while...")
-    best_coefs, all_auc = best_coefficients_rand(info, gold_standard, background_data, source_names)
+    if not coefficients:
+        best_coefs, all_auc = best_coefficients_rand(info, gold_standard, background_data, source_names)
+    else:
+        try:
+            coev_tuple = eval(coefficients)
+            best_coefs = {k: v for k, v in enumerate(coev_tuple, 1)}
+        except:
+            print("Error when reading coefficients. Make sure you provide a tuple!")
+            sys.exit(1)
+        if not isinstance(best_coefs, dict):
+            print("coefficients must be a tuple.")
+            sys.exit(1)
+        if len(best_coefs.keys()) != len(source_names):
+            print("Number of coefficients must match the number of sources.")
+            sys.exit(1)
+        print("Using predefined coefficients:", tuple(best_coefs.values()))
 
     all_data_scores = dict()
     best_coefs = [x for x in best_coefs.values()]

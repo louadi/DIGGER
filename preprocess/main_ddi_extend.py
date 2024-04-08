@@ -45,8 +45,7 @@ if __name__ == '__main__':
         cupm.main()
     # predict domain-domain interactions
     if 'all' in functions or 'predict' in functions:
-        ppidm.main(additional_flags.get('ignore_threshold', False),
-                   additional_flags.get('redo_similarity', True))
+        ppidm.main(additional_flags)
     # create nodes necessary for graph attributes
     if 'all' in functions or 'cumulate' in functions:
         dn.main()
