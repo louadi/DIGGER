@@ -4,12 +4,12 @@ import networkx as nx
 
 
 def load_obj(organism, name):
-    with open(f'../../container/domain/data/{organism}/{name}.pkl', 'rb') as f:
+    with open(f'../container/domain/data/{organism}/{name}.pkl', 'rb') as f:
         return pickle.load(f)
 
 
 def save_obj(organism, name, obj):
-    with open(f'../../container/domain/data/{organism}/{name}.pkl', 'wb') as f:
+    with open(f'../container/domain/data/{organism}/{name}.pkl', 'wb') as f:
         pickle.dump(obj, f)
 
 
@@ -82,7 +82,7 @@ def add_predicted_nodes(graph, predicted_ddis_path, graph_type):
     return graph
 
 
-def main(organism):
+def main(organism, backup=True):
     graphs = ['DomainG', 'DDI']
     for graph in graphs:
         # load original graph
@@ -92,10 +92,11 @@ def main(organism):
             continue
         print(f"Original graph has {len(original_graph.edges)} edges and {len(original_graph.nodes)} nodes")
         annotated_graph = dummy_attribute(original_graph)
-        save_obj(organism, f"{graph}.bak", annotated_graph)
+        if backup:
+            save_obj(organism, f"{graph}.bak", annotated_graph)
         # add predicted nodes
         extended_graph = add_predicted_nodes(annotated_graph,
-                                             f'../resultdata/predicted_ddi_ppi.tsv', graph)
+                                             f'resultdata/predicted_ddi_ppi.tsv', graph)
         print(f"Extended graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
         save_obj(organism, graph, extended_graph)
 

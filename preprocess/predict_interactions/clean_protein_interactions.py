@@ -202,5 +202,5 @@ def main(tasks: list):
         params = task[1:]
         globals()[function_name](*params)
 
-    read_all_interactions("../sourcedata/", True)
+    read_all_interactions("sourcedata/", True)
 

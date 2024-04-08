@@ -1,15 +1,12 @@
 import os
-import pickle
-import random
-import sys
 import timeit
-import interaction_clear_3did_kbdock as ic3k
-import process_tables as pt
-import filtering as filtering
-import pvalue as pv
+import predict_interactions.interaction_clear_3did_kbdock as ic3k
+import predict_interactions.process_tables as pt
+import predict_interactions.filtering as filtering
+import predict_interactions.pvalue as pv
 
-result_address = '../resultdata/'
-source_address = '../sourcedata/'
+result_address = 'resultdata/'
+source_address = 'sourcedata/'
 
 
 def main(threshold_ignore, redo_similarity):
@@ -50,7 +47,3 @@ def main(threshold_ignore, redo_similarity):
     print("Took:", timeit.default_timer() - start)
     # checkOneOnedomain()
     # verify_go_for_each_pair()
-
-
-if __name__ == '__main__':
-    main()

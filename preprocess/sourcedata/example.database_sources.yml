@@ -11,6 +11,8 @@ functions:
 params:
   - ignore_threshold: true # to ignore the threshold for bad F1 scores
   - redo_similarities: true # to redo the similarity calculations
+  - backup_domain_g: true # to backup the domain graph
+
 sources:
   mitab:
     - biogrid:

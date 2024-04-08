@@ -6,7 +6,7 @@ import timeit
 
 import pandas as pd
 
-mart_table = pd.read_csv('../sourcedata/mart_export.txt', sep='\t', dtype={'Gene stable ID': str,
+mart_table = pd.read_csv('sourcedata/mart_export.txt', sep='\t', dtype={'Gene stable ID': str,
                                                                         'UniProtKB/Swiss-Prot ID': str,
                                                                         'NCBI gene (formerly Entrezgene) ID': str})
 
@@ -139,13 +139,13 @@ def worker(chunk):
 
 def main():
     print("Starting the DDI & PPI combination")
-    if not os.path.isfile("../resultdata/source_pfam_combined"):
-        os.system("cat ../resultdata/source*pfam | sort | uniq > ../resultdata/source_pfam_combined")
-    file_path = "../resultdata/source_pfam_combined"
+    if not os.path.isfile("resultdata/source_pfam_combined"):
+        os.system("cat resultdata/source*pfam | sort | uniq > resultdata/source_pfam_combined")
+    file_path = "resultdata/source_pfam_combined"
     global inter_predicted
     global seq_dom
-    inter_predicted = read_interactions("../resultdata/result-all")
-    seq_dom = get_seq_dom("../sourcedata/")
+    inter_predicted = read_interactions("resultdata/result-all")
+    seq_dom = get_seq_dom("sourcedata/")
 
     start = timeit.default_timer()
 
@@ -170,11 +170,11 @@ def main():
     print(f"Read {len(interactions)} interactions in {round((timeit.default_timer() - start) / 60, 3)} minutes from "
           f"{file_path}")
 
-    with open("../resultdata/predicted_ddi_ppi.tsv", 'w') as f:
+    with open("resultdata/predicted_ddi_ppi.tsv", 'w') as f:
         for ddi in interactions:
             f.write(f'{ddi[0]}\t{ddi[1]}\n')
 
-    add_classification("../resultdata/predicted_ddi_ppi.tsv", "../resultdata/result-all")
+    add_classification("resultdata/predicted_ddi_ppi.tsv", "resultdata/result-all")
 
 
 if __name__ == '__main__':

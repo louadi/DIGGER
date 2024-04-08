@@ -4,7 +4,7 @@ import timeit
 
 import pandas as pd
 
-mart_table = pd.read_csv('../sourcedata/mart_export.txt', sep='\t', dtype={'Gene stable ID': str,
+mart_table = pd.read_csv('sourcedata/mart_export.txt', sep='\t', dtype={'Gene stable ID': str,
                                                                         'UniProtKB/Swiss-Prot ID': str,
                                                                         'NCBI gene (formerly Entrezgene) ID': str})
 
@@ -127,12 +127,12 @@ def process_interaction(dd_interaction: tuple, dom_seq: dict, all_ppis: set):
 
 def main():
     print("Starting the DDI & PPI combination")
-    if not os.path.isfile("../resultdata/source_combined"):
+    if not os.path.isfile("resultdata/source_combined"):
         print("Combining source files for available PPIs")
-        os.system("cat ../sourcedata/source* | sort | uniq > ../resultdata/source_combined")
-    file_path = "../resultdata/source_combined"
-    inter_predicted = read_interactions("../resultdata/result-all")
-    dom_seq = get_dom_seq("../sourcedata/")
+        os.system("cat sourcedata/source* | sort | uniq > resultdata/source_combined")
+    file_path = "resultdata/source_combined"
+    inter_predicted = read_interactions("resultdata/result-all")
+    dom_seq = get_dom_seq("sourcedata/")
     all_ppis = read_interactions(file_path)
     print("Read all the necessary data")
 
@@ -154,11 +154,11 @@ def main():
 
     print(f"Read {len(combined_interactions)} interactions in {round((timeit.default_timer() - start) / 60, 3)} minutes")
 
-    with open("../resultdata/predicted_ddi_ppi.tsv", 'w') as f:
+    with open("resultdata/predicted_ddi_ppi.tsv", 'w') as f:
         for ddi in combined_interactions:
             f.write(f'{ddi[0]}\t{ddi[1]}\n')
 
-    add_classification("../resultdata/predicted_ddi_ppi.tsv", "../resultdata/result-all")
+    add_classification("resultdata/predicted_ddi_ppi.tsv", "resultdata/result-all")
 
 
 if __name__ == '__main__':

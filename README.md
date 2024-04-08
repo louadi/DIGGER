@@ -44,6 +44,26 @@ docker-compose exec web python manage.py collectstatic --no-input
 ```
 
 
+## Extending DIGGER by DDIs
+To extend DIGGER using generated Domain-Domain Interactions (DDIs) follow these steps:
+````bash
+# First, create a conda environment to ensure you have all dependencies installed
+conda env create -f DIGGER_env.yml
+
+# Activate the environment
+conda activate DIGGER
+
+# Make sure you have the necessary files in the sourcedata folder
+# more info about what these files should look like can be found in the sourcedata README.md
+
+# copy the example database_sources to have a backup and list of all options. 
+# Edit the database_sources.yml file to your needs
+cp preprocess/sourcedata/example.database_sources.yml preprocess/sourcedata/database_sources.yml
+
+# Run the prediction script
+python preprocess/main_ddi_extend.py
+````
+
 ## Cite
 
 If you use DIGGER, please cite:

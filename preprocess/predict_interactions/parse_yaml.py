@@ -30,7 +30,7 @@ def parse(file):
             print(f"YAML not properly formatted, specify interactor columns for {list(source.keys())[0]}")
             exit(1)
 
-        tasks.append(("clean_mitab", path, f"../sourcedata/source{counter}_{name}", relevant_columns))
+        tasks.append(("clean_mitab", path, f"sourcedata/source{counter}_{name}", relevant_columns))
         counter += 1
 
     for source in sources_to_parse['string']:
@@ -52,7 +52,7 @@ def parse(file):
             print(f"YAML not properly formatted, specify mapping for {list(source.keys())[0]}")
             exit(1)
 
-        tasks.append(("clean_string", path, f"../sourcedata/source{counter}_string-{name}", mapping))
+        tasks.append(("clean_string", path, f"sourcedata/source{counter}_string-{name}", mapping))
         counter += 1
 
     for source in ['mippie', 'homology']:
@@ -73,7 +73,7 @@ def parse(file):
             except KeyError:
                 print(f"YAML not properly formatted, specify mapping for {name}")
                 exit(1)
-            tasks.append((f"clean_{source}", path, f"../sourcedata/source{counter}_{name}", mapping))
+            tasks.append((f"clean_{source}", path, f"sourcedata/source{counter}_{name}", mapping))
             counter += 1
 
     if 'mint' in sources_to_parse:
@@ -88,7 +88,7 @@ def parse(file):
             print(f"YAML not properly formatted, specify a path for mint")
             exit(1)
 
-        tasks.append(("clean_mint", path, f"../sourcedata/source{counter}_{name}"))
+        tasks.append(("clean_mint", path, f"sourcedata/source{counter}_{name}"))
         counter += 1
 
     if 'params' in data:
