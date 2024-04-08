@@ -12,7 +12,7 @@ result_address = '../resultdata/'
 source_address = '../sourcedata/'
 
 
-def main(threshold_ignore):
+def main(threshold_ignore, redo_similarity):
     sources = [x for x in os.listdir(source_address) if x.startswith('source')]
     print("Sources:", sources)
 
@@ -26,7 +26,7 @@ def main(threshold_ignore):
     # This calculates all the similarity scores for each source
     for i in sources:
         pt.similarity_calculator_interaction(i, 'pfam', seqDom, seqpdbchain, pdbchainDom,
-                                             source_address, result_address, redo=True)
+                                             source_address, result_address, redo=redo_similarity)
 
     # # sifts_reader_process('sifts', 'pfam')
     # This is a cleanup of the domain interaction sources

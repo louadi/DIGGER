@@ -71,11 +71,14 @@ def dummy_attribute(graph):
 
 
 def add_predicted_nodes(graph, predicted_ddis_path, graph_type):
+    mapping = {'Gold': 'high', 'Silver': 'mid', 'Bronze': 'low'}
     with open(predicted_ddis_path, 'r') as f:
         for line in f.readlines():
             line = line.strip().split("\t")
+            if not graph.has_node(line[0]) or not graph.has_node(line[1]):
+                continue
             if not graph.has_edge(line[0], line[1]):
-                graph.add_edge(line[0], line[1], confidence=line[2])
+                graph.add_edge(line[0], line[1], confidence=mapping[line[2]])
     return graph
 
 

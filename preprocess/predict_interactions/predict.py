@@ -44,7 +44,8 @@ if __name__ == '__main__':
         cupm.main()
     # predict domain-domain interactions
     if 'all' in functions or 'predict' in functions:
-        ppidm.main(additional_flags['ignore_threshold'])
+        ppidm.main(additional_flags.get('ignore_threshold', False),
+                   additional_flags.get('redo_similarity', True))
     # create nodes necessary for graph attributes
     if 'all' in functions or 'cumulate' in functions:
         dn.main()
@@ -53,4 +54,4 @@ if __name__ == '__main__':
         ga.main(organism)
 
     stop = timeit.default_timer()
-    print(f"Took : {stop - start} seconds for {functions}")
+    print(f"Took : {stop - start:2f} seconds for {functions}")
