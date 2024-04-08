@@ -61,7 +61,12 @@ conda activate DIGGER
 cp preprocess/sourcedata/example.database_sources.yml preprocess/sourcedata/database_sources.yml
 
 # Run the prediction script
-python preprocess/main_ddi_extend.py
+cd preprocess
+python main_ddi_extend.py
+
+# Once this has run, depending on your settings, restarting the DIGGER container will show the new data
+cd ..
+docker-compose up -d --force-recreate
 ````
 
 ## Cite
