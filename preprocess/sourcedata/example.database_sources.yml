@@ -1,0 +1,51 @@
+# Specify organism here after you have created the respective folder in the digger data folder so that we can
+# actually extend the graphs with the predicted data
+organism: Mus musculus[mouse]
+functions:
+  - all # to run all functions
+  - clean # clean the input sources to work with ppidm
+  - map # map the sources to uniprot ids
+  - predict # predict the interactions using ppidm
+  - cumulate # cumulate the ddis with ppis to be able to extend the graph
+  - extend # extend the graph with the cumulated ddis
+params:
+  - ignore_threshold: true  # to ignore the threshold for bad F1 scores
+  - redo_similarities: true # to redo the similarity calculations
+  - backup_domain_g: true   # to backup the domain graph
+  # the coefficients to be used for the threshold generation. Must be a tuple of integers with length # of sources
+  # if you are not 100% sure, do not use this parameter
+  # - coefficients: (1,1,1,1,1,1,1,1)
+
+sources:
+  mitab:
+    - biogrid:
+        path: "./mouse_datasets/BIOGRID-ORGANISM-Mus_musculus-4.4.230.mitab.txt"
+        interactor_columns: # these columns are the columns used to resolve uniprot ids, so they should have the "uniprotkb" identifier in them
+          - "Alt IDs Interactor A"
+          - "Alt IDs Interactor B"
+    - intact:
+        path: "./mouse_datasets/intact 16_02_2024.txt"
+        interactor_columns:
+          - "Alt. ID(s) interactor A"
+          - "Alt. ID(s) interactor B"
+    - dip:
+        path: "./mouse_datasets/Mmusc20170205.txt"
+        interactor_columns:
+          - "ID interactor A"
+          - "ID interactor B"
+  mint:
+    name: mint # optional
+    path: "./mouse_datasets/mint_04_03_2024.txt"
+  string:
+    - exp:
+        path: "./mouse_datasets/10090.protein.physical.links.v12.0.txt"
+        mapping: "./mouse_datasets/mart_export.txt" # this mapping should include Protein stable ID and UniProtKB/Swiss-Prot ID
+    - rest:
+        path: "./mouse_datasets/string_10090.protein.links.v12.0.txt"
+        mapping: "./mouse_datasets/mart_export.txt"
+  mippie:
+    path: "./mouse_datasets/mippie_ppi_v1_0.tsv"
+    mapping: "./mouse_datasets/mart_export.txt" # this mapping should include NCBI gene (formerly Entrezgene) ID and UniProtKB/Swiss-Prot ID
+  homology:
+    path: "./mouse_datasets/mouse_ensembl_transcriptome.protein_protein_interactions.tsv"
+    mapping: "./mouse_datasets/mart_export.txt" # this mapping should include Transcript stable ID and UniProtKB/Swiss-Prot ID

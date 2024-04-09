@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Multiple queries {{ name }}{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow my-5">
+  <div class="card-body p-3">
+    <h3 class="font-weight-light card-title"> List of the gene transcripts with known Pfam domains. </h3>
+    {% for key, value in tb.items %}
+    <div class="row mx-1 mb-1 mt-3 inHead" data-toggle="collapse" href="#collapse{{ key }}" role="button"
+         aria-expanded="true">
+      <h5 class="font-weight">
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="chevron rotate">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+        Input: <b>{{ key|safe }}</b></h5>
+    </div>
+    <div class="row mx-1 collapse" id="collapse{{ key }}">
+      <div class="table-responsive">
+        <h6>
+          {% autoescape off %}
+          {{ value }}
+          {% endautoescape %}
+        </h6>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<script>
+    // show the wait alert if the user clicks on the link with the class "visualize"
+    $(document).ready(function () {
+        $(".collapse").collapse('show');
+    });
+
+    // change mouse button of all inHead elements to pointer
+    $(".inHead").css("cursor", "pointer");
+
+    // rotate the chevron if the user clicks on the inHead element
+      $(".inHead").click(function () {
+          $(this).find(".chevron").toggleClass("rotate");
+      });
+</script>
+
+{% endblock content %}

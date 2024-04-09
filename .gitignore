@@ -222,3 +222,5 @@ cython_debug/
 
 # IntelliJ like IDEs (e.g. PyCharm)
 .idea
+
+tmp*
