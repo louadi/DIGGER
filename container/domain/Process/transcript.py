@@ -118,9 +118,6 @@ def Protein_view(P_id, organism):
     if len(protein_with_DDI) > 1:
         pd_interaction = table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_domain, organism)
 
-        pd_interaction["Score"] = (
-                100 - ((pd_interaction["Percentage of lost domain-domain interactions"].astype(int))))
-
         pd_interaction.insert(0, 'Selected Protein variant', '')
         pd_interaction["Selected Protein variant"] = tran_name
         pd_interaction.drop(columns=['Lost DDIs', 'Retained DDIs']).to_csv(f'{table_path_2}/{trID}.csv', index=False, )
@@ -405,7 +402,6 @@ def transcript_table(transcript_id, organism, protein_ID=False):
     trans_pfams = []
     all_pfams = []
     transcript_name = ""
-    missing = "-"
     with connection.cursor() as cursor:
         cursor.execute(sql_pfam, [transcript_id])
         pfam = cursor.fetchall()
@@ -417,17 +413,22 @@ def transcript_table(transcript_id, organism, protein_ID=False):
             cursor.execute(sql_pfam, [trans])
             pfam = cursor.fetchall()
             all_pfams.extend([x[0] for x in pfam if x[0] is not None])
-    if len(set(all_pfams) - set(trans_pfams)) > 0:
-        missing = "&#9989;"
+    num_missing = len(set(all_pfams) - set(trans_pfams))
+    missing = ('<span class="text-success">█</span>' * ((len(set(all_pfams)) - num_missing) * 2) +
+               '<span class="text-danger">█</span>' * (num_missing * 2))
 
     h = reverse('home') + "ID/" + organism + "/"
     link = '<a class="visualize" href="' + h + transcript_id + '">' + " Visualize " + '</a>'
     trans_pfams = [nt.link(x) for x in trans_pfams]
     domains = ', '.join(trans_pfams)
     # make a dataframe
-    transcript_data = pd.DataFrame(columns=['Transcript name', 'Transcript ID', 'Pfam domains', 'Interacting domains are missing in the isoform', 'Link'])
+
+    transcript_data = pd.DataFrame(columns=['Transcript name', 'Transcript ID', 'Pfam domains', '<span '
+                                            'class="text-success">Present</span> / <span class="text-danger">Missing'
+                                            '</span> interacting domains in the isoform', 'Link'])
     transcript_data = transcript_data.append({'Transcript name': transcript_name, 'Transcript ID': transcript_id,
                                               'Pfam domains': domains,
-                                              'Interacting domains are missing in the isoform': missing,
+                                              '<span class="text-success">Present</span> / <span class="text-danger">'
+                                              'Missing</span> interacting domains in the isoform': missing,
                                               'Link': link}, ignore_index=True)
     return transcript_data.to_html(**settings.TO_HTML_PARAMETERS)

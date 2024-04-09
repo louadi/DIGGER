@@ -65,9 +65,15 @@ def TranscriptsID_to_table(transcripts, organism, entrez='0'):
                 missing = []
                 missing = [x for x in all_pfams if x not in p]
                 missing = [entrez + '/' + x for x in missing]
-                missing_interaction = '-'
-                if any(DomainG.has_node(x) for x in missing):
-                    missing_interaction = '&#9989;'
+                missing_count = 0
+                not_missing_count = len(all_pfams) - len(missing)
+                for x in missing:
+                    if DomainG.has_node(x):
+                        # remove the second last element of the string
+                        missing_count += 1
+                # add green full blocks not_missing_count times and red empty blocks missing_count times
+                missing_interaction = ('<span class="text-success">█</span>' * (not_missing_count*2) +
+                                       '<span class="text-danger">█</span>' * (missing_count*2))
                 missing_PPI.append(missing_interaction)
 
                 # add hyperlink
@@ -77,7 +83,8 @@ def TranscriptsID_to_table(transcripts, organism, entrez='0'):
         if ID != []:
             pd_isoforms = pd.DataFrame(list(zip(name, ID, pfams, missing_PPI)),
                                        columns=['Transcript name', 'Transcript ID', 'Pfam domains',
-                                                'Interacting domains are missing in the isoform'])
+                                                '<span class="text-success">Present</span> / <span class="text-danger">'
+                                                'Missing</span> interacting domains in the isoform'])
             pd_isoforms['length'] = pd_isoforms['Pfam domains'].str.len()
             pd_isoforms.sort_values('length', ascending=False, inplace=True)
             pd_isoforms = pd_isoforms.drop(columns=['length'])

@@ -154,7 +154,7 @@ def exon(request, organism, exon_ID):
         pd_interaction = pd_interaction[
             ["Affected Protein", 'Partner Protein', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs',
              'Percentage of lost domain-domain interactions', 'Residue evidence', "Protein-protein interaction",
-             'Score', 'Confidence']]
+             'Confidence']]
 
         pd_interaction = pd_interaction.rename(columns={
 
@@ -163,7 +163,6 @@ def exon(request, organism, exon_ID):
             "Lost DDIs": "Missing domain-domain interactions",
             "Protein-protein interaction": "Protein-protein interaction",
             'Residue evidence': 'Residue-level evidence*',
-            "Score": "% of retained DDIs",
         })
 
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
@@ -248,13 +247,12 @@ def transcript(request, P_id, organism):
             "Retained DDIs": "Retained domain-domain interactions",
             "Lost DDIs": "Missing domain-domain interactions",
             "Protein-protein interaction": "Protein-protein interaction",
-            "Score": "% of retained DDIs",
         })
 
         pd_interaction = pd_interaction[
             ["Selected Protein variant", 'Partner Protein', 'NCBI gene ID', 'Retained domain-domain interactions',
              'Missing domain-domain interactions', '% of missing DDIs', 'Residue-level evidence',
-             "Protein-protein interaction", '% of retained DDIs', 'Confidence']]
+             "Protein-protein interaction", 'Confidence']]
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     # Get ID of missing domains with interactions

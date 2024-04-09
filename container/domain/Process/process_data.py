@@ -268,10 +268,10 @@ def interactive_select(pd_interaction):
     # go through pd_interaction and create a dictionary with the select box options
     for index, row in pd_interaction.iterrows():
         if row['Confidence'] == 'Original':
-            Interactiveview_select[row['Confidence']].append([row['_'], row['NCBI gene ID'], row['Score']])
+            Interactiveview_select[row['Confidence']].append([row['_'], row['NCBI gene ID'], row['Percentage of lost domain-domain interactions']])
         else:
             Interactiveview_select[row['Confidence'] + " confidence"].append(
-                [row['_'], row['NCBI gene ID'], row['Score']])
+                [row['_'], row['NCBI gene ID'], row['Percentage of lost domain-domain interactions']])
 
     order = {'Original': 3, 'High confidence': 2, 'Mid confidence': 1, 'Low confidence': 0}
     return dict(sorted(Interactiveview_select.items(), key=lambda x: order.get(x[0], 0), reverse=True))
