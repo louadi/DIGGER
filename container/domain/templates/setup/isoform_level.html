@@ -58,23 +58,12 @@
       </h6>
     </form>
     <div id="info_alert" class="alert alert-info my-3">You can also put in multiple search terms separated by a comma.</div>
-    <div id="wait_alert" class="alert alert-warning my-5" style="display: none">
-      This analysis might take a few seconds. Please be patient.
-    </div>
   </div>
 
   <script src="{% static "domain/typeahead.bundle.js" %}"></script>
   <script src="{% static "domain/typeahead.js" %}"></script>
   <script src="{% static "domain/organism_selector.js" %}"></script>
   <script src="{% static "domain/exampleSelector.js" %}"></script>
-  <script>
-      // show the wait alert iff the value of the input field begins with ENS and ends with a number and it was submitted
-      $('form').submit(function () {
-          var input = $('#input_field').val();
-          if (input.match(/^ENS[TP].*\d+$/)) {
-              $('#wait_alert').show();
-          }
-      });
-  </script>
+
 
 {% endblock %}
