@@ -12,6 +12,7 @@ services:
     volumes:
       - static_volume:/code/run/static
       - media_volume:/code/run/media
+      - ./container:/code
     networks:
       - digger_database_network
       - digger_nginx_network
@@ -24,6 +25,8 @@ services:
       - .env
     networks:
       - digger_database_network
+    ports:
+      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 

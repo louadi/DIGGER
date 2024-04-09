@@ -11,7 +11,7 @@ Protein-protein interaction (PPI) networks are a key resource for systems biolog
 
 
 ## Deploying DIGGER
-To install DIGGER (running it for the first time) follow these steps:
+To install DIGGER 1.5 (running it for the first time) follow these steps:
 ```shell script
 # First, follow this link, if you want to install docker-compose: 
 # https://docs.docker.com/compose/install/
@@ -19,8 +19,10 @@ To install DIGGER (running it for the first time) follow these steps:
 #  Clone this repository and change into the created directory
 git clone https://github.com/louadi/DIGGER.git && cd DIGGER
 
-# Download a copy of all the data files into domain/data
+# Download a copy of all the data files into domain/data/Homo sapiens[human]/
+# If you have more organisms, add the files into respective foldes, e.g. domain/data/Mus musculus[mouse]/
 wget https://zenodo.org/record/3973368/files/data.zip    # extract the files
+
 
 # Create a copy of the .env.sample file and edit the .env file
 cp .env.sample .env   # now edit the .env file 
@@ -28,7 +30,7 @@ cp .env.sample .env   # now edit the .env file
 # Deploy and build the containers
 docker-compose up -d --build
 
-# Apply migrations to the database (make sure the containers are up an running, else you will get an error)
+# Apply migrations (make sure the containers are up an running, else you will get an error)
 docker-compose exec web python manage.py migrate --noinput 
 
 # Import all the datasets into the database
@@ -41,6 +43,31 @@ docker-compose exec web python manage.py collectstatic --no-input
 
 ```
 
+
+## Extending DIGGER by DDIs
+To extend DIGGER using generated Domain-Domain Interactions (DDIs) follow these steps:
+````bash
+# First, create a conda environment to ensure you have all dependencies installed
+conda env create -f DIGGER_env.yml
+
+# Activate the environment
+conda activate DIGGER
+
+# Make sure you have the necessary files in the sourcedata folder
+# more info about what these files should look like can be found in the sourcedata README.md
+
+# copy the example database_sources to have a backup and list of all options. 
+# Edit the database_sources.yml file to your needs
+cp preprocess/sourcedata/example.database_sources.yml preprocess/sourcedata/database_sources.yml
+
+# Run the prediction script
+cd preprocess
+python main_ddi_extend.py
+
+# Once this has run, depending on your settings, restarting the DIGGER container will show the new data
+cd ..
+docker-compose up -d --force-recreate
+````
 
 ## Cite
 
