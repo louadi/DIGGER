@@ -71,9 +71,16 @@ def TranscriptsID_to_table(transcripts, organism, entrez='0'):
                     if DomainG.has_node(x):
                         # remove the second last element of the string
                         missing_count += 1
-                # add green full blocks not_missing_count times and red empty blocks missing_count times
-                missing_interaction = ('<span class="text-success">█</span>' * (not_missing_count*2) +
-                                       '<span class="text-danger">█</span>' * (missing_count*2))
+                for x in [f"{entrez}/{x}" for x in all_pfams if x in p]:
+                    if DomainG.has_node(x):
+                        # remove the second last element of the string
+                        not_missing_count += 1
+                total_count = missing_count + not_missing_count
+                percent_retained = (not_missing_count / total_count)
+                green_boxes = int(10 * percent_retained)
+                missing_interaction = '<span class="text-success">█</span>' * green_boxes + ('<span '
+                                                                    'class="text-danger">█</span>') * (10 - green_boxes)
+
                 missing_PPI.append(missing_interaction)
 
                 # add hyperlink

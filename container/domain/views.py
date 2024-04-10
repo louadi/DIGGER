@@ -201,8 +201,7 @@ def exon(request, organism, exon_ID):
         'first_vict': first_victim,
         'first_name': first_name,
 
-        'enable_Proteinview': len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True
-,
+        'enable_Proteinview': len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True,
     }
     return render(request, 'visualization/exon.html', context)
 
