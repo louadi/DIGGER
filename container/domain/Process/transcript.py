@@ -1,5 +1,6 @@
 import os
 
+
 from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as info
@@ -21,6 +22,16 @@ engine = settings.DATABASE_ENGINE
 table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table 2')
 if not os.path.exists(table_path_2):
     os.makedirs(table_path_2)
+
+import sys
+def sizeof_fmt(num, suffix='B'):
+    ''' by Fred Cirera,  https://stackoverflow.com/a/1094933/1870254, modified'''
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f %s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f %s%s" % (num, 'Yi', suffix)
+
 
 DomainG_all = {}
 PPI_all = {}
@@ -414,8 +425,10 @@ def transcript_table(transcript_id, organism, protein_ID=False):
             pfam = cursor.fetchall()
             all_pfams.extend([x[0] for x in pfam if x[0] is not None])
     num_missing = len(set(all_pfams) - set(trans_pfams))
-    missing = ('<span class="text-success">█</span>' * ((len(set(all_pfams)) - num_missing) * 2) +
-               '<span class="text-danger">█</span>' * (num_missing * 2))
+    percent_retained = (len(set(all_pfams)) - num_missing) / len(set(all_pfams))
+    green_boxes = int(10 * percent_retained)
+    missing = '<span class="text-success">█</span>' * green_boxes + '<span class="text-danger">█</span>' * (
+            10 - green_boxes)
 
     h = reverse('home') + "ID/" + organism + "/"
     link = '<a class="visualize" href="' + h + transcript_id + '">' + " Visualize " + '</a>'
