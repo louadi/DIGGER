@@ -364,7 +364,7 @@
           <div class="card-body">
 
             {% if dis %}
-              {% if enable_Proteinview %}
+              {% if not enable_Proteinview %}
 
                 <h5 class="tab1"> ProteinView is not available for this protein because of its high
                   number of partners in the PPI. Please check the InteractionView or
@@ -544,10 +544,10 @@
                     });
 
                     function proteinViewFilter(node) {
-                        if (proteinViewFilterValue.value === "") {
+                        if (proteinViewSelector.value === "") {
                             return node.group === "protein";
                         }
-                        switch (proteinViewFilterValue.value) {
+                        switch (proteinViewSelector.value) {
 
                             case "PPI-DDI":
                                 return node.source === "DDI";
@@ -567,7 +567,7 @@
 
                   </script>
 
-                  <img class="resize" src="{% static 'image/legend2.png' %}" alt="">
+                  <img class="resize" src="{% static 'image/network_legend.png' %}" alt="">
                 </center>
 
                 <br/>

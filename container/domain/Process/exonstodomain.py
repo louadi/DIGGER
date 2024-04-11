@@ -124,7 +124,6 @@ def vis_node_(node, organism, missing=False):
             E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, width: '
                                          f'WIDTH_SCALE, color:  {colour} }},')
 
-
     return N, E, pr.entrez_to_name(node.split("/")[0], organism), node.split("/")[1]
 
 

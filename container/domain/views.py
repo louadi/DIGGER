@@ -148,8 +148,13 @@ def exon(request, organism, exon_ID):
         Interactiveview_select = pr.interactive_select(pd_interaction)
 
         # the first protein to show, select a protein with confidence original
-        first_victim = pd_interaction[pd_interaction['Confidence'] == 'Original']['NCBI gene ID'].tolist()[0]
-        first_name = pd_interaction[pd_interaction['Confidence'] == 'Original']['_'].tolist()[0]
+        try:
+            first_victim = pd_interaction[pd_interaction['Confidence'] == 'Original']['NCBI gene ID'].tolist()[0]
+            first_name = pd_interaction[pd_interaction['Confidence'] == 'Original']['_'].tolist()[0]
+        except IndexError:
+            # if there is no original confidence, select the first protein
+            first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
+            first_name = pd_interaction['_'].tolist()[0]
 
         pd_interaction = pd_interaction[
             ["Affected Protein", 'Partner Protein', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs',
@@ -166,6 +171,7 @@ def exon(request, organism, exon_ID):
         })
 
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+
 
     table = table.to_html(**settings.TO_HTML_PARAMETERS)
 
@@ -201,7 +207,7 @@ def exon(request, organism, exon_ID):
         'first_vict': first_victim,
         'first_name': first_name,
 
-        'enable_Proteinview': len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True,
+        'enable_Proteinview': len(edges_domainV.get('original')) < 70 if edges_domainV.get('original') else True,
     }
     return render(request, 'visualization/exon.html', context)
 
@@ -347,7 +353,7 @@ def transcript(request, P_id, organism):
         'Domainview_nodes': nodes_domainV,
 
         # make it make sense
-        'enable_Proteinview': (len_edges_domainV > 200) or (len_edges_domainV > 130 and len(unique) + len(missed) == 1),
+        'enable_Proteinview': (len_edges_domainV < 200 or len(unique) + len(missed) == 1),
     }
 
     return render(request, 'visualization/transcript.html', context)
@@ -428,7 +434,7 @@ def exon_level(request):
         search_query = search_query.split(" ")
         search_query = [x for x in search_query if x != '']
         # search_query[0]=search_query[0].split(".")[0]
-        if len(search_query) == 3 and re.match(r'ENS\w*[G]\d+$', search_query[0]) and \
+        if len(search_query) == 3 and re.match(r'ENS\w*G\d+$', search_query[0]) and \
                 search_query[1].isdigit() and search_query[2].isdigit():
 
             gene_ID = search_query[0]

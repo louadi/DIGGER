@@ -154,8 +154,8 @@ function startNetwork(container, options, predictedCheckboxes, physicsCheckbox,
             // check if length of edges[checkbox.value] is greater than 0, if not do nothing
             if (edges[checkbox.value].length > 0) {
                 data = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
-                if (nodeFilterValue.value === "PPI" || nodeFilterValue.value === "PPI-DDI") {
-                    data = filterProteinView(data, nodeFilterValue.value);
+                if (nodeFilterSelector.value === "PPI" || nodeFilterSelector.value === "PPI-DDI") {
+                    data = filterProteinView(data, nodeFilterSelector.value);
                 }
                 // check if the nodes and edges are the same as the previous ones, if not update the network
                 if (!compareDataSets(data, previousData)) {
