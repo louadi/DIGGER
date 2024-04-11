@@ -25,8 +25,10 @@ function setNodes(nodes, edges, predictedCheckboxes, filterFunction) {
     nodes = new vis.DataSet(neededNodes);
     nodes = new vis.DataSet(nodes.get({filter: filterFunction}));
 
-    return {nodes: nodes,
-            edges: new vis.DataSet(neededEdges)};
+    return {
+        nodes: nodes,
+        edges: new vis.DataSet(neededEdges)
+    };
 }
 
 
@@ -110,7 +112,6 @@ function connectedToMainNetwork(edges, startNode) {
     // depth of 2, however if the protein is connected to the main network, it must at least be 3
     const requiredDepth = startNode.includes("/") ? 2 : 1;
 
-
     function dfs(node, depth) {
         visited.add(node);
         if (depth > requiredDepth) {
@@ -173,24 +174,21 @@ function startNetwork(container, options, predictedCheckboxes, physicsCheckbox,
         }
     });
 
-    nodeFilterSelector.addEventListener("change", function(e) {
-    // set new value to filter variable
-    // if nodeFilterValue is instance of Set then add the value to the set else set it to the value
-    if (nodeFilterValue instanceof Set) {
-        nodeFilterValue = new Set(e.target.value);
-    } else {
-        nodeFilterValue = e.target.value;
-    }
-    data = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
+    nodeFilterSelector.addEventListener("change", function (e) {
 
-    try {
-        if (nodeFilterValue.value === "PPI" || nodeFilterValue.value === "PPI-DDI") {
-            data = filterProteinView(data, nodeFilterValue.value);
+        data = setNodes(nodes, edges, predictedCheckboxes, graphFilter);
+
+        try {
+            if (nodeFilterSelector.value === "PPI" || nodeFilterSelector.value === "PPI-DDI") {
+                // uncheck "Enable Physics" if it is checked
+                physicsCheckbox.checked = true;
+                network2.setOptions({physics: true});
+                data = filterProteinView(data, nodeFilterSelector.value);
+            }
+        } catch (e) {
+            console.log(e);
         }
-    } catch (e) {
-        console.log(e);
-    }
-    network2.setData(data);
+        network2.setData(data);
     });
     network2.fit();
 }

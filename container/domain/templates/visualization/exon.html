@@ -230,10 +230,12 @@
                       LENGTH_SUB = 50,
                       WIDTH_SCALE = 2,
                       GREEN = "green",
+                      LIGHTGREEN = "lightgreen",
                       RED = "#C5000B",
                       //ORANGE = "orange",
                       YELLOW = "orange",
-                      WHITE = "EED5EB"
+                      WHITE = "EED5EB",
+                      BLUE = "#2B7CE9",
                       //GRAY = '#666666',
                       GRAY = "gray",
                       BLACK = "#2B1B17";
@@ -304,7 +306,7 @@
 
                           MDomain: {
                               shape: "triangle",
-                              color: "#109618" // green
+                              borderWidth: 4,
                           }
                       }
                   };
@@ -339,6 +341,9 @@
 
 
               </script>
+                <center>
+                <img class="resize" src="{% static 'image/network_legend.webp' %}" alt="">
+              </center>
 
             {% else %}
               <h5 class="mt-4"> The domains coded by selected exon do not have any known

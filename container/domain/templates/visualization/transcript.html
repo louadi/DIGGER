@@ -346,7 +346,7 @@
                     var proteinViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-protein]");
                     var proteinViewPredictedCheckboxes = document.querySelectorAll(".predicted-checkbox-protein");
 
-                    let proteinViewFilterValue = {value: "PPI"};
+                    let proteinViewFilterValue = {value: proteinViewSelector.value};
 
                     var predictedItems = document.querySelectorAll(".protein-view-predicted");
 
@@ -364,10 +364,10 @@
                     });
 
                     function proteinViewFilter(node) {
-                        if (proteinViewFilterValue.value === "") {
+                        if (proteinViewSelector.value === "") {
                             return node.group === "protein";
                         }
-                        switch (proteinViewFilterValue.value) {
+                        switch (proteinViewSelector.value) {
 
                             case "PPI-DDI":
                                 return node.source === "DDI";
@@ -488,9 +488,10 @@
                     RED = "#C5000B",
                     //ORANGE = "orange",
                     YELLOW = "orange",
-                    WHITE = "EED5EB"
-                //GRAY = '#666666',
-                GRAY = "gray",
+                    WHITE = "EED5EB",
+                    BLUE = "#2B7CE9",
+                    //GRAY = '#666666',
+                    GRAY = "gray",
                     BLACK = "#2B1B17";
 
                 // create singular dictionary
@@ -558,7 +559,9 @@
 
                         MDomain: {
                             shape: "triangle",
-                            color: "#109618" // green
+                            //color: "#2B7CE9", // also blue
+                            borderWidth: "4",
+
                         }
                     }
                 };
@@ -570,10 +573,10 @@
                 let domainViewNodeFilter = {value: ""};
 
                 function domainViewFilter(node) {
-                    if (domainViewNodeFilter.value === "") {
+                    if (domainViewFilterSelector.value === "") {
                         return node.source === "{{ first_domain|safe}}";
                     }
-                    switch (domainViewNodeFilter.value) {
+                    switch (domainViewFilterSelector.value) {
 
                         {% for s in switch2 %}
                             {{ s|safe }}
@@ -590,6 +593,9 @@
                     domainViewNodes, domainViewEdges, domainViewFilter);
 
             </script>
+              <center>
+                <img class="resize" src="{% static 'image/network_legend.webp' %}" alt="">
+              </center>
 
             <!-- Tables-->
             <div style="text-align: center;" class="mt-5">

@@ -35,7 +35,7 @@ for organism_folder in os.listdir('domain/data'):
 # PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
 
 # function for visualization  DomainView
-def vis_node_(node, organism):
+def vis_node_(node, organism, missing=False):
     p_id = '"' + node.split(".")[1] + '"'
     ppp = node.split(".")[1]
     node = node.split(".")[0] + "/" + node.split(".")[1]
@@ -97,7 +97,9 @@ def vis_node_(node, organism):
                 try:
                     domain_name = n.split("/")[1]
                     domain_name = pr.Domain_name(domain_name)[0] + ' (' + domain_name + ')'
-                    N[confid].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", physics: false, source: {p_id}, value: "5"}},')
+                    # if the node is missing in the isoform, make it red
+                    color = 'RED' if missing else 'BLUE'
+                    N[confid].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", color: {color}, physics: false, source: {p_id}, value: "5"}},')
                 except KeyError:
                     print("KeyError with", node)
             # a gene node
@@ -111,14 +113,16 @@ def vis_node_(node, organism):
 
         # edge to the main domain
         if any(x == node for x in e):
-            colour = 'BLACK' if e[2]['confidence'] == 'original' else 'YELLOW'
-
-            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, color:  {colour} }},')
+            colour = 'GREEN' if e[2]['confidence'] == 'original' else 'LIGHTGREEN'
+            dashes = 'true' if missing else 'false'
+            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, dashes: {dashes}, '
+                                         f'width: WIDTH_SCALE * 2, color:  {colour} }},')
 
         else:
-            colour = 'RED' if e[2]['confidence'] == 'original' else 'YELLOW'
+            colour = 'YELLOW' if e[2]['confidence'] == 'original' else 'YELLOW'
 
-            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, color:  {colour} }},')
+            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, width: '
+                                         f'WIDTH_SCALE, color:  {colour} }},')
 
 
     return N, E, pr.entrez_to_name(node.split("/")[0], organism), node.split("/")[1]

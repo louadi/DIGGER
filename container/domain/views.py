@@ -293,7 +293,7 @@ def transcript(request, P_id, organism):
     switcher_m = []
     if len(missed) != 0:
         for pfams in missing_domains:
-            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism, missing=True)
             if len(e['original']) > maxx:
                 maxx = len(e)
                 first = pfams
