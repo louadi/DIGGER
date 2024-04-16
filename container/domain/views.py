@@ -73,7 +73,11 @@ def multiple_queries(request, inputs, organism):
 
     context = {
         'tb': transcript_table,
+        'combined_nodes': {},
+        'combined_edges': {},
+        'switch': []
     }
+
     return render(request, 'visualization/multiple_queries.html', context)
 
 

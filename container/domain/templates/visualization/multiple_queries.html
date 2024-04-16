@@ -3,43 +3,329 @@
 
 {% block title %}Multiple queries {{ name }}{% endblock %}
 
-{% block content %}
-<div class="card border-0 shadow my-5">
-  <div class="card-body p-3">
-    <h3 class="font-weight-light card-title"> List of the gene transcripts with known Pfam domains. </h3>
-    {% for key, value in tb.items %}
-    <div class="row mx-1 mb-1 mt-3 inHead" data-toggle="collapse" href="#collapse{{ key }}" role="button"
-         aria-expanded="true">
-      <h5 class="font-weight">
-        <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="chevron rotate">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-        Input: <b>{{ key|safe }}</b></h5>
-    </div>
-    <div class="row mx-1 collapse" id="collapse{{ key }}">
-      <div class="table-responsive">
-        <h6>
-          {% autoescape off %}
-          {{ value }}
-          {% endautoescape %}
-        </h6>
+{% block header %}
+  <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
+
+  <style>
+      .sticky-offset {
+          top: 56px
+      }
+
+      .list-group > .list-group > .list-group-item {
+          padding-left: 2.5rem;
+      }
+
+      .tab-content > .tab-pane:not(.active) {
+          display: block;
+          height: 0;
+          overflow-y: hidden;
+      }
+
+      #protein-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #domain-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #interaction-network {
+          position: relative;
+          height: 600px;
+          border: 2px solid lightgray;
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+          display: block; /* remove extra space below image */
+      }
+
+      .tab {
+          margin-left: 90px;
+      }
+
+      .tab {
+          margin-left: 50px;
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+      }
+
+      img.resize {
+          max-width: 80%;
+          max-height: 80%;
+      }
+
+      img.resize2 {
+          max-width: 55%;
+          max-height: 55%;
+      }
+  </style>
+
+  <script>
+      $(document).ready(function () {
+          $('#Interaction_table').DataTable();
+      });
+  </script>
+  <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
+{% endblock %}
+
+{% block raw_content %}
+<div class="wider-container my-3">
+<div class="row">
+    <!-- Vertical pill selection menu-->
+    <div class="col-lg-2 mb-2 rounded">
+      <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+        <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
+             aria-orientation="vertical">
+
+          <a class="nav-link active" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-network" role="tab"
+             aria-controls="v-pills-protein" aria-selected="true">Network</a>
+
+          <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-queries"
+             role="tab"
+             aria-controls="v-pills-compare" aria-selected="false">Queries</a>
+
+        </div>
       </div>
     </div>
-    {% endfor %}
+    <!-- /Vertical pill selection menu -->
+
+    <!-- Page Content -->
+    <div class="col-lg-10">
+      <!-- Tab content -->
+      <div class="tab-content" id="v-pills-tabContent">
+      
+        <!-- Queries tab -->
+        <div class="tab-pane fade card shadow rounded" id="v-pills-queries" role="tabpanel">
+            <div class="card-body p-3">
+              <h3 class="font-weight-light card-title"> List of the gene transcripts with known Pfam
+                domains. </h3>
+              {% for key, value in tb.items %}
+              <div class="row mx-1 mb-1 mt-3 inHead" data-toggle="collapse" href="#collapse{{ key }}"
+                   role="button"
+                   aria-expanded="true">
+                <h5 class="font-weight">
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="chevron rotate">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  Input: <b>{{ key|safe }}</b></h5>
+              </div>
+              <div class="row mx-1 collapse" id="collapse{{ key }}">
+                <div class="table-responsive">
+                  <h6>
+                    {% autoescape off %}
+                    {{ value }}
+                    {% endautoescape %}
+                  </h6>
+                </div>
+              </div>
+              {% endfor %}
+          </div>
+        </div>
+        <!-- /Queries tab -->
+        
+        <!-- Network tab -->
+        <div class="tab-pane fade card shadow rounded show active" id="v-pills-network" role="tabpanel"
+             aria-labelledby="v-pills-domain-tab">
+
+          <h2 class="card-header"> NetworkView </h2>
+          <div class="card-body">
+            <h5 class="tab1"> network provides a more specific graphical visualization for each
+              domain. The domain is shown only once, and all proteins containing the domain are linked
+              to this domain node. </h5>
+            <br>
+            <hr>
+
+            <!-- View options -->
+            <h5>
+              <div class="form-group row">
+                <div class="col-sm-2"><b>Options</b></div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
+                           name="physics-checkbox-domain" checked>
+                    <label class="custom-control-label" for="physicsSwitchDomain">Enable
+                      physics</label>
+                  </div>
+                </div>
+                <div class="col-sm-2"><b>Predicted DDIs</b></div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                           id="high_domain"
+                           name="predicted-checkbox-high"
+                           value="high">
+                    <label class="custom-control-label" for="high_domain">High</label>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                           id="mid_domain"
+                           name="predicted-checkbox-mid"
+                           value="mid">
+                    <label class="custom-control-label" for="mid_domain">Medium</label>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <div class="custom-control custom-switch predicted">
+                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                           id="low_domain"
+                           name="predicted-checkbox-low"
+                           value="low">
+                    <label class="custom-control-label" for="low_domain">Low (confidence)</label>
+                  </div>
+                </div>
+              </div>
+            </h5>
+
+            <!-- Vis.js Network-->
+            <div id="domain-network"></div>
+            <script type="text/javascript">
+                var L1 = 300,
+                    L2 = 30,
+                    PR_DM = 400,
+                    LENGTH_SUB = 50,
+                    WIDTH_SCALE = 2,
+                    LIGHTGREEN = "lightgreen",
+                    GREEN = "green",
+                    RED = "#C5000B",
+                    //ORANGE = "orange",
+                    YELLOW = "orange",
+                    WHITE = "EED5EB",
+                    BLUE = "#2B7CE9",
+                    //GRAY = '#666666',
+                    GRAY = "gray",
+                    BLACK = "#2B1B17";
+
+                // create singular dictionary
+                const networkNodes = {
+                    {% for key, value in combined_nodes.items %}
+                        "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                    {% endfor %}
+                };
+
+                // create singular dictionary
+                const networkEdges = {
+                    {% for key, value in combined_edges.items %}
+                        "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                    {% endfor %}
+                };
+
+                // initiate all the variables needed for the network
+                const networkFilterSelector = document.getElementById("nodeFilterSelect2");
+
+                var networkContainer = document.getElementById('domain-network');
+
+                var networkOptions = {
+
+
+                    interaction: {
+                        navigationButtons: true,
+
+                    },
+
+                    physics: {
+                        barnesHut: {gravitationalConstant: -10000},
+                        stabilization: {iterations: 15},
+
+                    },
+
+                    nodes: {
+                        scaling: {
+                            min: 16,
+                            max: 32
+                        }
+                    },
+                    edges: {
+                        color: WHITE,
+                        smooth: false,
+
+                    },
+
+
+                    groups: {
+                        protein: {
+                            shape: "dot",
+                            color: GRAY, // orange
+                            font:
+                                {
+                                    size: 18, // px
+                                }
+                        },
+
+
+                        Domain: {
+                            shape: "triangle",
+                            color: "#2B7CE9" // blue
+                        },
+
+
+                        MDomain: {
+                            shape: "triangle",
+                            //color: "#2B7CE9", // also blue
+                            borderWidth: "4",
+
+                        }
+                    }
+                };
+
+                var networkPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-domain]");
+
+                var networkCheckboxes = document.querySelectorAll(".predicted-checkbox-domain");
+
+                let networkNodeFilter = {value: ""};
+
+                function networkFilter(node) {
+                    if (networkFilterSelector.value === "") {
+                        return node.source === "{{ first_domain|safe}}";
+                    }
+                    switch (networkFilterSelector.value) {
+
+                        {% for s in switch %}
+                            {{ s|safe }}
+                        {% endfor %}
+
+                        default:
+                            return true;
+                    }
+                }
+
+                // start network from createNetwork.js file
+                startNetwork(networkContainer, networkOptions, networkCheckboxes,
+                    networkPhysicsCheckbox, networkFilterSelector, networkNodeFilter,
+                    networkNodes, networkEdges, networkFilter);
+
+            </script>
+              <center>
+                <img class="resize" src="{% static 'image/network_legend.webp' %}" alt="">
+              </center>
+          </div>
+        </div>
+        <!-- /Network tab -->
+      </div>
+    </div>
+
   </div>
 </div>
-
-
 <script>
     // show the wait alert if the user clicks on the link with the class "visualize"
     $(document).ready(function () {
@@ -50,9 +336,9 @@
     $(".inHead").css("cursor", "pointer");
 
     // rotate the chevron if the user clicks on the inHead element
-      $(".inHead").click(function () {
-          $(this).find(".chevron").toggleClass("rotate");
-      });
+    $(".inHead").click(function () {
+        $(this).find(".chevron").toggleClass("rotate");
+    });
 </script>
 
-{% endblock content %}
+{% endblock raw_content %}
