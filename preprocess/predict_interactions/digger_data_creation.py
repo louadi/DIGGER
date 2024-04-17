@@ -129,5 +129,5 @@ def extend_data(input_path: str, output_path: str, mart_table: str, predicted_in
 
 if __name__ == '__main__':
     extend_data('../data_digger', '../data_digger',
-                '../sourcedata/mart_export.txt', '../predicted_ddi_ppi.tsv.tsv')
+                '../sourcedata/mart_export.txt', '../predicted_ddi_ppi_alt.tsv.tsv')
     print("Done, exiting.")

@@ -3,26 +3,13 @@ import re
 
 from django.conf import settings
 
-from domain.Process import exonstodomain as exd
 from domain.Process import process_data as pr
+from domain.Process.load_data import PPI_all, g2d_all, protein_all, DDI_all
 import pandas as pd
 import numpy as np
 import networkx as nx
 from django.urls import reverse
 
-PPI_all = {}
-g2d_all = {}
-data_all = {}
-DDI_all = {}
-for organism in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism):
-        continue
-    trivial_name = organism.split("[")[1][:-1]
-    PPI_all[trivial_name] = exd.load_obj(organism + '/PPI')
-    g2d_all[trivial_name] = exd.load_obj(organism + '/g2d')
-    data_all[trivial_name] = pd.read_csv('domain/data/' + organism + '/all_Proteins.csv')
-    if os.path.isfile('domain/data/' + organism + '/DDI.pkl'):
-        DDI_all[trivial_name] = exd.load_obj(organism + '/DDI')
 
 # --- Create folder
 # Global jobs table path
@@ -316,7 +303,7 @@ def analysis_input_isoforms(Inputs, organism):
 
 def analysis_input_genes(Inputs, organism):
     PPI = PPI_all[organism]
-    data = data_all[organism]
+    data = protein_all[organism]
 
     protein_id = []
     missing = {}
@@ -347,7 +334,7 @@ def analysis_input_genes(Inputs, organism):
 
 
 def pr_to_tr(pr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Protein stable ID'].isin([pr])
     try:
         return data[df_filter]['Transcript stable ID'].unique()[0]
@@ -356,7 +343,7 @@ def pr_to_tr(pr, organism):
 
 
 def tr_to_gene(tr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Transcript stable ID'].isin([tr])
     try:
         return data[df_filter]['Gene stable ID'].unique()[0]
@@ -365,7 +352,7 @@ def tr_to_gene(tr, organism):
 
 
 def ensembl_to_entrez(gene, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Gene stable ID'].isin([gene])
     try:
         return data[df_filter]['NCBI gene ID'].unique()[0]
@@ -374,7 +361,7 @@ def ensembl_to_entrez(gene, organism):
 
 
 def entrez_to_ensembl(gene, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['NCBI gene ID'].isin([gene])
     try:
         return data[df_filter]['Gene stable ID'].unique()[0]
@@ -383,7 +370,7 @@ def entrez_to_ensembl(gene, organism):
 
 
 def tr_to_domain(tr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Transcript stable ID'].isin([tr])
     tdata = data[df_filter]
     tdata = tdata[tdata["Pfam ID"].notna()].drop_duplicates()
@@ -396,13 +383,13 @@ def tr_to_domain(tr, organism):
 # add to view
 def check_PPI_status(tr, organism):
     PPI = PPI_all[organism]
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Transcript stable ID'].isin([tr])
     return PPI.has_node(data[df_filter]['NCBI gene ID'].astype('int').astype('str').unique()[0])
 
 
 def tr_is_coding(tr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     return len(data[data['Transcript stable ID'].isin([tr])]) != 0
 
 

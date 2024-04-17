@@ -13,6 +13,8 @@ from sqlalchemy import text
 from django.conf import settings
 from django.db import connection
 
+from domain.Process.load_data import gid2name_all
+
 server = "http://rest.ensembl.org"
 cwd = os.getcwd()
 
@@ -28,21 +30,6 @@ engine = settings.DATABASE_ENGINE
 
 # #List of transcripts name and discriptions from Biomart":
 # gene_info=pd.read_csv( 'domain/data/gene_info.csv')
-
-
-# load coverter
-def load_obj(name):
-    with open('domain/data/' + name + '.pkl', 'rb') as f:
-        return pickle.load(f)
-
-
-# from Biomart":
-gid2name_all = {}
-for organism in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism):
-        continue
-    trivial_name = organism.split("[")[1][:-1]
-    gid2name_all[trivial_name] = load_obj(organism + '/gid2name')
 
 
 def entrez_to_name_online(entrezID):
@@ -156,7 +143,7 @@ def gene_to_all_transcripts_online(gene_ID):
 
 
 def tranID_convert(Ensemble_transID, organism):
-    print('ID...........', Ensemble_transID)
+    print('converting ID...', Ensemble_transID)
     query = """
             SELECT * 
             FROM gene_info_""" + organism + """

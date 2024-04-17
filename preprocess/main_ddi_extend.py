@@ -1,5 +1,6 @@
 # first clean protein interactions
 # then use ppidm to predict and finally use graph attributes to annotate the graph
+import sys
 import timeit
 import os
 
@@ -7,8 +8,6 @@ import predict_interactions.clean_protein_interactions as cpi
 import predict_interactions.create_uniprot_pfam_map as cupm
 import predict_interactions.parse_yaml as parse_yaml
 import predict_interactions.ppidm as ppidm
-import extend_digger.graph_attributes as ga
-import extend_digger.ddi_network as dn
 
 needed_files = ['3did_flat', 'INTERACTION.txt', 'mart_export.txt', 'pdb_chain_pfam.tsv',
                 'uniprot_sprot.dat', 'uniprot_trembl.dat']
@@ -18,10 +17,13 @@ if __name__ == '__main__':
     if not os.name == 'posix':
         print("This script only works with linux systems")
         exit(1)
+    missing_files = []
     for file in needed_files:
         if not os.path.isfile(f"sourcedata/{file}"):
-            print(f"Missing file: {file}, please read the README.md in sourcedata for more information.")
-            exit(1)
+            missing_files.append(file)
+    if len(missing_files) > 0:
+        print(f"Missing files: {', '.join(missing_files)}, please read the README.md in sourcedata for more information.")
+        sys.exit(1)
 
     # parse yaml file with information about sources
     tasks, organism, functions, additional_flags = parse_yaml.parse("sourcedata/database_sources.yml")
@@ -48,9 +50,11 @@ if __name__ == '__main__':
         ppidm.main(additional_flags)
     # create nodes necessary for graph attributes
     if 'all' in functions or 'cumulate' in functions:
+        import extend_digger.ddi_network_alt as dn
         dn.main()
     # extend DIGGER graph with confidence levels
     if 'all' in functions or 'extend' in functions:
+        import extend_digger.graph_attributes as ga
         ga.main(organism, additional_flags.get('backup_graph', True))
 
     stop = timeit.default_timer()

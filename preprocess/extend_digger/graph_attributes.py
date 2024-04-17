@@ -105,7 +105,7 @@ if __name__ == '__main__':
     main('Mus musculus[human]')
 
     # domain_g_original: nx.Graph = load_obj('DomainG_original')
-    # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi.tsv')
+    # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi_alt.tsv')
     # domain_g = new_graph(predicted_edges)
     # domain_g = annotate_graph(domain_g_original, domain_g)
     # save_obj("Domain_G_ext", domain_g)

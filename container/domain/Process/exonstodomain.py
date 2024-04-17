@@ -11,6 +11,7 @@ import os
 
 from django.conf import settings
 from domain.Process import process_data as pr
+from domain.Process.load_data import DomainG_all as Graphs
 from sqlalchemy import text
 from django.urls import reverse
 
@@ -22,14 +23,6 @@ engine = settings.DATABASE_ENGINE
 def load_obj(name):
     with open('domain/data/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
-
-
-Graphs = {}
-for organism_folder in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism_folder):
-        continue
-    trivial_name = organism_folder.split("[")[1][:-1]
-    Graphs[trivial_name] = load_obj(organism_folder + '/DomainG')
 
 
 # PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")

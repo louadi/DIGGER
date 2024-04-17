@@ -5,6 +5,7 @@ from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as info
 from domain.Process import network_analysis as nt
+from domain.Process.load_data import DomainG_all, PPI_all, g2d_all
 import pandas as pd
 from django.urls import reverse
 
@@ -22,19 +23,6 @@ engine = settings.DATABASE_ENGINE
 table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table 2')
 if not os.path.exists(table_path_2):
     os.makedirs(table_path_2)
-
-
-DomainG_all = {}
-PPI_all = {}
-g2d_all = {}
-for organism in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism):
-        continue
-    trivial_name = organism.split("[")[1][:-1]
-    # Join PPI-DDI network
-    DomainG_all[trivial_name] = exd.load_obj(f'{organism}/DomainG')
-    PPI_all[trivial_name] = exd.load_obj(f'{organism}/PPI')
-    g2d_all[trivial_name] = exd.load_obj(f'{organism}/g2d')
 
 
 # PPI network confirmed by residue evidence
