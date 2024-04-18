@@ -74,7 +74,7 @@ def multiple_queries(request, inputs, organism):
             continue
 
     # iterate through all query ids
-    id_list = set()
+    id_list = []
     for query in transcript_table.keys():
         # search for the id in the transcript table string. This is suboptimal but it works for now
         # TODO: enable search for exon ids
@@ -82,17 +82,17 @@ def multiple_queries(request, inputs, organism):
             transcript_ids = re.findall(r'ENS\w*[T,P]\d+', transcript_table[query])
             for t_id in transcript_ids:
                 tran_name, _, _, entrez_id, _ = proc_data.tranID_convert(t_id, organism)
-                id_list.add((tran_name, entrez_id))
+                _, _, unique_domains = proc_data.transcript(t_id, organism)
+                id_list.append([tran_name, entrez_id, unique_domains])
         except AttributeError:
             pass
     # for each id, get the graph data
     combined_nodes = {}
     combined_edges = {}
-    switch = []
     try:
         # convert id_list ids to entrez ids
-        subgraph_g, confirmed_proteins = mq.create_subgraph(id_list, organism)
-        nodes, edges = mq.vis_nodes_many(subgraph_g, id_list, confirmed_proteins)
+        subgraph_g, confirmed_proteins, missing_domains = mq.create_subgraph(id_list, organism)
+        nodes, edges = mq.vis_nodes_many(subgraph_g, id_list, confirmed_proteins, missing_domains)
         combined_nodes = {k: combined_nodes.get(k, []) + v for k, v in nodes.items()}
         combined_edges = {k: combined_edges.get(k, []) + v for k, v in edges.items()}
     except Exception as e:

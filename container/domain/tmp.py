@@ -1,5 +1,10 @@
 import pickle
+import re
 import networkx as nx
+
+def load_obj(name):
+    with open('data/' + name + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 
 def vis_node_(node, DomainG):
@@ -113,18 +118,26 @@ def remove_nan_nodes(graph):
     return graph
 
 
+def extract_confidence(domainG):
+    confidences = set()
+    for edge in domainG.edges(data=True):
+        confidences.add(edge[2].get('confidence', 'original'))
+    print(confidences)
+
+
 if __name__ == '__main__':
-    ppi_graph: nx.Graph = pickle.load(open('../domain/data/Homo sapiens[human]/DomainG.pkl', 'rb'))
-    print(len(ppi_graph.nodes))
-    ppi_graph = remove_nan_nodes(ppi_graph)
-    print(len(ppi_graph.nodes))
-    pickle.dump(ppi_graph, open('../domain/data/Homo sapiens[human]/DomainG_up.pkl', 'wb'))
+    # ppi_graph: nx.Graph = pickle.load(open('../domain/data/Homo sapiens[human]/DomainG.pkl', 'rb'))
+    # print(len(ppi_graph.nodes))
+    # ppi_graph = remove_nan_nodes(ppi_graph)
+    # print(len(ppi_graph.nodes))
+    # pickle.dump(ppi_graph, open('../domain/data/Homo sapiens[human]/DomainG_up.pkl', 'wb'))
 
 
     # edges_domainV = {'test': [1,2,3,4], 'original': [1,2,3,4]}
     # print(len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True)
     # # load human DDI graph
-    # DomainG_human = pickle.load(open('data/Homo sapiens[human]/DomainG.pkl', 'rb'))
+    DomainG_human = pickle.load(open('data/Homo sapiens[human]/DomainG.pkl', 'rb'))
+    extract_confidence(DomainG_human)
     # DomainG_mouse = pickle.load(open('data/Mus musculus[mouse]/DomainG.pkl', 'rb'))
     # print(len(DomainG_mouse.edges), len(DomainG_mouse.nodes))
     #

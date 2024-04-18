@@ -3,7 +3,7 @@ import domain.Process.process_data as pr
 import domain.Process.exonstodomain as exd
 
 
-def create_subgraph(id_names: set, organism: str):
+def create_subgraph(id_names: list, organism: str):
     """
     Create a subgraph containing the protein nodes as well as the domain nodes and each
     edge between them.
@@ -16,10 +16,9 @@ def create_subgraph(id_names: set, organism: str):
     # list contains protein confirmed by both PPI and DDI (for visualization)
     confirmed_proteins = []
     id_set = set([name[1] for name in id_names])
-    for name in id_names:
-        entrez_id = name[1]
-        if g.has_node(entrez_id):
-            continue
+    missing_domains = set()
+    for name in id_set:
+        entrez_id = name
         if PPI.has_node(entrez_id):
             # filter PPI edges to only include ones where the destination node is in the list
             filtered_edges = [(source, target, data) for source, target, data in PPI.edges(entrez_id, data=True) if target in id_set]
@@ -31,10 +30,11 @@ def create_subgraph(id_names: set, organism: str):
 
         for domain in protein_domains:
             node = entrez_id + '/' + domain
-
-            # TODO: add domains missing in the transcript here
             g.add_node(node)
-            print("added node: ", node, "to the graph.")
+
+            if domain not in [x[2] for x in id_names if x[1] == name][0]:
+                missing_domains.add(node)
+                continue
 
             # add domain interactions to the graph:
             if DomainG.has_node(node):
@@ -53,10 +53,10 @@ def create_subgraph(id_names: set, organism: str):
 
         g.add_edges_from(edges)
         confirmed_proteins = list(set(confirmed_proteins))
-    return g, confirmed_proteins
+    return g, confirmed_proteins, missing_domains
 
 
-def vis_nodes_many(graph, id_names, confirmed_proteins):
+def vis_nodes_many(graph, id_names, confirmed_proteins, missing_domains):
     nodes = {'original': [], 'high': [], 'mid': [], 'low': []}
     edges = {'original': [], 'high': [], 'mid': [], 'low': []}
     transcript_names = [id_name[0] for id_name in id_names]
@@ -64,7 +64,7 @@ def vis_nodes_many(graph, id_names, confirmed_proteins):
 
     for node in graph.nodes:
         if len(node.split('/')) == 2:
-            nodes['original'].append(domain_node(node))
+            nodes['original'].append(domain_node(node, missing_domains))
         else:
             try:
                 nodes['original'].append(protein_node(node, entrez_ids, transcript_names))
@@ -74,10 +74,11 @@ def vis_nodes_many(graph, id_names, confirmed_proteins):
     for edge in graph.edges(data=True):
         source = edge[0]
         target = edge[1]
+        confidence = edge[2].get('confidence', 'original')
         if source.split('/')[0] not in entrez_ids or target.split('/')[0] not in entrez_ids:
             continue
         color = edge_color(edge)
-        edges['original'].append(f'{{from: "{source}", to: "{target}", value: "1", dashes: false, physics: true, {color}}},')
+        edges[confidence].append(f'{{from: "{source}", to: "{target}", value: "1", dashes: false, physics: true, {color}}},')
 
     return nodes, edges
 
@@ -85,12 +86,13 @@ def vis_nodes_many(graph, id_names, confirmed_proteins):
 def protein_node(node, entrez_ids, transcript_names):
     node_entrez_id = node
     label = transcript_names[entrez_ids.index(node_entrez_id)]
-    return f'{{id: "{node}", label: "{label}", group: "protein", physics: false, source: "PPI", value: "4"}},'
+    return f'{{id: "{node}", label: "{label}", group: "protein", physics: true, source: "PPI", value: "4"}},'
 
 
-def domain_node(node):
+def domain_node(node, missing_domains):
     label = node.split('/')[1]
-    color = ""
+    color = ''
+    if node in missing_domains:  color = 'color: missing,'
     return f'{{id: "{node}", label: "{label}", {color} group: "domain", physics: true, source: "DDI", value: "4"}},'
 
 
