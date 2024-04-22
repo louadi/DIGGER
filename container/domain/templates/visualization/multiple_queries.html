@@ -23,7 +23,7 @@
 
       #query-network {
           position: relative;
-          height: 540px;
+          height: 840px;
           border: 2px solid lightgray;
       }
 
@@ -157,7 +157,7 @@
 
               <div class="form-group row">
                 <div class="col-sm-2"><b>Options</b></div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                   <div class="custom-control custom-switch">
                     <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
                            name="physics-checkbox-domain" checked>
@@ -165,6 +165,14 @@
                       physics</label>
                   </div>
                 </div>
+                <div class="col-sm-3">
+                  <div class="form-inline">
+                    <label for="formControlRange">Canvas height</label>
+                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="canvasRange">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
                 <div class="col-sm-2"><b>Predicted DDIs</b></div>
                 <div class="col-sm-2">
                   <div class="custom-control custom-switch">
@@ -312,6 +320,12 @@
   </div>
 </div>
 <script>
+    // add eventListener to the canvasRange input and change the height of the canvas
+    document.getElementById("canvasRange").addEventListener("input", function () {
+        document.getElementById("query-network").style.height = this.value + "px";
+    });
+
+
     // show the wait alert if the user clicks on the link with the class "visualize"
     $(document).ready(function () {
         $(".collapse").collapse('show');

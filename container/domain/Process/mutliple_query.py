@@ -62,6 +62,8 @@ def vis_nodes_many(graph, id_names, confirmed_proteins, missing_domains):
     transcript_names = [id_name[0] for id_name in id_names]
     entrez_ids = [id_name[1] for id_name in id_names]
 
+    # TODO: integrate confirmed_proteins into the graph
+
     for node in graph.nodes:
         if len(node.split('/')) == 2:
             nodes['original'].append(domain_node(node, missing_domains))

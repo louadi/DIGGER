@@ -1,4 +1,5 @@
 # domain_G, DDI, gid2name
+import os.path
 import pickle
 import networkx as nx
 
@@ -9,7 +10,12 @@ def load_obj(organism, name):
 
 
 def save_obj(organism, name, obj):
-    with open(f'../container/domain/data/{organism}/{name}.pkl', 'wb') as f:
+    path = f'../container/domain/data/{organism}/{name}.pkl'
+    # don't overwrite existing backup files, just to be sure
+    if "bak" in name:
+        while os.path.isfile(path):
+            path = path.replace(".pkl", "_1.pkl")
+    with open(path, 'wb') as f:
         pickle.dump(obj, f)
 
 
@@ -96,13 +102,13 @@ def main(organism, backup=True):
             save_obj(organism, f"{graph}.bak", annotated_graph)
         # add predicted nodes
         extended_graph = add_predicted_nodes(annotated_graph,
-                                             f'resultdata/predicted_ddi_ppi.tsv', graph)
+                                             f'resultdata/predicted_ddi_ppi_alt.tsv', graph)
         print(f"Extended graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
         save_obj(organism, graph, extended_graph)
 
 
 if __name__ == '__main__':
-    main('Mus musculus[human]')
+    main('Mus musculus[mouse]')
 
     # domain_g_original: nx.Graph = load_obj('DomainG_original')
     # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi_alt.tsv')
