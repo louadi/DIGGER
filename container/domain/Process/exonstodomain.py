@@ -194,7 +194,10 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
         partners = list(set(partners + tr_2['Transcript stable ID_x'].unique().tolist()))
 
         if len(partners) != 0:
-            partners = list(set([pr.tranID_convert(x, organism)[3] for x in partners]))
+            try:
+                partners = list(set([pr.tranID_convert(x, organism)[3] for x in partners]))
+            except TypeError:
+                partners = []
 
     for exon_ID in exon_IDs:
         # print(exon_ID)

@@ -71,7 +71,6 @@ def transcript(transcript_ID, organism):
     exons = tdata.drop(columns=["Pfam ID", "Pfam start", "Pfam end"]).drop_duplicates()
     D = tdata[tdata["Pfam ID"].notna()].drop_duplicates()
     p = D["Pfam ID"].unique()
-
     return exons, D, p
 
 
@@ -155,7 +154,7 @@ def tranID_convert(Ensemble_transID, organism):
     # tdata=gene_info[df_filter]
 
     # No domain or wrong entry
-    if len(tdata) == 0:     return 0
+    if len(tdata) == 0: return 0
 
     try:
         Ensemble_geneID = tdata["Gene stable ID"].unique()[0]

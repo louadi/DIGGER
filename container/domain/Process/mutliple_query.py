@@ -61,12 +61,11 @@ def vis_nodes_many(graph, id_names, confirmed_proteins, missing_domains):
     edges = {'original': [], 'high': [], 'mid': [], 'low': []}
     transcript_names = [id_name[0] for id_name in id_names]
     entrez_ids = [id_name[1] for id_name in id_names]
-
-    # TODO: integrate confirmed_proteins into the graph
+    co_partners = [id_name[3] for id_name in id_names]
 
     for node in graph.nodes:
         if len(node.split('/')) == 2:
-            nodes['original'].append(domain_node(node, missing_domains))
+            nodes['original'].append(domain_node(node, missing_domains, confirmed_proteins))
         else:
             try:
                 nodes['original'].append(protein_node(node, entrez_ids, transcript_names))
@@ -79,7 +78,7 @@ def vis_nodes_many(graph, id_names, confirmed_proteins, missing_domains):
         confidence = edge[2].get('confidence', 'original')
         if source.split('/')[0] not in entrez_ids or target.split('/')[0] not in entrez_ids:
             continue
-        color = edge_color(edge)
+        color = edge_options(edge, entrez_ids, co_partners)
         edges[confidence].append(f'{{from: "{source}", to: "{target}", value: "1", dashes: false, physics: true, {color}}},')
 
     return nodes, edges
@@ -91,19 +90,26 @@ def protein_node(node, entrez_ids, transcript_names):
     return f'{{id: "{node}", label: "{label}", group: "protein", physics: true, source: "PPI", value: "4"}},'
 
 
-def domain_node(node, missing_domains):
+def domain_node(node, missing_domains, confirmed_proteins):
     label = node.split('/')[1]
     color = ''
     if node in missing_domains:  color = 'color: missing,'
-    return f'{{id: "{node}", label: "{label}", {color} group: "domain", physics: true, source: "DDI", value: "4"}},'
+    source = "PPI" if node in confirmed_proteins else "DDI"
+    return f'{{id: "{node}", label: "{label}", {color} group: "domain", physics: true, source: "{source}", value: "4"}},'
 
 
-def edge_color(edge):
+def edge_options(edge, entrez_ids, co_partners):
     e1 = edge[0].split('/')
     e2 = edge[1].split('/')
     # protein to protein
     if len(e1) == 1 and len(e2) == 1:
-        edge_color = ''
+        # get the index of the entrez_id in the list
+        entrez1_index = entrez_ids.index(e1[0])
+        entrez2_index = entrez_ids.index(e2[0])
+        edge_color = 'color: residue,' if ((e1[0] in co_partners[entrez1_index]) or
+                                           (e2[0] in co_partners[entrez1_index]) or
+                                           (e1[0] in co_partners[entrez2_index]) or
+                                           (e2[0] in co_partners[entrez2_index])) else ''
 
         option = 'length: PR_LENGTH,' + edge_color + ' width: WIDTH_SCALE * 4'
 
