@@ -466,7 +466,7 @@
               <div class="form-group row">
                 <div class="col-sm-2"><b>Predicted DDIs</b></div>
                 <div class="col-sm-2">
-                  <div class="custom-control custom-switch">
+                  <div class="custom-control custom-switch disabled" aria-disabled="true">
                     <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
                            id="high_domain"
                            name="predicted-checkbox-high"
@@ -989,16 +989,20 @@
   </div>
 </div>
 <script>
+    // write an exception that just ignores if inputElement is null
+    function addHeightListener(inputId, outputId) {
+        try {
+            const inputElement = document.getElementById(inputId);
+            inputElement.addEventListener("input", function() {
+              document.getElementById(outputId).style.height = `${this.value}px`;
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
-  function addHeightListener(inputId, outputId) {
-    const inputElement = document.getElementById(inputId);
-    inputElement.addEventListener("input", function() {
-      document.getElementById(outputId).style.height = `${this.value}px`;
-    });
-  }
-
-  addHeightListener("proteinCanvasRange", "protein-network");
-  addHeightListener("domainCanvasRange", "domain-network");
-  addHeightListener("interactionCanvasRange", "interaction-network");
+    addHeightListener("proteinCanvasRange", "protein-network");
+    addHeightListener("domainCanvasRange", "domain-network");
+    addHeightListener("interactionCanvasRange", "interaction-network");
 </script>
 {% endblock %}
