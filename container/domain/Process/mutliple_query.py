@@ -78,8 +78,9 @@ def vis_nodes_many(graph, id_names, confirmed_proteins, missing_domains):
         confidence = edge[2].get('confidence', 'original')
         if source.split('/')[0] not in entrez_ids or target.split('/')[0] not in entrez_ids:
             continue
-        color = edge_options(edge, entrez_ids, co_partners)
-        edges[confidence].append(f'{{from: "{source}", to: "{target}", value: "1", dashes: false, physics: true, {color}}},')
+        options = edge_options(edge, entrez_ids, co_partners)
+        edges[confidence].append(f'{{from: "{source}", to: "{target}", value: "1", '
+                                 f'dashes: false, physics: true, {options}}},')
 
     return nodes, edges
 
@@ -105,11 +106,8 @@ def edge_options(edge, entrez_ids, co_partners):
     if len(e1) == 1 and len(e2) == 1:
         # get the index of the entrez_id in the list
         entrez1_index = entrez_ids.index(e1[0])
-        entrez2_index = entrez_ids.index(e2[0])
         edge_color = 'color: residue,' if ((e1[0] in co_partners[entrez1_index]) or
-                                           (e2[0] in co_partners[entrez1_index]) or
-                                           (e1[0] in co_partners[entrez2_index]) or
-                                           (e2[0] in co_partners[entrez2_index])) else ''
+                                           (e2[0] in co_partners[entrez1_index])) else ''
 
         option = 'length: PR_LENGTH,' + edge_color + ' width: WIDTH_SCALE * 4'
 

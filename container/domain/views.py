@@ -80,7 +80,7 @@ def multiple_queries(request, inputs, organism):
     for query in transcript_table.keys():
         # search for the id in the transcript table string. This is suboptimal but it works for now
         # TODO: enable search for exon ids
-        partner_list = []
+        co_partners = []
         find_co_partners = True
         try:
             transcript_ids = re.findall(r'ENS\w*[T,P]\d+', transcript_table[query])
@@ -89,9 +89,8 @@ def multiple_queries(request, inputs, organism):
                 exons, _, unique_domains = proc_data.transcript(t_id, organism)
                 if find_co_partners:
                     _, _, co_partners = exd.exon_3D(exons['Exon stable ID'].tolist(), t_id, organism)
-                    partner_list = co_partners
                     find_co_partners = False
-                id_list.append([tran_name, entrez_id, unique_domains, partner_list])
+                id_list.append([tran_name, entrez_id, unique_domains, co_partners])
         except AttributeError:
             pass
     # for each id, get the graph data

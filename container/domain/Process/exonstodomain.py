@@ -190,14 +190,18 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
                   """
     tr_2 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
 
+    co_partners = []
     if len(partners) != 0:
         partners = list(set(partners + tr_2['Transcript stable ID_x'].unique().tolist()))
 
         if len(partners) != 0:
-            try:
-                partners = list(set([pr.tranID_convert(x, organism)[3] for x in partners]))
-            except TypeError:
-                partners = []
+            for x in partners:
+                try:
+                    co_partners.append(pr.tranID_convert(x, organism)[3])
+                except TypeError:
+                    pass
+
+    co_partners = list(set(co_partners))
 
     for exon_ID in exon_IDs:
         # print(exon_ID)
@@ -246,7 +250,7 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
         n = len(p1)
         N.append(n)
         if n != 0: exons_in_interface.append(exon_ID)
-    return N, exons_in_interface, partners
+    return N, exons_in_interface, co_partners
 
 
 # if the input is a transcript ID:

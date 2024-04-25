@@ -39,6 +39,7 @@ def Protein_view(P_id, organism):
     g2d = g2d_all[organism]
     DomainG = DomainG_all[organism]
 
+    # add all the interactions of the input protein to the graph
     if PPI.has_node(entrezID):
         g = exd.nx.Graph()
         g.add_edges_from(PPI.edges(entrezID))
@@ -259,6 +260,7 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
 
 
 def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_partners, organism):
+    print(protein_with_DDI)
     # convert N and E to dictionaries to accommodate for different confidence interactions
     N = {'original': [], 'high': [], 'mid': [], 'low': []}
     E = {'original': [], 'high': [], 'mid': [], 'low': []}
@@ -281,7 +283,8 @@ def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_pa
                 color = ''
                 if node in missing_domain:  color = 'color: missing, '
                 label = node_label(node, entrezID, tran_name)
-                N[c].append(f'{{id: "{node}", label: "{label}", {color} group: "{group_node(node, entrezID)}", physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
+                N[c].append(f'{{id: "{node}", label: "{label}", {color} group: "{group_node(node, entrezID)}", '
+                            f'physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
 
     for e in g.edges(data=True):
         try:
@@ -300,6 +303,8 @@ def edge_option(edge, entrezID, co_partners):
     if len(e1) == 1 and len(e2) == 1:
         edge_color = ''
         # print(co_partners)
+        if e2 == ['573']:
+            print(entrezID, co_partners)
         if (e1[0] in co_partners and e1[0] != entrezID) or (
                 e2[0] in co_partners and e2[0] != entrezID): edge_color = 'color: Residue,'
 
