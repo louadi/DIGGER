@@ -14,7 +14,11 @@ def save_obj(organism, name, obj):
     # don't overwrite existing backup files, just to be sure
     if "bak" in name:
         while os.path.isfile(path):
-            path = path.replace(".pkl", "_1.pkl")
+            try:
+                num = int(path[-5])
+            except ValueError:
+                num = 1
+            path = path.replace(".pkl", f"_{num}.pkl")
     with open(path, 'wb') as f:
         pickle.dump(obj, f)
 
@@ -112,7 +116,7 @@ def main(organism, backup=True):
         # add predicted nodes
         extended_graph = add_predicted_nodes(annotated_graph,
                                              f'resultdata/predicted_ddi_ppi_alt.tsv', ppi_graph)
-        print(f"Extended graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
+        print(f"Extended {graph} graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
         save_obj(organism, graph, extended_graph)
 
 
