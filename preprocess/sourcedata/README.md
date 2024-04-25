@@ -11,7 +11,8 @@ the file for a single organism)
 
 ## Evaluating not very good F1 scores in PPIDM
 
-When running the PPIDM method, you will get an F1 score based on a testing set of known
+When running the [PPIDM](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008844) 
+method, you will get an F1 score based on a testing set of known
 interactions. If the F1 score is not above >0.8 you will be asked to confirm to continue
 running the method since there is a possibility that you will get unreliable results.
 To properly evaluate for your scenario whether you should continue or not, you should look at
