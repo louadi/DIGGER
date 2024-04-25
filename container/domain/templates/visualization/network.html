@@ -41,9 +41,7 @@
         <h2 class="card-header">Visualization of the subnetwork</h2>
         <div class="card-body">
             <div style="text-align: center;">
-                <!-- Interaction Network-->
-                <div id="interaction-network"></div>
-                <!-- Legend and physics switch -->
+              <!-- Options and legend -->
                 <div class="row mt-2 p-2">
                     <div class="col-sm-2">
                         <div class="custom-control custom-switch">
@@ -52,10 +50,18 @@
                             <label class="custom-control-label" for="physicsSwitch"><h5>Enable physics</h5></label>
                         </div>
                     </div>
-                    <div class="col-sm-10">
+                  <div class="col-sm-3">
+                    <div class="form-inline">
+                      <label for="formControlRange">Canvas height</label>
+                      <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="canvasRange">
+                    </div>
+                  </div>
+                </div>
+                <!-- Interaction Network-->
+                <div id="interaction-network"></div>
+              <div class="col-sm-10">
                         <img src="{% static 'image/legend 4.png' %}" class="img-fluid">
                     </div>
-                </div>
             </div>
 
             <!-- Download data -->
@@ -81,10 +87,6 @@
                     {{ tab }}
                 {% endautoescape %}
             </h6>
-
-            <h6 class="font-weight-light">* This score represents the confidence of the PPI. A score of 0 means that all
-                known structurally resolved interfaces between the two proteins are missing in your list of
-                isoforms. </h6>
 
             <!-- Download data -->
             <div style="text-align: center;" class="mt-5">
@@ -175,7 +177,7 @@
         });
 
 
-        network.on("selectNode", function (params) {
+        network.on("doubleClick", function (params) {
             if (params.nodes.length === 1) {
                 var node = nodes.get(params.nodes[0]);
                 window.open(node.url, '_blank');
@@ -187,6 +189,11 @@
 
         $(document).ready(function () {
             $('#results').DataTable();
+        });
+
+        // add eventListener to the canvasRange input and change the height of the canvas
+        document.getElementById("canvasRange").addEventListener("input", function () {
+            document.getElementById("interaction-network").style.height = this.value + "px";
         });
     </script>
 {% endblock %}

@@ -210,7 +210,9 @@ def Construct_network(proteins_id, missing, job_ID, organism):
 
     pd_html.sort_values(by=['Source of the interaction'], ascending=[True])
 
-    pd_html = pd_html.rename(columns={"Score": "% retained DDIs*", })
+    pd_html['Score'] = pd_html['Score'].astype(float) * 100
+    pd_html['Score'] = pd_html['Score'].astype(int).astype(str)
+    pd_html = pd_html.rename(columns={"Score": "% retained DDIs", })
 
     # Convert Table to HTML
     pd_html = pd_html.to_html(table_id='results', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
