@@ -18,7 +18,7 @@ def save_obj(organism, name, obj):
                 num = int(path[-5])
             except ValueError:
                 num = 1
-            path = path.replace(".pkl", f"_{num}.pkl")
+            path = path.replace(".pkl", f"_{num+1}.pkl")
     with open(path, 'wb') as f:
         pickle.dump(obj, f)
 
