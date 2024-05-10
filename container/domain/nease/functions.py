@@ -266,9 +266,8 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs,
     annotated_graph = nx.Graph()
     annotated_graph.add_edges_from(filtered_ppis)
 
-    # TODO: convert this to be computed on the fly
-    p = int(Pathways[Pathways['external_id'] == path_id][ppi_type])
     path_genes = list(Pathways[Pathways['external_id'] == path_id]['entrez_gene_ids'])[0]
+    p = pathway_node_degree(annotated_graph, path_genes)
 
     #collect:
     spliced_genes = []
