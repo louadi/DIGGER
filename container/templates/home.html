@@ -18,7 +18,7 @@
           interchangeably: </h5>
 
         <div class="row">
-          <div class="col-lg-4 col-md-6 mb-4">
+          <div class="col-lg-3 col-md-6 mb-4">
             <div class="card h-100 shadow rounded">
               <img class="card-img-top" src="{% static 'image/Isoform_mode.svg' %}" alt="">
               <div class="card-body">
@@ -31,12 +31,12 @@
               <div class="card-footer">
                 <div style="text-align: center;">
                   <a href="{% url 'isoform-level' %}" class="btn btn-secondary px-4 py-2 btn-sm">
-                    Explore an isoform interaction</a>
+                    Query isoform interactions</a>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-lg-4 col-md-6 mb-4">
+          <div class="col-lg-3 col-md-6 mb-4">
             <div class="card h-100 shadow rounded">
               <img class="card-img-top" src="{% static 'image/exon_page.svg' %}" alt="">
               <div class="card-body">
@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-4 col-md-6 mb-4">
+          <div class="col-lg-3 col-md-6 mb-4">
             <div class="card h-100 shadow rounded">
               <img class="card-img-top" src="{% static 'image/net_page.svg' %}" alt="">
               <div class="card-body">
@@ -70,6 +70,23 @@
                 <div style="text-align: center;">
                   <a href="{% url 'network-analysis' %}" class="btn btn-secondary px-4 py-2 btn-sm">Build
                     your subnetwork</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card h-100 shadow rounded">
+              <img class="card-img-top" src="{% static 'image/net_page.svg' %}" alt="">
+              <div class="card-body">
+                <div style="text-align: center;">
+                  <h4 class="card-title">NEASE Analysis</h4>
+                </div>
+                <p class="card-text" style="text-align: justify;">Run the NEASE tool to do a functional enrichment analysis of
+                  alternative splicing events</p>
+              </div>
+              <div class="card-footer">
+                <div style="text-align: center;">
+                  <a href="{% url 'nease-analysis' %}" class="btn btn-secondary px-4 py-2 btn-sm">Run NEASE</a>
                 </div>
               </div>
             </div>

@@ -176,6 +176,7 @@ def Construct_network(proteins_id, missing, job_ID, organism):
 
             score.append('1.0')
             source.append('PPI')
+
     nodes = []
     for n in N:
         ensembl = entrez_to_ensembl(n, organism)
@@ -245,7 +246,7 @@ def analysis_input_isoforms(Inputs, organism):
     g2d = g2d_all[organism]
 
     filtered = filter_proteins_list(Inputs, organism)
-    print('-----------filtered--------------')
+    print('filtered inputs')
 
     n = len(filtered)
     # Inputs are so many
@@ -253,7 +254,7 @@ def analysis_input_isoforms(Inputs, organism):
         return False
 
     else:
-        print('-----------yeaaaaaaah--------------')
+        print('inputs are less than 2000')
         gene_domains = {}
         # all genes and missing domains
         missing = {}
@@ -299,7 +300,6 @@ def analysis_input_isoforms(Inputs, organism):
                             missing[ensembl].append(d)
 
         proteins_id = Remove(proteins_id)
-
         return proteins_id, missing, n
 
 
@@ -364,7 +364,7 @@ def ensembl_to_entrez(gene, organism):
 
 def entrez_to_ensembl(gene, organism):
     data = protein_all[organism]
-    df_filter = data['NCBI gene ID'].isin([gene])
+    df_filter = data['NCBI gene ID'].isin([int(gene)])
     try:
         return data[df_filter]['Gene stable ID'].unique()[0]
     except IndexError:

@@ -25,6 +25,7 @@ from .Process import gene as g
 from .Process import network_analysis as nt
 from .Process import mutliple_query as mq
 from .Process import process_data as proc_data
+from .nease import nease as nease
 
 # --- Create folder
 # Global jobs path
@@ -651,7 +652,9 @@ def Multi_proteins(request, organism, job='0'):
         return HttpResponse("<h1>Too many inputs (max=2000 genes)</h1>")
 
     else:
+        print("info exists")
         genes, missing, num_isoforms = info
+
 
         Net = nt.Construct_network(genes, missing, job, organism)
 
@@ -674,6 +677,20 @@ def Multi_proteins(request, organism, job='0'):
     }
 
     return render(request, 'visualization/network.html', context)
+
+
+def setup_nease(request):
+    return render(request, 'setup/nease_setup.html')
+
+
+def run_nease(request):
+    input_data = request.FILES
+    if 'input_file' not in input_data:
+        return HttpResponse("No input file provided")
+
+    print("Submitted NEASE job")
+    events = nease.run(input_data)
+    return JsonResponse(events)
 
 
 def get_organisms(request):

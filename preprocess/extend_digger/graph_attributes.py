@@ -9,8 +9,11 @@ def load_obj(organism, name):
         return pickle.load(f)
 
 
-def save_obj(organism, name, obj):
-    path = f'../container/domain/data/{organism}/{name}.pkl'
+def save_obj(organism, name, obj, path=None):
+    if path is None:
+        path = f'../container/domain/data/{organism}/{name}.pkl'
+    else:
+        path = f'{path}/{organism}/{name}.pkl'
     # don't overwrite existing backup files, just to be sure
     if "bak" in name:
         while os.path.isfile(path):
@@ -117,7 +120,9 @@ def main(organism, backup=True):
         extended_graph = add_predicted_nodes(annotated_graph,
                                              f'resultdata/predicted_ddi_ppi_alt.tsv', ppi_graph)
         print(f"Extended {graph} graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
-        save_obj(organism, graph, extended_graph)
+        if graph == 'DomainG':
+            save_obj(organism, graph, extended_graph)
+            save_obj(organism, 'graph', extended_graph, path='../../container/domain/nease/data')
 
 
 if __name__ == '__main__':

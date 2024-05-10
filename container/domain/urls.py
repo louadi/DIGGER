@@ -17,6 +17,8 @@ urlpatterns = [
          name="network-analysis-example-2"),
     path('network_analysis/example3', TemplateView.as_view(template_name='setup/network_example_3.html'),
          name="network-analysis-example-3"),
+    # NEASE setup
+    path('nease_analysis', views.setup_nease, name="nease-analysis"),
 
     # --- Selection Page
     # Interaction view page (select one transcript of gene)
