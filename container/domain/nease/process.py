@@ -225,7 +225,8 @@ def process_MAJIQ(data,
         data["P(|dPSI|>=0.20)"] = data['P(|dPSI|>=0.20) per LSV junction'].apply(f)
         data["delta_sif"] = data['delta'].apply(l)
         data = data[data['delta_sif']]
-    except:
+    except Exception as e:
+        print(e)
         raise Exception(
             "Could not recognize MAJIQ format. Please make sure your table matches MAJIQ output or use the standard format.")
 

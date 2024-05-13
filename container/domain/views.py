@@ -213,9 +213,7 @@ def exon(request, organism, exon_ID):
 
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
-
     table = table.to_html(**settings.TO_HTML_PARAMETERS)
-
 
     context = {
 
@@ -680,6 +678,39 @@ def Multi_proteins(request, organism, job='0'):
 
 
 def setup_nease(request):
+    if not request.FILES:
+        return render(request, 'setup/nease_setup.html')
+    # Get the input file and post data
+    input_data = request.FILES
+    if 'splicing-events-file' not in input_data:
+        return HttpResponse("No input file provided", status=400)
+
+    organism = request.POST.get('organism', 'human')
+    database_type = request.POST.get('inputType', 'Standard')
+
+    confidences = []
+    for confidence in ["high", "mid", "low"]:
+        if request.POST.get(f"predicted-checkbox-{confidence}", False):
+            confidences.append(confidence)
+
+    enrich_dbs = request.POST.getlist('databases_to_enrich')
+    p_value = request.POST.get('p_value_cutoff', 0.05)
+    min_delta = request.POST.get('min_delta', 0.05)
+    majiq_confidence = request.POST.get('Majiq_confidence', 0.95)
+    only_ddis = request.POST.get('only_DDIs', False)
+    rm_not_in_frame = request.POST.get('remove_non_in_frame', True)
+    divisible_by_3 = request.POST.get('only_divisible_by_3', False)
+
+    # Run the NEASE job
+    print(f"Submitted NEASE job with params: {organism}, {database_type}, {p_value}, {rm_not_in_frame}, "
+          f"{divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
+
+    table = pd.read_table(input_data['splicing-events-file'])
+    try:
+        events = nease.run(table, organism, database_type, p_value, rm_not_in_frame, divisible_by_3, min_delta,
+                           majiq_confidence, only_ddis, confidences)
+    except Exception as e:
+        print(e)
     return render(request, 'setup/nease_setup.html')
 
 
