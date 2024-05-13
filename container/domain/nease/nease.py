@@ -571,7 +571,7 @@ class run(object):
             print('\n')
             # run enrichment
             enrich, _ = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                           self.only_DDIs, self.confidences)
+                                           self.only_DDIs)
 
             if len(enrich) == 0:
                 print('No enrichment or genes found for the selected pathway.')
@@ -648,7 +648,7 @@ class run(object):
             # run enrichment
 
             enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                                        self.only_DDIs, self.confidences)
+                                                        self.only_DDIs)
 
             if len(enrich) == 0:
                 print('No enrichment or genes found for the selected pathway.')

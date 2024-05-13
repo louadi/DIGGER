@@ -13,13 +13,18 @@
       the options you would like to use and automatically get your results!</p>
   </div>
 
+    <!-- make a danger alert if there is no file -->
+    <div id="noFileAlert" class="alert alert-danger" role="alert" hidden="">
+      Please select a file!
+    </div>
+
   <div role="tabpanel" class="tab-pane" id="Section3">
-    <form class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
+    <form id="inputForm" class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <!-- file upload -->
       <div class="card-body row no-gutters align-items-center">
         <div class="custom-file form-group">
-            <input type="file" class="custom-file-input form-control" name="splicing-events-file">
+            <input type="file" class="custom-file-input form-control" name="splicing-events-file" id="customFile">
             <label class="custom-file-label" for="customFile">Upload a file with splicing events</label>
         </div>
       </div>
@@ -43,7 +48,9 @@
             <!-- databases -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="input_type">Input Database:</label>
+                <label for="input_type" data-toggle="tooltip" data-placement="top"
+                       title="The source of the input splicing events. Dictates the format NEASE uses"
+                >Input format:</label>
               </div>
               <div class="col-md-8">
                 <select class="form-control" id="input_type" name="inputType">
@@ -60,7 +67,9 @@
             <!-- DDIs -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label>Predicted DDIs:</label>
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Determines which (if any) predicted Domain-Domain Interactions should be used"
+                >Predicted DDIs:</label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
@@ -88,7 +97,10 @@
             <!-- enriched databases -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="databases_to_enrich">Databases to enrich:</label>
+                <label for="databases_to_enrich" data-toggle="tooltip" data-placement="top"
+                       title="Enrich for specific databases only, separated by comma. Supported databases: Reactome,
+                       KEGG, PharmGKB, HumanCyc, Wikipathways, SMPDB, Signalink, NetPath, EHMN, INOH, BioCarta, PID"
+                >Databases to enrich:</label>
               </div>
               <div class="col-md-8">
                 <input type="text" class="form-control" id="databases_to_enrich" name="databases_to_enrich"
@@ -98,7 +110,8 @@
             <!-- p_value_cutoff -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="p_value_cutoff">P-value cutoff:</label>
+                <label for="p_value_cutoff" data-toggle="tooltip" data-placement="top"
+                       title="The p value cutoff used to compute NEASE scores.">P-value cutoff:</label>
               </div>
               <div class="col-md-8">
                 <input type="number" class="form-control" id="p_value_cutoff" name="p_value_cutoff" value="0.05"
@@ -108,7 +121,9 @@
             <!-- min_delta -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="min_delta">Min delta:</label>
+                <label for="min_delta" data-toggle="tooltip" data-placement="top"
+                       title="min delta to consider in case your input has a dPsi column.
+                       The value also corresponds to logfold change in case of DEXSeq.">Min delta:</label>
               </div>
               <div class="col-md-8">
                 <input type="number" class="form-control" id="min_delta" name="min_delta" value="0.05"
@@ -118,7 +133,9 @@
             <!-- Majiq_confidence -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="Majiq_confidence">Majiq confidence:</label>
+                <label for="Majiq_confidence" data-toggle="tooltip" data-placement="top"
+                       title="In case of your input format being MAJIQ. The parameter P(dPSI > 20%) is needed.
+                       Check MAJIQ paper for details about this">MAJIQ confidence:</label>
               </div>
               <div class="col-md-8">
                 <input type="number" class="form-control" id="Majiq_confidence" name="Majiq_confidence"
@@ -129,7 +146,8 @@
             <!-- only_DDIs -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label>Only DDIs:</label>
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Only use DDI and exclude PDB and linear motif interactions for calculations">Only DDIs:</label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
@@ -141,12 +159,14 @@
             <!-- remove non in frame -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label>Remove non in frame:</label>
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Removes all exons that are predicted to disturb the ORF or known to result
+                       in a non-coding gene. Disable to include all exons.">Remove non-in-frame:</label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
                   <input type="checkbox" class="custom-control-input" id="remove_non_in_frame"
-                         name="remove_non_in_frame" value="True">
+                         name="remove_non_in_frame" checked>
                   <label class="custom-control-label" for="remove_non_in_frame"></label>
                 </div>
               </div>
@@ -155,7 +175,8 @@
             <!-- only divisible by 3 -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label>Only divisible by 3:</label>
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Removes exons not divisible by 3">Only divisible by 3:</label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
@@ -179,6 +200,12 @@
   <script src="{% static "domain/organism_selector.js" %}"></script>
 
   <script>
+    // enable tooltips
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
+
     // check if input_type is Majiq, if it is not, disable Majiq_confidence
     $('#input_type').change(function () {
       if ($('#input_type').val() === 'Majiq') {
@@ -187,6 +214,30 @@
         $('#Majiq_confidence').prop('disabled', true);
       }
     });
+
+    // change the label text when a file is selected
+    $(document).ready(function(){
+      // Add change event listener to file input
+      $('#customFile').on('change', function(){
+          // Get the name of the selected file
+          var fileName = $(this).val().split('\\').pop();
+          // Update the label text
+          $(this).next('.custom-file-label').html(fileName);
+      });
+    });
+
+    // prevent form submission if no file is selected
+    document.getElementById('inputForm').addEventListener('submit', function(event) {
+      var fileInput = document.getElementById('customFile');
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      event.preventDefault();
+      document.getElementById('noFileAlert').removeAttribute('hidden');
+      }
+      else {
+          document.getElementById('noFileAlert').setAttribute('hidden', '');
+      }
+    });
+
   </script>
 
 {% endblock %}

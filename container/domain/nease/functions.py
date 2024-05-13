@@ -245,20 +245,19 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
     return Enrichment.sort_values(['p_value'], ascending=True)
 
 
-def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs, confidences):
+def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs):
     # Totat degree of structural network for human (pre-computer)
     # For statistical test: edge enrichment
     ppi_set = ppi_interactions(PPI[organism])
 
     if only_DDIs:
-        filtered_ppis = filter_by_ddi(network[organism], ppi_set, confidences)
+        filtered_ppis = filter_by_ddi(network[organism], ppi_set)
         n = len(filtered_ppis)
         ppi_type = 'Degree in the PPI/DDI'
 
     else:
         filtered_ppis = filter_ppi_graph(ppi_set, network[organism],
-                                         elm_interactions[organism], pdb[organism], mapping,
-                                         wanted_confidence=confidences)
+                                         elm_interactions[organism], pdb[organism], mapping)
         n = len(filtered_ppis)
         ppi_type = 'Degree in the structural PPI'
 

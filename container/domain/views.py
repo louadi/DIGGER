@@ -693,17 +693,20 @@ def setup_nease(request):
         if request.POST.get(f"predicted-checkbox-{confidence}", False):
             confidences.append(confidence)
 
+    # get form data in the correct format
     enrich_dbs = request.POST.getlist('databases_to_enrich')
-    p_value = request.POST.get('p_value_cutoff', 0.05)
-    min_delta = request.POST.get('min_delta', 0.05)
-    majiq_confidence = request.POST.get('Majiq_confidence', 0.95)
-    only_ddis = request.POST.get('only_DDIs', False)
-    rm_not_in_frame = request.POST.get('remove_non_in_frame', True)
-    divisible_by_3 = request.POST.get('only_divisible_by_3', False)
+    p_value = float(request.POST.get('p_value_cutoff', 0.05))
+    min_delta = float(request.POST.get('min_delta', 0.05))
+    majiq_confidence = float(request.POST.get('Majiq_confidence', 0.95))
+    only_ddis = request.POST.get('only_DDIs', 'off') == 'on'
+    rm_not_in_frame = request.POST.get('remove_non_in_frame', 'on') == 'on'
+    divisible_by_3 = request.POST.get('only_divisible_by_3', 'off') == 'on'
 
     # Run the NEASE job
     print(f"Submitted NEASE job with params: {organism}, {database_type}, {p_value}, {rm_not_in_frame}, "
           f"{divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
+    print(f"Datatypes: {type(organism)}, {type(database_type)}, {type(p_value)}, {type(rm_not_in_frame)}, "
+          f"{type(divisible_by_3)}, {type(min_delta)}, {type(majiq_confidence)}, {type(only_ddis)}, {type(confidences)}")
 
     table = pd.read_table(input_data['splicing-events-file'])
     try:
