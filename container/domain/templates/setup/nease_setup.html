@@ -4,7 +4,6 @@
 {% block title %}NEASE Analysis{% endblock %}
 
 {% block header %}
-  <link href="{% static 'domain/typeaheadjs.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -14,70 +13,180 @@
       the options you would like to use and automatically get your results!</p>
   </div>
 
-    <div role="tabpanel" class="tab-pane" id="Section3">
-    <form class="card card-sm shadow" autocomplete="off">
+  <div role="tabpanel" class="tab-pane" id="Section3">
+    <form class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- file upload -->
       <div class="card-body row no-gutters align-items-center">
-        <div class="col">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
-            </div>
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-            </div>
-          </div>
+        <div class="custom-file form-group">
+            <input type="file" class="custom-file-input form-control" name="splicing-events-file">
+            <label class="custom-file-label" for="customFile">Upload a file with splicing events</label>
         </div>
-        <!--end of col-->
-        <div class="col-auto mr-1 ml-1">
-          <select class="form-control" id="org_select" name="organism">
-          </select>
-        </div>
-
-        <!--end of col-->
-        <div class="col-auto">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
-        </div>
-
       </div>
-      <div class="card-body row no-gutters align-itmes-center">
-        <div class="col-sm-2"><b>Predicted DDIs</b></div>
-          <div class="col-sm-2">
-            <div class="custom-control custom-switch disabled" aria-disabled="true">
-              <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
-                     id="high_domain"
-                     name="predicted-checkbox-high"
-                     value="high">
-              <label class="custom-control-label" for="high_domain">High</label>
+
+      <!-- options -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5><b>Required Options</b></h5>
+            <br>
+            <!-- organism -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="org_select">Organism:</label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-control" id="org_select" name="organism">
+                </select>
+              </div>
+            </div>
+            <!-- databases -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="input_type">Input Database:</label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-control" id="input_type" name="inputType">
+                  <!-- options: 'MAJIQ', 'Standard', 'Spycone', 'Whippet', 'rmats', 'DEXSeq' -->
+                  <option value="Standard">Standard</option>
+                  <option value="MAJIQ">MAJIQ</option>
+                  <option value="Spycone">Spycone</option>
+                  <option value="Whippet">Whippet</option>
+                  <option value="rmats">rmats</option>
+                  <option value="DEXSeq">DEXSeq</option>
+                </select>
+              </div>
+            </div>
+            <!-- DDIs -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label>Predicted DDIs:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="high_domain"
+                         name="predicted-checkbox-high" value="high">
+                  <label class="custom-control-label" for="high_domain">High</label>
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="mid_domain"
+                         name="predicted-checkbox-mid" value="mid">
+                  <label class="custom-control-label" for="mid_domain">Medium</label>
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="low_domain"
+                         name="predicted-checkbox-low" value="low">
+                  <label class="custom-control-label" for="low_domain">Low (confidence)</label>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="col-sm-2">
-            <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
-                     id="mid_domain"
-                     name="predicted-checkbox-mid"
-                     value="mid">
-              <label class="custom-control-label" for="mid_domain">Medium</label>
+
+          <div class="col-md-6">
+            <h5><b>Advanced Options</b></h5>
+            <br>
+            <!-- enriched databases -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="databases_to_enrich">Databases to enrich:</label>
+              </div>
+              <div class="col-md-8">
+                <input type="text" class="form-control" id="databases_to_enrich" name="databases_to_enrich"
+                       placeholder="Reactome, KEGG, ...">
+              </div>
+            </div>
+            <!-- p_value_cutoff -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="p_value_cutoff">P-value cutoff:</label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="p_value_cutoff" name="p_value_cutoff" value="0.05"
+                       step="0.01">
+              </div>
+            </div>
+            <!-- min_delta -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="min_delta">Min delta:</label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="min_delta" name="min_delta" value="0.05"
+                       step="0.01">
+              </div>
+            </div>
+            <!-- Majiq_confidence -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="Majiq_confidence">Majiq confidence:</label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="Majiq_confidence" name="Majiq_confidence"
+                       value="0.95"
+                       step="0.01" disabled="">
+              </div>
+            </div>
+            <!-- only_DDIs -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label>Only DDIs:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="only_DDIs" name="only_DDIs" value="True">
+                  <label class="custom-control-label" for="only_DDIs"></label>
+                </div>
+              </div>
+            </div>
+            <!-- remove non in frame -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label>Remove non in frame:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="remove_non_in_frame"
+                         name="remove_non_in_frame" value="True">
+                  <label class="custom-control-label" for="remove_non_in_frame"></label>
+                </div>
+              </div>
+
+            </div>
+            <!-- only divisible by 3 -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label>Only divisible by 3:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="only_divisible_by_3"
+                         name="only_divisible_by_3" value="False">
+                  <label class="custom-control-label" for="only_divisible_by_3"></label>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="col-sm-2">
-            <div class="custom-control custom-switch predicted">
-              <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
-                     id="low_domain"
-                     name="predicted-checkbox-low"
-                     value="low">
-              <label class="custom-control-label" for="low_domain">Low (confidence)</label>
-            </div>
-          </div>
+        </div>
+      </div>
+
+      <!-- submit button -->
+      <div class="card-body row no-gutters justify-content-end">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
       </div>
     </form>
-
   </div>
 
-  <script src="{% static "domain/typeahead.bundle.js" %}"></script>
-  <script src="{% static "domain/typeahead.js" %}"></script>
   <script src="{% static "domain/organism_selector.js" %}"></script>
-  <script src="{% static "domain/exampleSelector.js" %}"></script>
 
+  <script>
+    // check if input_type is Majiq, if it is not, disable Majiq_confidence
+    $('#input_type').change(function () {
+      if ($('#input_type').val() === 'Majiq') {
+        $('#Majiq_confidence').prop('disabled', false);
+      } else {
+        $('#Majiq_confidence').prop('disabled', true);
+      }
+    });
+  </script>
 
 {% endblock %}

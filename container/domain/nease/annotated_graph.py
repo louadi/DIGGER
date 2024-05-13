@@ -1,12 +1,10 @@
-# This file is supposed to update the relevant NEASE data to comply with the new DIGGER data
-# It should be run before creating the nease package
+# This file is responsible for filtering the PPI graph based on DDI, ELM and PDB
 import pickle
 import timeit
 
 import networkx as nx
 import pickle5
 import pandas as pd
-import ast
 # load files
 
 
