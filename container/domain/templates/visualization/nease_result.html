@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}NEASE result{% endblock %}
+
+{% block header %}
+  <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
+
+  <style>
+      .sticky-offset {
+          top: 56px
+      }
+
+      .list-group > .list-group > .list-group-item {
+          padding-left: 2.5rem;
+      }
+
+      .tab-content > .tab-pane:not(.active) {
+          display: block;
+          height: 0;
+          overflow-y: hidden;
+      }
+
+      #protein-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #domain-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #interaction-network {
+          position: relative;
+          height: 600px;
+          border: 2px solid lightgray;
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+          display: block; /* remove extra space below image */
+      }
+
+      .tab {
+          margin-left: 90px;
+      }
+
+      .tab {
+          margin-left: 50px;
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+      }
+
+      img.resize {
+          max-width: 80%;
+          max-height: 80%;
+      }
+
+      img.resize2 {
+          max-width: 55%;
+          max-height: 55%;
+      }
+  </style>
+
+  <script>
+      $(document).ready(function () {
+          $('#Interaction_table').DataTable();
+      });
+  </script>
+  <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
+{% endblock %}
+
+{% block raw_content %}
+<div class="wider-container my-3">
+  <div class="row">
+    <!-- Vertical pill selection menu-->
+    <div class="col-lg-2 mb-2 rounded">
+      <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+        <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
+             aria-orientation="vertical">
+          <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
+             role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
+          <hr class="border-bottom" style="width: 100%;">
+          <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein" role="tab"
+             aria-controls="v-pills-protein" aria-selected="false">Path analysis</a>
+
+          <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-interaction"
+             role="tab"
+             aria-controls="v-pills-compare" aria-selected="false">Visualise Exons</a>
+
+        </div>
+      </div>
+    </div>
+    <!-- /Vertical pill selection menu -->
+
+    <!-- Page content -->
+    <div class="col-lg-10">
+
+      <!-- Jumbotron overview-->
+      <div class="jumbotron p-xl-4">
+        <h1 class="display-4">NEASE summary</h1>
+        <hr>
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 180px">Input file:</span> {{ input_name|safe }}
+        </h5>
+        <h5 class="lead">
+          {{ summary|safe }}
+        </h5>
+
+      </div>
+
+      <!-- Tab content -->
+      <div class="tab-content" id="v-pills-tabContent">
+        <!-- Overview content -->
+        <div class="tab-pane fade show active card shadow rounded" id="v-pills-overview" role="tabpanel"
+             aria-labelledby="v-pills-overview-tab">
+          <div class="card-body">
+            <p class="lead text-center"><span
+                style="font-weight:bold">Domain and exon architecture</span></p>
+
+            <!-- Exon Table-->
+
+            <div class="mt-5">
+              <h5 class="mb-3">Select an exon from the table to assess the consequence of its skipping
+                or choose different tabs to explore the isoform  interactions.</h5>
+              <div class="table-responsive">
+                <h6 class="mb-3" style="text-align: center">
+                </h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Page content -->
+    </div>
+  </div>
+</div>
+<script>
+    // write an exception that just ignores if inputElement is null
+    function addHeightListener(inputId, outputId) {
+        try {
+            const inputElement = document.getElementById(inputId);
+            inputElement.addEventListener("input", function() {
+              document.getElementById(outputId).style.height = `${this.value}px`;
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    addHeightListener("proteinCanvasRange", "protein-network");
+    addHeightListener("domainCanvasRange", "domain-network");
+    addHeightListener("interactionCanvasRange", "interaction-network");
+</script>
+{% endblock %}

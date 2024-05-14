@@ -66,6 +66,8 @@ class run(object):
         self.organism = organism
         self.confidences = confidences
 
+        self.summary = None
+
         supported_organisms = ['human', 'mouse']
         supported_input_types = ['MAJIQ', 'Standard', 'Spycone', 'Whippet', 'rmats', 'DEXSeq']
 
@@ -78,7 +80,6 @@ class run(object):
         else:
 
             # Open the Join graph and databases of the selected organism:
-            Join = network[organism]
             self.mapping = database_mapping[organism]
             self.path = Pathways[organism]
             self.ppi = PPI[organism]
@@ -96,9 +97,11 @@ class run(object):
 
             # preprocess data to make analysis easier
             self.path['entrez_gene_ids'] = self.path['entrez_gene_ids'].apply(eval)
-            if self.confidences is None:
+            if not self.confidences:
                 self.confidences = ['original']
-            Join.remove_edges_from([x for x in Join.edges(data=True) if x[2]['confidence'] not in self.confidences])
+            network[organism].remove_edges_from([x for x in network[organism].edges(data=True)
+                                                 if x[2]['confidence'] not in self.confidences])
+            Join = network[organism]
 
             if input_type == 'MAJIQ':
 
@@ -109,7 +112,7 @@ class run(object):
                                                                                                     self.only_DDIs,
                                                                                                     self)
                 if len(self.data) == 0:
-                    print('Found no overlap with protein domains.')
+                    self.summary = 'Found no overlap with protein domains.'
 
             elif input_type == 'Standard':
 
@@ -117,9 +120,8 @@ class run(object):
                     self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
                         input_data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
                     if len(self.data) == 0:
-                        print('Found no overlap with protein domains.')
-                        print(
-                            'Make sure that the genomic coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
+                        self.summary = ('Found no overlap with protein domains. Make sure that the genomic '
+                                        'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
                 except:
                     print(
                         'Could not recognize the standard format. Please make sure your table matches the standard format.')
@@ -196,17 +198,6 @@ class run(object):
 
                 self.data = exons_to_edges(self.data, Join, self.elm_interactions, self.organism)
 
-                print('\n\t\tData Summary')
-                print('**************************************************')
-
-                print(str(len(self.data['Domain ID'].unique())) + ' protein domains are affected by AS.\n')
-                if not self.only_DDIs:
-                    print(str(len(self.elm_affected['ELMIdentifier'].unique())) + " linear motifs are affected by AS.\n"
-                          + str(len(self.pdb_affected)) + ' interacting residue are affected by AS.\n')
-
-                print(str(len(self.data[self.data['Interacting domain']][
-                                  'Domain ID'].unique())) + ' of the affected domains/motifs have known interactions.')
-
                 # Identify binding of affected domains = Edges in the PPI
                 # get DMI adn DDI for spliced domains
 
@@ -217,14 +208,17 @@ class run(object):
                 # self.pdb_affected: co-resolved interactions
                 self.g2edges = gene_to_edges(self.interacting_domains, self.pdb_affected, self.only_DDIs)
 
-                print(str(len([item for sublist in self.g2edges.values() for item in
-                               sublist])) + ' protein interactions/binding affected.')
+                self.summary = 'Data Summary\n**************************************************'
+                self.summary += '\n' + str(len(self.data['Domain ID'].unique())) + ' protein domains are affected by AS.'
+                if not self.only_DDIs:
+                    self.summary += '\n' + str(len(self.elm_affected['ELMIdentifier'].unique())) + " linear motifs are affected by AS."
+                    self.summary += '\n' + str(len(self.pdb_affected)) + ' interacting residue are affected by AS.'
+                self.summary += '\n' + (str(len(self.data[self.data['Interacting domain']]['Domain ID'].unique())) +
+                                        ' of the affected domains/motifs have known interactions.')
 
-                #get affected edges from ELM and PDB
+                self.summary += ('\n' + str(len([item for sublist in self.g2edges.values() for item in sublist])) +
+                                 ' protein interactions/binding affected.')
 
-                # Runing Enrichment analysis
-
-                print('\n**************************************************')
                 print('Running enrichment analysis...')
 
                 self.supported_database = list(self.path['source'].unique())

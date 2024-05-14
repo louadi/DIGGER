@@ -705,16 +705,25 @@ def setup_nease(request):
     # Run the NEASE job
     print(f"Submitted NEASE job with params: {organism}, {database_type}, {p_value}, {rm_not_in_frame}, "
           f"{divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
-    print(f"Datatypes: {type(organism)}, {type(database_type)}, {type(p_value)}, {type(rm_not_in_frame)}, "
-          f"{type(divisible_by_3)}, {type(min_delta)}, {type(majiq_confidence)}, {type(only_ddis)}, {type(confidences)}")
 
     table = pd.read_table(input_data['splicing-events-file'])
+    context = {
+        'error_msg': None
+    }
     try:
         events = nease.run(table, organism, database_type, p_value, rm_not_in_frame, divisible_by_3, min_delta,
                            majiq_confidence, only_ddis, confidences)
+        context = {
+            'input_name': input_data['splicing-events-file'].name,
+            'summary': events.summary.replace("\n", "<br>"),
+        }
+        return render(request, 'visualization/nease_result.html', context)
     except Exception as e:
+        print("outer exception")
         print(e)
-    return render(request, 'setup/nease_setup.html')
+        traceback.print_exc()
+        context['error_msg'] = str(e)
+    return render(request, 'setup/nease_setup.html', context)
 
 
 def run_nease(request):

@@ -18,6 +18,14 @@
       Please select a file!
     </div>
 
+  {% if error_msg %}
+    <div class="alert alert-danger" role="alert">
+      Error:
+      <br>
+      {{ error_msg }}
+    </div>
+  {% endif %}
+
   <div role="tabpanel" class="tab-pane" id="Section3">
     <form id="inputForm" class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
       {% csrf_token %}

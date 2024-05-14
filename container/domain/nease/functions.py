@@ -143,10 +143,8 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
         ppi_type = 'Degree in the PPI/DDI'
 
     else:
-        filtered_ppis = filter_ppi_graph(ppi_set, network[organism],
-                                         elm_interactions[organism], pdb[organism], mapping)
+        filtered_ppis = filter_ppi_graph(ppi_set, network[organism], elm_interactions[organism], pdb[organism], mapping)
         n = len(filtered_ppis)
-        n = 60235
         ppi_type = 'Degree in the structural PPI'
 
     # convert filtered ppi to networkx graph

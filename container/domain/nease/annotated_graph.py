@@ -37,6 +37,7 @@ def ppi_interactions(ppi_graph):
 
 
 def filter_by_ddi(ddi_graph, ppis):
+    print(len(ddi_graph.edges))
     ddi_supported_ppis = set()
     for edge in ddi_graph.edges(data=True):
         entrez_only = [edge[0].split("/")[0], edge[1].split("/")[0]]
@@ -80,7 +81,8 @@ def filter_ppi_graph(ppis, ddi_graph, elm, pdb, Organism):
     pdb_filtered = filter_by_pdb(pdb, Organism, ppis)
     # print("Filtered by pdb: ", len(pdb_filtered))
     ppis = ddi_filtered | elm_filtered | pdb_filtered
-    print("Number of edges after filtering: ", len(ppis))
+    print(f"Number of edges after filtering: {len(ppis)}, (ddi: {len(ddi_filtered)}, elm: {len(elm_filtered)}, "
+          f"pdb: {len(pdb_filtered)})")
     return ppis
 
 
