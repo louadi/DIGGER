@@ -57,14 +57,14 @@ def filter_by_elm(elm, ppis):
 def filter_by_pdb(pdb, organism, ppis):
     # convert organism['gene name'] and organims['entrez'] to dictionary
     organism['NCBI gene ID'] = organism['NCBI gene ID'].astype(str)
-    # gene_to_entrez = organism.set_index('Gene name')['NCBI gene ID'].to_dict()
-    gene_to_entrez = pdb.set_index('symbol')['entrezgene'].to_dict()
+    gene_to_entrez = organism.set_index('Gene name')['NCBI gene ID'].to_dict()
+    # gene_to_entrez = pdb.set_index('symbol')['entrezgene'].to_dict()
 
     # convert pdb['symbol'] to entrez and put it in an ordered tuple with pdb['entrezgene']
-    # pdb_entrez = [tuple(sorted([str(gene_to_entrez.get(row['symbol'], None)), str(row['entrezgene'])]))
-    #               for index, row in pdb.iterrows()]
-    pdb_entrez = [tuple(sorted([str(gene_to_entrez.get(row['Gene name'], None)), str(row['NCBI gene ID'])]))
-                  for index, row in organism.iterrows()]
+    pdb_entrez = [tuple(sorted([str(gene_to_entrez.get(row['symbol'], None)), str(row['entrezgene'])]))
+                  for index, row in pdb.iterrows()]
+    # pdb_entrez = [tuple(sorted([str(gene_to_entrez.get(row['Gene name'], None)), str(row['NCBI gene ID'])]))
+    #               for index, row in organism.iterrows()]
 
     return ppis & set(pdb_entrez)
 

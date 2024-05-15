@@ -108,12 +108,23 @@
         <h1 class="display-4">NEASE summary</h1>
         <hr>
         <h5 class="lead"><span
-            style="font-weight:bold; display: inline-block; width: 180px">Input file:</span> {{ input_name|safe }}
+            style="font-weight:bold; display: inline-block; width: 500px">Input file:</span> {{ input_name|safe }}
         </h5>
-        <h5 class="lead">
-          {{ summary|safe }}
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 500px">Affected protein domains:</span> {{ domain_affected|safe }}
         </h5>
-
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 500px">Affected linear motifs:</span> {{ lin_motifs|safe }}
+        </h5>
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 500px">Affected interacting residues:</span> {{ residues|safe }}
+        </h5>
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 500px">Affected Domains/Motifs with known interactions:</span> {{ known_interactions|safe }}
+        </h5>
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
+        </h5>
       </div>
 
       <!-- Tab content -->
@@ -123,13 +134,14 @@
              aria-labelledby="v-pills-overview-tab">
           <div class="card-body">
             <p class="lead text-center"><span
-                style="font-weight:bold">Domain and exon architecture</span></p>
+                style="font-weight:bold">Enrichment result</span></p>
 
             <!-- Exon Table-->
 
             <div class="mt-5">
-              <h5 class="mb-3">Select an exon from the table to assess the consequence of its skipping
-                or choose different tabs to explore the isoform  interactions.</h5>
+              {% if error %}
+              <h5 class="text-danger text-center">{{ error }}</h5>
+              {% endif %}
               <div class="table-responsive">
                 <h6 class="mb-3" style="text-align: center">
                 </h6>

@@ -715,7 +715,7 @@ def setup_nease(request):
                            majiq_confidence, only_ddis, confidences)
         context = {
             'input_name': input_data['splicing-events-file'].name,
-            'summary': events.summary.replace("\n", "<br>"),
+            **events.summary,
         }
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:

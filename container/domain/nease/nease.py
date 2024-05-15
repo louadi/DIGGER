@@ -66,7 +66,7 @@ class run(object):
         self.organism = organism
         self.confidences = confidences
 
-        self.summary = None
+        self.summary = {}
 
         supported_organisms = ['human', 'mouse']
         supported_input_types = ['MAJIQ', 'Standard', 'Spycone', 'Whippet', 'rmats', 'DEXSeq']
@@ -112,7 +112,7 @@ class run(object):
                                                                                                     self.only_DDIs,
                                                                                                     self)
                 if len(self.data) == 0:
-                    self.summary = 'Found no overlap with protein domains.'
+                    self.summary['error'] = 'Found no overlap with protein domains.'
 
             elif input_type == 'Standard':
 
@@ -120,14 +120,13 @@ class run(object):
                     self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
                         input_data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
                     if len(self.data) == 0:
-                        self.summary = ('Found no overlap with protein domains. Make sure that the genomic '
+                        self.summary['error'] = ('Found no overlap with protein domains. Make sure that the genomic '
                                         'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
                 except:
-                    print(
-                        'Could not recognize the standard format. Please make sure your table matches the standard format.')
-                    print('Gene ensembl ID          EXON START        EXON END          dPSI (optional)')
-                    print(
-                        'Make sure that the genomic coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
+                    raise ValueError('Could not recognize the standard format. Please make sure your table matches '
+                                     'the standard format with these columns: Gene ensembl ID, EXON START, EXON END, '
+                                     'dPSI (optional). Also ensure that the genomic coordinates of the exons correspond '
+                                     'to the correct genome build (i.e. hg38 (GRCh38) in human).')
 
             elif input_type == 'Whippet':
 
@@ -144,7 +143,7 @@ class run(object):
                         data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
                 except:
-                    print('process failed....Try to use the Standard input')
+                    raise ValueError('Invalid file format! Try to use the Standard input')
 
             elif input_type == 'rmats':
 
@@ -158,7 +157,7 @@ class run(object):
                         data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
                 except:
-                    print('process failed....Try to use the Standard input')
+                    raise ValueError('Invalid file format! Try to use the Standard input')
 
             elif input_type == 'DEXSeq':
 
@@ -170,20 +169,22 @@ class run(object):
                         data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
                 except:
-                    print('process failed....Try to use the Standard input')
+                    raise ValueError('Invalid file format! Try to use the Standard input')
 
             elif input_type == 'Spycone':
 
-                self.data, self.spliced_genes = process_spycone(input_data, self.mapping)
+                try:
 
-                #spycone only uses DDI for now
-                self.only_DDIs = True
+                    self.data, self.spliced_genes = process_spycone(input_data, self.mapping)
 
-                if len(self.data) == 0:
-                    print('Found no overlap with protein domains.')
+                    #spycone only uses DDI for now
+                    self.only_DDIs = True
+
+                except:
+                    raise ValueError('Invalid file format! Try to use the Standard input')
 
             if len(self.data) == 0:  #
-                print('process canceled...')
+                self.summary['error'] = 'Found no overlap with protein domains. Analysis cancelled...'
 
             else:
                 self.data = self.data.drop_duplicates(['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Pfam ID'],
@@ -208,16 +209,13 @@ class run(object):
                 # self.pdb_affected: co-resolved interactions
                 self.g2edges = gene_to_edges(self.interacting_domains, self.pdb_affected, self.only_DDIs)
 
-                self.summary = 'Data Summary\n**************************************************'
-                self.summary += '\n' + str(len(self.data['Domain ID'].unique())) + ' protein domains are affected by AS.'
+                self.summary['domain_affected'] = str(len(self.data['Domain ID'].unique()))
                 if not self.only_DDIs:
-                    self.summary += '\n' + str(len(self.elm_affected['ELMIdentifier'].unique())) + " linear motifs are affected by AS."
-                    self.summary += '\n' + str(len(self.pdb_affected)) + ' interacting residue are affected by AS.'
-                self.summary += '\n' + (str(len(self.data[self.data['Interacting domain']]['Domain ID'].unique())) +
-                                        ' of the affected domains/motifs have known interactions.')
+                    self.summary['lin_motifs'] = str(len(self.elm_affected['ELMIdentifier'].unique()))
+                    self.summary['residues'] = str(len(self.pdb_affected))
+                self.summary['known_interactions'] = str(len(self.data[self.data['Interacting domain']]['Domain ID'].unique()))
 
-                self.summary += ('\n' + str(len([item for sublist in self.g2edges.values() for item in sublist])) +
-                                 ' protein interactions/binding affected.')
+                self.summary['interaction_affected'] = str(len([item for sublist in self.g2edges.values() for item in sublist]))
 
                 print('Running enrichment analysis...')
 
