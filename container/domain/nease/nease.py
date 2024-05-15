@@ -96,7 +96,11 @@ class run(object):
             self.spliced_genes = []
 
             # preprocess data to make analysis easier
-            self.path['entrez_gene_ids'] = self.path['entrez_gene_ids'].apply(eval)
+            try:
+                self.path['entrez_gene_ids'] = self.path['entrez_gene_ids'].apply(eval)
+            except TypeError:
+                print(type(self.path))
+                print(self.path)
             if not self.confidences:
                 self.confidences = ['original']
             network[organism].remove_edges_from([x for x in network[organism].edges(data=True)

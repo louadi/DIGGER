@@ -20,8 +20,6 @@
 
   {% if error_msg %}
     <div class="alert alert-danger" role="alert">
-      Error:
-      <br>
       {{ error_msg }}
     </div>
   {% endif %}
@@ -197,9 +195,12 @@
           </div>
         </div>
       </div>
-
       <!-- submit button -->
-      <div class="card-body row no-gutters justify-content-end">
+      <div class="card-body row no-gutters align-items-center justify-content-end">
+        <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
+        <div class="spinner-border m-2" role="status" style="display: none">
+          <span class="sr-only">Loading...</span>
+        </div>
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
       </div>
     </form>
@@ -221,6 +222,17 @@
       } else {
         $('#Majiq_confidence').prop('disabled', true);
       }
+    });
+
+    // enable the spinner when the form is submitted and disable the button
+    $('#inputForm').submit(function () {
+      $('.spinner-border').css('display', 'inline-block');
+      $('#loading_text').css('display', 'inline-block');
+      $('button').prop('disabled', true);
+
+      setTimeout(function() {
+        $('#loading_text').text('Running enrichment analysis');
+      }, 2000);
     });
 
     // change the label text when a file is selected
