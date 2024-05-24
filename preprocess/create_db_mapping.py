@@ -1,4 +1,6 @@
 # this aims to recreate the database mapping (Human, Mouse) used in nease
+import sys
+
 import tqdm
 import pandas as pd
 import pickle5 as pickle
@@ -10,9 +12,86 @@ def load_df(path):
 
 
 human_ground_truth = load_df('db_data/Human')
-mouse_ppi_interface = pd.read_csv('../container/domain/data/Mus musculus[mouse]/PPI_interface_mapped_to_exon.csv')
+mouse_ppi_interface = pd.read_csv('db_data/PPI_interface_mapped_to_exon_mouse.csv')
 biomart_exons = pd.read_csv('db_data/exon_info_mouse.txt', sep='\t')
 biomart_domains = pd.read_csv('db_data/domain_info_mouse.txt', sep='\t')
+
+old_pdb_file = load_df('db_data/pdb')
+new_pdb_file = load_df('db_data/pdb_mouse.pkl')
+
+
+# for PPI interface to exon mapping
+def create_ppi_interface_to_exon(exon_info):
+    transcript_to_uniprot = pd.read_csv('db_data/transcript_to_uniprot.txt', sep='\t')
+    mouse_proteome_pos_pos = pd.read_csv('db_data/mouse_proteome.position_positions_interactions.tsv', sep='\t')
+
+    dict1 = transcript_to_uniprot.set_index('UniProtKB/Swiss-Prot ID')['Transcript stable ID'].to_dict()
+    dict2 = transcript_to_uniprot.set_index('UniProtKB/TrEMBL ID')['Transcript stable ID'].to_dict()
+
+    trans_to_uni = [dict1, dict2]
+
+    biomart_exons['CDS start'] = biomart_exons['CDS start'].fillna(-1).astype(int)
+    biomart_exons['CDS end'] = biomart_exons['CDS end'].fillna(-1).astype(int)
+    exon_info = exon_info.set_index('Transcript stable ID').sort_index()
+    total_len = len(mouse_proteome_pos_pos)
+    interaction_list = [['Transcript stable ID_x', 'u_ac_1', 'Exon stable ID_x', 'Transcript stable ID_y',
+                         'u_ac_2', 'Exon stable ID_y']]
+    for _, row in tqdm.tqdm(mouse_proteome_pos_pos.iterrows(), total=total_len):
+        interact_a = row['Input Protein ID A']
+        interact_b = row['Input Protein ID B']
+        pos_a = row['Position A']
+        pos_b = row['Position B']
+
+        # check if interact_a is in dict1 or dict2
+        transcript_a = trans_to_uni[0].get(interact_a, None)
+        if not transcript_a:
+            transcript_a = trans_to_uni[1].get(interact_a, None)
+            if not transcript_a:
+                continue
+        transcript_b = trans_to_uni[0].get(interact_b, None)
+        if not transcript_b:
+            transcript_b = trans_to_uni[1].get(interact_b, None)
+            if not transcript_b:
+                continue
+        # check if transcript_a and transcript_b are in exon_info
+        if transcript_a not in exon_info.index or transcript_b not in exon_info.index:
+            continue
+
+        # get the exon info for transcript_a and transcript_b
+        exon_info_a = exon_info.loc[transcript_a]
+        exon_info_b = exon_info.loc[transcript_b]
+
+        if isinstance(exon_info_a, pd.Series):
+            exon_info_a = exon_info_a.to_frame().T
+        if isinstance(exon_info_b, pd.Series):
+            exon_info_b = exon_info_b.to_frame().T
+
+        exon_a, exon_b = None, None
+
+        for _, exon_row in exon_info_a.iterrows():
+            # check if CDS start and CDS end are not -1
+            if exon_row['CDS start'] == -1 or exon_row['CDS end'] == -1:
+                continue
+
+            # check if pos_a is in the range of CDS start and CDS end
+            if exon_row['CDS start'] <= pos_a <= exon_row['CDS end']:
+                exon_a = exon_row['Exon stable ID']
+                break
+        for _, exon_row in exon_info_b.iterrows():
+            if exon_row['CDS start'] == -1 or exon_row['CDS end'] == -1:
+                continue
+            if exon_row['CDS start'] <= pos_b <= exon_row['CDS end']:
+                exon_b = exon_row['Exon stable ID']
+                break
+
+        if exon_a and exon_b:
+            interaction_list.append([transcript_a, interact_a, exon_a, transcript_b, interact_b, exon_b])
+    return pd.DataFrame(interaction_list[1:], columns=interaction_list[0])
+
+
+#interaction_list = create_ppi_interface_to_exon(transcript_to_uniprot, biomart_exons, mouse_proteome_pos_pos)
+#print(len(interaction_list))
+#interaction_list.to_csv('db_data/PPI_interface_mapped_to_exon_mouse.csv', index=False)
 
 # remove the first column in human_ground_truth
 human_ground_truth = human_ground_truth.drop(columns=['Unnamed: 0.1'])
@@ -89,4 +168,5 @@ for _, row in tqdm.tqdm(filtered_human_ppi_interface.iterrows(), total=filtered_
 # Convert to DataFrame
 new_pdb_df = pd.DataFrame(new_pdb[1:], columns=new_pdb[0])
 new_pdb_df = new_pdb_df.drop_duplicates()
+pickle.dump(new_pdb_df, open('db_data/pdb_mouse.pkl', 'wb'))
 print(new_pdb_df.shape)

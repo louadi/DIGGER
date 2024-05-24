@@ -97,8 +97,5 @@ if __name__ == '__main__':
     domaing, ppi_graph, ELM_interactions, pdb, Organsim = load_needed_files(organism)
     ppis = ppi_interactions(ppi_graph)
     ppis = filter_ppi_graph(ppis, domaing, ELM_interactions, pdb, Organsim)
-    # load some original files
-    organism_true = load_file(f'/home/elias/NEASE/nease/data/database/Mouse')
-    pdb_true = load_file(f'/home/elias/NEASE/nease/data/database/pdb_mouse')
 
     print("Number of edges after filtering: ", len(ppis))
