@@ -16,7 +16,7 @@ mouse_ppi_interface = pd.read_csv('db_data/PPI_interface_mapped_to_exon_mouse.cs
 biomart_exons = pd.read_csv('db_data/exon_info_mouse.txt', sep='\t')
 biomart_domains = pd.read_csv('db_data/domain_info_mouse.txt', sep='\t')
 
-old_pdb_file = load_df('db_data/pdb')
+pdb_human_file = load_df('db_data/pdb')
 new_pdb_file = load_df('db_data/pdb_mouse.pkl')
 
 
@@ -169,4 +169,5 @@ for _, row in tqdm.tqdm(filtered_human_ppi_interface.iterrows(), total=filtered_
 new_pdb_df = pd.DataFrame(new_pdb[1:], columns=new_pdb[0])
 new_pdb_df = new_pdb_df.drop_duplicates()
 pickle.dump(new_pdb_df, open('db_data/pdb_mouse.pkl', 'wb'))
+pickle.dump(biomart_table, open('db_data/Mouse', 'wb'))
 print(new_pdb_df.shape)

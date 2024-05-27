@@ -20,12 +20,12 @@ def load_file(file):
 def load_needed_files(organism):
     # domaing = load_file(f'../../../container/domain/data/{organism}/DomainG.pkl')
     domaing = load_file(f'data/{organism}/graph.pkl')
-    ppi_graph = load_file(f'data/{organism}/PPI.pkl')
+    ppi_graph = load_file(f'../../../container/domain/data/{organism}/PPI.pkl')
     ELM_interactions = load_file(f'data/{organism}/ELM_interactions')
-    pdb = load_file(f'data/{organism}/pdb')
+    pdb = load_file(f'../../../container/domain/data/{organism}/pdb')
     trivial_name = organism.split('[')[1][:-1].capitalize()
-    Organsim = load_file(f'data/{organism}/{trivial_name}')
-    return domaing, ppi_graph, ELM_interactions, pdb, Organsim
+    Organism = load_file(f'../../../container/domain/data/{organism}/{trivial_name}')
+    return domaing, ppi_graph, ELM_interactions, pdb, Organism
 
 
 def ppi_interactions(ppi_graph):
@@ -94,8 +94,9 @@ def pathway_node_degree(annotated_ppi_graph, pathway_entrez):
 
 if __name__ == '__main__':
     organism = "Mus musculus[mouse]"
-    domaing, ppi_graph, ELM_interactions, pdb, Organsim = load_needed_files(organism)
+    # organism = "Homo sapiens[human]"
+    domaing, ppi_graph, ELM_interactions, pdb, Organism = load_needed_files(organism)
     ppis = ppi_interactions(ppi_graph)
-    ppis = filter_ppi_graph(ppis, domaing, ELM_interactions, pdb, Organsim)
+    ppis = filter_ppi_graph(ppis, domaing, ELM_interactions, pdb, Organism)
 
     print("Number of edges after filtering: ", len(ppis))
