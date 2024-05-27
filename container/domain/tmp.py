@@ -98,6 +98,7 @@ def is_subgraph(graph1, graph2):
             return False
     return True
 
+
 # get node and edge overlap between two graphs
 def graph_overlap(graph1, graph2):
     node_overlap = 0

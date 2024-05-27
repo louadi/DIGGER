@@ -25,7 +25,7 @@ from .Process import gene as g
 from .Process import network_analysis as nt
 from .Process import mutliple_query as mq
 from .Process import process_data as proc_data
-from .nease import nease as nease
+from .Process import nease_output as no
 
 # --- Create folder
 # Global jobs path
@@ -67,8 +67,9 @@ def multiple_queries(request, inputs, organism):
                 transcript_table[query] = tr.transcript_table(query, organism, True)
             else:
                 with connection.cursor() as cursor:
-                    cursor.execute("""SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
-                                   [query])
+                    cursor.execute(
+                        """SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
+                        [query])
                     row = cursor.fetchone()
                     query_id = row[0] if row else query
                     transcript_table[query] = g.input_gene(query_id, organism)[0]
@@ -303,7 +304,6 @@ def transcript(request, P_id, organism):
     if len(missed) != 0:
         missing_domains = missed['Pfam ID'].unique()
         missed = missed.to_html(**settings.TO_HTML_PARAMETERS)
-
 
     nodes_domainV = {}
     edges_domainV = {}
@@ -653,7 +653,6 @@ def Multi_proteins(request, organism, job='0'):
         print("info exists")
         genes, missing, num_isoforms = info
 
-
         Net = nt.Construct_network(genes, missing, job, organism)
 
         if Net == 0:
@@ -711,11 +710,21 @@ def setup_nease(request):
         'error_msg': None
     }
     try:
-        events = nease.run(table, organism, database_type, p_value, rm_not_in_frame, divisible_by_3, min_delta,
-                           majiq_confidence, only_ddis, confidences)
+        events, run_id, classic = no.run_nease(table, organism, {'db_type': database_type,
+                                                'enrich_dbs': enrich_dbs,
+                                                'p_value': p_value,
+                                                'rm_not_in_frame': rm_not_in_frame,
+                                                'divisible_by_3': divisible_by_3,
+                                                'min_delta': min_delta,
+                                                'majiq_confidence': majiq_confidence,
+                                                'only_ddis': only_ddis,
+                                                'confidences': confidences})
+
         context = {
             'input_name': input_data['splicing-events-file'].name,
             **events.summary,
+            'stats': run_id + ".jpg",
+            'classic_enr': classic,
         }
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:
@@ -724,16 +733,6 @@ def setup_nease(request):
         traceback.print_exc()
         context['error_msg'] = str(e)
     return render(request, 'setup/nease_setup.html', context)
-
-
-def run_nease(request):
-    input_data = request.FILES
-    if 'input_file' not in input_data:
-        return HttpResponse("No input file provided")
-
-    print("Submitted NEASE job")
-    events = nease.run(input_data)
-    return JsonResponse(events)
 
 
 def get_organisms(request):

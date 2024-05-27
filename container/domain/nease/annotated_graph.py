@@ -94,7 +94,7 @@ def pathway_node_degree(annotated_ppi_graph, pathway_entrez):
 
 if __name__ == '__main__':
     organism = "Mus musculus[mouse]"
-    # organism = "Homo sapiens[human]"
+    organism = "Homo sapiens[human]"
     domaing, ppi_graph, ELM_interactions, pdb, Organism = load_needed_files(organism)
     ppis = ppi_interactions(ppi_graph)
     ppis = filter_ppi_graph(ppis, domaing, ELM_interactions, pdb, Organism)

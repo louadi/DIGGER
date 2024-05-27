@@ -393,25 +393,25 @@ class run(object):
                        outdir='Enrichr_gseapy',
                        non_symmetrical_only=False):
 
-        '''
+        """
         Classic gene level enrichement using the python library gseapy.
-        
+
         Parameters
-        ---------- 
-        gseapy_databases: str, list, tuple of Enrichr Library name(s). 
-                  or custom defined gene_sets (dict, or gmt file). For more details, please check: https://pypi.org/project/gseapy/ 
-                  
-        non_symmetrical_only: Bool 
+        ----------
+        gseapy_databases: str, list, tuple of Enrichr Library name(s).
+                  or custom defined gene_sets (dict, or gmt file). For more details, please check: https://pypi.org/project/gseapy/
+
+        non_symmetrical_only: Bool
                     Run classic gene set enrichment only on non_symmetrical exons.
 
          Returns
         -------
-        pd.DataFrame Object    
-        
+        pd.DataFrame Object
+
         Example:
             gseapy_databases=['KEGG_2019_Human', 'Reactome_2016','WikiPathways_2019_Human']
-        
-        '''
+
+        """
 
         if not self.spliced_genes:
             print('No genes found on your input.')
@@ -422,6 +422,9 @@ class run(object):
 
             # compare with user input with gseapy_library
             gene_set_database = list(set(gseapy_library).intersection(gseapy_databases))
+            # if nothing is found, use all the gene sets in gseapy library
+            if len(gene_set_database) == 0:
+                gene_set_database = list(set(gseapy_library))
 
             if not gene_set_database:
                 print('none of the gene set databases provided is supported in gseapy library.')

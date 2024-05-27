@@ -515,9 +515,7 @@ def stats_domains(affecting_percentage,
     ax2.add_artist(con)
     con.set_linewidth(4)
 
-    file_path = os.path.join(os.path.dirname(file_path), 'NEASE_stats.pdf')
-
-    plt.savefig(file_path, format='pdf', bbox_inches='tight')
+    plt.savefig(file_path + ".jpg", format='jpg', bbox_inches='tight')
     plt.show()
 
     # Save the figure

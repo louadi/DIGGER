@@ -135,8 +135,13 @@
           <div class="card-body">
             <p class="lead text-center"><span
                 style="font-weight:bold">Enrichment result</span></p>
+            <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
+              <h6 class="mb-3" style="text-align: center">
+                {% autoescape off %}
+                  {{ classic_enr }}
+                {% endautoescape %}
+              </h6>
 
-            <!-- Exon Table-->
 
             <div class="mt-5">
               {% if error %}
