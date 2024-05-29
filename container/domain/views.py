@@ -299,6 +299,7 @@ def transcript(request, P_id, organism):
              'Missing domain-domain interactions', '% of missing DDIs', 'Residue-level evidence',
              "Protein-protein interaction", 'Confidence']]
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+        print(pd_interaction)
 
     # Get ID of missing domains with interactions
     if len(missed) != 0:
@@ -711,20 +712,20 @@ def setup_nease(request):
     }
     try:
         events, run_id, classic = no.run_nease(table, organism, {'db_type': database_type,
-                                                'enrich_dbs': enrich_dbs,
-                                                'p_value': p_value,
-                                                'rm_not_in_frame': rm_not_in_frame,
-                                                'divisible_by_3': divisible_by_3,
-                                                'min_delta': min_delta,
-                                                'majiq_confidence': majiq_confidence,
-                                                'only_ddis': only_ddis,
-                                                'confidences': confidences})
+                                                                 'enrich_dbs': enrich_dbs,
+                                                                 'p_value': p_value,
+                                                                 'rm_not_in_frame': rm_not_in_frame,
+                                                                 'divisible_by_3': divisible_by_3,
+                                                                 'min_delta': min_delta,
+                                                                 'majiq_confidence': majiq_confidence,
+                                                                 'only_ddis': only_ddis,
+                                                                 'confidences': confidences})
 
         context = {
             'input_name': input_data['splicing-events-file'].name,
             **events.summary,
             'stats': run_id + ".jpg",
-            'classic_enr': classic,
+            'classic_enr': classic.to_html(table_id="classic_enrich", **settings.TO_HTML_RESPONSIVE_PARAMETERS),
         }
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:

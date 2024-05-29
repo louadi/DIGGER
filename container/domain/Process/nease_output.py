@@ -25,11 +25,12 @@ def run_nease(data, organism, params):
     print(events)
     try:
         classic_enrich_table = events.classic_enrich(params.get('enrich_dbs', []))
+        classic_enrich_table['Genes'] = classic_enrich_table['Genes'].apply(lambda x: x.replace(';', ', '))
     except ValueError:
         classic_enrich_table = pd.DataFrame(
             columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
-    classic_enrich_table = classic_enrich_table.to_html(**settings.TO_HTML_RESPONSIVE_PARAMETERS)
+
     events.get_stats(file_path=image_path)
 
     return events, run_id, classic_enrich_table

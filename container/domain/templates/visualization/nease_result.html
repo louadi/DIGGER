@@ -71,7 +71,7 @@
 
   <script>
       $(document).ready(function () {
-          $('#Interaction_table').DataTable();
+          $('#classic_enrich').DataTable();
       });
   </script>
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
@@ -136,21 +136,18 @@
             <p class="lead text-center"><span
                 style="font-weight:bold">Enrichment result</span></p>
             <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
-              <h6 class="mb-3" style="text-align: center">
-                {% autoescape off %}
-                  {{ classic_enr }}
-                {% endautoescape %}
-              </h6>
+
+            <h6 class="my-4">
+              {% autoescape off %}
+                {{ classic_enr }}
+              {% endautoescape %}
+            </h6>
 
 
             <div class="mt-5">
               {% if error %}
               <h5 class="text-danger text-center">{{ error }}</h5>
               {% endif %}
-              <div class="table-responsive">
-                <h6 class="mb-3" style="text-align: center">
-                </h6>
-              </div>
             </div>
           </div>
         </div>
