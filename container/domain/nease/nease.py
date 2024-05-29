@@ -390,7 +390,6 @@ class run(object):
 
     def classic_enrich(self,
                        gseapy_databases,
-                       outdir='Enrichr_gseapy',
                        non_symmetrical_only=False):
 
         """
@@ -448,7 +447,7 @@ class run(object):
                     gene_list = [Ensemb_to_name(x, self.mapping) for x in self.spliced_genes]
 
                 enr = gp.enrichr(gene_list=gene_list, organism=self.organism, gene_sets=gene_set_database,
-                                 outdir=outdir)
+                                 outdir=None)
 
                 return enr.results.sort_values('Adjusted P-value')
 

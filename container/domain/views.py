@@ -711,21 +711,21 @@ def setup_nease(request):
         'error_msg': None
     }
     try:
-        events, run_id, classic = no.run_nease(table, organism, {'db_type': database_type,
-                                                                 'enrich_dbs': enrich_dbs,
-                                                                 'p_value': p_value,
-                                                                 'rm_not_in_frame': rm_not_in_frame,
-                                                                 'divisible_by_3': divisible_by_3,
-                                                                 'min_delta': min_delta,
-                                                                 'majiq_confidence': majiq_confidence,
-                                                                 'only_ddis': only_ddis,
-                                                                 'confidences': confidences})
+        events, run_id = no.run_nease(table, organism, {'db_type': database_type,
+                                                        'enrich_dbs': enrich_dbs,
+                                                        'p_value': p_value,
+                                                        'rm_not_in_frame': rm_not_in_frame,
+                                                        'divisible_by_3': divisible_by_3,
+                                                        'min_delta': min_delta,
+                                                        'majiq_confidence': majiq_confidence,
+                                                        'only_ddis': only_ddis,
+                                                        'confidences': confidences})
 
         context = {
             'input_name': input_data['splicing-events-file'].name,
             **events.summary,
             'stats': run_id + ".jpg",
-            'classic_enr': classic.to_html(table_id="classic_enrich", **settings.TO_HTML_RESPONSIVE_PARAMETERS),
+            'run_id': run_id,
         }
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:
@@ -734,6 +734,21 @@ def setup_nease(request):
         traceback.print_exc()
         context['error_msg'] = str(e)
     return render(request, 'setup/nease_setup.html', context)
+
+
+def nease_extra_functions(request):
+    run_id = request.GET.get('runId', None)
+    databases = request.GET.get('databases', None)
+    databases = databases.split(",") if databases else []
+    if not run_id:
+        return HttpResponse("No run ID provided", status=400)
+
+    # get the enrichment table
+    try:
+        classic = no.nease_classic_enrich(no.get_nease_events(run_id), databases)
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
+    return HttpResponse(classic.to_html(table_id="classic_enrich", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
 
 
 def get_organisms(request):

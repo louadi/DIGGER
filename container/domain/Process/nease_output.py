@@ -1,3 +1,5 @@
+import pickle
+
 import pandas as pd
 import os
 from domain.nease import nease
@@ -7,6 +9,15 @@ import uuid
 images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
 if not os.path.exists(images_path):
     os.makedirs(images_path)
+
+if not os.path.exists('nease_events/'):
+    os.makedirs('nease_events/')
+
+nease_events = 'nease_events/'
+
+
+def same_input(run_id):
+    pass
 
 
 def run_nease(data, organism, params):
@@ -22,15 +33,29 @@ def run_nease(data, organism, params):
                        params.get('majiq_confidence', 0.95),
                        params.get('only_ddis', False),
                        params.get('confidences', []))
-    print(events)
+
+    events.get_stats(file_path=image_path)
+
+    # save events to pickle
+    pickle.dump(events, open(nease_events + run_id + '.pkl', 'wb'))
+    return events, run_id
+
+
+def get_nease_events(run_id):
+    events = pickle.load(open(nease_events + run_id + '.pkl', 'rb'))
+    return events
+
+
+def nease_domains(events):
+    return events.get_domains()
+
+
+def nease_classic_enrich(events, databases):
     try:
-        classic_enrich_table = events.classic_enrich(params.get('enrich_dbs', []))
+        classic_enrich_table = events.classic_enrich(databases)
         classic_enrich_table['Genes'] = classic_enrich_table['Genes'].apply(lambda x: x.replace(';', ', '))
     except ValueError:
         classic_enrich_table = pd.DataFrame(
             columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
-
-    events.get_stats(file_path=image_path)
-
-    return events, run_id, classic_enrich_table
+    return classic_enrich_table
