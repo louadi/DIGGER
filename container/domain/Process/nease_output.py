@@ -23,7 +23,6 @@ def same_input(run_id):
 def run_nease(data, organism, params):
     run_id = str(uuid.uuid4())
     image_path = images_path + run_id
-    print(image_path)
 
     events = nease.run(data, organism, params.get('db_type', []),
                        params.get('p_value', 0.05),
@@ -37,12 +36,12 @@ def run_nease(data, organism, params):
     events.get_stats(file_path=image_path)
 
     # save events to pickle
-    pickle.dump(events, open(nease_events + run_id + '.pkl', 'wb'))
+    events.save(nease_events + run_id)
     return events, run_id
 
 
 def get_nease_events(run_id):
-    events = pickle.load(open(nease_events + run_id + '.pkl', 'rb'))
+    events = nease.load(nease_events + run_id + '.pkl')
     return events
 
 

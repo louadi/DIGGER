@@ -1,6 +1,9 @@
+import os.path
+
 from .functions import *
 import statsmodels.api as sm
 import gseapy as gp
+import pickle5 as pickle
 
 
 # Main Code 
@@ -84,7 +87,6 @@ class run(object):
             self.path = Pathways[organism]
             self.ppi = PPI[organism]
             self.only_DDIs = only_DDIs
-            self.elm_interactions = elm_interactions[organism]
             self.input_type = input_type
 
             if not only_DDIs:
@@ -110,7 +112,8 @@ class run(object):
             if input_type == 'MAJIQ':
 
                 # Processing Majiq output
-                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected = process_MAJIQ(input_data, self.mapping,
+                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected = process_MAJIQ(input_data,
+                                                                                                    self.mapping,
                                                                                                     Majiq_confidence,
                                                                                                     min_delta,
                                                                                                     self.only_DDIs,
@@ -122,10 +125,11 @@ class run(object):
 
                 try:
                     self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
-                        input_data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
+                        input_data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame,
+                        only_divisible_by_3)
                     if len(self.data) == 0:
                         self.summary['error'] = ('Found no overlap with protein domains. Make sure that the genomic '
-                                        'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
+                                                 'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
                 except:
                     raise ValueError('Could not recognize the standard format. Please make sure your table matches '
                                      'the standard format with these columns: Gene ensembl ID, EXON START, EXON END, '
@@ -217,9 +221,11 @@ class run(object):
                 if not self.only_DDIs:
                     self.summary['lin_motifs'] = str(len(self.elm_affected['ELMIdentifier'].unique()))
                     self.summary['residues'] = str(len(self.pdb_affected))
-                self.summary['known_interactions'] = str(len(self.data[self.data['Interacting domain']]['Domain ID'].unique()))
+                self.summary['known_interactions'] = str(
+                    len(self.data[self.data['Interacting domain']]['Domain ID'].unique()))
 
-                self.summary['interaction_affected'] = str(len([item for sublist in self.g2edges.values() for item in sublist]))
+                self.summary['interaction_affected'] = str(
+                    len([item for sublist in self.g2edges.values() for item in sublist]))
 
                 print('Running enrichment analysis...')
 
@@ -227,6 +233,20 @@ class run(object):
                 self.enrichment = pathway_enrichment(self.g2edges, self.path, self.mapping, organism, p_value_cutoff,
                                                      self.only_DDIs).reset_index(drop=True)
                 print('NEASE enrichment done.')
+
+    def save(self, file_path):
+        folders = "/".join(file_path.split("/")[:-1])
+        if not os.path.isdir(folders):
+            os.makedirs(folders)
+        # filter out the static files that can be read in during loading
+        self.mapping = None
+        self.path = None
+        self.ppi = None
+        self.elm = None
+        self.elm_interactions = None
+        self.pdb = None
+        with open(file_path + ".pkl", 'wb') as f:
+            pickle.dump(self, f)
 
     def get_stats(self, file_path=''):
 
@@ -343,7 +363,7 @@ class run(object):
             pdb_affected = self.pdb_affected.rename(
                 columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
 
-            #Convert IDs to names
+            # Convert IDs to names
             c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions'].apply(c)
 
@@ -451,18 +471,7 @@ class run(object):
 
                 return enr.results.sort_values('Adjusted P-value')
 
-    def enrich(self, database=['PharmGKB',
-                               'HumanCyc',
-                               'Wikipathways',
-                               'Reactome',
-                               'KEGG',
-                               'SMPDB',
-                               'Signalink',
-                               'NetPath',
-                               'EHMN',
-                               'INOH',
-                               'BioCarta',
-                               'PID'], cutoff=0.05):
+    def enrich(self, database=None, cutoff=0.05):
 
         """ 
         Run enrichement analysis
@@ -486,6 +495,9 @@ class run(object):
                 events.enrich(database=['Reactome'])
         
         """
+        if not database:
+            database = ['PharmGKB', 'HumanCyc', 'Wikipathways', 'Reactome', 'KEGG', 'SMPDB', 'Signalink', 'NetPath',
+                        'EHMN', 'INOH', 'BioCarta', 'PID']
 
         if len(self.data) == 0:
             print('Processing failed')
@@ -698,3 +710,17 @@ class run(object):
                 print('Visualization of the pathway generated in: ' + file_path)
 
                 return
+
+
+def load(file_path):
+    nease_object = pickle.load(open(file_path, 'rb'))
+    # load the static files
+    nease_object.mapping = database_mapping[nease_object.organism]
+    nease_object.path = Pathways[nease_object.organism]
+    nease_object.ppi = PPI[nease_object.organism]
+
+    if not nease_object.only_DDIs:
+        nease_object.elm = elm[nease_object.organism]
+        nease_object.elm_interactions = elm_interactions[nease_object.organism]
+        nease_object.pdb = pdb[nease_object.organism]
+    return nease_object
