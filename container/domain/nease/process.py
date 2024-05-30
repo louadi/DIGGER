@@ -60,7 +60,8 @@ def process_standard(data,
     # make sure you have at least two columns
     if len(columns) < 3:
         raise ValueError(
-            'Make sure your table have at least 3 columns:    Gene ensembl ID    EXON START    EXON END    dPSI (optional)')
+            'Make sure your table have at least two columns:    Gene ensembl ID    EXON START    EXON END    dPSI ('
+            'optional)')
 
     else:
         genes = list(data[columns[0]])

@@ -198,7 +198,8 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
                 connected = connected + tmp
 
                 # add gene to the gene list of the pathway
-                genes_tmp.append(Entrez_to_name(gene, mapping_dict=mapping_dict) + " (" + str(tmp) + ")")
+                # Entrez_to_name(gene, mapping_dict=mapping_dict) + " (" + str(tmp) + ")"
+                genes_tmp.append(f"{Entrez_to_name(gene, mapping_dict=mapping_dict)} ({tmp})")
 
                 # gene specific test
                 _, p_gene = edge_enrich(tmp, len(g2edges[gene]) - tmp, p, n)

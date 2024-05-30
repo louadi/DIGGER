@@ -720,7 +720,11 @@ def setup_nease(request):
     print(f"Submitted NEASE job with params: {organism}, {database_type}, {p_value}, {rm_not_in_frame}, "
           f"{divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
 
-    table = pd.read_table(input_data['splicing-events-file'])
+    if input_data['splicing-events-file'].name.endswith('.json'):
+        table = pd.read_json(input_data['splicing-events-file'])
+    else:
+        table = pd.read_table(input_data['splicing-events-file'])
+
     context = {
         'error_msg': None
     }

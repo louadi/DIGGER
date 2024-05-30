@@ -1,3 +1,4 @@
+import os.path
 import pickle
 import re
 import networkx as nx
@@ -127,6 +128,13 @@ def extract_confidence(domainG):
 
 
 if __name__ == '__main__':
+    path = "test/this/path.txt"
+    if not os.path.exists(path):
+        folders = "/".join(path.split("/")[:-1])
+        os.makedirs(folders)
+        with open(path, 'w') as f:
+            f.write("test")
+
     # ppi_graph: nx.Graph = pickle.load(open('../domain/data/Homo sapiens[human]/DomainG.pkl', 'rb'))
     # print(len(ppi_graph.nodes))
     # ppi_graph = remove_nan_nodes(ppi_graph)
@@ -137,8 +145,8 @@ if __name__ == '__main__':
     # edges_domainV = {'test': [1,2,3,4], 'original': [1,2,3,4]}
     # print(len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True)
     # # load human DDI graph
-    DomainG_human = pickle.load(open('data/Homo sapiens[human]/DomainG.pkl', 'rb'))
-    extract_confidence(DomainG_human)
+    # DomainG_human = pickle.load(open('data/Homo sapiens[human]/DomainG.pkl', 'rb'))
+    # extract_confidence(DomainG_human)
     # DomainG_mouse = pickle.load(open('data/Mus musculus[mouse]/DomainG.pkl', 'rb'))
     # print(len(DomainG_mouse.edges), len(DomainG_mouse.nodes))
     #

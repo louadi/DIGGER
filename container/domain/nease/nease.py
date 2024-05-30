@@ -130,7 +130,7 @@ class run(object):
                     if len(self.data) == 0:
                         self.summary['error'] = ('Found no overlap with protein domains. Make sure that the genomic '
                                                  'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
-                except:
+                except Exception as e:
                     raise ValueError('Could not recognize the standard format. Please make sure your table matches '
                                      'the standard format with these columns: Gene ensembl ID, EXON START, EXON END, '
                                      'dPSI (optional). Also ensure that the genomic coordinates of the exons correspond '
