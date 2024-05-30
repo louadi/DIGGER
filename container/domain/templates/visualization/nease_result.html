@@ -69,6 +69,7 @@
       }
   </style>
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
+  <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block raw_content %}
@@ -199,6 +200,11 @@
   <script>
       // make a GET request to the server to get the enrichment result
       runId = "{{ run_id }}";
+      fileName = "{{ input_name|safe }}";
+
+      // save the runId in local storage so that it can be accessed for another 7 days
+      const userStore = window.initStore({ key: runId, expiresInDays: 7, name: fileName })
+      userStore.set(runId)
 
       $("#run_enrichment").click(function () {
         const databases = $("#databasesToEnrich").val();

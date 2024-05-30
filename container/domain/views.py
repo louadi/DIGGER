@@ -678,6 +678,20 @@ def Multi_proteins(request, organism, job='0'):
 
 
 def setup_nease(request):
+    # handle previous analysis
+    if request.POST.get('previousAnalysis', None):
+        print("got previous analysis with run ID:", request.POST.get('previousAnalysis'))
+        events = no.get_nease_events(request.POST.get('previousAnalysis'))
+        run_id = request.POST.get('previousAnalysis')
+        context = {
+            'input_name': request.POST.get('previousName'),
+            **events.summary,
+            'stats': run_id + ".jpg",
+            'run_id': run_id,
+        }
+        return render(request, 'visualization/nease_result.html', context)
+
+    # otherwise continue with new analysis
     if not request.FILES:
         return render(request, 'setup/nease_setup.html')
     # Get the input file and post data

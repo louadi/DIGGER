@@ -4,6 +4,18 @@
 {% block title %}NEASE Analysis{% endblock %}
 
 {% block header %}
+  <script src="{% static "domain/loadStore.js" %}" type="text/javascript"></script>
+  <style>
+      .previous-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .previous-card:hover {
+        transform: scale(1.005);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -181,6 +193,11 @@
             </div>
           </div>
         </div>
+        <div class="row" style="display: none">
+          <!-- create hidden input for previous analyses -->
+          <input type="hidden" name="previousAnalysis" id="previous_analyses_input" value="">
+          <input type="hidden" name="previousName" id="previous_analyses_name" value="">
+        </div>
       </div>
       <!-- submit button -->
       <div class="card-body row no-gutters align-items-center justify-content-end">
@@ -188,7 +205,17 @@
         <div class="spinner-border m-2" role="status" style="display: none">
           <span class="sr-only">Loading...</span>
         </div>
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+        <button id="submit" class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+      </div>
+      <!-- previous analyses -->
+      <div id="prevAnalysisContainer" class="container" style="display: none;">
+          <div class="row">
+            <div class="col-md-12">
+              <h5><b>Previous Analyses</b></h5>
+            </div>
+          </div>
+          <div id="previousAnalyses">
+          </div>
       </div>
     </form>
   </div>
@@ -196,6 +223,21 @@
   <script src="{% static "domain/organism_selector.js" %}"></script>
 
   <script>
+    // load previous analyses
+  const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+    // filter for only keys that start with 'nease/'
+  const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
+
+  if (data.length > 0) {
+    $('#prevAnalysisContainer').css('display', 'block');
+  }
+
+  for (let i = 0; i < data.length; i++) {
+    const template = createHtmlTemplate(data[i]);
+    appendTemplateToDiv(template, 'previousAnalyses');
+  }
+
+
     // enable tooltips
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
@@ -214,8 +256,13 @@
     // enable the spinner when the form is submitted and disable the button
     $('#inputForm').submit(function () {
       $('.spinner-border').css('display', 'inline-block');
-      $('#loading_text').css('display', 'inline-block');
       $('button').prop('disabled', true);
+
+      // check if previous analyses are selected, if so, don't show the loading text
+      if ($('#previous_analyses_input').val()) {
+        return;
+      }
+      $('#loading_text').css('display', 'inline-block');
 
       setTimeout(function() {
         $('#loading_text').text('Running enrichment analysis');
@@ -236,7 +283,9 @@
     // prevent form submission if no file is selected
     document.getElementById('inputForm').addEventListener('submit', function(event) {
       var fileInput = document.getElementById('customFile');
-      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      var prevInput = document.getElementById('previous_analyses_input');
+      // there must be either a file selected or a previous analysis input
+      if ((!fileInput || !fileInput.files || fileInput.files.length === 0) && !prevInput.value) {
       event.preventDefault();
       document.getElementById('noFileAlert').removeAttribute('hidden');
       }
