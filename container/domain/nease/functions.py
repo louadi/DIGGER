@@ -10,6 +10,18 @@ from matplotlib.patches import ConnectionPatch
 import numpy as np
 
 
+def create_digger_link(row, organism):
+    if row['Interacting domain']:
+        organism_name = organism.lower()
+        return f"<a href='{DIGGER}{organism_name}/{row['Exon stable ID']}' target='_blank'>{row['Exon stable ID']}</a>"
+    else:
+        return ''
+
+
+def create_elm_link(row):
+    return f"<a href='http://elm.eu.org/elms/{row['ELMIdentifier']}' target='_blank'>{row['ELMIdentifier']}</a>"
+
+
 # main functions for nease
 def exons_to_edges(mapped, G, elm_interactions, organism):
     # check if domains have known interactions/binding:
@@ -38,9 +50,7 @@ def exons_to_edges(mapped, G, elm_interactions, organism):
     mapped = mapped.rename(columns={"max_change": "dPSI",
                                     "domain": "Domain ID"}).reset_index(drop=True)
     mapped['Visualization link'] = ''
-    organism_name = organism.lower()
-    mapped.loc[mapped['Interacting domain'], ['Visualization link']] = DIGGER + organism_name + '/' + mapped[
-        'Exon stable ID']
+    mapped['Visualization link'] = mapped.apply(lambda x: create_digger_link(x, organism), axis=1)
     return mapped
 
 

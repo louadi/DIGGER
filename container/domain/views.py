@@ -681,11 +681,16 @@ def setup_nease(request):
     # handle previous analysis
     if request.POST.get('previousAnalysis', None):
         print("got previous analysis with run ID:", request.POST.get('previousAnalysis'))
-        events = no.get_nease_events(request.POST.get('previousAnalysis'))
+        events, info_tables = no.get_nease_events(request.POST.get('previousAnalysis'))
         run_id = request.POST.get('previousAnalysis')
+
+        for key, value in info_tables.items():
+            info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+
         context = {
             'input_name': request.POST.get('previousName'),
             **events.summary,
+            **info_tables,
             'stats': run_id + ".jpg",
             'run_id': run_id,
         }
@@ -729,19 +734,23 @@ def setup_nease(request):
         'error_msg': None
     }
     try:
-        events, run_id = no.run_nease(table, organism, {'db_type': database_type,
-                                                        'enrich_dbs': enrich_dbs,
-                                                        'p_value': p_value,
-                                                        'rm_not_in_frame': rm_not_in_frame,
-                                                        'divisible_by_3': divisible_by_3,
-                                                        'min_delta': min_delta,
-                                                        'majiq_confidence': majiq_confidence,
-                                                        'only_ddis': only_ddis,
-                                                        'confidences': confidences})
+        events, info_tables, run_id = no.run_nease(table, organism, {'db_type': database_type,
+                                                                     'enrich_dbs': enrich_dbs,
+                                                                     'p_value': p_value,
+                                                                     'rm_not_in_frame': rm_not_in_frame,
+                                                                     'divisible_by_3': divisible_by_3,
+                                                                     'min_delta': min_delta,
+                                                                     'majiq_confidence': majiq_confidence,
+                                                                     'only_ddis': only_ddis,
+                                                                     'confidences': confidences})
+
+        for key, value in info_tables.items():
+            info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
         context = {
             'input_name': input_data['splicing-events-file'].name,
             **events.summary,
+            **info_tables,
             'stats': run_id + ".jpg",
             'run_id': run_id,
         }
@@ -763,7 +772,7 @@ def nease_extra_functions(request):
 
     # get the enrichment table
     try:
-        classic = no.nease_classic_enrich(no.get_nease_events(run_id), databases)
+        classic = no.nease_classic_enrich(no.get_nease_events(run_id), databases, run_id)
     except Exception as e:
         return HttpResponse(f"Error: {str(e)}", status=500)
     return HttpResponse(classic.to_html(table_id="classic_enrich", **settings.TO_HTML_RESPONSIVE_PARAMETERS))

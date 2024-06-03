@@ -143,6 +143,77 @@
                   <h5 class="text-danger text-center">{{ error }}</h5>
                 {% endif %}
               </div>
+
+              <hr>
+
+              <!-- tables resulting from enrichment -->
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected protein domains</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_domains.csv"
+                      class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ domains|safe }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected interactions (domain binding)</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_edges.csv"
+                      class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ edges|safe }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected linear motifs</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_elm.csv"
+                      class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ elm|safe }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected interacting residues</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_pdb.csv"
+                      class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ pdb|safe }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -205,6 +276,11 @@
       // save the runId in local storage so that it can be accessed for another 7 days
       const userStore = window.initStore({ key: runId, expiresInDays: 7, name: fileName })
       userStore.set(runId)
+
+      // format all tables to be responsive
+      $(document).ready(function () {
+          $("[id$='_table']").DataTable();
+      });
 
       $("#run_enrichment").click(function () {
         const databases = $("#databasesToEnrich").val();

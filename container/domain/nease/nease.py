@@ -338,7 +338,7 @@ class run(object):
             print('No known linear motif are affected by AS')
 
         else:
-            self.elm_affected['ELM link'] = 'http://elm.eu.org/elms/' + self.elm_affected.ELMIdentifier.astype('str')
+            self.elm_affected['ELM link'] = self.elm_affected.apply(create_elm_link, axis=1)
 
             return self.elm_affected.drop(columns=['ID', 'Affected binding (NCBI)']).reset_index(drop=True)
 
@@ -367,7 +367,7 @@ class run(object):
             c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions'].apply(c)
 
-            a = lambda x: ",".join(x)
+            a = lambda x: ", ".join(x)
             pdb_affected['Co-resolved interactions'] = pdb_affected['Co-resolved interactions'].apply(a)
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions symbol'].apply(a)
 
@@ -399,7 +399,7 @@ class run(object):
             count = lambda x: len(x)
             edges['Number of affected interactions'] = edges['Affected binding'].apply(count)
 
-            a = lambda x: ",".join(x)
+            a = lambda x: ", ".join(x)
             edges['Affected binding'] = edges['Affected binding'].apply(a)
             edges['Affected binding (NCBI)'] = edges['Affected binding (NCBI)'].apply(a)
             edges = edges.drop_duplicates()
