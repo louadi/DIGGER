@@ -79,4 +79,12 @@ def nease_classic_enrich(events, databases, run_id):
 
 
 def nease_enrichment(events, databases, run_id):
-    pass
+    events, _ = events
+    try:
+        enrich_table = events.enrich(databases)
+        enrich_table.to_csv(f"{data_path}{run_id}_neenr.csv")
+    except ValueError:
+        enrich_table = pd.DataFrame(
+            columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
+                     "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
+    return enrich_table

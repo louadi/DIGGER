@@ -435,6 +435,8 @@ class run(object):
             print('No genes found on your input.')
 
         else:
+            if not gseapy_databases:
+                raise ValueError('Please provide a list of gene set databases to run the enrichment analysis.')
             # get gene sets supported in gseapy
             gseapy_library = gp.get_library_name(organism=self.organism)
 
