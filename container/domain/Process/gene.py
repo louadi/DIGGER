@@ -9,18 +9,11 @@ from sqlalchemy import text
 from django.conf import settings
 
 from domain.Process import network_analysis as nt
+from domain.Process.load_data import DomainG_all
 
 # --- Get database connection aka 'SQLAlchemie engine'
 engine = settings.DATABASE_ENGINE
 
-# load DIGGER Join Graph
-
-DomainG_all = {}
-for organism in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism):
-        continue
-    trivial_name = organism.split("[")[1][:-1]
-    DomainG_all[trivial_name] = exd.load_obj(organism + '/DomainG')
 
 
 def TranscriptsID_to_table(transcripts, organism, entrez='0'):

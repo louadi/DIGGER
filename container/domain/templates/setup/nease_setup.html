@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}NEASE Analysis{% endblock %}
+
+{% block header %}
+  <script src="{% static "domain/loadStore.js" %}" type="text/javascript"></script>
+  <style>
+      .previous-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .previous-card:hover {
+        transform: scale(1.005);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-4">NEASE Analysis</h1>
+    <p class="lead">Upload a file containing alternative splicing events in one of the supported formats, select
+      the options you would like to use and automatically get your results!</p>
+  </div>
+
+    <!-- make a danger alert if there is no file -->
+    <div id="noFileAlert" class="alert alert-danger" role="alert" hidden="">
+      Please select a file!
+    </div>
+
+  {% if error_msg %}
+    <div class="alert alert-danger" role="alert">
+      {{ error_msg }}
+    </div>
+  {% endif %}
+
+  <div role="tabpanel" class="tab-pane" id="Section3">
+    <form id="inputForm" class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- file upload -->
+      <div class="card-body row no-gutters align-items-center">
+        <div class="custom-file form-group">
+            <input type="file" class="custom-file-input form-control" name="splicing-events-file" id="customFile">
+            <label class="custom-file-label" for="customFile">Upload a file with splicing events</label>
+        </div>
+      </div>
+
+      <!-- options -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5><b>Required Options</b></h5>
+            <br>
+            <!-- organism -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="org_select">Organism:</label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-control" id="org_select" name="organism">
+                </select>
+              </div>
+            </div>
+            <!-- databases -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="input_type" data-toggle="tooltip" data-placement="top"
+                       title="The source of the input splicing events. Dictates the format NEASE uses"
+                >Input format:</label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-control" id="input_type" name="inputType">
+                  <!-- options: 'MAJIQ', 'Standard', 'Spycone', 'Whippet', 'rmats', 'DEXSeq' -->
+                  <option value="Standard">Standard</option>
+                  <option value="MAJIQ">MAJIQ</option>
+                  <option value="Spycone">Spycone</option>
+                  <option value="Whippet">Whippet</option>
+                  <option value="rmats">rmats</option>
+                  <option value="DEXSeq">DEXSeq</option>
+                </select>
+              </div>
+            </div>
+            <!-- DDIs -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Determines which (if any) predicted Domain-Domain Interactions should be used"
+                >Predicted DDIs:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="high_domain"
+                         name="predicted-checkbox-high" value="high">
+                  <label class="custom-control-label" for="high_domain">High</label>
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="mid_domain"
+                         name="predicted-checkbox-mid" value="mid">
+                  <label class="custom-control-label" for="mid_domain">Medium</label>
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="low_domain"
+                         name="predicted-checkbox-low" value="low">
+                  <label class="custom-control-label" for="low_domain">Low (confidence)</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <h5><b>Advanced Options</b></h5>
+            <br>
+            <!-- p_value_cutoff -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="p_value_cutoff" data-toggle="tooltip" data-placement="top"
+                       title="The p value cutoff used to compute NEASE scores.">P-value cutoff:</label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="p_value_cutoff" name="p_value_cutoff" value="0.05"
+                       step="0.01">
+              </div>
+            </div>
+            <!-- min_delta -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="min_delta" data-toggle="tooltip" data-placement="top"
+                       title="min delta to consider in case your input has a dPsi column.
+                       The value also corresponds to logfold change in case of DEXSeq.">Min delta:</label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="min_delta" name="min_delta" value="0.05"
+                       step="0.01">
+              </div>
+            </div>
+            <!-- Majiq_confidence -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="Majiq_confidence" data-toggle="tooltip" data-placement="top"
+                       title="In case of your input format being MAJIQ. The parameter P(dPSI > 20%) is needed.
+                       Check MAJIQ paper for details about this">MAJIQ confidence:</label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="Majiq_confidence" name="Majiq_confidence"
+                       value="0.95"
+                       step="0.01" disabled="">
+              </div>
+            </div>
+            <!-- only_DDIs -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Only use DDI and exclude PDB and linear motif interactions for calculations">Only DDIs:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="only_DDIs" name="only_DDIs" value="True">
+                  <label class="custom-control-label" for="only_DDIs"></label>
+                </div>
+              </div>
+            </div>
+            <!-- remove non in frame -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Removes all exons that are predicted to disturb the ORF or known to result
+                       in a non-coding gene. Disable to include all exons.">Remove non-in-frame:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="remove_non_in_frame"
+                         name="remove_non_in_frame" checked>
+                  <label class="custom-control-label" for="remove_non_in_frame"></label>
+                </div>
+              </div>
+
+            </div>
+            <!-- only divisible by 3 -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Removes exons not divisible by 3">Only divisible by 3:</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="only_divisible_by_3"
+                         name="only_divisible_by_3" value="False">
+                  <label class="custom-control-label" for="only_divisible_by_3"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="display: none">
+          <!-- create hidden input for previous analyses -->
+          <input type="hidden" name="previousAnalysis" id="previous_analyses_input" value="">
+          <input type="hidden" name="previousName" id="previous_analyses_name" value="">
+        </div>
+      </div>
+      <!-- submit button -->
+      <div class="card-body row no-gutters align-items-center justify-content-end">
+        <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
+        <div class="spinner-border m-2" role="status" style="display: none">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <button id="submit" class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+      </div>
+      <!-- previous analyses -->
+      <div id="prevAnalysisContainer" class="container" style="display: none;">
+          <div class="row">
+            <div class="col-md-12">
+              <h5><b>Previous Analyses</b></h5>
+            </div>
+          </div>
+          <div id="previousAnalyses">
+          </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="{% static "domain/organism_selector.js" %}"></script>
+
+  <script>
+    // load previous analyses
+  const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+    // filter for only keys that start with 'nease/'
+  const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
+
+  if (data.length > 0) {
+    $('#prevAnalysisContainer').css('display', 'block');
+  }
+
+  for (let i = 0; i < data.length; i++) {
+    const template = createHtmlTemplate(data[i]);
+    appendTemplateToDiv(template, 'previousAnalyses');
+  }
+
+
+    // enable tooltips
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
+
+    // check if input_type is Majiq, if it is not, disable Majiq_confidence
+    $('#input_type').change(function () {
+      if ($('#input_type').val() === 'MAJIQ') {
+        $('#Majiq_confidence').prop('disabled', false);
+      } else {
+        $('#Majiq_confidence').prop('disabled', true);
+      }
+    });
+
+    // enable the spinner when the form is submitted and disable the button
+    $('#inputForm').submit(function () {
+      $('.spinner-border').css('display', 'inline-block');
+      $('button').prop('disabled', true);
+
+      // check if previous analyses are selected, if so, don't show the loading text
+      if ($('#previous_analyses_input').val()) {
+        return;
+      }
+      $('#loading_text').css('display', 'inline-block');
+
+      setTimeout(function() {
+        $('#loading_text').text('Running enrichment analysis');
+      }, 2000);
+    });
+
+    // change the label text when a file is selected
+    $(document).ready(function(){
+      // Add change event listener to file input
+      $('#customFile').on('change', function(){
+          // Get the name of the selected file
+          var fileName = $(this).val().split('\\').pop();
+          // Update the label text
+          $(this).next('.custom-file-label').html(fileName);
+      });
+    });
+
+    // prevent form submission if no file is selected
+    document.getElementById('inputForm').addEventListener('submit', function(event) {
+      var fileInput = document.getElementById('customFile');
+      var prevInput = document.getElementById('previous_analyses_input');
+      // there must be either a file selected or a previous analysis input
+      if ((!fileInput || !fileInput.files || fileInput.files.length === 0) && !prevInput.value) {
+      event.preventDefault();
+      document.getElementById('noFileAlert').removeAttribute('hidden');
+      }
+      else {
+          document.getElementById('noFileAlert').setAttribute('hidden', '');
+      }
+    });
+
+  </script>
+
+{% endblock %}

@@ -6,6 +6,9 @@ import timeit
 
 import pandas as pd
 
+# this is not used anymore since it produces unreliable and wrong results
+
+
 mart_table = pd.read_csv('sourcedata/mart_export.txt', sep='\t', dtype={'Gene stable ID': str,
                                                                         'UniProtKB/Swiss-Prot ID': str,
                                                                         'NCBI gene (formerly Entrezgene) ID': str})
@@ -25,7 +28,7 @@ seq_dom = dict()
 
 def get_seq_dom(source_address: str):
     seqDom = dict()
-    for src in ['pfam-seq-sp', 'pfam-seq-tr']:
+    for src in ['pfam-seq-sp']:
         file1 = open(source_address + src, 'r')
         for line in file1:
             line_sp = line.rstrip().split('\t')

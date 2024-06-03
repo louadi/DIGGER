@@ -16,6 +16,7 @@ from typing import Tuple
 
 # reproducibility yay
 random.seed(42)
+np.random.seed(42)
 
 
 def read_interactions(file_path: str):
@@ -219,14 +220,14 @@ def calculate_coefficient_sum(coefficients: tuple, info: dict, gold_standard: se
 
 
 # get random coefficients and calculate AUC
-def best_coefficients_rand(info: dict, gold_standard: set, background_data: list, source_names: list):
+def best_coefficients_rand(info: dict, gold_standard: set, background_data: list, source_names: list,
+                           iterations: int = 10_000):
     num_sources = len(source_names)
     best_coeffs = tuple([1] * num_sources)
     tested = set()
     all_auc = []
     max_auc = [0.0]
     max_coefs = [best_coeffs]
-    iterations = 10_000
     i = 0
 
     while i < iterations:
@@ -371,7 +372,7 @@ def create_wrong_assocations(sources, source_address, result_address):
     print("Running Time: " + str(end - start) + "\n")
 
 
-def assign_interaction(sources, result_address, continue_flag=False, coefficients=None):
+def assign_interaction(sources, result_address, continue_flag=False, coefficients=None, iteration_option=10_000):
     start = datetime.datetime.now()
     print("Filtering associations for Interactions")
     interactions_3did, pfam_3did = read_interactions(result_address + '3did')
@@ -429,7 +430,8 @@ def assign_interaction(sources, result_address, continue_flag=False, coefficient
 
     print("Calculating coefficients, this will take a while...")
     if not coefficients:
-        best_coefs, all_auc = best_coefficients_rand(info, gold_standard, background_data, source_names)
+        best_coefs, all_auc = best_coefficients_rand(info, gold_standard, background_data, source_names,
+                                                     iterations=iteration_option)
     else:
         try:
             coev_tuple = eval(coefficients)
@@ -640,7 +642,8 @@ def assign_interaction(sources, result_address, continue_flag=False, coefficient
         count += 1
 
     if best_fmeasure_test < 0.8:
-        print(f"Best threshold ({best_fmeasure_test}) is not very good, this may result in poor quality interactions.")
+        print(f"Best threshold ({best_fmeasure_test}) is not very good, this may result in poor quality interactions.\n"
+              f"For more information on what to do next, please refer to the README file in the sourcedata directory.")
         if not continue_flag:
             continue_user = input("Do you want to continue anyway? (y/n): ")
             if continue_user == 'n':

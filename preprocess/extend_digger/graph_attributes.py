@@ -1,4 +1,5 @@
 # domain_G, DDI, gid2name
+import os.path
 import pickle
 import networkx as nx
 
@@ -8,8 +9,20 @@ def load_obj(organism, name):
         return pickle.load(f)
 
 
-def save_obj(organism, name, obj):
-    with open(f'../container/domain/data/{organism}/{name}.pkl', 'wb') as f:
+def save_obj(organism, name, obj, path=None):
+    if path is None:
+        path = f'../container/domain/data/{organism}/{name}.pkl'
+    else:
+        path = f'{path}/{organism}/{name}.pkl'
+    # don't overwrite existing backup files, just to be sure
+    if "bak" in name:
+        while os.path.isfile(path):
+            try:
+                num = int(path[-5])
+            except ValueError:
+                num = 1
+            path = path.replace(".pkl", f"_{num+1}.pkl")
+    with open(path, 'wb') as f:
         pickle.dump(obj, f)
 
 
@@ -70,12 +83,17 @@ def dummy_attribute(graph):
     return graph
 
 
-def add_predicted_nodes(graph, predicted_ddis_path, graph_type):
+def add_predicted_nodes(graph, predicted_ddis_path, ppi_graph):
     mapping = {'Gold': 'high', 'Silver': 'mid', 'Bronze': 'low'}
     with open(predicted_ddis_path, 'r') as f:
+        # skip header
+        f.readline()
         for line in f.readlines():
             line = line.strip().split("\t")
-            if not graph.has_node(line[0]) or not graph.has_node(line[1]):
+            prot_1 = line[0].split("/")[0]
+            prot_2 = line[1].split("/")[0]
+            # if there is no edge between the proteins, a DDI can't exist
+            if (not graph.has_node(line[0]) or not graph.has_node(line[1])) and (not ppi_graph.has_edge(prot_1, prot_2)):
                 continue
             if not graph.has_edge(line[0], line[1]):
                 graph.add_edge(line[0], line[1], confidence=mapping[line[2]])
@@ -83,6 +101,10 @@ def add_predicted_nodes(graph, predicted_ddis_path, graph_type):
 
 
 def main(organism, backup=True):
+    # load PPI graph
+    ppi_graph = load_obj(organism, 'PPI')
+    print(f"PPI graph has {len(ppi_graph.edges)} edges and {len(ppi_graph.nodes)} nodes")
+
     graphs = ['DomainG', 'DDI']
     for graph in graphs:
         # load original graph
@@ -96,16 +118,18 @@ def main(organism, backup=True):
             save_obj(organism, f"{graph}.bak", annotated_graph)
         # add predicted nodes
         extended_graph = add_predicted_nodes(annotated_graph,
-                                             f'resultdata/predicted_ddi_ppi.tsv', graph)
-        print(f"Extended graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
-        save_obj(organism, graph, extended_graph)
+                                             f'resultdata/predicted_ddi_ppi_alt.tsv', ppi_graph)
+        print(f"Extended {graph} graph has {len(extended_graph.edges)} edges and {len(extended_graph.nodes)} nodes")
+        if graph == 'DomainG':
+            save_obj(organism, graph, extended_graph)
+            save_obj(organism, 'graph', extended_graph, path='../../container/domain/nease/data')
 
 
 if __name__ == '__main__':
-    main('Mus musculus[human]')
+    main('Mus musculus[mouse]')
 
     # domain_g_original: nx.Graph = load_obj('DomainG_original')
-    # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi.tsv')
+    # predicted_edges, predicted_edges_ddi = read_ddi_tsv('../domain/data/Homo sapiens[human]/predicted_ddi_ppi_alt.tsv')
     # domain_g = new_graph(predicted_edges)
     # domain_g = annotate_graph(domain_g_original, domain_g)
     # save_obj("Domain_G_ext", domain_g)

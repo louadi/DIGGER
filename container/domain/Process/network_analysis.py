@@ -3,26 +3,13 @@ import re
 
 from django.conf import settings
 
-from domain.Process import exonstodomain as exd
 from domain.Process import process_data as pr
+from domain.Process.load_data import PPI_all, g2d_all, protein_all, DDI_all
 import pandas as pd
 import numpy as np
 import networkx as nx
 from django.urls import reverse
 
-PPI_all = {}
-g2d_all = {}
-data_all = {}
-DDI_all = {}
-for organism in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism):
-        continue
-    trivial_name = organism.split("[")[1][:-1]
-    PPI_all[trivial_name] = exd.load_obj(organism + '/PPI')
-    g2d_all[trivial_name] = exd.load_obj(organism + '/g2d')
-    data_all[trivial_name] = pd.read_csv('domain/data/' + organism + '/all_Proteins.csv')
-    if os.path.isfile('domain/data/' + organism + '/DDI.pkl'):
-        DDI_all[trivial_name] = exd.load_obj(organism + '/DDI')
 
 # --- Create folder
 # Global jobs table path
@@ -189,6 +176,7 @@ def Construct_network(proteins_id, missing, job_ID, organism):
 
             score.append('1.0')
             source.append('PPI')
+
     nodes = []
     for n in N:
         ensembl = entrez_to_ensembl(n, organism)
@@ -223,7 +211,9 @@ def Construct_network(proteins_id, missing, job_ID, organism):
 
     pd_html.sort_values(by=['Source of the interaction'], ascending=[True])
 
-    pd_html = pd_html.rename(columns={"Score": "% retained DDIs*", })
+    pd_html['Score'] = pd_html['Score'].astype(float) * 100
+    pd_html['Score'] = pd_html['Score'].astype(int).astype(str)
+    pd_html = pd_html.rename(columns={"Score": "% retained DDIs", })
 
     # Convert Table to HTML
     pd_html = pd_html.to_html(table_id='results', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
@@ -256,7 +246,7 @@ def analysis_input_isoforms(Inputs, organism):
     g2d = g2d_all[organism]
 
     filtered = filter_proteins_list(Inputs, organism)
-    print('-----------filtered--------------')
+    print('filtered inputs')
 
     n = len(filtered)
     # Inputs are so many
@@ -264,7 +254,7 @@ def analysis_input_isoforms(Inputs, organism):
         return False
 
     else:
-        print('-----------yeaaaaaaah--------------')
+        print('inputs are less than 2000')
         gene_domains = {}
         # all genes and missing domains
         missing = {}
@@ -310,13 +300,12 @@ def analysis_input_isoforms(Inputs, organism):
                             missing[ensembl].append(d)
 
         proteins_id = Remove(proteins_id)
-
         return proteins_id, missing, n
 
 
 def analysis_input_genes(Inputs, organism):
     PPI = PPI_all[organism]
-    data = data_all[organism]
+    data = protein_all[organism]
 
     protein_id = []
     missing = {}
@@ -347,7 +336,7 @@ def analysis_input_genes(Inputs, organism):
 
 
 def pr_to_tr(pr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Protein stable ID'].isin([pr])
     try:
         return data[df_filter]['Transcript stable ID'].unique()[0]
@@ -356,7 +345,7 @@ def pr_to_tr(pr, organism):
 
 
 def tr_to_gene(tr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Transcript stable ID'].isin([tr])
     try:
         return data[df_filter]['Gene stable ID'].unique()[0]
@@ -365,7 +354,7 @@ def tr_to_gene(tr, organism):
 
 
 def ensembl_to_entrez(gene, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Gene stable ID'].isin([gene])
     try:
         return data[df_filter]['NCBI gene ID'].unique()[0]
@@ -374,8 +363,8 @@ def ensembl_to_entrez(gene, organism):
 
 
 def entrez_to_ensembl(gene, organism):
-    data = data_all[organism]
-    df_filter = data['NCBI gene ID'].isin([gene])
+    data = protein_all[organism]
+    df_filter = data['NCBI gene ID'].isin([int(gene)])
     try:
         return data[df_filter]['Gene stable ID'].unique()[0]
     except IndexError:
@@ -383,7 +372,7 @@ def entrez_to_ensembl(gene, organism):
 
 
 def tr_to_domain(tr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Transcript stable ID'].isin([tr])
     tdata = data[df_filter]
     tdata = tdata[tdata["Pfam ID"].notna()].drop_duplicates()
@@ -396,13 +385,13 @@ def tr_to_domain(tr, organism):
 # add to view
 def check_PPI_status(tr, organism):
     PPI = PPI_all[organism]
-    data = data_all[organism]
+    data = protein_all[organism]
     df_filter = data['Transcript stable ID'].isin([tr])
     return PPI.has_node(data[df_filter]['NCBI gene ID'].astype('int').astype('str').unique()[0])
 
 
 def tr_is_coding(tr, organism):
-    data = data_all[organism]
+    data = protein_all[organism]
     return len(data[data['Transcript stable ID'].isin([tr])]) != 0
 
 

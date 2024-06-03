@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}NEASE result{% endblock %}
+
+{% block header %}
+  <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
+
+  <style>
+      .sticky-offset {
+          top: 56px
+      }
+
+      .list-group > .list-group > .list-group-item {
+          padding-left: 2.5rem;
+      }
+
+      .tab-content > .tab-pane:not(.active) {
+          display: block;
+          height: 0;
+          overflow-y: hidden;
+      }
+
+      #protein-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #domain-network {
+          position: relative;
+          height: 840px;
+          border: 2px solid lightgray;
+      }
+
+      #interaction-network {
+          position: relative;
+          height: 600px;
+          border: 2px solid lightgray;
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+          display: block; /* remove extra space below image */
+      }
+
+      .tab {
+          margin-left: 90px;
+      }
+
+      .tab {
+          margin-left: 50px;
+      }
+
+      img {
+          max-width: 100%;
+          max-height: 100%;
+      }
+
+      img.resize {
+          max-width: 80%;
+          max-height: 80%;
+      }
+
+      img.resize2 {
+          max-width: 55%;
+          max-height: 55%;
+      }
+  </style>
+  <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
+  <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
+{% endblock %}
+
+{% block raw_content %}
+  <div class="wider-container my-3">
+    <div class="row">
+      <!-- Vertical pill selection menu-->
+      <div class="col-lg-2 mb-2 rounded">
+        <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+          <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
+               aria-orientation="vertical">
+            <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
+               role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
+
+            <hr class="border-bottom" style="width: 100%;">
+
+            <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-nease_enr"
+               role="tab"
+               aria-controls="v-pills-compare" aria-selected="false">NEASE edge enrichment</a>
+
+            <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-classic_enr"
+               role="tab"
+               aria-controls="v-pills-compare" aria-selected="false">Classic enrichment</a>
+
+            <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-pathway" role="tab"
+               aria-controls="v-pills-protein" aria-selected="false">Path analysis</a>
+
+            <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-exons"
+               role="tab"
+               aria-controls="v-pills-compare" aria-selected="false">Visualise Exons</a>
+
+          </div>
+        </div>
+      </div>
+      <!-- /Vertical pill selection menu -->
+
+      <!-- Page content -->
+      <div class="col-lg-10">
+
+        <!-- Jumbotron overview-->
+        <div class="jumbotron p-xl-4">
+          <h1 class="display-4">NEASE summary</h1>
+          <hr>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Input file:</span> {{ input_name|safe }}
+          </h5>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Affected protein domains:</span> {{ domain_affected|safe }}
+          </h5>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Affected linear motifs:</span> {{ lin_motifs|safe }}
+          </h5>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Affected interacting residues:</span> {{ residues|safe }}
+          </h5>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Affected Domains/Motifs with known interactions:</span> {{ known_interactions|safe }}
+          </h5>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
+          </h5>
+        </div>
+
+        <!-- Tab content -->
+        <div class="tab-content" id="v-pills-tabContent">
+          <!-- Overview content -->
+          <div class="tab-pane fade show active card shadow rounded" id="v-pills-overview" role="tabpanel"
+               aria-labelledby="v-pills-overview-tab">
+            <div class="card-body">
+              <p class="lead text-center"><span
+                  style="font-weight:bold">NEASE enrichment result</span></p>
+              <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
+
+              <div class="mt-5">
+                {% if error %}
+                  <h5 class="text-danger text-center">{{ error }}</h5>
+                {% endif %}
+              </div>
+
+              <hr>
+
+              <!-- tables resulting from enrichment -->
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected protein domains</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_domains.csv"
+                       class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ domains|safe }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected interactions (domain binding)</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_edges.csv"
+                       class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ edges|safe }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected linear motifs</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_elm.csv"
+                       class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ elm|safe }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="my-5">
+                <div class="row my-2">
+                  <div class="col-sm-12 col-md-6 my-2">
+                    <h5 class="text-center">Affected interacting residues</h5>
+                  </div>
+                  <div class="col-sm-12 col-md-6">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_pdb.csv"
+                       class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ pdb|safe }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nease enrichment content -->
+          <div class="tab-pane fade show card shadow rounded" id="v-pills-nease_enr" role="tabpanel"
+               aria-labelledby="v-pills-classic_enr-tab">
+            <div class="card-body">
+              <p class="lead text-center"><span
+                  style="font-weight:bold">NEASE edge enrichment</span></p>
+
+              <div class="row justify-content-center">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="neaseDatabasesToEnrich">Databases to enrich</label>
+                    <input type="text" class="form-control" id="neaseDatabasesToEnrich" placeholder="Enter databases">
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-primary" id="run_nease_enrichment">Run enrichment</button>
+                    <div class="spinner-border" role="status" style="display: none">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h6 class="my-4">
+                <div id="nease_enrichment_result"></div>
+                <div id="nease_enrich_download_button" class="row" style="display: none;">
+                  <div class="col-sm-12 text-center">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_neenr.csv"
+                       class="btn btn-secondary px-4 py-2 btn-sm">Download enrichment result</a>
+                  </div>
+                </div>
+              </h6>
+            </div>
+
+          </div>
+
+          <!-- Classic enrichment content -->
+          <div class="tab-pane fade show card shadow rounded" id="v-pills-classic_enr" role="tabpanel"
+               aria-labelledby="v-pills-nease_enr-tab">
+            <div class="card-body">
+              <p class="lead text-center"><span
+                  style="font-weight:bold">Nease Enrichment</span></p>
+
+              <div class="row justify-content-center">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="databasesToEnrich">Databases to enrich</label>
+                    <input type="text" class="form-control" id="databasesToEnrich" placeholder="Enter databases">
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-primary" id="run_enrichment">Run enrichment</button>
+                    <div class="spinner-border" role="status" style="display: none">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h6 class="my-4">
+                <div id="enrichment_result"></div>
+                <div id="enrich_download_button" class="row" style="display: none;">
+                  <div class="col-sm-12 text-center">
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_clenr.csv"
+                       class="btn btn-secondary px-4 py-2 btn-sm">Download enrichment result</a>
+                  </div>
+                </div>
+              </h6>
+            </div>
+          </div>
+
+          <!-- Pathway content -->
+          <div class="tab-pane fade show card shadow rounded" id="v-pills-pathway" role="tabpanel"
+               aria-labelledby="v-pills-pathway-tab">
+            <div class="card-body">
+              <p class="lead text-center"><span
+                  style="font-weight:bold">Pathway analysis</span></p>
+            </div>
+          </div>
+
+          <!-- Visualise exons content -->
+          <div class="tab-pane fade show card shadow rounded" id="v-pills-exons" role="tabpanel"
+               aria-labelledby="v-pills-exons-tab">
+            <div class="card-body">
+              <p class="lead text-center"><span
+                  style="font-weight:bold">Visualise exons</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Page content -->
+    </div>
+  </div>
+  <script>
+      // make a GET request to the server to get the enrichment result
+      runId = "{{ run_id }}";
+      fileName = "{{ input_name|safe }}";
+
+      // save the runId in local storage so that it can be accessed for another 7 days
+      const userStore = window.initStore({key: runId, expiresInDays: 7, name: fileName})
+      userStore.set(runId)
+
+      // format all tables to be responsive
+      $(document).ready(function () {
+          $("[id$='_table']").DataTable();
+      });
+
+      $("#run_enrichment").click(function () {
+          const databases = $("#databasesToEnrich").val();
+          $("#databasesToEnrich").prop("disabled", true);
+          $("#run_enrichment").prop("disabled", true);
+          $('.spinner-border').css('display', 'inline-block');
+
+          $.get("/nease_analysis/extra_functions?" + $.param({runId: runId, databases: databases, func: 'classic'}), function (data) {
+              $("#enrichment_result").html(data);
+              $('#classic_enrich').DataTable();
+
+              // Re-enable the input and button, and hide the spinner
+              $("#databasesToEnrich").prop("disabled", false);
+              $("#run_enrichment").prop("disabled", false);
+              $('.spinner-border').css('display', 'none');
+              $('#enrich_download_button').css('display', 'block');
+          });
+      });
+
+      // run nease enrichment
+      $('#run_nease_enrichment').click(function () {
+          const databases = $('#neaseDatabasesToEnrich').val();
+          $('#neaseDatabasesToEnrich').prop('disabled', true);
+          $('#run_nease_enrichment').prop('disabled', true);
+          $('.spinner-border').css('display', 'inline-block');
+
+          $.get("/nease_analysis/extra_functions?" + $.param({runId: runId, databases: databases, func: 'nease'}), function (data) {
+              $('#nease_enrichment_result').html(data);
+              $('#nease_enrich').DataTable();
+
+              // Re-enable the input and button, and hide the spinner
+              $('#neaseDatabasesToEnrich').prop('disabled', false);
+              $('#run_nease_enrichment').prop('disabled', false);
+              $('.spinner-border').css('display', 'none');
+              $('#nease_enrich_download_button').css('display', 'block');
+          });
+      });
+
+  </script>
+{% endblock %}

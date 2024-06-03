@@ -5,6 +5,7 @@ from domain.Process import process_data as pr
 from domain.Process import exonstodomain as exd
 from domain.Process import proteininfo as info
 from domain.Process import network_analysis as nt
+from domain.Process.load_data import DomainG_all, PPI_all, g2d_all
 import pandas as pd
 from django.urls import reverse
 
@@ -23,28 +24,6 @@ table_path_2 = os.path.join(settings.MEDIA_ROOT, 'table 2')
 if not os.path.exists(table_path_2):
     os.makedirs(table_path_2)
 
-import sys
-def sizeof_fmt(num, suffix='B'):
-    ''' by Fred Cirera,  https://stackoverflow.com/a/1094933/1870254, modified'''
-    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
-        if abs(num) < 1024.0:
-            return "%3.1f %s%s" % (num, unit, suffix)
-        num /= 1024.0
-    return "%.1f %s%s" % (num, 'Yi', suffix)
-
-
-DomainG_all = {}
-PPI_all = {}
-g2d_all = {}
-for organism in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism):
-        continue
-    trivial_name = organism.split("[")[1][:-1]
-    # Join PPI-DDI network
-    DomainG_all[trivial_name] = exd.load_obj(f'{organism}/DomainG')
-    PPI_all[trivial_name] = exd.load_obj(f'{organism}/PPI')
-    g2d_all[trivial_name] = exd.load_obj(f'{organism}/g2d')
-
 
 # PPI network confirmed by residue evidence
 # PPI_3D=exd.load_obj("Residue")
@@ -60,6 +39,7 @@ def Protein_view(P_id, organism):
     g2d = g2d_all[organism]
     DomainG = DomainG_all[organism]
 
+    # add all the interactions of the input protein to the graph
     if PPI.has_node(entrezID):
         g = exd.nx.Graph()
         g.add_edges_from(PPI.edges(entrezID))
@@ -280,16 +260,14 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
 
 
 def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_partners, organism):
+    print(protein_with_DDI)
     # convert N and E to dictionaries to accommodate for different confidence interactions
     N = {'original': [], 'high': [], 'mid': [], 'low': []}
     E = {'original': [], 'high': [], 'mid': [], 'low': []}
     for node in g.nodes():
         confidence = set()
         for e in g.edges(node, data=True):
-            try:
-                confidence.add(e[2]['confidence'])
-            except KeyError:
-                confidence.add('original')
+            confidence.add(e[2].get('confidence', 'original'))
 
         for c in confidence:
             # node of a protein:
@@ -305,7 +283,8 @@ def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_pa
                 color = ''
                 if node in missing_domain:  color = 'color: missing, '
                 label = node_label(node, entrezID, tran_name)
-                N[c].append(f'{{id: "{node}", label: "{label}", {color} group: "{group_node(node, entrezID)}", physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
+                N[c].append(f'{{id: "{node}", label: "{label}", {color} group: "{group_node(node, entrezID)}", '
+                            f'physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
 
     for e in g.edges(data=True):
         try:
@@ -324,6 +303,8 @@ def edge_option(edge, entrezID, co_partners):
     if len(e1) == 1 and len(e2) == 1:
         edge_color = ''
         # print(co_partners)
+        if e2 == ['573']:
+            print(entrezID, co_partners)
         if (e1[0] in co_partners and e1[0] != entrezID) or (
                 e2[0] in co_partners and e2[0] != entrezID): edge_color = 'color: Residue,'
 

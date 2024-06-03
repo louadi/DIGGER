@@ -11,6 +11,7 @@ import os
 
 from django.conf import settings
 from domain.Process import process_data as pr
+from domain.Process.load_data import DomainG_all as Graphs
 from sqlalchemy import text
 from django.urls import reverse
 
@@ -24,18 +25,10 @@ def load_obj(name):
         return pickle.load(f)
 
 
-Graphs = {}
-for organism_folder in os.listdir('domain/data'):
-    if not os.path.isdir('domain/data/' + organism_folder):
-        continue
-    trivial_name = organism_folder.split("[")[1][:-1]
-    Graphs[trivial_name] = load_obj(organism_folder + '/DomainG')
-
-
 # PPI= pd.read_csv( "domain/data/PPI_interface_mapped_to_exon.csv")
 
 # function for visualization  DomainView
-def vis_node_(node, organism):
+def vis_node_(node, organism, missing=False):
     p_id = '"' + node.split(".")[1] + '"'
     ppp = node.split(".")[1]
     node = node.split(".")[0] + "/" + node.split(".")[1]
@@ -97,7 +90,9 @@ def vis_node_(node, organism):
                 try:
                     domain_name = n.split("/")[1]
                     domain_name = pr.Domain_name(domain_name)[0] + ' (' + domain_name + ')'
-                    N[confid].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", physics: false, source: {p_id}, value: "5"}},')
+                    # if the node is missing in the isoform, make it red
+                    color = 'RED' if missing else 'BLUE'
+                    N[confid].append(f'{{id: "{n + ppp}", label: "{pr.entrez_to_name(gene, organism)} - {domain_name}", group: "MDomain", color: {color}, physics: false, source: {p_id}, value: "5"}},')
                 except KeyError:
                     print("KeyError with", node)
             # a gene node
@@ -111,15 +106,16 @@ def vis_node_(node, organism):
 
         # edge to the main domain
         if any(x == node for x in e):
-            colour = 'BLACK' if e[2]['confidence'] == 'original' else 'YELLOW'
-
-            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, color:  {colour} }},')
+            colour = 'GREEN' if e[2]['confidence'] == 'original' else 'LIGHTGREEN'
+            dashes = 'true' if missing else 'false'
+            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L1, dashes: {dashes}, '
+                                         f'width: WIDTH_SCALE * 2, color:  {colour} }},')
 
         else:
-            colour = 'RED' if e[2]['confidence'] == 'original' else 'YELLOW'
+            colour = 'YELLOW' if e[2]['confidence'] == 'original' else 'YELLOW'
 
-            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, color:  {colour} }},')
-
+            E[e[2]['confidence']].append(f'{{from: "{e[0] + ppp}", to: "{e[1] + ppp}", length:  L2, width: '
+                                         f'WIDTH_SCALE, color:  {colour} }},')
 
     return N, E, pr.entrez_to_name(node.split("/")[0], organism), node.split("/")[1]
 
@@ -194,11 +190,18 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
                   """
     tr_2 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
 
+    co_partners = []
     if len(partners) != 0:
         partners = list(set(partners + tr_2['Transcript stable ID_x'].unique().tolist()))
 
         if len(partners) != 0:
-            partners = list(set([pr.tranID_convert(x, organism)[3] for x in partners]))
+            for x in partners:
+                try:
+                    co_partners.append(pr.tranID_convert(x, organism)[3])
+                except TypeError:
+                    pass
+
+    co_partners = list(set(co_partners))
 
     for exon_ID in exon_IDs:
         # print(exon_ID)
@@ -247,7 +250,7 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
         n = len(p1)
         N.append(n)
         if n != 0: exons_in_interface.append(exon_ID)
-    return N, exons_in_interface, partners
+    return N, exons_in_interface, co_partners
 
 
 # if the input is a transcript ID:

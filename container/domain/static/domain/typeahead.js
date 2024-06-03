@@ -8,7 +8,12 @@ var gene_symbol = new Bloodhound({
                 url: document.body.getAttribute('data-typeahead') + '?q=%QUERY&o=%ORGANISM',
                 wildcard: '%QUERY',
                 replace: function(url, query) {
+                    // get the organism value, in case it has not loaded yet, default to human
                     var organism = $('#org_select').val();
+                    if (organism === undefined) {
+                        console.log("Organism not loaded yet, defaulting to human.");
+                        organism = 'human';
+                    }
                     // only consider the last characters after any comma if there is one (support for multi input)
                     var last_query = query.split(',').pop().trim();
                     if (last_query.length > 0) {

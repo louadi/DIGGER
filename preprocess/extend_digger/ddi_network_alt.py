@@ -154,11 +154,11 @@ def main():
 
     print(f"Read {len(combined_interactions)} interactions in {round((timeit.default_timer() - start) / 60, 3)} minutes")
 
-    with open("resultdata/predicted_ddi_ppi.tsv", 'w') as f:
+    with open("resultdata/predicted_ddi_ppi_alt.tsv", 'w') as f:
         for ddi in combined_interactions:
             f.write(f'{ddi[0]}\t{ddi[1]}\n')
 
-    add_classification("resultdata/predicted_ddi_ppi.tsv", "resultdata/result-all")
+    add_classification("resultdata/predicted_ddi_ppi_alt.tsv", "resultdata/result-all")
 
 
 if __name__ == '__main__':

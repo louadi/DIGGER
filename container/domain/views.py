@@ -2,7 +2,9 @@ import os
 import pickle
 import random
 import re
+import time
 import timeit
+import traceback
 
 import pandas as pd
 
@@ -21,6 +23,9 @@ from .Process import process_data as pr
 from .Process import transcript as tr
 from .Process import gene as g
 from .Process import network_analysis as nt
+from .Process import mutliple_query as mq
+from .Process import process_data as proc_data
+from .Process import nease_output as no
 
 # --- Create folder
 # Global jobs path
@@ -62,8 +67,9 @@ def multiple_queries(request, inputs, organism):
                 transcript_table[query] = tr.transcript_table(query, organism, True)
             else:
                 with connection.cursor() as cursor:
-                    cursor.execute("""SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
-                                   [query])
+                    cursor.execute(
+                        """SELECT ensembl_id FROM domain_gene_""" + organism + """ WHERE gene_symbol ILIKE %s""",
+                        [query])
                     row = cursor.fetchone()
                     query_id = row[0] if row else query
                     transcript_table[query] = g.input_gene(query_id, organism)[0]
@@ -71,9 +77,45 @@ def multiple_queries(request, inputs, organism):
             print(e)
             continue
 
+    # iterate through all query ids
+    id_list = []
+    for query in transcript_table.keys():
+        # search for the id in the transcript table string. This is suboptimal but it works for now
+        # TODO: enable search for exon ids
+        co_partners = []
+        find_co_partners = True
+        try:
+            transcript_ids = re.findall(r'ENS\w*[T,P]\d+', transcript_table[query])
+            for t_id in transcript_ids:
+                tran_name, _, _, entrez_id, _ = proc_data.tranID_convert(t_id, organism)
+                exons, _, unique_domains = proc_data.transcript(t_id, organism)
+                if find_co_partners:
+                    _, _, co_partners = exd.exon_3D(exons['Exon stable ID'].tolist(), t_id, organism)
+                    find_co_partners = False
+                id_list.append([tran_name, entrez_id, unique_domains, co_partners])
+        except AttributeError:
+            pass
+    # for each id, get the graph data
+    combined_nodes = {}
+    combined_edges = {}
+    try:
+        # convert id_list ids to entrez ids
+        subgraph_g, confirmed_proteins, missing_domains = mq.create_subgraph(id_list, organism)
+
+        nodes, edges = mq.vis_nodes_many(subgraph_g, id_list, confirmed_proteins, missing_domains)
+        combined_nodes = {k: combined_nodes.get(k, []) + v for k, v in nodes.items()}
+        combined_edges = {k: combined_edges.get(k, []) + v for k, v in edges.items()}
+    except Exception as e:
+        print(e)
+        pass
+
     context = {
-        'tb': transcript_table,
+        'trans_table': transcript_table,
+        'combined_nodes': combined_nodes,
+        'combined_edges': combined_edges,
+        'switch': []
     }
+
     return render(request, 'visualization/multiple_queries.html', context)
 
 
@@ -148,8 +190,13 @@ def exon(request, organism, exon_ID):
         Interactiveview_select = pr.interactive_select(pd_interaction)
 
         # the first protein to show, select a protein with confidence original
-        first_victim = pd_interaction[pd_interaction['Confidence'] == 'Original']['NCBI gene ID'].tolist()[0]
-        first_name = pd_interaction[pd_interaction['Confidence'] == 'Original']['_'].tolist()[0]
+        try:
+            first_victim = pd_interaction[pd_interaction['Confidence'] == 'Original']['NCBI gene ID'].tolist()[0]
+            first_name = pd_interaction[pd_interaction['Confidence'] == 'Original']['_'].tolist()[0]
+        except IndexError:
+            # if there is no original confidence, select the first protein
+            first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
+            first_name = pd_interaction['_'].tolist()[0]
 
         pd_interaction = pd_interaction[
             ["Affected Protein", 'Partner Protein', 'NCBI gene ID', 'Retained DDIs', 'Lost DDIs',
@@ -168,7 +215,6 @@ def exon(request, organism, exon_ID):
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     table = table.to_html(**settings.TO_HTML_PARAMETERS)
-
 
     context = {
 
@@ -201,7 +247,7 @@ def exon(request, organism, exon_ID):
         'first_vict': first_victim,
         'first_name': first_name,
 
-        'enable_Proteinview': len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True,
+        'enable_Proteinview': len(edges_domainV.get('original')) < 70 if edges_domainV.get('original') else True,
     }
     return render(request, 'visualization/exon.html', context)
 
@@ -253,12 +299,12 @@ def transcript(request, P_id, organism):
              'Missing domain-domain interactions', '% of missing DDIs', 'Residue-level evidence',
              "Protein-protein interaction", 'Confidence']]
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+        print(pd_interaction)
 
     # Get ID of missing domains with interactions
     if len(missed) != 0:
         missing_domains = missed['Pfam ID'].unique()
         missed = missed.to_html(**settings.TO_HTML_PARAMETERS)
-
 
     nodes_domainV = {}
     edges_domainV = {}
@@ -293,7 +339,7 @@ def transcript(request, P_id, organism):
     switcher_m = []
     if len(missed) != 0:
         for pfams in missing_domains:
-            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism)
+            n, e, _, _ = exd.vis_node_(entrezID + "." + pfams, organism, missing=True)
             if len(e['original']) > maxx:
                 maxx = len(e)
                 first = pfams
@@ -347,7 +393,7 @@ def transcript(request, P_id, organism):
         'Domainview_nodes': nodes_domainV,
 
         # make it make sense
-        'enable_Proteinview': (len_edges_domainV > 200) or (len_edges_domainV > 130 and len(unique) + len(missed) == 1),
+        'enable_Proteinview': (len_edges_domainV < 200 or len(unique) + len(missed) == 1),
     }
 
     return render(request, 'visualization/transcript.html', context)
@@ -428,7 +474,7 @@ def exon_level(request):
         search_query = search_query.split(" ")
         search_query = [x for x in search_query if x != '']
         # search_query[0]=search_query[0].split(".")[0]
-        if len(search_query) == 3 and re.match(r'ENS\w*[G]\d+$', search_query[0]) and \
+        if len(search_query) == 3 and re.match(r'ENS\w*G\d+$', search_query[0]) and \
                 search_query[1].isdigit() and search_query[2].isdigit():
 
             gene_ID = search_query[0]
@@ -605,6 +651,7 @@ def Multi_proteins(request, organism, job='0'):
         return HttpResponse("<h1>Too many inputs (max=2000 genes)</h1>")
 
     else:
+        print("info exists")
         genes, missing, num_isoforms = info
 
         Net = nt.Construct_network(genes, missing, job, organism)
@@ -628,6 +675,130 @@ def Multi_proteins(request, organism, job='0'):
     }
 
     return render(request, 'visualization/network.html', context)
+
+
+def set_previous_analysis(request):
+    print("got previous analysis with run ID:", request.POST.get('previousAnalysis'))
+    try:
+        events, info_tables = no.get_nease_events(request.POST.get('previousAnalysis'))
+
+    except FileNotFoundError:
+        context = {'error_msg': "Could not find this analysis, please run it again."}
+        return render(request, 'setup/nease_setup.html', context)
+
+    except Exception as e:
+        context = {'error_msg': str(e)}
+        return render(request, 'setup/nease_setup.html', context)
+
+    run_id = request.POST.get('previousAnalysis')
+
+    for key, value in info_tables.items():
+        info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+
+    context = {
+        'input_name': request.POST.get('previousName'),
+        **events.summary,
+        **info_tables,
+        'stats': run_id + ".jpg",
+        'run_id': run_id,
+    }
+    return render(request, 'visualization/nease_result.html', context)
+
+
+def setup_nease(request):
+    # handle previous analysis
+    if request.POST.get('previousAnalysis', None):
+        return set_previous_analysis(request)
+
+    # otherwise continue with new analysis
+    if not request.FILES:
+        return render(request, 'setup/nease_setup.html')
+    # Get the input file and post data
+    input_data = request.FILES
+    if 'splicing-events-file' not in input_data:
+        return HttpResponse("No input file provided", status=400)
+
+    organism = request.POST.get('organism', 'human')
+    database_type = request.POST.get('inputType', 'Standard')
+
+    confidences = []
+    for confidence in ["high", "mid", "low"]:
+        if request.POST.get(f"predicted-checkbox-{confidence}", False):
+            confidences.append(confidence)
+
+    # get form data in the correct format
+    enrich_dbs = request.POST.getlist('databases_to_enrich')
+    p_value = float(request.POST.get('p_value_cutoff', 0.05))
+    min_delta = float(request.POST.get('min_delta', 0.05))
+    majiq_confidence = float(request.POST.get('Majiq_confidence', 0.95))
+    only_ddis = request.POST.get('only_DDIs', 'off') == 'on'
+    rm_not_in_frame = request.POST.get('remove_non_in_frame', 'on') == 'on'
+    divisible_by_3 = request.POST.get('only_divisible_by_3', 'off') == 'on'
+
+    # Run the NEASE job
+    print(f"Submitted NEASE job with params: {organism}, {database_type}, {p_value}, {rm_not_in_frame}, "
+          f"{divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
+
+    if input_data['splicing-events-file'].name.endswith('.json'):
+        table = pd.read_json(input_data['splicing-events-file'])
+    else:
+        table = pd.read_table(input_data['splicing-events-file'])
+
+    context = {
+        'error_msg': None
+    }
+    try:
+        events, info_tables, run_id = no.run_nease(table, organism, {'db_type': database_type,
+                                                                     'enrich_dbs': enrich_dbs,
+                                                                     'p_value': p_value,
+                                                                     'rm_not_in_frame': rm_not_in_frame,
+                                                                     'divisible_by_3': divisible_by_3,
+                                                                     'min_delta': min_delta,
+                                                                     'majiq_confidence': majiq_confidence,
+                                                                     'only_ddis': only_ddis,
+                                                                     'confidences': confidences})
+
+        for key, value in info_tables.items():
+            info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+
+        context = {
+            'input_name': input_data['splicing-events-file'].name,
+            **events.summary,
+            **info_tables,
+            'stats': run_id + ".jpg",
+            'run_id': run_id,
+        }
+        return render(request, 'visualization/nease_result.html', context)
+    except Exception as e:
+        print("outer exception")
+        print(e)
+        traceback.print_exc()
+        context['error_msg'] = str(e)
+    return render(request, 'setup/nease_setup.html', context)
+
+
+def nease_extra_functions(request):
+    function_name = request.GET.get('func', None)
+    if not function_name:
+        return HttpResponse("No function provided", status=400)
+    run_id = request.GET.get('runId', None)
+    databases = request.GET.get('databases', None)
+    databases = databases.split(",") if databases else None
+    if not run_id:
+        return HttpResponse("No run ID provided", status=400)
+
+    # get the enrichment table
+    try:
+        print("Got function: ", function_name)
+        if function_name == 'classic':
+            out_table = no.nease_classic_enrich(no.get_nease_events(run_id), databases, run_id)
+        elif function_name == 'nease':
+            out_table = no.nease_enrichment(no.get_nease_events(run_id), databases, run_id)
+        else:
+            return HttpResponse(f"Unknown function: {function_name}", status=400)
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
+    return HttpResponse(out_table.to_html(table_id=f"{function_name}_enrich", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
 
 
 def get_organisms(request):

@@ -117,24 +117,25 @@
         <h1 class="display-4">Transcript {{ tran_name }}</h1>
         <hr>
         <h5 class="lead"><span
-                style="font-weight:bold; display: inline-block; width: 180px">Gene name:</span>{{ gene_description|safe }}
+            style="font-weight:bold; display: inline-block; width: 180px">Gene name:</span>{{ gene_description|safe }}
         </h5>
 
         <h5 class="lead">
-          <span style="font-weight:bold; display: inline-block; width: 180px">Transcript name:</span>{{ tran_name|safe }}
+          <span
+              style="font-weight:bold; display: inline-block; width: 180px">Transcript name:</span>{{ tran_name|safe }}
         </h5>
 
         <h5 class="lead">
           <span style="font-weight:bold; display: inline-block; width: 180px">NCBI gene ID:</span><a
-                href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
-                target="_blank">{{ entrezID|safe }} </a>
+            href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
+            target="_blank">{{ entrezID|safe }} </a>
         </h5>
 
         <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px">Ensembl:</span><a
-                href="https://www.ensembl.org/id/{{ gID|safe }}"
-                target="_blank">{{ gID|safe }}</a>, <a
-                href="https://www.ensembl.org/id/{{ trID|safe }}"
-                target="_blank">{{ trID|safe }}</a>
+            href="https://www.ensembl.org/id/{{ gID|safe }}"
+            target="_blank">{{ gID|safe }}</a>, <a
+            href="https://www.ensembl.org/id/{{ trID|safe }}"
+            target="_blank">{{ trID|safe }}</a>
         </h5>
 
       </div>
@@ -146,7 +147,7 @@
              aria-labelledby="v-pills-overview-tab">
           <div class="card-body">
             <p class="lead text-center"><span
-                    style="font-weight:bold">Domain and exon architecture</span>: {{ text1 }}</p>
+                style="font-weight:bold">Domain and exon architecture</span>: {{ text1 }}</p>
 
 
             <img src="{% get_media_prefix %}images/{{ trID }}.png">
@@ -177,12 +178,12 @@
           <h2 class="card-header"> ProteinView </h2>
           <div class="card-body">
 
-            {% if enable_Proteinview %}
+            {% if not enable_Proteinview %}
               <h5 class="tab1"> ProteinView is not available for this protein because of its high
                 number of partners in the PPI. Please check InteractionView or DomainView.</h5>
             {% endif %}
 
-            {% if not enable_Proteinview %}
+            {% if enable_Proteinview %}
 
               <h5 class="tab1"> ProteinView provides a general visualization of the protein and its
                 domains interactions. Please select your view mode:</h5>
@@ -213,6 +214,7 @@
                     </select>
                   </div>
                 </div>
+
                 <div class="form-group row">
                   <div class="col-sm-2"><b>Options</b></div>
                   <div class="col-sm-2">
@@ -223,6 +225,15 @@
                         physics</label>
                     </div>
                   </div>
+                    <div class="col-sm-3">
+                  <div class="form-inline">
+                    <label for="formControlRange">Canvas height</label>
+                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="proteinCanvasRange">
+                  </div>
+                </div>
+                  </div>
+
+                  <div class="form-group row">
                   <!-- Hide predicted DDI options in ProteinView since they have no impact anyway -->
                   <div class="col-sm-2 protein-view-predicted" style="visibility: hidden"><b>Predicted DDIs</b></div>
                   <div class="col-sm-2 protein-view-predicted" style="visibility: hidden">
@@ -346,7 +357,7 @@
                     var proteinViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-protein]");
                     var proteinViewPredictedCheckboxes = document.querySelectorAll(".predicted-checkbox-protein");
 
-                    let proteinViewFilterValue = {value: "PPI"};
+                    let proteinViewFilterValue = {value: proteinViewSelector.value};
 
                     var predictedItems = document.querySelectorAll(".protein-view-predicted");
 
@@ -364,10 +375,10 @@
                     });
 
                     function proteinViewFilter(node) {
-                        if (proteinViewFilterValue.value === "") {
+                        if (proteinViewSelector.value === "") {
                             return node.group === "protein";
                         }
-                        switch (proteinViewFilterValue.value) {
+                        switch (proteinViewSelector.value) {
 
                             case "PPI-DDI":
                                 return node.source === "DDI";
@@ -434,9 +445,10 @@
                   </select>
                 </div>
               </div>
+
               <div class="form-group row">
                 <div class="col-sm-2"><b>Options</b></div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                   <div class="custom-control custom-switch">
                     <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
                            name="physics-checkbox-domain" checked>
@@ -444,9 +456,17 @@
                       physics</label>
                   </div>
                 </div>
+                <div class="col-sm-3">
+                  <div class="form-inline">
+                    <label for="formControlRange">Canvas height</label>
+                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="domainCanvasRange">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
                 <div class="col-sm-2"><b>Predicted DDIs</b></div>
                 <div class="col-sm-2">
-                  <div class="custom-control custom-switch">
+                  <div class="custom-control custom-switch disabled" aria-disabled="true">
                     <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
                            id="high_domain"
                            name="predicted-checkbox-high"
@@ -488,9 +508,10 @@
                     RED = "#C5000B",
                     //ORANGE = "orange",
                     YELLOW = "orange",
-                    WHITE = "EED5EB"
-                //GRAY = '#666666',
-                GRAY = "gray",
+                    WHITE = "EED5EB",
+                    BLUE = "#2B7CE9",
+                    //GRAY = '#666666',
+                    GRAY = "gray",
                     BLACK = "#2B1B17";
 
                 // create singular dictionary
@@ -558,7 +579,9 @@
 
                         MDomain: {
                             shape: "triangle",
-                            color: "#109618" // green
+                            //color: "#2B7CE9", // also blue
+                            borderWidth: "4",
+
                         }
                     }
                 };
@@ -570,10 +593,10 @@
                 let domainViewNodeFilter = {value: ""};
 
                 function domainViewFilter(node) {
-                    if (domainViewNodeFilter.value === "") {
+                    if (domainViewFilterSelector.value === "") {
                         return node.source === "{{ first_domain|safe}}";
                     }
-                    switch (domainViewNodeFilter.value) {
+                    switch (domainViewFilterSelector.value) {
 
                         {% for s in switch2 %}
                             {{ s|safe }}
@@ -590,6 +613,9 @@
                     domainViewNodes, domainViewEdges, domainViewFilter);
 
             </script>
+            <center>
+              <img class="resize" src="{% static 'image/network_legend.webp' %}" alt="">
+            </center>
 
             <!-- Tables-->
             <div style="text-align: center;" class="mt-5">
@@ -667,32 +693,33 @@
                   <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <div  class="col-md-4">
+                        <div class="col-md-4">
                           <h5 class="modal-title" id="exampleModalLabel">Interactions + % missing DDIs</h5>
                         </div>
                         <div class="col-md-4">
                           <button class="btn btn-primary" id="interactionViewDeselect">Deselect all</button>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                         </div>
                       </div>
                       <div class="modal-body">
                         <div class="row" id="nodeFilterSelect3">
-                            {% for key, value in Interactiveview_select.items %}
-                              <div class="col">
+                          {% for key, value in Interactiveview_select.items %}
+                            <div class="col">
                               <p><b>{{ key }}</b></p>
                               {% for s in value %}
                                 <div class="form-check my-1">
-                                  <input class="form-check-input" type="checkbox" name="InteractionChecks" id="{{ s.1 }}"
+                                  <input class="form-check-input" type="checkbox" name="InteractionChecks"
+                                         id="{{ s.1 }}"
                                          value="{{ s.1 }}">
                                   <label class="form-check-label" style="width: 50%" for="{{ s.1 }}">{{ s.0 }}</label>
                                   <label class="form-check-label" style="text-align: right" id="{{ s.1 }}Label"
                                          for="{{ s.1 }}Radio">{{ s.2 }}%</label>
                                 </div>
                               {% endfor %}
-                              </div>
-                            {% endfor %}
+                            </div>
+                          {% endfor %}
                         </div>
                       </div>
                     </div>
@@ -704,7 +731,7 @@
               <!-- Option menu -->
               <div class="form-group row">
                 <div class="col-sm-2"><b>Options</b></div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                   <div class="custom-control custom-switch">
                     <input type="checkbox" class="custom-control-input" id="physicsSwitchInteraction"
                            name="physics-checkbox-interaction" checked>
@@ -712,6 +739,14 @@
                       physics</label>
                   </div>
                 </div>
+                <div class="col-sm-3">
+                  <div class="form-inline">
+                    <label for="formControlRange">Canvas height</label>
+                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="interactionCanvasRange">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
                 <div class="col-sm-2"><b>Predicted DDIs</b></div>
                 <div class="col-sm-2">
                   <div class="custom-control custom-switch">
@@ -884,6 +919,8 @@
                       interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterSet,
                       interactionViewNodes, interactionViewEdges, interactionViewFilter);
 
+
+
               </script>
               <center>
                 <img class="resize" src="{% static 'image/network_legend.webp' %}" alt="">
@@ -903,11 +940,11 @@
             </div>
 
             <h6 class="tab1" style="text-align: left;"><span
-                    style="font-weight:bold">Retained DDIs</span>:
+                style="font-weight:bold">Retained DDIs</span>:
               For every partner, a list of the retained DDI in this protein variant is shown.
             </h6>
             <h6 class="tab1" style="text-align: left;"><span
-                    style="font-weight:bold">Missing DDIs</span>: The interactions missing from the
+                style="font-weight:bold">Missing DDIs</span>: The interactions missing from the
               selected protein but present in other isoforms. You can check other variants of this
               gene 'Other isoforms' section. </h6>
 
@@ -953,4 +990,21 @@
     </div>
   </div>
 </div>
+<script>
+    // write an exception that just ignores if inputElement is null
+    function addHeightListener(inputId, outputId) {
+        try {
+            const inputElement = document.getElementById(inputId);
+            inputElement.addEventListener("input", function() {
+              document.getElementById(outputId).style.height = `${this.value}px`;
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    addHeightListener("proteinCanvasRange", "protein-network");
+    addHeightListener("domainCanvasRange", "domain-network");
+    addHeightListener("interactionCanvasRange", "interaction-network");
+</script>
 {% endblock %}
