@@ -677,24 +677,38 @@ def Multi_proteins(request, organism, job='0'):
     return render(request, 'visualization/network.html', context)
 
 
+def set_previous_analysis(request):
+    print("got previous analysis with run ID:", request.POST.get('previousAnalysis'))
+    try:
+        events, info_tables = no.get_nease_events(request.POST.get('previousAnalysis'))
+
+    except FileNotFoundError:
+        context = {'error_msg': "Could not find this analysis, please run it again."}
+        return render(request, 'setup/nease_setup.html', context)
+
+    except Exception as e:
+        context = {'error_msg': str(e)}
+        return render(request, 'setup/nease_setup.html', context)
+
+    run_id = request.POST.get('previousAnalysis')
+
+    for key, value in info_tables.items():
+        info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+
+    context = {
+        'input_name': request.POST.get('previousName'),
+        **events.summary,
+        **info_tables,
+        'stats': run_id + ".jpg",
+        'run_id': run_id,
+    }
+    return render(request, 'visualization/nease_result.html', context)
+
+
 def setup_nease(request):
     # handle previous analysis
     if request.POST.get('previousAnalysis', None):
-        print("got previous analysis with run ID:", request.POST.get('previousAnalysis'))
-        events, info_tables = no.get_nease_events(request.POST.get('previousAnalysis'))
-        run_id = request.POST.get('previousAnalysis')
-
-        for key, value in info_tables.items():
-            info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
-
-        context = {
-            'input_name': request.POST.get('previousName'),
-            **events.summary,
-            **info_tables,
-            'stats': run_id + ".jpg",
-            'run_id': run_id,
-        }
-        return render(request, 'visualization/nease_result.html', context)
+        return set_previous_analysis(request)
 
     # otherwise continue with new analysis
     if not request.FILES:
