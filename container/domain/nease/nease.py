@@ -100,9 +100,8 @@ class run(object):
             # preprocess data to make analysis easier
             try:
                 self.path['entrez_gene_ids'] = self.path['entrez_gene_ids'].apply(eval)
-            except TypeError:
-                print(type(self.path))
-                print(self.path)
+            except TypeError as e:
+                print(e)
             if not self.confidences:
                 self.confidences = ['original']
             network[organism].remove_edges_from([x for x in network[organism].edges(data=True)
