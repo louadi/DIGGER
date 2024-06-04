@@ -1,7 +1,11 @@
 import pickle
 
+import numpy as np
 import pandas as pd
 import os
+
+from matplotlib import pyplot as plt
+
 from domain.nease import nease
 from django.conf import settings
 import uuid
@@ -75,6 +79,15 @@ def nease_classic_enrich(events, databases, run_id):
         classic_enrich_table = pd.DataFrame(
             columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
+        return classic_enrich_table
+
+    # make plot displaying the most enriched terms
+    terms = classic_enrich_table['Term'][:8]
+    p_values = classic_enrich_table['Adjusted P-value'][:8]
+    p_values = [-np.log10(x) for x in p_values]
+
+    create_plot(terms, p_values, f"{images_path}{run_id}_clenr.jpg")
+
     return classic_enrich_table
 
 
@@ -87,4 +100,22 @@ def nease_enrichment(events, databases, run_id):
         enrich_table = pd.DataFrame(
             columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
+        return enrich_table
+    enrich_table = enrich_table.sort_values(by='Nease score', ascending=False)
+    terms = enrich_table['Pathway name'][:8]
+    pvalues = enrich_table['adj p_value'][:8]
+    pvalues = [-np.log10(x) for x in pvalues]
+
+    create_plot(terms, pvalues, f"{images_path}{run_id}_neenr.jpg")
+
     return enrich_table
+
+
+def create_plot(terms, pvalues, filename):
+    plt.style.use('ggplot')
+    plt.barh(terms[::-1], pvalues[::-1])
+    plt.xlabel('-log10(adjusted p-value)')
+    plt.ylabel('Terms')
+    plt.savefig(filename, bbox_inches='tight')
+    # flush the plot
+    plt.clf()
