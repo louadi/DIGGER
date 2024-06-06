@@ -340,52 +340,45 @@
           $("[id$='_table']").DataTable();
       });
 
-      $("#run_enrichment").click(function () {
-          const databases = $("#databasesToEnrich").val();
-          $("#databasesToEnrich").prop("disabled", true);
-          $("#run_enrichment").prop("disabled", true);
-          $('.spinner-border').css('display', 'inline-block');
 
-          $.get("nease_analysis/extra_functions?" + $.param({runId: runId, databases: databases, func: 'classic'}), function (data) {
-              $("#enrichment_result").html(data);
-              $('#classic_enrich').DataTable();
 
-              // Re-enable the input and button, and hide the spinner
-              $("#databasesToEnrich").prop("disabled", false);
-              $("#run_enrichment").prop("disabled", false);
-              $('.spinner-border').css('display', 'none');
+function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
+    $(`#${buttonId}`).click(function () {
+        try {
+            const databases = $(`#${inputFieldId}`).val();
+            $(`#${inputFieldId}`).prop("disabled", true);
+            $(`#${buttonId}`).prop("disabled", true);
+            $(`.${spinnerId}`).css('display', 'inline-block');
 
-              // show all the relevant elements
-              $('#enrich_download_button').css('display', 'block');
-              $('#enrEdgeImage').attr('src', "{% get_media_prefix %}images/" + runId + "_clenr.jpg");
-              $('#enrEdgeHr1').css('display', 'block');
-              $('#enrEdgeHr2').css('display', 'block');
-          });
-      });
+            $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, databases: databases, func: funcName}), function (data) {
+                $(`#${tableId}`).html(data);
+                $(`#${tableNameId}`).DataTable();
 
-      // run nease enrichment
-      $('#run_nease_enrichment').click(function () {
-          const databases = $('#neaseDatabasesToEnrich').val();
-          $('#neaseDatabasesToEnrich').prop('disabled', true);
-          $('#run_nease_enrichment').prop('disabled', true);
-          $('.spinner-border').css('display', 'inline-block');
+                // Re-enable the input and button, and hide the spinner
+                $(`#${inputFieldId}`).prop("disabled", false);
+                $(`#${buttonId}`).prop("disabled", false);
+                $(`.${spinnerId}`).css('display', 'none');
 
-          $.get("nease_analysis/extra_functions?" + $.param({runId: runId, databases: databases, func: 'nease'}), function (data) {
-              $('#nease_enrichment_result').html(data);
-              $('#nease_enrich').DataTable();
+                // show all the relevant elements
+                $(`#${tableNameId}_download_button`).css('display', 'block');
 
-              // Re-enable the input and button, and hide the spinner
-              $('#neaseDatabasesToEnrich').prop('disabled', false);
-              $('#run_nease_enrichment').prop('disabled', false);
-              $('.spinner-border').css('display', 'none');
+                const image_end = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
+                $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end);
+                $(`#${hrId}Hr1`).css('display', 'block');
+                $(`#${hrId}Hr2`).css('display', 'block');
+            }).fail(function() {
+                alert("An error occurred while processing your request.");
+            });
+        } catch (err) {
+            console.error(`An error occurred: ${err.message}`);
+        }
+    });
+}
 
-              // show all the relevant elements
-              $('#nease_enrich_download_button').css('display', 'block');
-              $('#neaseEdgeImage').attr('src', "{% get_media_prefix %}images/" + runId + "_neenr.jpg");
-              $('#neaseEdgeHr1').css('display', 'block');
-              $('#neaseEdgeHr2').css('display', 'block');
-          });
-      });
+    runEnrichment('databasesToEnrich', 'run_enrichment', 'spinner-border', 'classic', 'enrEdgeImage', 'enrichment_result',
+                  'classic_enrich', 'enrEdge');
+    runEnrichment('neaseDatabasesToEnrich', 'run_nease_enrichment', 'spinner-border', 'nease', 'neaseEdgeImage',
+                  'nease_enrichment_result', 'nease_enrich', 'neaseEdge');
 
   </script>
 {% endblock %}

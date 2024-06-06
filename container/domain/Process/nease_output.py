@@ -85,8 +85,9 @@ def nease_classic_enrich(events, databases, run_id):
     terms = classic_enrich_table['Term'][:8]
     p_values = classic_enrich_table['Adjusted P-value'][:8]
     p_values = [-np.log10(x) for x in p_values]
+    cut_off = -np.log10(events.get_p_value())
 
-    create_plot(terms, p_values, f"{images_path}{run_id}_clenr.jpg")
+    create_plot(terms, p_values, cut_off, f"{images_path}{run_id}_clenr.jpg")
 
     return classic_enrich_table
 
@@ -105,15 +106,20 @@ def nease_enrichment(events, databases, run_id):
     terms = enrich_table['Pathway name'][:8]
     pvalues = enrich_table['adj p_value'][:8]
     pvalues = [-np.log10(x) for x in pvalues]
+    cut_off = -np.log10(events.get_p_value())
 
-    create_plot(terms, pvalues, f"{images_path}{run_id}_neenr.jpg")
+    create_plot(terms, pvalues, cut_off, f"{images_path}{run_id}_neenr.jpg")
 
     return enrich_table
 
 
-def create_plot(terms, pvalues, filename):
+def create_plot(terms, pvalues, cut_off, filename):
     plt.style.use('ggplot')
     plt.barh(terms[::-1], pvalues[::-1])
+    try:
+        plt.axvline(x=cut_off, color='r', linestyle='--')
+    except:
+        pass
     plt.xlabel('-log10(adjusted p-value)')
     plt.ylabel('Terms')
     plt.savefig(filename, bbox_inches='tight')

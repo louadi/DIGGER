@@ -97,6 +97,8 @@ class run(object):
             self.data = []
             self.spliced_genes = []
 
+            self.cutoff = p_value_cutoff
+
             # preprocess data to make analysis easier
             try:
                 self.path['entrez_gene_ids'] = self.path['entrez_gene_ids'].apply(eval)
@@ -711,6 +713,9 @@ class run(object):
                 print('Visualization of the pathway generated in: ' + file_path)
 
                 return
+
+    def get_p_value(self):
+        return self.cutoff
 
 
 def load(file_path):

@@ -527,7 +527,7 @@ def stats_domains(affecting_percentage,
     con.set_linewidth(4)
 
     plt.savefig(file_path + ".jpg", format='jpg', bbox_inches='tight')
-    plt.show()
+    plt.clf()
 
     # Save the figure
 
