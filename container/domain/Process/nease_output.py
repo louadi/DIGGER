@@ -130,14 +130,24 @@ def pathway_info(events, pathway, run_id):
     return pathway_info_table
 
 
+def visualise_path(events, pathway, k):
+    events, _ = events
+    try:
+        pathway_visualisation = events.Vis_path(pathway, k=k)
+    except ValueError as e:
+        print(e)
+        pathway_visualisation = None
+    return pathway_visualisation
+
+
 def create_plot(terms, pvalues, cut_off, filename):
     plt.style.use('ggplot')
     plt.barh(terms[::-1], pvalues[::-1])
-    plt.axvline(x=cut_off, color='r', linestyle='--')
+    plt.axvline(x=cut_off, color='b', linestyle='--')
     plt.xlabel('-log10(adjusted p-value)')
     plt.ylabel('Terms')
-    # explain the red line
-    plt.text(cut_off + 0.1, 0, 'p-value cut-off', rotation=90)
+    # explain the red line in the legend
+    plt.legend(['Cut-off', 'Adjusted p-value'])
     plt.savefig(filename, bbox_inches='tight')
     # flush the plot
     plt.clf()

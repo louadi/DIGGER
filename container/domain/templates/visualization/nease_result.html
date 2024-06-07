@@ -346,6 +346,36 @@
             <div class="card-body">
               <p class="lead text-center"><span
                   style="font-weight:bold">Visualise pathways</span></p>
+
+              <div class="row justify-content-center">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <label for="pathwayVis">Pathway to visualize</label>
+                        <input type="text" class="form-control" id="pathwayVis" placeholder="Enter pathway">
+                      </div>
+
+                      <div class="col-md-2">
+                        <label for="k">k</label>
+                        <input type="number" class="form-control" id="k" value="0.8">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-primary" id="vis_pathway">Visualize pathway</button>
+                    <div class="spinner-border" role="status" style="display: none">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- result of the pathway visualisation -->
+
+              <div id="vis_result_div" class="embed-responsive embed-responsive-16by9" style="display: none">
+                <iframe id="vis_result" class="embed-responsive-item"></iframe>
+              </div>
             </div>
           </div>
         </div>
@@ -419,10 +449,45 @@
 
           }).fail(function() {
               alert("An error occurred while processing your request.");
+              // enable the input fields and button
+              $('#pathwayAnal').prop("disabled", false);
+              $('#anal_pathway').prop("disabled", false);
+              $('.spinner-border').css('display', 'none');
+
           });
 
         })
 
+    }
+
+    function visualisePath() {
+        $('#vis_pathway').click(function () {
+          pathway = $('#pathwayVis').val();
+          k = $('#k').val();
+          $('#pathwayVis').prop("disabled", true);
+          $('#k').prop("disabled", true);
+          $('#vis_pathway').prop("disabled", true);
+          $('.spinner-border').css('display', 'inline-block');
+          $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, pathway: pathway, k: k ,func: 'visualise'}), function (data) {
+              $('#vis_result').attr('srcdoc', data)
+              $('#vis_result_div').css('display', 'block');
+              $('#pathwayVis').prop("disabled", false);
+              $('#k').prop("disabled", false);
+              $('#vis_pathway').prop("disabled", false);
+              $('.spinner-border').css('display', 'none');
+
+
+          }).fail(function() {
+              alert("An error occurred while processing your request.");
+              // enable the input fields and button
+              $('#pathwayVis').prop("disabled", false);
+              $('#k').prop("disabled", false);
+              $('#vis_pathway').prop("disabled", false);
+              $('.spinner-border').css('display', 'none');
+
+          });
+
+        })
     }
 
     runEnrichment('databasesToEnrich', 'run_enrichment', 'spinner-border', 'classic', 'enrEdgeImage', 'enrichment_result',
@@ -431,5 +496,6 @@
                   'nease_enrichment_result', 'nease_enrich', 'neaseEdge');
 
       analysePathway()
+      visualisePath()
   </script>
 {% endblock %}

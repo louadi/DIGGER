@@ -785,6 +785,7 @@ def nease_extra_functions(request):
     databases = request.GET.get('databases', None)
     databases = databases.split(",") if databases else None
     pathway = request.GET.get('pathway', None)
+    k = request.GET.get('k', None)
     if not run_id:
         return HttpResponse("No run ID provided", status=400)
 
@@ -799,8 +800,8 @@ def nease_extra_functions(request):
         elif function_name == 'pathway':
             out_table = no.pathway_info(no.get_nease_events(run_id), pathway, run_id)
             table_name = "path"
-        elif function_name == 'visualize':
-            out_table = None
+        elif function_name == 'visualise':
+            return HttpResponse(no.visualise_path(no.get_nease_events(run_id), pathway, k), status=200)
         else:
             return HttpResponse(f"Unknown function: {function_name}", status=400)
     except Exception as e:
