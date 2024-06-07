@@ -129,7 +129,7 @@
           </h5>
           <h5 class="lead"><span
               style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
-          </h5>
+            </h5>
         </div>
 
         <!-- Tab content -->
@@ -358,13 +358,13 @@
 
                       <div class="col-md-2">
                         <label for="k">k</label>
-                        <input type="number" class="form-control" id="k" value="0.8">
+                        <input type="number" class="form-control" id="k" value="0.8" step="0.1">
                       </div>
                     </div>
                   </div>
                   <div class="text-center">
                     <button class="btn btn-primary" id="vis_pathway">Visualize pathway</button>
-                    <div class="spinner-border" role="status" style="display: none">
+                    <div id="spinner-vis" class="spinner-border" role="status" style="display: none">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
@@ -460,35 +460,54 @@
 
     }
 
-    function visualisePath() {
-        $('#vis_pathway').click(function () {
-          pathway = $('#pathwayVis').val();
-          k = $('#k').val();
-          $('#pathwayVis').prop("disabled", true);
-          $('#k').prop("disabled", true);
-          $('#vis_pathway').prop("disabled", true);
-          $('.spinner-border').css('display', 'inline-block');
-          $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, pathway: pathway, k: k ,func: 'visualise'}), function (data) {
-              $('#vis_result').attr('srcdoc', data)
-              $('#vis_result_div').css('display', 'block');
-              $('#pathwayVis').prop("disabled", false);
-              $('#k').prop("disabled", false);
-              $('#vis_pathway').prop("disabled", false);
-              $('.spinner-border').css('display', 'none');
+  function visualisePath() {
+    document.getElementById('vis_pathway').addEventListener('click', () => {
+        const pathway = document.getElementById('pathwayVis').value;
+        const k = document.getElementById('k').value;
 
+        // Disable input fields and button
+        document.getElementById('pathwayVis').disabled = true;
+        document.getElementById('k').disabled = true;
+        document.getElementById('vis_pathway').disabled = true;
+        document.getElementById('spinner-vis').style.display = 'inline-block';
 
-          }).fail(function() {
-              alert("An error occurred while processing your request.");
-              // enable the input fields and button
-              $('#pathwayVis').prop("disabled", false);
-              $('#k').prop("disabled", false);
-              $('#vis_pathway').prop("disabled", false);
-              $('.spinner-border').css('display', 'none');
+        // Construct URL with query parameters
+        const baseURL = window.location.origin + window.location.pathname;
+        const url = new URL('nease_analysis/extra_functions', baseURL);
+        url.searchParams.append('runId', runId);
+        url.searchParams.append('pathway', pathway);
+        url.searchParams.append('k', k);
+        url.searchParams.append('func', 'visualise');
 
-          });
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
 
-        })
-    }
+                document.getElementById('vis_result_div').style.display = 'block';
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                document.getElementById('vis_pathway').disabled = false;
+                document.getElementById('spinner-vis').style.display = 'none';
+            })
+            .catch(error => {
+                alert("An error occurred while processing your request.");
+                // Enable the input fields and button
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                document.getElementById('vis_pathway').disabled = false;
+                document.getElementById('spinner-vis').style.display = 'none';
+            });
+    });
+}
 
     runEnrichment('databasesToEnrich', 'run_enrichment', 'spinner-border', 'classic', 'enrEdgeImage', 'enrichment_result',
                   'classic_enrich', 'enrEdge');
@@ -497,5 +516,17 @@
 
       analysePathway()
       visualisePath()
+
+
+      const iframe = document.getElementById('vis_result');
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+      // Ensure HTML and body tags take full height
+      iframeDoc.documentElement.style.height = '100%';
+      iframeDoc.body.style.height = '100%';
+      iframeDoc.body.style.margin = '0';
+      iframeDoc.body.style.display = 'flex';
+      iframeDoc.body.style.flexDirection = 'column';
+
   </script>
 {% endblock %}
