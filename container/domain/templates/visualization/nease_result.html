@@ -98,7 +98,7 @@
 
             <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-exons"
                role="tab"
-               aria-controls="v-pills-compare" aria-selected="false">Visualise Exons</a>
+               aria-controls="v-pills-compare" aria-selected="false">Visualise Pathways</a>
 
           </div>
         </div>
@@ -268,7 +268,7 @@
                aria-labelledby="v-pills-nease_enr-tab">
             <div class="card-body">
               <p class="lead text-center"><span
-                  style="font-weight:bold">Nease Enrichment</span></p>
+                  style="font-weight:bold">Classic Enrichment</span></p>
 
               <div class="row justify-content-center">
                 <div class="col-md-6">
@@ -307,18 +307,45 @@
           <!-- Pathway content -->
           <div class="tab-pane fade show card shadow rounded" id="v-pills-pathway" role="tabpanel"
                aria-labelledby="v-pills-pathway-tab">
+
             <div class="card-body">
               <p class="lead text-center"><span
                   style="font-weight:bold">Pathway analysis</span></p>
+
+              <div class="row justify-content-center">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="pathwayAnal">Pathway to analyse</label>
+                    <input type="text" class="form-control" id="pathwayAnal" placeholder="Enter pathway">
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-primary" id="anal_pathway">Get pathway information</button>
+                    <div class="spinner-border" role="status" style="display: none">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- result of the pathway analysis -->
+              <h6 class="my-4">
+                <div id="pathway_result"></div>
+                <div id="pathway_download_button" class="row" style="display: none;">
+                  <div class="col-sm-12 text-center">
+                    <a id="pathwayDownloadLink" href=""
+                    class="btn btn-secondary px-4 py-2 btn-sm">Download pathway information</a>
+                  </div>
+                </div>
+              </h6>
             </div>
           </div>
 
-          <!-- Visualise exons content -->
+          <!-- Visualise pathways content -->
           <div class="tab-pane fade show card shadow rounded" id="v-pills-exons" role="tabpanel"
                aria-labelledby="v-pills-exons-tab">
             <div class="card-body">
               <p class="lead text-center"><span
-                  style="font-weight:bold">Visualise exons</span></p>
+                  style="font-weight:bold">Visualise pathways</span></p>
             </div>
           </div>
         </div>
@@ -342,7 +369,7 @@
 
 
 
-function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
+    function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
     $(`#${buttonId}`).click(function () {
         try {
             const databases = $(`#${inputFieldId}`).val();
@@ -375,10 +402,34 @@ function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tab
     });
 }
 
+    function analysePathway() {
+        $('#anal_pathway').click(function () {
+          pathway = $('#pathwayAnal').val();
+          $('#pathwayAnal').prop("disabled", true);
+          $('#anal_pathway').prop("disabled", true);
+          $('.spinner-border').css('display', 'inline-block');
+          $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, pathway: pathway, func: 'pathway'}), function (data) {
+              $('#pathway_result').html(data);
+              $('#pathway_path').DataTable();
+              $('#pathwayAnal').prop("disabled", false);
+              $('#anal_pathway').prop("disabled", false);
+              $('.spinner-border').css('display', 'none');
+              $('#pathway_download_button').css('display', 'block');
+              $('#pathwayDownloadLink').attr('href', `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv');
+
+          }).fail(function() {
+              alert("An error occurred while processing your request.");
+          });
+
+        })
+
+    }
+
     runEnrichment('databasesToEnrich', 'run_enrichment', 'spinner-border', 'classic', 'enrEdgeImage', 'enrichment_result',
                   'classic_enrich', 'enrEdge');
     runEnrichment('neaseDatabasesToEnrich', 'run_nease_enrichment', 'spinner-border', 'nease', 'neaseEdgeImage',
                   'nease_enrichment_result', 'nease_enrich', 'neaseEdge');
 
+      analysePathway()
   </script>
 {% endblock %}

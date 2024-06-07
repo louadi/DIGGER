@@ -310,8 +310,8 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
             spliced_genes_entrez.append(g)
             gene_association.append(g in path_genes)
             num.append(str(a) + '/' + str(a + b))
-            affected_edges.append((',').join([Entrez_to_name(x, mapping) for x in edges]))
-            affected_edges_entrez.append((',').join(edges))
+            affected_edges.append((', ').join([Entrez_to_name(x, mapping) for x in edges]))
+            affected_edges_entrez.append((', ').join(edges))
             p_val.append(p_value)
 
             # save affected edges
@@ -528,7 +528,7 @@ def stats_domains(affecting_percentage,
 
     plt.savefig(file_path + ".jpg", format='jpg', bbox_inches='tight')
     plt.clf()
-
+    plt.close()
     # Save the figure
 
     return

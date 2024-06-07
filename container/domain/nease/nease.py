@@ -409,9 +409,7 @@ class run(object):
             return edges[['Gene name', 'NCBI gene ID', 'Identifier', 'dPSI', 'Number of affected interactions',
                           'Affected binding', 'Affected binding (NCBI)']].reset_index(drop=True)
 
-    def classic_enrich(self,
-                       gseapy_databases,
-                       non_symmetrical_only=False):
+    def classic_enrich(self, gseapy_databases, non_symmetrical_only=False, cutoff=0.05):
 
         """
         Classic gene level enrichement using the python library gseapy.
@@ -435,44 +433,46 @@ class run(object):
 
         if not self.spliced_genes:
             print('No genes found on your input.')
+            return
 
-        else:
-            if not gseapy_databases:
-                raise ValueError('Please provide a list of gene set databases to run the enrichment analysis.')
-            # get gene sets supported in gseapy
-            gseapy_library = gp.get_library_name(organism=self.organism)
+        if not gseapy_databases:
+            raise ValueError('Please provide a list of gene set databases to run the enrichment analysis.')
 
-            # compare with user input with gseapy_library
-            gene_set_database = list(set(gseapy_library).intersection(gseapy_databases))
-            # if nothing is found, use all the gene sets in gseapy library
-            if len(gene_set_database) == 0:
-                gene_set_database = list(set(gseapy_library))
+        # get gene sets supported in gseapy
+        gseapy_library = gp.get_library_name(organism=self.organism)
 
-            if not gene_set_database:
-                print('none of the gene set databases provided is supported in gseapy library.')
-                print('please check https://pypi.org/project/gseapy/')
-                return
+        # compare with user input with gseapy_library
+        gene_set_database = list(set(gseapy_library).intersection(gseapy_databases))
+        # if nothing is found, use all the gene sets in gseapy library
+        if len(gene_set_database) == 0:
+            gene_set_database = list(set(gseapy_library))
+
+        if not gene_set_database:
+            print('none of the gene set databases provided is supported in gseapy library.')
+            print('please check https://pypi.org/project/gseapy/')
+            return
+
+        # run gene set enrichment
+        if non_symmetrical_only:
+            if self.input_type == "Majiq":
+                print(
+                    'Non-symmetrical exons enrichment is not available for Majiq output. Please use standard input. ')
 
             else:
+                # run only on non-symteric
+                gene_list = [Ensemb_to_name(x, self.mapping) for x in self.symetric_genes]
+        else:
+            # run on all genes
+            gene_list = [Ensemb_to_name(x, self.mapping) for x in self.spliced_genes]
 
-                # run gene set enrichment
+        enr = gp.enrichr(gene_list=gene_list, organism=self.organism, gene_sets=gene_set_database,
+                         outdir=None, cutoff=cutoff)
 
-                if non_symmetrical_only:
-                    if self.input_type == "Majiq":
-                        print(
-                            'Non-symmetrical exons enrichment is not available for Majiq output. Please use standard input. ')
+        # add a "significance" column
+        enr.results['Significant'] = ['yes' if x <= cutoff else 'no' for x in
+                                      enr.results['Adjusted P-value']]
 
-                    else:
-                        # run only on non-symteric
-                        gene_list = [Ensemb_to_name(x, self.mapping) for x in self.symetric_genes]
-                else:
-                    # run on all genes
-                    gene_list = [Ensemb_to_name(x, self.mapping) for x in self.spliced_genes]
-
-                enr = gp.enrichr(gene_list=gene_list, organism=self.organism, gene_sets=gene_set_database,
-                                 outdir=None)
-
-                return enr.results.sort_values('Adjusted P-value')
+        return enr.results.sort_values('Adjusted P-value')
 
     def enrich(self, database=None, cutoff=0.05):
 
@@ -536,6 +536,10 @@ class run(object):
             print('No enrichment found with the cutoff ' + str(cutoff) + '.')
         else:
             print("Found " + str(num) + " enriched pathways after multiple testing correction.\n")
+
+        # add a "significance" column
+        enrich_results['Significant'] = ['yes' if x <= cutoff else 'no' for x in
+                                         enrich_results['adj p_value']]
 
         return enrich_results.sort_values(['Nease score', 'p_value'], ascending=[False, True]).reset_index(
             drop=True)

@@ -72,7 +72,7 @@ def nease_domains(events):
 def nease_classic_enrich(events, databases, run_id):
     events, _ = events
     try:
-        classic_enrich_table = events.classic_enrich(databases)
+        classic_enrich_table = events.classic_enrich(databases, cutoff=events.get_p_value())
         classic_enrich_table['Genes'] = classic_enrich_table['Genes'].apply(lambda x: x.replace(';', ', '))
         classic_enrich_table.to_csv(f"{data_path}{run_id}_clenr.csv")
     except ValueError:
@@ -113,15 +113,32 @@ def nease_enrichment(events, databases, run_id):
     return enrich_table
 
 
+def pathway_info(events, pathway, run_id):
+    events, _ = events
+    try:
+        pathway_info_table = events.path_analysis(pathway)
+        if not isinstance(pathway_info_table, pd.DataFrame) or len(pathway_info_table) == 0:
+            raise ValueError("not found")
+        print("Table is:", len(pathway_info_table))
+        pathway_info_table.to_csv(f"{data_path}{run_id}_path_{pathway}.csv")
+    except ValueError as e:
+        print(e)
+        pathway_info_table = pd.DataFrame(
+            columns=["Spliced genes", "NCBI gene ID", "Gene is known to be in the pathway",
+                     "Percentage of edges associated to the pathway", "p_value", "Affected binding (edges)",
+                     "Affected binding (NCBI)"])
+    return pathway_info_table
+
+
 def create_plot(terms, pvalues, cut_off, filename):
     plt.style.use('ggplot')
     plt.barh(terms[::-1], pvalues[::-1])
-    try:
-        plt.axvline(x=cut_off, color='r', linestyle='--')
-    except:
-        pass
+    plt.axvline(x=cut_off, color='r', linestyle='--')
     plt.xlabel('-log10(adjusted p-value)')
     plt.ylabel('Terms')
+    # explain the red line
+    plt.text(cut_off + 0.1, 0, 'p-value cut-off', rotation=90)
     plt.savefig(filename, bbox_inches='tight')
     # flush the plot
     plt.clf()
+    plt.close()

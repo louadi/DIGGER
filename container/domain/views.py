@@ -784,21 +784,28 @@ def nease_extra_functions(request):
     run_id = request.GET.get('runId', None)
     databases = request.GET.get('databases', None)
     databases = databases.split(",") if databases else None
+    pathway = request.GET.get('pathway', None)
     if not run_id:
         return HttpResponse("No run ID provided", status=400)
 
     # get the enrichment table
     try:
         print("Got function: ", function_name)
+        table_name = "enrich"
         if function_name == 'classic':
             out_table = no.nease_classic_enrich(no.get_nease_events(run_id), databases, run_id)
         elif function_name == 'nease':
             out_table = no.nease_enrichment(no.get_nease_events(run_id), databases, run_id)
+        elif function_name == 'pathway':
+            out_table = no.pathway_info(no.get_nease_events(run_id), pathway, run_id)
+            table_name = "path"
+        elif function_name == 'visualize':
+            out_table = None
         else:
             return HttpResponse(f"Unknown function: {function_name}", status=400)
     except Exception as e:
         return HttpResponse(f"Error: {str(e)}", status=500)
-    return HttpResponse(out_table.to_html(table_id=f"{function_name}_enrich", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
+    return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
 
 
 def get_organisms(request):
