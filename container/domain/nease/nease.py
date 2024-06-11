@@ -411,6 +411,9 @@ class run(object):
             return edges[['Gene name', 'NCBI gene ID', 'Identifier', 'dPSI', 'Number of affected interactions',
                           'Affected binding', 'Affected binding (NCBI)']].reset_index(drop=True)
 
+    def get_databases(self):
+        return {'classic_dbs': gp.get_library_name(organism=self.organism), 'nease_dbs': self.supported_database}
+
     def classic_enrich(self, gseapy_databases, non_symmetrical_only=False, cutoff=0.05):
 
         """

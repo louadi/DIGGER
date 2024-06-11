@@ -701,6 +701,7 @@ def set_previous_analysis(request):
         **info_tables,
         'stats': run_id + ".jpg",
         'run_id': run_id,
+        **events.get_databases()
     }
     return render(request, 'visualization/nease_result.html', context)
 
@@ -767,6 +768,7 @@ def setup_nease(request):
             **info_tables,
             'stats': run_id + ".jpg",
             'run_id': run_id,
+            **events.get_databases(),
         }
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:

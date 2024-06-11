@@ -233,12 +233,15 @@
               <div class="row justify-content-center">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="neaseDatabasesToEnrich">Databases to enrich</label>
-                    <input type="text" class="form-control" id="neaseDatabasesToEnrich" placeholder="Enter databases">
+                    <label id="neaseEnrichLabel" data-toggle="tooltip" data-placement="top"
+                     title="" for="neaseDatabasesToEnrich">Databases to enrich</label>
+                    <input type="text" class="form-control" id="neaseDatabasesToEnrich"
+                    placeholder="Reactome, KEGG, ...">
+                    <p id="neaseNotSupported" class="text-danger my-1" hidden=""></p>
                   </div>
-                  <div class="text-center">
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
                     <button class="btn btn-primary" id="run_nease_enrichment">Run enrichment</button>
-                    <div class="spinner-border" role="status" style="display: none">
+                    <div class="spinner-border ml-1" role="status" style="display: none">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
@@ -273,12 +276,15 @@
               <div class="row justify-content-center">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="databasesToEnrich">Databases to enrich</label>
-                    <input type="text" class="form-control" id="databasesToEnrich" placeholder="Enter databases">
+                    <label id="classicEnrichLabel" data-toggle="tooltip" data-placement="top"
+                     title="" for="databasesToEnrich">Databases to enrich</label>
+                    <input type="text" class="form-control" id="databasesToEnrich"
+                    placeholder="Reactome_2022, WikiPathway_2023_Human, ...">
+                    <p id="classicNotSupported" class="text-danger my-1" hidden=""></p>
                   </div>
-                  <div class="text-center">
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
                     <button class="btn btn-primary" id="run_enrichment">Run enrichment</button>
-                    <div class="spinner-border" role="status" style="display: none">
+                    <div class="spinner-border ml-1" role="status" style="display: none">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
@@ -315,12 +321,13 @@
               <div class="row justify-content-center">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="pathwayAnal">Pathway to analyse</label>
+                    <label data-toggle="tooltip" data-placement="top"
+                        title="Get pathway IDs from NEASE edge enrichment" for="pathwayAnal">Pathway to analyse</label>
                     <input type="text" class="form-control" id="pathwayAnal" placeholder="Enter pathway">
                   </div>
-                  <div class="text-center">
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
                     <button class="btn btn-primary" id="anal_pathway">Get pathway information</button>
-                    <div class="spinner-border" role="status" style="display: none">
+                    <div class="spinner-border ml-1" role="status" style="display: none">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
@@ -352,19 +359,21 @@
                   <div class="form-group">
                     <div class="row">
                       <div class="col-md-10">
-                        <label for="pathwayVis">Pathway to visualize</label>
+                        <label for="pathwayVis" data-toggle="tooltip" data-placement="top"
+                        title="Get pathway IDs from NEASE edge enrichment">Pathway to visualize</label>
                         <input type="text" class="form-control" id="pathwayVis" placeholder="Enter pathway">
                       </div>
 
                       <div class="col-md-2">
-                        <label for="k">k</label>
+                        <label for="k" data-toggle="tooltip" data-placement="top"
+                                title="Position nodes using Fruchterman-Reingold force-directed algorithm">k</label>
                         <input type="number" class="form-control" id="k" value="0.8" step="0.1">
                       </div>
                     </div>
                   </div>
-                  <div class="text-center">
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
                     <button class="btn btn-primary" id="vis_pathway">Visualize pathway</button>
-                    <div id="spinner-vis" class="spinner-border" role="status" style="display: none">
+                    <div id="spinner-vis" class="spinner-border ml-1" role="status" style="display: none">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
@@ -385,19 +394,29 @@
   </div>
   <script>
       // make a GET request to the server to get the enrichment result
-      runId = "{{ run_id }}";
-      fileName = "{{ input_name|safe }}";
+      const runId = "{{ run_id }}";
+      const fileName = "{{ input_name|safe }}";
+
+      const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
+      const classic_databases = [ {% for db in classic_dbs %} "{{ db|safe }}", {% endfor %} ]
 
       // save the runId in local storage so that it can be accessed for another 7 days
       const userStore = window.initStore({key: runId, expiresInDays: 7, name: fileName})
       userStore.set(runId)
+
+      // enable tooltips
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
 
       // format all tables to be responsive
       $(document).ready(function () {
           $("[id$='_table']").DataTable();
       });
 
-
+    function addSupportedPathwaysTooltip(pathwayLabel, databases){
+        pathwayLabel.title = 'Supported pathways: ' + databases.join(', ');
+    }
 
     function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
     $(`#${buttonId}`).click(function () {
@@ -460,7 +479,7 @@
 
     }
 
-  function visualisePath() {
+    function visualisePath() {
     document.getElementById('vis_pathway').addEventListener('click', () => {
         const pathway = document.getElementById('pathwayVis').value;
         const k = document.getElementById('k').value;
@@ -509,14 +528,45 @@
     });
 }
 
+    function supported_pathways(inputElem, submitBtn, warnText, pathwayList) {
+        // split input by , and show an error if the input is not in the list
+        inputElem.addEventListener('input', () => {
+            const input = inputElem.value;
+            if (input.length < 3) return;
+            const inputList = input.split(',').map(item => item.trim());
+            const notSupported = inputList.filter(item => !pathwayList.includes(item));
+            if (notSupported.length > 0) {
+                inputElem.classList.add('is-invalid');
+                submitBtn.disabled = true;
+                warnText.textContent = `The following pathways are not supported: ${notSupported.join(', ')}`;
+                warnText.hidden = false;
+            }
+            else {
+                inputElem.classList.remove('is-invalid');
+                submitBtn.disabled = false;
+                warnText.hidden = true;
+            }
+        });
+    }
+
     runEnrichment('databasesToEnrich', 'run_enrichment', 'spinner-border', 'classic', 'enrEdgeImage', 'enrichment_result',
                   'classic_enrich', 'enrEdge');
     runEnrichment('neaseDatabasesToEnrich', 'run_nease_enrichment', 'spinner-border', 'nease', 'neaseEdgeImage',
                   'nease_enrichment_result', 'nease_enrich', 'neaseEdge');
 
-      analysePathway()
-      visualisePath()
+    analysePathway()
+    visualisePath()
 
+    supported_pathways(document.getElementById('databasesToEnrich'),
+                       document.getElementById('run_enrichment'),
+                       document.getElementById('classicNotSupported'), classic_databases)
+
+    supported_pathways(document.getElementById('neaseDatabasesToEnrich'),
+                       document.getElementById('run_nease_enrichment'),
+                       document.getElementById('neaseNotSupported'), nease_databases)
+
+    addSupportedPathwaysTooltip(document.getElementById('classicEnrichLabel'), classic_databases)
+    addSupportedPathwaysTooltip(document.getElementById('neaseEnrichLabel'), nease_databases)
 
       const iframe = document.getElementById('vis_result');
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
