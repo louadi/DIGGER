@@ -277,7 +277,7 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
     path_genes = list(Pathways[Pathways['external_id'] == path_id]['entrez_gene_ids'])[0]
     p = pathway_node_degree(annotated_graph, path_genes)
     # convert path_genes to str
-    path_genes = [str(x) for x in path_genes]
+    path_genes_str = [str(x) for x in path_genes]
 
     #collect:
     spliced_genes = []
@@ -297,7 +297,7 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
         affected = g2edges[g]
 
         # edges connected to the pathway
-        edges = [x for x in affected if x in path_genes]
+        edges = [x for x in affected if x in path_genes_str]
         a = len(edges)
 
         # Not connected
@@ -310,7 +310,7 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
             # Save results
             spliced_genes.append(Entrez_to_name(g, mapping))
             spliced_genes_entrez.append(g)
-            gene_association.append(g in path_genes)
+            gene_association.append(g in path_genes_str)
             num.append(str(a) + '/' + str(a + b))
             affected_edges.append((', ').join([Entrez_to_name(x, mapping) for x in edges]))
             affected_edges_entrez.append((', ').join(edges))
