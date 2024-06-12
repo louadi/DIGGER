@@ -1,7 +1,11 @@
 import pickle
 
+import numpy as np
 import pandas as pd
 import os
+
+from matplotlib import pyplot as plt
+
 from domain.nease import nease
 from django.conf import settings
 import uuid
@@ -68,13 +72,23 @@ def nease_domains(events):
 def nease_classic_enrich(events, databases, run_id):
     events, _ = events
     try:
-        classic_enrich_table = events.classic_enrich(databases)
+        classic_enrich_table = events.classic_enrich(databases, cutoff=events.get_p_value())
         classic_enrich_table['Genes'] = classic_enrich_table['Genes'].apply(lambda x: x.replace(';', ', '))
         classic_enrich_table.to_csv(f"{data_path}{run_id}_clenr.csv")
     except ValueError:
         classic_enrich_table = pd.DataFrame(
             columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
+        return classic_enrich_table
+
+    # make plot displaying the most enriched terms
+    terms = classic_enrich_table['Term'][:8]
+    p_values = classic_enrich_table['Adjusted P-value'][:8]
+    p_values = [-np.log10(x) for x in p_values]
+    cut_off = -np.log10(events.get_p_value())
+
+    create_plot(terms, p_values, cut_off, f"{images_path}{run_id}_clenr.jpg")
+
     return classic_enrich_table
 
 
@@ -87,4 +101,54 @@ def nease_enrichment(events, databases, run_id):
         enrich_table = pd.DataFrame(
             columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
+        return enrich_table
+    enrich_table = enrich_table.sort_values(by='Nease score', ascending=False)
+    terms = enrich_table['Pathway name'][:8]
+    pvalues = enrich_table['adj p_value'][:8]
+    pvalues = [-np.log10(x) for x in pvalues]
+    cut_off = -np.log10(events.get_p_value())
+
+    create_plot(terms, pvalues, cut_off, f"{images_path}{run_id}_neenr.jpg")
+
     return enrich_table
+
+
+def pathway_info(events, pathway, run_id):
+    events, _ = events
+    try:
+        pathway_info_table = events.path_analysis(pathway)
+        if not isinstance(pathway_info_table, pd.DataFrame) or len(pathway_info_table) == 0:
+            raise ValueError("not found")
+        print("Table is:", len(pathway_info_table))
+        pathway_info_table.to_csv(f"{data_path}{run_id}_path_{pathway}.csv")
+    except ValueError as e:
+        print(e)
+        pathway_info_table = pd.DataFrame(
+            columns=["Spliced genes", "NCBI gene ID", "Gene is known to be in the pathway",
+                     "Percentage of edges associated to the pathway", "p_value", "Affected binding (edges)",
+                     "Affected binding (NCBI)"])
+    return pathway_info_table
+
+
+def visualise_path(events, pathway, k):
+    events, _ = events
+    try:
+        pathway_visualisation = events.Vis_path(pathway, k=k)
+    except ValueError as e:
+        print(e)
+        pathway_visualisation = None
+    return pathway_visualisation
+
+
+def create_plot(terms, pvalues, cut_off, filename):
+    plt.style.use('ggplot')
+    plt.barh(terms[::-1], pvalues[::-1])
+    plt.axvline(x=cut_off, color='b', linestyle='--')
+    plt.xlabel('-log10(adjusted p-value)')
+    plt.ylabel('Terms')
+    # explain the red line in the legend
+    plt.legend(['Cut-off', 'Adjusted p-value'])
+    plt.savefig(filename, bbox_inches='tight')
+    # flush the plot
+    plt.clf()
+    plt.close()

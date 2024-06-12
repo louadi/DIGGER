@@ -81,7 +81,6 @@ def multiple_queries(request, inputs, organism):
     id_list = []
     for query in transcript_table.keys():
         # search for the id in the transcript table string. This is suboptimal but it works for now
-        # TODO: enable search for exon ids
         co_partners = []
         find_co_partners = True
         try:
@@ -94,6 +93,7 @@ def multiple_queries(request, inputs, organism):
                     find_co_partners = False
                 id_list.append([tran_name, entrez_id, unique_domains, co_partners])
         except AttributeError:
+            print("Attribute error for: ", query)
             pass
     # for each id, get the graph data
     combined_nodes = {}
@@ -110,6 +110,7 @@ def multiple_queries(request, inputs, organism):
         pass
 
     context = {
+        'show_network': len(combined_nodes['original']) > 0,
         'trans_table': transcript_table,
         'combined_nodes': combined_nodes,
         'combined_edges': combined_edges,
@@ -335,7 +336,6 @@ def transcript(request, P_id, organism):
             switcher_js.append('case "' + pfams + '": return node.source === "' + pfams + '";')
 
     # DomainView for missing domains
-
     switcher_m = []
     if len(missed) != 0:
         for pfams in missing_domains:
@@ -701,6 +701,7 @@ def set_previous_analysis(request):
         **info_tables,
         'stats': run_id + ".jpg",
         'run_id': run_id,
+        **events.get_databases()
     }
     return render(request, 'visualization/nease_result.html', context)
 
@@ -767,6 +768,7 @@ def setup_nease(request):
             **info_tables,
             'stats': run_id + ".jpg",
             'run_id': run_id,
+            **events.get_databases(),
         }
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:
@@ -784,21 +786,29 @@ def nease_extra_functions(request):
     run_id = request.GET.get('runId', None)
     databases = request.GET.get('databases', None)
     databases = databases.split(",") if databases else None
+    pathway = request.GET.get('pathway', None)
+    k = request.GET.get('k', None)
     if not run_id:
         return HttpResponse("No run ID provided", status=400)
 
     # get the enrichment table
     try:
         print("Got function: ", function_name)
+        table_name = "enrich"
         if function_name == 'classic':
             out_table = no.nease_classic_enrich(no.get_nease_events(run_id), databases, run_id)
         elif function_name == 'nease':
             out_table = no.nease_enrichment(no.get_nease_events(run_id), databases, run_id)
+        elif function_name == 'pathway':
+            out_table = no.pathway_info(no.get_nease_events(run_id), pathway, run_id)
+            table_name = "path"
+        elif function_name == 'visualise':
+            return HttpResponse(no.visualise_path(no.get_nease_events(run_id), pathway, k), status=200)
         else:
             return HttpResponse(f"Unknown function: {function_name}", status=400)
     except Exception as e:
         return HttpResponse(f"Error: {str(e)}", status=500)
-    return HttpResponse(out_table.to_html(table_id=f"{function_name}_enrich", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
+    return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
 
 
 def get_organisms(request):

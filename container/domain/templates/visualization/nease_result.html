@@ -98,7 +98,7 @@
 
             <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-exons"
                role="tab"
-               aria-controls="v-pills-compare" aria-selected="false">Visualise Exons</a>
+               aria-controls="v-pills-compare" aria-selected="false">Visualise Pathways</a>
 
           </div>
         </div>
@@ -129,7 +129,7 @@
           </h5>
           <h5 class="lead"><span
               style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
-          </h5>
+            </h5>
         </div>
 
         <!-- Tab content -->
@@ -140,7 +140,9 @@
             <div class="card-body">
               <p class="lead text-center"><span
                   style="font-weight:bold">NEASE enrichment result</span></p>
-              <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
+              <div class="d-flex justify-content-center align-items-center">
+                <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
+              </div>
 
               <div class="mt-5">
                 {% if error %}
@@ -231,12 +233,15 @@
               <div class="row justify-content-center">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="neaseDatabasesToEnrich">Databases to enrich</label>
-                    <input type="text" class="form-control" id="neaseDatabasesToEnrich" placeholder="Enter databases">
+                    <label id="neaseEnrichLabel" data-toggle="tooltip" data-placement="top"
+                     title="" for="neaseDatabasesToEnrich">Databases to enrich</label>
+                    <input type="text" class="form-control" id="neaseDatabasesToEnrich"
+                    placeholder="Reactome, KEGG, ...">
+                    <p id="neaseNotSupported" class="text-danger my-1" hidden=""></p>
                   </div>
-                  <div class="text-center">
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
                     <button class="btn btn-primary" id="run_nease_enrichment">Run enrichment</button>
-                    <div class="spinner-border" role="status" style="display: none">
+                    <div class="spinner-border ml-1" role="status" style="display: none">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
@@ -244,6 +249,11 @@
               </div>
 
               <h6 class="my-4">
+                <hr id="neaseEdgeHr1" style="display: none;">
+                <div class="d-flex justify-content-center align-items-center">
+                  <img id="neaseEdgeImage" src="" class="resize">
+                </div>
+                <hr id="neaseEdgeHr2" style="display: none">
                 <div id="nease_enrichment_result"></div>
                 <div id="nease_enrich_download_button" class="row" style="display: none;">
                   <div class="col-sm-12 text-center">
@@ -261,24 +271,34 @@
                aria-labelledby="v-pills-nease_enr-tab">
             <div class="card-body">
               <p class="lead text-center"><span
-                  style="font-weight:bold">Nease Enrichment</span></p>
+                  style="font-weight:bold">Classic Enrichment</span></p>
 
               <div class="row justify-content-center">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="databasesToEnrich">Databases to enrich</label>
-                    <input type="text" class="form-control" id="databasesToEnrich" placeholder="Enter databases">
+                    <label id="classicEnrichLabel" data-toggle="tooltip" data-placement="top"
+                     title="" for="databasesToEnrich">Databases to enrich</label>
+                    <input type="text" class="form-control" id="databasesToEnrich"
+                    placeholder="Reactome_2022, WikiPathway_2023_Human, ...">
+                    <p id="classicNotSupported" class="text-danger my-1" hidden=""></p>
                   </div>
-                  <div class="text-center">
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
                     <button class="btn btn-primary" id="run_enrichment">Run enrichment</button>
-                    <div class="spinner-border" role="status" style="display: none">
+                    <div class="spinner-border ml-1" role="status" style="display: none">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
                 </div>
               </div>
 
+              <!-- result of the enrichment -->
               <h6 class="my-4">
+                <hr id="enrEdgeHr1" style="display: none;">
+                <div class="d-flex justify-content-center align-items-center">
+                  <img id="enrEdgeImage" src="" class="resize">
+                </div>
+                <hr id="enrEdgeHr2" style="display: none">
+
                 <div id="enrichment_result"></div>
                 <div id="enrich_download_button" class="row" style="display: none;">
                   <div class="col-sm-12 text-center">
@@ -293,18 +313,78 @@
           <!-- Pathway content -->
           <div class="tab-pane fade show card shadow rounded" id="v-pills-pathway" role="tabpanel"
                aria-labelledby="v-pills-pathway-tab">
+
             <div class="card-body">
               <p class="lead text-center"><span
                   style="font-weight:bold">Pathway analysis</span></p>
+
+              <div class="row justify-content-center">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label data-toggle="tooltip" data-placement="top"
+                        title="Get pathway IDs from NEASE edge enrichment" for="pathwayAnal">Pathway to analyse</label>
+                    <input type="text" class="form-control" id="pathwayAnal" placeholder="Enter pathway">
+                  </div>
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
+                    <button class="btn btn-primary" id="anal_pathway">Get pathway information</button>
+                    <div class="spinner-border ml-1" role="status" style="display: none">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- result of the pathway analysis -->
+              <h6 class="my-4">
+                <div id="pathway_result"></div>
+                <div id="pathway_download_button" class="row" style="display: none;">
+                  <div class="col-sm-12 text-center">
+                    <a id="pathwayDownloadLink" href=""
+                    class="btn btn-secondary px-4 py-2 btn-sm">Download pathway information</a>
+                  </div>
+                </div>
+              </h6>
             </div>
           </div>
 
-          <!-- Visualise exons content -->
+          <!-- Visualise pathways content -->
           <div class="tab-pane fade show card shadow rounded" id="v-pills-exons" role="tabpanel"
                aria-labelledby="v-pills-exons-tab">
             <div class="card-body">
               <p class="lead text-center"><span
-                  style="font-weight:bold">Visualise exons</span></p>
+                  style="font-weight:bold">Visualise pathways</span></p>
+
+              <div class="row justify-content-center">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <label for="pathwayVis" data-toggle="tooltip" data-placement="top"
+                        title="Get pathway IDs from NEASE edge enrichment">Pathway to visualize</label>
+                        <input type="text" class="form-control" id="pathwayVis" placeholder="Enter pathway">
+                      </div>
+
+                      <div class="col-md-2">
+                        <label for="k" data-toggle="tooltip" data-placement="top"
+                                title="Position nodes using Fruchterman-Reingold force-directed algorithm">k</label>
+                        <input type="number" class="form-control" id="k" value="0.8" step="0.1">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center row no-gutters align-items-center justify-content-center">
+                    <button class="btn btn-primary" id="vis_pathway">Visualize pathway</button>
+                    <div id="spinner-vis" class="spinner-border ml-1" role="status" style="display: none">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- result of the pathway visualisation -->
+
+              <div id="vis_result_div" class="embed-responsive embed-responsive-16by9" style="display: none">
+                <iframe id="vis_result" class="embed-responsive-item"></iframe>
+              </div>
             </div>
           </div>
         </div>
@@ -314,54 +394,189 @@
   </div>
   <script>
       // make a GET request to the server to get the enrichment result
-      runId = "{{ run_id }}";
-      fileName = "{{ input_name|safe }}";
+      const runId = "{{ run_id }}";
+      const fileName = "{{ input_name|safe }}";
+
+      const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
+      const classic_databases = [ {% for db in classic_dbs %} "{{ db|safe }}", {% endfor %} ]
 
       // save the runId in local storage so that it can be accessed for another 7 days
       const userStore = window.initStore({key: runId, expiresInDays: 7, name: fileName})
       userStore.set(runId)
+
+      // enable tooltips
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
 
       // format all tables to be responsive
       $(document).ready(function () {
           $("[id$='_table']").DataTable();
       });
 
-      $("#run_enrichment").click(function () {
-          const databases = $("#databasesToEnrich").val();
-          $("#databasesToEnrich").prop("disabled", true);
-          $("#run_enrichment").prop("disabled", true);
+    function addSupportedPathwaysTooltip(pathwayLabel, databases){
+        pathwayLabel.title = 'Supported pathways: ' + databases.join(', ');
+    }
+
+    function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
+    $(`#${buttonId}`).click(function () {
+        try {
+            const databases = $(`#${inputFieldId}`).val();
+            $(`#${inputFieldId}`).prop("disabled", true);
+            $(`#${buttonId}`).prop("disabled", true);
+            $(`.${spinnerId}`).css('display', 'inline-block');
+
+            $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, databases: databases, func: funcName}), function (data) {
+                $(`#${tableId}`).html(data);
+                $(`#${tableNameId}`).DataTable();
+
+                // Re-enable the input and button, and hide the spinner
+                $(`#${inputFieldId}`).prop("disabled", false);
+                $(`#${buttonId}`).prop("disabled", false);
+                $(`.${spinnerId}`).css('display', 'none');
+
+                // show all the relevant elements
+                $(`#${tableNameId}_download_button`).css('display', 'block');
+
+                const image_end = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
+                $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end);
+                $(`#${hrId}Hr1`).css('display', 'block');
+                $(`#${hrId}Hr2`).css('display', 'block');
+            }).fail(function() {
+                alert("An error occurred while processing your request.");
+            });
+        } catch (err) {
+            console.error(`An error occurred: ${err.message}`);
+        }
+    });
+}
+
+    function analysePathway() {
+        $('#anal_pathway').click(function () {
+          pathway = $('#pathwayAnal').val();
+          $('#pathwayAnal').prop("disabled", true);
+          $('#anal_pathway').prop("disabled", true);
           $('.spinner-border').css('display', 'inline-block');
-
-          $.get("/nease_analysis/extra_functions?" + $.param({runId: runId, databases: databases, func: 'classic'}), function (data) {
-              $("#enrichment_result").html(data);
-              $('#classic_enrich').DataTable();
-
-              // Re-enable the input and button, and hide the spinner
-              $("#databasesToEnrich").prop("disabled", false);
-              $("#run_enrichment").prop("disabled", false);
+          $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, pathway: pathway, func: 'pathway'}), function (data) {
+              $('#pathway_result').html(data);
+              $('#pathway_path').DataTable();
+              $('#pathwayAnal').prop("disabled", false);
+              $('#anal_pathway').prop("disabled", false);
               $('.spinner-border').css('display', 'none');
-              $('#enrich_download_button').css('display', 'block');
-          });
-      });
+              $('#pathway_download_button').css('display', 'block');
+              $('#pathwayDownloadLink').attr('href', `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv');
 
-      // run nease enrichment
-      $('#run_nease_enrichment').click(function () {
-          const databases = $('#neaseDatabasesToEnrich').val();
-          $('#neaseDatabasesToEnrich').prop('disabled', true);
-          $('#run_nease_enrichment').prop('disabled', true);
-          $('.spinner-border').css('display', 'inline-block');
-
-          $.get("/nease_analysis/extra_functions?" + $.param({runId: runId, databases: databases, func: 'nease'}), function (data) {
-              $('#nease_enrichment_result').html(data);
-              $('#nease_enrich').DataTable();
-
-              // Re-enable the input and button, and hide the spinner
-              $('#neaseDatabasesToEnrich').prop('disabled', false);
-              $('#run_nease_enrichment').prop('disabled', false);
+          }).fail(function() {
+              alert("An error occurred while processing your request.");
+              // enable the input fields and button
+              $('#pathwayAnal').prop("disabled", false);
+              $('#anal_pathway').prop("disabled", false);
               $('.spinner-border').css('display', 'none');
-              $('#nease_enrich_download_button').css('display', 'block');
+
           });
-      });
+
+        })
+
+    }
+
+    function visualisePath() {
+    document.getElementById('vis_pathway').addEventListener('click', () => {
+        const pathway = document.getElementById('pathwayVis').value;
+        const k = document.getElementById('k').value;
+
+        // Disable input fields and button
+        document.getElementById('pathwayVis').disabled = true;
+        document.getElementById('k').disabled = true;
+        document.getElementById('vis_pathway').disabled = true;
+        document.getElementById('spinner-vis').style.display = 'inline-block';
+
+        // Construct URL with query parameters
+        const baseURL = window.location.origin + window.location.pathname;
+        const url = new URL('nease_analysis/extra_functions', baseURL);
+        url.searchParams.append('runId', runId);
+        url.searchParams.append('pathway', pathway);
+        url.searchParams.append('k', k);
+        url.searchParams.append('func', 'visualise');
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
+
+                document.getElementById('vis_result_div').style.display = 'block';
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                document.getElementById('vis_pathway').disabled = false;
+                document.getElementById('spinner-vis').style.display = 'none';
+            })
+            .catch(error => {
+                alert("An error occurred while processing your request.");
+                // Enable the input fields and button
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                document.getElementById('vis_pathway').disabled = false;
+                document.getElementById('spinner-vis').style.display = 'none';
+            });
+    });
+}
+
+    function supported_pathways(inputElem, submitBtn, warnText, pathwayList) {
+        // split input by , and show an error if the input is not in the list
+        inputElem.addEventListener('input', () => {
+            const input = inputElem.value;
+            if (input.length < 3) return;
+            const inputList = input.split(',').map(item => item.trim());
+            const notSupported = inputList.filter(item => !pathwayList.includes(item));
+            if (notSupported.length > 0) {
+                inputElem.classList.add('is-invalid');
+                submitBtn.disabled = true;
+                warnText.textContent = `The following pathways are not supported: ${notSupported.join(', ')}`;
+                warnText.hidden = false;
+            }
+            else {
+                inputElem.classList.remove('is-invalid');
+                submitBtn.disabled = false;
+                warnText.hidden = true;
+            }
+        });
+    }
+
+    runEnrichment('databasesToEnrich', 'run_enrichment', 'spinner-border', 'classic', 'enrEdgeImage', 'enrichment_result',
+                  'classic_enrich', 'enrEdge');
+    runEnrichment('neaseDatabasesToEnrich', 'run_nease_enrichment', 'spinner-border', 'nease', 'neaseEdgeImage',
+                  'nease_enrichment_result', 'nease_enrich', 'neaseEdge');
+
+    analysePathway()
+    visualisePath()
+
+    supported_pathways(document.getElementById('databasesToEnrich'),
+                       document.getElementById('run_enrichment'),
+                       document.getElementById('classicNotSupported'), classic_databases)
+
+    supported_pathways(document.getElementById('neaseDatabasesToEnrich'),
+                       document.getElementById('run_nease_enrichment'),
+                       document.getElementById('neaseNotSupported'), nease_databases)
+
+    addSupportedPathwaysTooltip(document.getElementById('classicEnrichLabel'), classic_databases)
+    addSupportedPathwaysTooltip(document.getElementById('neaseEnrichLabel'), nease_databases)
+
+      const iframe = document.getElementById('vis_result');
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+      // Ensure HTML and body tags take full height
+      iframeDoc.documentElement.style.height = '100%';
+      iframeDoc.body.style.height = '100%';
+      iframeDoc.body.style.margin = '0';
+      iframeDoc.body.style.display = 'flex';
+      iframeDoc.body.style.flexDirection = 'column';
 
   </script>
 {% endblock %}

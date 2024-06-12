@@ -21,7 +21,10 @@
 {% block content %}
   <div class="jumbotron">
     <h1 class="display-4">NEASE Analysis</h1>
-    <p class="lead">Upload a file containing alternative splicing events in one of the supported formats, select
+    <p class="lead">
+      NEASE is a network-based approach for exon set enrichment.
+      <br><br>
+      Upload a file containing alternative splicing events in one of the supported formats, select
       the options you would like to use and automatically get your results!</p>
   </div>
 
@@ -120,7 +123,7 @@
               </div>
               <div class="col-md-8">
                 <input type="number" class="form-control" id="p_value_cutoff" name="p_value_cutoff" value="0.05"
-                       step="0.01">
+                       step="0.0001">
               </div>
             </div>
             <!-- min_delta -->

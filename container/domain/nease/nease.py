@@ -1,9 +1,11 @@
+import ast
 import os.path
 
 from .functions import *
 import statsmodels.api as sm
 import gseapy as gp
 import pickle5 as pickle
+import traceback
 
 
 # Main Code 
@@ -96,6 +98,8 @@ class run(object):
             self.non_coding = non_coding
             self.data = []
             self.spliced_genes = []
+
+            self.cutoff = p_value_cutoff
 
             # preprocess data to make analysis easier
             try:
@@ -407,9 +411,10 @@ class run(object):
             return edges[['Gene name', 'NCBI gene ID', 'Identifier', 'dPSI', 'Number of affected interactions',
                           'Affected binding', 'Affected binding (NCBI)']].reset_index(drop=True)
 
-    def classic_enrich(self,
-                       gseapy_databases,
-                       non_symmetrical_only=False):
+    def get_databases(self):
+        return {'classic_dbs': gp.get_library_name(organism=self.organism), 'nease_dbs': self.supported_database}
+
+    def classic_enrich(self, gseapy_databases, non_symmetrical_only=False, cutoff=0.05):
 
         """
         Classic gene level enrichement using the python library gseapy.
@@ -433,44 +438,46 @@ class run(object):
 
         if not self.spliced_genes:
             print('No genes found on your input.')
+            return
 
-        else:
-            if not gseapy_databases:
-                raise ValueError('Please provide a list of gene set databases to run the enrichment analysis.')
-            # get gene sets supported in gseapy
-            gseapy_library = gp.get_library_name(organism=self.organism)
+        if not gseapy_databases:
+            raise ValueError('Please provide a list of gene set databases to run the enrichment analysis.')
 
-            # compare with user input with gseapy_library
-            gene_set_database = list(set(gseapy_library).intersection(gseapy_databases))
-            # if nothing is found, use all the gene sets in gseapy library
-            if len(gene_set_database) == 0:
-                gene_set_database = list(set(gseapy_library))
+        # get gene sets supported in gseapy
+        gseapy_library = gp.get_library_name(organism=self.organism)
 
-            if not gene_set_database:
-                print('none of the gene set databases provided is supported in gseapy library.')
-                print('please check https://pypi.org/project/gseapy/')
-                return
+        # compare with user input with gseapy_library
+        gene_set_database = list(set(gseapy_library).intersection(gseapy_databases))
+        # if nothing is found, use all the gene sets in gseapy library
+        if len(gene_set_database) == 0:
+            gene_set_database = list(set(gseapy_library))
+
+        if not gene_set_database:
+            print('none of the gene set databases provided is supported in gseapy library.')
+            print('please check https://pypi.org/project/gseapy/')
+            return
+
+        # run gene set enrichment
+        if non_symmetrical_only:
+            if self.input_type == "Majiq":
+                print(
+                    'Non-symmetrical exons enrichment is not available for Majiq output. Please use standard input. ')
 
             else:
+                # run only on non-symteric
+                gene_list = [Ensemb_to_name(x, self.mapping) for x in self.symetric_genes]
+        else:
+            # run on all genes
+            gene_list = [Ensemb_to_name(x, self.mapping) for x in self.spliced_genes]
 
-                # run gene set enrichment
+        enr = gp.enrichr(gene_list=gene_list, organism=self.organism, gene_sets=gene_set_database,
+                         outdir=None, cutoff=cutoff)
 
-                if non_symmetrical_only:
-                    if self.input_type == "Majiq":
-                        print(
-                            'Non-symmetrical exons enrichment is not available for Majiq output. Please use standard input. ')
+        # add a "significance" column
+        enr.results['Significant'] = ['yes' if x <= cutoff else 'no' for x in
+                                      enr.results['Adjusted P-value']]
 
-                    else:
-                        # run only on non-symteric
-                        gene_list = [Ensemb_to_name(x, self.mapping) for x in self.symetric_genes]
-                else:
-                    # run on all genes
-                    gene_list = [Ensemb_to_name(x, self.mapping) for x in self.spliced_genes]
-
-                enr = gp.enrichr(gene_list=gene_list, organism=self.organism, gene_sets=gene_set_database,
-                                 outdir=None)
-
-                return enr.results.sort_values('Adjusted P-value')
+        return enr.results.sort_values('Adjusted P-value')
 
     def enrich(self, database=None, cutoff=0.05):
 
@@ -535,6 +542,10 @@ class run(object):
         else:
             print("Found " + str(num) + " enriched pathways after multiple testing correction.\n")
 
+        # add a "significance" column
+        enrich_results['Significant'] = ['yes' if x <= cutoff else 'no' for x in
+                                         enrich_results['adj p_value']]
+
         return enrich_results.sort_values(['Nease score', 'p_value'], ascending=[False, True]).reset_index(
             drop=True)
 
@@ -592,10 +603,7 @@ class run(object):
 
     def Vis_path(self,
                  path_id,
-                 file='',
-                 k=0.8,
-                 save_pdf=False,
-                 auto_open=True):
+                 k=0.8):
 
         '''
                Visualize the network module of a specific pathway.
@@ -641,6 +649,10 @@ class run(object):
                         Link: networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html.
             file         - A string representing a local file path.
             '''
+        if not k:
+            k = 0.8
+        k = float(k)
+
         if self.data.empty:
             print('Processing failed')
         elif self.interacting_domains.empty:
@@ -650,67 +662,76 @@ class run(object):
 
         if len(path_info) == 0:
             print('No pathway with the given ID found.')
+            return
 
-        else:
-            path_name = list(path_info['Pathway name'])[0]
-            print('Enrichment of the pathway: ' + path_name + '.\n')
-            print('Overall p_value: ', list(path_info['p_value'])[0])
-            print('\n')
-            # run enrichment
+        path_name = list(path_info['Pathway name'])[0]
+        print('Enrichment of the pathway: ' + path_name + '.\n')
+        print('Overall p_value: ', list(path_info['p_value'])[0])
+        print('\n')
+        # run enrichment
 
-            enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                                        self.only_DDIs)
+        enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
+                                                    self.only_DDIs)
 
-            if len(enrich) == 0:
-                print('No enrichment or genes found for the selected pathway.')
+        if len(enrich) == 0:
+            print('No enrichment or genes found for the selected pathway.')
 
-                return
+            return
 
-            else:
+        # Get genes of the pathway (Entrez IDs)
+        path_genes = list(self.path[self.path['external_id'] == path_id]['entrez_gene_ids'])[0]
 
-                # Get genes of the pathway (Entrez IDs)
-                path_genes = list(self.path[self.path['external_id'] == path_id]['entrez_gene_ids'])[0]
+        significant = list(enrich[enrich['p_value'] <= 0.05]['NCBI gene ID'].unique())
 
-                significant = list(enrich[enrich['p_value'] <= 0.05]['NCBI gene ID'].unique())
+        if not isinstance(path_genes, list):
+            path_genes = ast.literal_eval(path_genes)
 
-                graph_data = extract_subnetwork(path_genes,
-                                                self.ppi,
-                                                list(enrich['NCBI gene ID'].unique()),
-                                                self.spliced_genes,
-                                                k,
-                                                self.mapping,
-                                                affected_graph,
-                                                significant)
+        try:
+            graph_data = extract_subnetwork(path_genes,
+                                            self.ppi,
+                                            list(enrich['NCBI gene ID'].unique()),
+                                            self.spliced_genes,
+                                            k,
+                                            self.mapping,
+                                            affected_graph,
+                                            significant)
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+            return
 
-                path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
-                path_name = list(path_info['Pathway name'])[0]
+        path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
+        path_name = list(path_info['Pathway name'])[0]
 
-                fig = go.Figure(data=graph_data,
-                                layout=go.Layout(
-                                    title='<br>' + path_name,
-                                    titlefont_size=16,
-                                    showlegend=False,
-                                    hovermode='closest',
-                                    margin=dict(b=20, l=5, r=5, t=40),
-                                    annotations=[dict(
-                                        text="<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 Spliced gene and known to be part of the patwhay.<br> 🟠 Spliced gene but not known to be in the pathway.",
-                                        showarrow=False,
-                                        font=dict(size=20),
-                                        xref="paper", yref="paper",
-                                        x=0.005, y=-0.002)],
-                                    xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                                    yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+        fig = go.Figure(data=graph_data,
+                        layout=go.Layout(
+                            title='<br>' + path_name,
+                            titlefont_size=16,
+                            showlegend=False,
+                            hovermode='closest',
+                            margin=dict(b=20, l=5, r=5, t=40),
+                            annotations=[dict(
+                                text="<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 "
+                                     "Spliced gene and known to be part of the patwhay.<br> 🟠 Spliced gene but not "
+                                     "known to be in the pathway.",
+                                showarrow=False,
+                                font=dict(size=20),
+                                xref="paper", yref="paper",
+                                x=0.005, y=-0.002)],
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
-                file_path = os.path.join(os.path.dirname(file), path_name + '.html')
-                fig.write_html(file_path, auto_open=auto_open)
+        # get the html as a string
+        try:
+            html = fig.to_html(full_html=True, include_plotlyjs='cdn')
+        except Exception as e:
+            print(e)
+            return
 
-                if save_pdf:
-                    fig.write_image(os.path.join(os.path.dirname(file), path_name + '.pdf'), format='pdf', width=2544,
-                                    height=1313)
+        return html
 
-                print('Visualization of the pathway generated in: ' + file_path)
-
-                return
+    def get_p_value(self):
+        return self.cutoff
 
 
 def load(file_path):

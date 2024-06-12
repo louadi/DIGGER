@@ -18,7 +18,7 @@ DIGGER = 'https://exbio.wzw.tum.de/digger/ID/exon/'
 
 
 def splitDataFrameList(df, target_column):
-    '''
+    """
     Efficiently split Pandas Dataframe cells containing lists into multiple rows,
     duplicating the other column's values.
     Original code from https://gist.github.com/jlln/338b4b0b55bd6984f883
@@ -28,7 +28,7 @@ def splitDataFrameList(df, target_column):
     separator = the symbol used to perform the split
     returns: a dataframe with each entry for the target column separated, with each element moved into a new row.
     The values in the other columns are duplicated across the newly divided rows.
-    '''
+    """
 
     def splitListToRows(row, row_accumulator, target_column):
         split_row = row[target_column]

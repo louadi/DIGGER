@@ -31,6 +31,9 @@ engine = settings.DATABASE_ENGINE
 # #List of transcripts name and discriptions from Biomart":
 # gene_info=pd.read_csv( 'domain/data/gene_info.csv')
 
+# invert gid2name_all for every organism
+gid2name_all_inverted = {k: {v: k for k, v in v.items()} for k, v in gid2name_all.items()}
+
 
 def entrez_to_name_online(entrezID):
     mg = mygene.MyGeneInfo()
@@ -40,6 +43,10 @@ def entrez_to_name_online(entrezID):
 
 def entrez_to_name(entrezID, organism):
     return gid2name_all[organism][entrezID]
+
+
+def name_to_entrez(name, organism):
+    return gid2name_all_inverted[organism][name]
 
 
 def protein_to_transcript(Ensemble_prID):
