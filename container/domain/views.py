@@ -336,7 +336,6 @@ def transcript(request, P_id, organism):
             switcher_js.append('case "' + pfams + '": return node.source === "' + pfams + '";')
 
     # DomainView for missing domains
-
     switcher_m = []
     if len(missed) != 0:
         for pfams in missing_domains:
