@@ -807,6 +807,7 @@ def nease_extra_functions(request):
         else:
             return HttpResponse(f"Unknown function: {function_name}", status=400)
     except Exception as e:
+        traceback.print_exc()
         return HttpResponse(f"Error: {str(e)}", status=500)
     return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
 
