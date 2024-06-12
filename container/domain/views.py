@@ -81,7 +81,6 @@ def multiple_queries(request, inputs, organism):
     id_list = []
     for query in transcript_table.keys():
         # search for the id in the transcript table string. This is suboptimal but it works for now
-        # TODO: enable search for exon ids
         co_partners = []
         find_co_partners = True
         try:
@@ -94,6 +93,7 @@ def multiple_queries(request, inputs, organism):
                     find_co_partners = False
                 id_list.append([tran_name, entrez_id, unique_domains, co_partners])
         except AttributeError:
+            print("Attribute error for: ", query)
             pass
     # for each id, get the graph data
     combined_nodes = {}
@@ -110,6 +110,7 @@ def multiple_queries(request, inputs, organism):
         pass
 
     context = {
+        'show_network': len(combined_nodes['original']) > 0,
         'trans_table': transcript_table,
         'combined_nodes': combined_nodes,
         'combined_edges': combined_edges,

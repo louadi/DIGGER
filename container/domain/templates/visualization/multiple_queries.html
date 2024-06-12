@@ -74,10 +74,13 @@
         <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
              aria-orientation="vertical">
 
+          {% if show_network %}
           <a class="nav-link active" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-network" role="tab"
              aria-controls="v-pills-protein" aria-selected="true">Network</a>
+          {% endif %}
 
-          <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-queries"
+          <a class="nav-link {% if not show_network %}active{% endif %}"
+             id="v-pills-interaction-tab" data-toggle="pill" href="#v-pills-queries"
              role="tab"
              aria-controls="v-pills-compare" aria-selected="false">Queries</a>
 
@@ -92,7 +95,8 @@
       <div class="tab-content" id="v-pills-tabContent">
       
         <!-- Queries tab -->
-        <div class="tab-pane fade card shadow rounded" id="v-pills-queries" role="tabpanel">
+        <div class="tab-pane fade card shadow rounded {% if not show_network %} show active pepe {% endif %}"
+             id="v-pills-queries" role="tabpanel">
             <div class="card-body p-3">
               <h3 class="font-weight-light card-title"> List of the gene transcripts with known Pfam
                 domains. </h3>
@@ -129,7 +133,8 @@
           </div>
         </div>
         <!-- /Queries tab -->
-        
+
+        {% if show_network %}
         <!-- Network tab -->
         <div class="tab-pane fade card shadow rounded show active" id="v-pills-network" role="tabpanel"
              aria-labelledby="v-pills-domain-tab">
@@ -313,6 +318,7 @@
           </div>
         </div>
         <!-- /Network tab -->
+        {% endif %}
       </div>
     </div>
 
@@ -320,12 +326,14 @@
 </div>
 <script>
     // add eventListener to the canvasRange input and change the height of the canvas
-    document.getElementById("canvasRange").addEventListener("input", function () {
-        document.getElementById("query-network").style.height = this.value + "px";
-    });
+    try {
+        document.getElementById("canvasRange").addEventListener("input", function () {
+            document.getElementById("query-network").style.height = this.value + "px";
+        });
+    } catch (e) {
+        console.log(e);
+    }
 
-
-    // show the wait alert if the user clicks on the link with the class "visualize"
     $(document).ready(function () {
         $(".collapse").collapse('show');
     });

@@ -74,7 +74,7 @@ def input_exon(exon_ID, organism):
 
     table_domains["Link to other Databases"] = ('<a href="https://www.ebi.ac.uk/interpro/entry/pfam/' + table_domains[
         'Pfam ID'] + '  "target="_blank">Pfam  </a>  &nbsp;&nbsp;&nbsp; ' +
-            '<a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value=' +
+                                                '<a href="https://3did.irbbarcelona.org/dispatch.php?type=domain&value=' +
                                                 table_domains['Pfam ID'] + '"target="_blank">3did  </a>   </h5 class> ')
 
     table_domains = table_domains.drop(
@@ -255,7 +255,7 @@ def tr_to_names(list_tr, organism):
     return names
 
 
-def exon_table(exon_ID, organism):
+def exon_table(exon_ID, organism, to_html=True):
     print("getting exon info")
     query = """
     SELECT * 
@@ -281,5 +281,8 @@ def exon_table(exon_ID, organism):
     visualize_link = reverse('home') + f"ID/exon/{organism}/{exon_ID}/"
     viz = f'<a href="{visualize_link}" target="_blank">Visualize</a>'
     unique_pfams = ', '.join(unique_pfams)
-    return pd.DataFrame({'Gene': [gene_name], '# associated Transcripts': [len(transcripts)],
-                         'Pfam domain(s)': [unique_pfams], 'Link': [viz]}).to_html(**settings.TO_HTML_PARAMETERS)
+    df = pd.DataFrame({'Gene': [gene_name], '# associated Transcripts': [len(transcripts)],
+                       'Pfam domain(s)': [unique_pfams], 'Link': [viz]})
+    if to_html:
+        return df.to_html(**settings.TO_HTML_PARAMETERS)
+    return df
