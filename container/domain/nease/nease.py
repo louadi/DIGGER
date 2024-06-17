@@ -1,6 +1,8 @@
 import ast
 import os.path
 
+import pandas as pd
+
 from .functions import *
 import statsmodels.api as sm
 import gseapy as gp
@@ -343,7 +345,7 @@ class run(object):
         else:
             self.elm_affected['ELM link'] = self.elm_affected.apply(create_elm_link, axis=1)
 
-            return self.elm_affected.drop(columns=['ID', 'Affected binding (NCBI)']).reset_index(drop=True)
+        return self.elm_affected.drop(columns=['ID', 'Affected binding (NCBI)']).reset_index(drop=True)
 
     def get_pdb(self):
 
@@ -365,17 +367,17 @@ class run(object):
         else:
             pdb_affected = self.pdb_affected.rename(
                 columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
-
             # Convert IDs to names
             c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions'].apply(c)
 
-            a = lambda x: ", ".join(x)
+            a = lambda x: ", ".join([str(val) for val in x])
             pdb_affected['Co-resolved interactions'] = pdb_affected['Co-resolved interactions'].apply(a)
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions symbol'].apply(a)
 
             return pdb_affected[['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Co-resolved interactions symbol',
                                  'Co-resolved interactions']].reset_index(drop=True)
+        return self.pdb_affected.rename(columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
 
     def get_edges(self):
 
@@ -410,6 +412,7 @@ class run(object):
 
             return edges[['Gene name', 'NCBI gene ID', 'Identifier', 'dPSI', 'Number of affected interactions',
                           'Affected binding', 'Affected binding (NCBI)']].reset_index(drop=True)
+        return self.interacting_domains
 
     def get_databases(self):
         return {'classic_dbs': gp.get_library_name(organism=self.organism), 'nease_dbs': self.supported_database}
@@ -705,7 +708,7 @@ class run(object):
 
         fig = go.Figure(data=graph_data,
                         layout=go.Layout(
-                            title='<br>' + path_name,
+                            title=path_name,
                             titlefont_size=16,
                             showlegend=False,
                             hovermode='closest',

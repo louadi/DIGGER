@@ -34,18 +34,24 @@ def run_nease(data, organism, params):
 
     events.get_stats(file_path=image_path)
 
-    domains = events.get_domains()
-    domains.to_csv(f"{data_path}{run_id}_domains.csv")
+    domains: pd.DataFrame = events.get_domains()
+    # check if domains is not empty
+    if not domains.empty:
+        domains.to_csv(f"{data_path}{run_id}_domains.csv")
+
     edges = events.get_edges()
-    edges.to_csv(f"{data_path}{run_id}_edges.csv")
+    if not edges.empty:
+        edges.to_csv(f"{data_path}{run_id}_edges.csv")
 
     info_tables = {'domains': domains, 'edges': edges}
 
     if not params.get('only_ddis', False):
         elm = events.get_elm()
-        elm.to_csv(f"{data_path}{run_id}_elm.csv")
+        if not elm.empty:
+            elm.to_csv(f"{data_path}{run_id}_elm.csv")
         pdb = events.get_pdb()
-        pdb.to_csv(f"{data_path}{run_id}_pdb.csv")
+        if not pdb.empty:
+            pdb.to_csv(f"{data_path}{run_id}_pdb.csv")
         info_tables.update({'elm': elm, 'pdb': pdb})
 
     # save events to pickle
