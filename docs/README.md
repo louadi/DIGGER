@@ -1,17 +1,54 @@
-# DIGGER
 <p align="center">
   <img src="https://exbio.wzw.tum.de/digger/static/image/DIGGER.png" height="130">
 </p>
 
-
-
 Protein-protein interaction (PPI) networks are a key resource for systems biology. However, they do not consider the influence of alternative splicing, even though experimental evidence suggests that interaction partners are different for isoforms of the same protein. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein interactions and domain-domain interactions into a joint graph and maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or as a set to visually explore their interactions and it is available at: https://exbio.wzw.tum.de/digger
 
+# Overview of the workflow
 
+<img alt="DIGGER workflow" src="https://exbio.wzw.tum.de/digger/static/image/figure%201.png" width="800"/>
 
+PPI networks do not consider the influence of alternative splicing, even
+though experimental evidence suggests that the majority of protein isoforms
+have different interaction partners.
+
+Domain Interaction Graph Guided ExploreR (DIGGER) integrates
+protein-protein interaction and domain-domain interactions into a joint
+graph and maps interacting residues to exons.
+
+DIGGER provides a great way to visualize PPI in structure context using a
+dynamic graph visualization that can be toggled between a protein
+isoform and a domain-centric view.  
+By comparing the structure of different isoforms, DIGGER identifies the
+surfaces specific to an isoform and missing in others. In this way,
+isoform-specific interactions can be precisely identified.  
+Furthermore, the tool maps the protein features encoded by a selected exon,
+to judge the functional role of individual exons in the PPI.  
+DIGGER is ideally suited to investigate the difference of interactions
+between the isoforms, analyze the effect of isoform-switch, To or explore
+how alternative splicing events such as exon skipping lead to altered
+interactions of protein isoforms.   
+DIGGER’s joint PPI and domain-domain interaction network can also be
+used for subnetwork extraction, providing a basis for network analysis. From
+a list of proteins or transcripts, the tool re-score the PPI edges based on
+the structure evidence of the input proteins.  
+
+# Workflow for alternative splicing analysis
+
+# Isoform-level analysis
+
+# Exon-level analysis
+
+# Network-level analysis
+
+# Running NEASE
+
+# Hosting your own instance
+
+If you want, you can also host your own instance of DIGGER. To do so, follow the instructions below.
 
 ## Deploying DIGGER
-To install DIGGER 1.5 (running it for the first time) follow these steps:
+To install DIGGER 2.0 (running it for the first time) follow these steps:
 ```shell script
 # First, follow this link, if you want to install docker-compose: 
 # https://docs.docker.com/compose/install/
@@ -69,20 +106,14 @@ cd ..
 docker-compose up -d --force-recreate
 ````
 
-## Usage
 
-...
-
-
-## Cite
+# Cite
 
 If you use DIGGER, please cite:
-
 
 Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumbach, Tim Kacprowski*, Markus List*. DIGGER: exploring the functional role of alternative splicing in protein interactions, Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa768  (*joint last author)
 
 
-
-## Contact us
+# Contact us
 Elias Albrecht: elias.albrecht@in.tum.de  
 Olga Tsoy: olga.tsoy@uni-hamburg.de
