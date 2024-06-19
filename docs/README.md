@@ -82,6 +82,8 @@ docker-compose exec web python manage.py collectstatic --no-input
 
 
 ## Extending DIGGER by DDIs
+If you downloaded the data provided by us, the extended DDIs are already included and you will **not** have to do 
+this step. Only extend DIGGER like this if you want to add new organisms and have sufficient data to do so.  
 To extend DIGGER using generated Domain-Domain Interactions (DDIs) follow these steps:
 ````bash
 # First, create a conda environment to ensure you have all dependencies installed
