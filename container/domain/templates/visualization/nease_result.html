@@ -414,7 +414,7 @@
                 $(`#${tableNameId}_download_button`).css('display', 'block');
 
                 const image_end = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
-                $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end);
+                $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end + '?' + new Date().getTime());
                 $(`#${hrId}Hr1`).css('display', 'block');
                 $(`#${hrId}Hr2`).css('display', 'block');
             }).fail(function() {
