@@ -230,18 +230,21 @@
 
   <script>
     // load previous analyses
-  const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
-    // filter for only keys that start with 'nease/'
-  const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
+    const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+    // remove keys if they expired
+    localKeys.forEach(key => {
+      removeExpiredData(key)
+    });
+    const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
 
-  if (data.length > 0) {
-    $('#prevAnalysisContainer').css('display', 'block');
-  }
+    if (data.length > 0) {
+      $('#prevAnalysisContainer').css('display', 'block');
+    }
 
-  for (let i = 0; i < data.length; i++) {
-    const template = createHtmlTemplate(data[i]);
-    appendTemplateToDiv(template, 'previousAnalyses');
-  }
+    for (let i = 0; i < data.length; i++) {
+      const template = createHtmlTemplate(data[i]);
+      appendTemplateToDiv(template, 'previousAnalyses');
+    }
 
 
     // enable tooltips
