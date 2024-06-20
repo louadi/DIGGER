@@ -76,35 +76,41 @@
 <div class="wider-container my-3">
   <div class="row">
     <!-- Vertical pill selection menu-->
-    <div class="col-lg-2 mb-2 rounded">
-      <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
-      <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
-           aria-orientation="vertical">
+    <div class="col-lg-2 mb-2 rounded rounded d-flex flex-column">
+      <div class="sticky-top sticky-offset align-items-center">
+        <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+          <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
+               aria-orientation="vertical">
 
-        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-domain"
-           role="tab"
-           aria-controls="v-pills-domain" aria-selected="true">DomainView</a>
-
-        {% if dis %}
-          <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein"
-             role="tab"
-             aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
-        {% endif %}
-
-        {% if dis or dis3 %}
-          {% if not dis4 %}
-            <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill"
-               href="#v-pills-interaction"
+            <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-domain"
                role="tab"
-               aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
-          {% endif %}
-        {% endif %}
+               aria-controls="v-pills-domain" aria-selected="true">DomainView</a>
 
-        <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
-           role="tab"
-           aria-controls="v-pills-interaction" aria-selected="false">Proteins that use this exon</a>
+            {% if dis %}
+              <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-protein"
+                 role="tab"
+                 aria-controls="v-pills-protein" aria-selected="false">ProteinView</a>
+            {% endif %}
+
+            {% if dis or dis3 %}
+              {% if not dis4 %}
+                <a class="nav-link" id="v-pills-interaction-tab" data-toggle="pill"
+                   href="#v-pills-interaction"
+                   role="tab"
+                   aria-controls="v-pills-compare" aria-selected="false">InteractionView</a>
+              {% endif %}
+            {% endif %}
+
+            <a class="nav-link" id="v-pills-compare-tab" data-toggle="pill" href="#v-pills-compare"
+               role="tab"
+               aria-controls="v-pills-interaction" aria-selected="false">Proteins that use this exon</a>
+          </div>
+        </div>
+        <div class="my-4" style="width: 50%; margin: 0 auto">
+          <!-- not a great solution but I don't know the subpath of the page -->
+          <a id="backToMenu" class="btn btn-primary shadow p-2" href="../../../../exon_level">Back to search</a>
+        </div>
       </div>
-            </div>
     </div>
     <!-- /Vertical pill selection menu -->
 
@@ -114,14 +120,16 @@
       <div class="jumbotron p-xl-4">
         <h1 class="display-4"> Exon Information {{ name }}</h1>
         <hr>
-        <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px"> Exon ID:</span>{{ exon_ID|safe }}  </h5>
-        <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px"> Gene name:</span>{{ name|safe }} </h5>
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 180px"> Exon ID:</span>{{ exon_ID|safe }}  </h5>
+        <h5 class="lead"><span
+            style="font-weight:bold; display: inline-block; width: 180px"> Gene name:</span>{{ name|safe }} </h5>
 
         <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px">NCBI gene ID:</span><a
-                href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
-                target="_blank">{{ entrezID|safe }} </a></h5>
+            href="https://www.ncbi.nlm.nih.gov/gene/{{ entrezID|safe }}"
+            target="_blank">{{ entrezID|safe }} </a></h5>
         <h5 class="lead"><span style="font-weight:bold; display: inline-block; width: 180px">Ensembl gene ID:</span><a
-                href="https://www.ensembl.org/id/{{ gID|safe }}" target="_blank">{{ gID|safe }} </a></h5>
+            href="https://www.ensembl.org/id/{{ gID|safe }}" target="_blank">{{ gID|safe }} </a></h5>
       </div>
 
       <!-- Tab content -->
@@ -145,7 +153,7 @@
 
             <div style="text-align: center;" class="mt-4">
               <p class="lead"><span
-                      style="font-weight:bold">The exon Codes for the following Pfam domains </span>
+                  style="font-weight:bold">The exon Codes for the following Pfam domains </span>
               </p>
 
               <h5 class>
@@ -182,53 +190,54 @@
                   </div>
                 </div>
                 <div class="form-group row">
-                <div class="col-sm-2"><b>Options</b></div>
-                <div class="col-sm-2">
-                  <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
-                           name="physics-checkbox-domain" checked>
-                    <label class="custom-control-label" for="physicsSwitchDomain">Enable
-                      physics</label>
+                  <div class="col-sm-2"><b>Options</b></div>
+                  <div class="col-sm-2">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="physicsSwitchDomain"
+                             name="physics-checkbox-domain" checked>
+                      <label class="custom-control-label" for="physicsSwitchDomain">Enable
+                        physics</label>
+                    </div>
                   </div>
-                </div>
                   <div class="col-sm-3">
-                  <div class="form-inline">
-                    <label for="formControlRange">Canvas height</label>
-                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="domainCanvasRange">
+                    <div class="form-inline">
+                      <label for="formControlRange">Canvas height</label>
+                      <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840"
+                             id="domainCanvasRange">
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="form-group row">
-                <div class="col-sm-2"><b>Predicted DDIs</b></div>
-                <div class="col-sm-2">
-                  <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
-                           id="high_domain"
-                           name="predicted-checkbox-high"
-                           value="high">
-                    <label class="custom-control-label" for="high_domain">High</label>
+                <div class="form-group row">
+                  <div class="col-sm-2"><b>Predicted DDIs</b></div>
+                  <div class="col-sm-2">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                             id="high_domain"
+                             name="predicted-checkbox-high"
+                             value="high">
+                      <label class="custom-control-label" for="high_domain">High</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                             id="mid_domain"
+                             name="predicted-checkbox-mid"
+                             value="mid">
+                      <label class="custom-control-label" for="mid_domain">Medium</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <div class="custom-control custom-switch predicted">
+                      <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
+                             id="low_domain"
+                             name="predicted-checkbox-low"
+                             value="low">
+                      <label class="custom-control-label" for="low_domain">Low (confidence)</label>
+                    </div>
                   </div>
                 </div>
-                <div class="col-sm-2">
-                  <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
-                           id="mid_domain"
-                           name="predicted-checkbox-mid"
-                           value="mid">
-                    <label class="custom-control-label" for="mid_domain">Medium</label>
-                  </div>
-                </div>
-                <div class="col-sm-2">
-                  <div class="custom-control custom-switch predicted">
-                    <input type="checkbox" class="custom-control-input predicted-checkbox-domain"
-                           id="low_domain"
-                           name="predicted-checkbox-low"
-                           value="low">
-                    <label class="custom-control-label" for="low_domain">Low (confidence)</label>
-                  </div>
-                </div>
-              </div>
               </h5>
 
               <div id="domain-network"></div>
@@ -265,11 +274,11 @@
                   };
 
 
-                const domainViewFilterSelector = document.getElementById("nodeFilterSelect2");
+                  const domainViewFilterSelector = document.getElementById("nodeFilterSelect2");
 
-                var domainViewContainer = document.getElementById('domain-network');
+                  var domainViewContainer = document.getElementById('domain-network');
 
-                var domainViewOptions = {
+                  var domainViewOptions = {
 
 
                       interaction: {
@@ -320,37 +329,36 @@
                       }
                   };
 
-                var domainViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-domain]");
+                  var domainViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-domain]");
 
-                var domainViewCheckboxes = document.querySelectorAll(".predicted-checkbox-domain");
+                  var domainViewCheckboxes = document.querySelectorAll(".predicted-checkbox-domain");
 
-                let domainViewNodeFilter = {value: ""};
-
-
-                function domainViewFilter(node) {
-                    if (domainViewNodeFilter.value === "") {
-                        return node.source === "{{ first_domain|safe}}";
-                    }
-                    switch (domainViewNodeFilter.value) {
-
-                        {% for s in switch2 %}
-                            {{ s|safe }}
-                        {% endfor %}
-
-                        default:
-                            return true;
-                    }
-                }
+                  let domainViewNodeFilter = {value: ""};
 
 
-                startNetwork(domainViewContainer, domainViewOptions, domainViewCheckboxes,
-                    domainViewPhysicsCheckbox, domainViewFilterSelector, domainViewNodeFilter,
-                    domainViewNodes, domainViewEdges, domainViewFilter);
+                  function domainViewFilter(node) {
+                      if (domainViewNodeFilter.value === "") {
+                          return node.source === "{{ first_domain|safe}}";
+                      }
+                      switch (domainViewNodeFilter.value) {
 
+                          {% for s in switch2 %}
+                              {{ s|safe }}
+                          {% endfor %}
+
+                          default:
+                              return true;
+                      }
+                  }
+
+
+                  startNetwork(domainViewContainer, domainViewOptions, domainViewCheckboxes,
+                      domainViewPhysicsCheckbox, domainViewFilterSelector, domainViewNodeFilter,
+                      domainViewNodes, domainViewEdges, domainViewFilter);
 
 
               </script>
-                <center>
+              <center>
                 <img class="resize" src="{% static 'image/network_legend.webp' %}" alt="">
               </center>
 
@@ -392,31 +400,32 @@
                 <!-- View options -->
                 <h5>
                   <div class="form-group row">
-                  <label for="nodeFilterSelect" class="col-sm-2 col-form-label">View Mode</label>
-                  <div class="col-sm-10">
-                    <select id="nodeFilterSelect" class="form-control">
-                      <option value="PPI"> PPI View</option>
-                      <option value="PPI-DDI"> PPI-DDI View</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-2"><b>Options</b></div>
-                  <div class="col-sm-2">
-                    <div class="custom-control custom-switch">
-                      <input type="checkbox" class="custom-control-input" id="physicsSwitchProtein"
-                             name="physics-checkbox-protein" checked>
-                      <label class="custom-control-label" for="physicsSwitchProtein">Enable
-                        physics</label>
+                    <label for="nodeFilterSelect" class="col-sm-2 col-form-label">View Mode</label>
+                    <div class="col-sm-10">
+                      <select id="nodeFilterSelect" class="form-control">
+                        <option value="PPI"> PPI View</option>
+                        <option value="PPI-DDI"> PPI-DDI View</option>
+                      </select>
                     </div>
                   </div>
-                  <div class="col-sm-3">
-                  <div class="form-inline">
-                    <label for="formControlRange">Canvas height</label>
-                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="proteinCanvasRange">
+                  <div class="form-group row">
+                    <div class="col-sm-2"><b>Options</b></div>
+                    <div class="col-sm-2">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="physicsSwitchProtein"
+                               name="physics-checkbox-protein" checked>
+                        <label class="custom-control-label" for="physicsSwitchProtein">Enable
+                          physics</label>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="form-inline">
+                        <label for="formControlRange">Canvas height</label>
+                        <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840"
+                               id="proteinCanvasRange">
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
                   <div class="form-group row">
                     <!-- Hide predicted DDI options in ProteinView since they have no impact anyway -->
                     <div class="col-sm-2 protein-view-predicted" style="visibility: hidden"><b>Predicted DDIs</b></div>
@@ -447,7 +456,7 @@
                         <label class="custom-control-label" for="low_protein">Low (confidence)</label>
                       </div>
                     </div>
-                </div>
+                  </div>
                 </h5>
 
                 <center>
@@ -456,130 +465,130 @@
 
                   <script type="text/javascript">
 
-                    var PR_LENGTH = 500,
-                        LENGTH_domain = 20,
-                        PR_DM = 400,
-                        LENGTH_SUB = 50,
-                        WIDTH_SCALE = 2,
-                        GREEN = "green",
-                        LIGHTGREEN = "lightgreen",
-                        RED = "#C5000B",
-                        //ORANGE = "orange",
-                        YELLOW = "orange",
-                        WHITE = "EED5EB"
-                    //GRAY = '#666666',
-                    GRAY = "gray",
-                        BLACK = "#2B1B17";
-                    missing = '#C70039';
-                    Residue = '#DA70D6';
+                      var PR_LENGTH = 500,
+                          LENGTH_domain = 20,
+                          PR_DM = 400,
+                          LENGTH_SUB = 50,
+                          WIDTH_SCALE = 2,
+                          GREEN = "green",
+                          LIGHTGREEN = "lightgreen",
+                          RED = "#C5000B",
+                          //ORANGE = "orange",
+                          YELLOW = "orange",
+                          WHITE = "EED5EB"
+                      //GRAY = '#666666',
+                      GRAY = "gray",
+                          BLACK = "#2B1B17";
+                      missing = '#C70039';
+                      Residue = '#DA70D6';
 
-                    var proteinViewNodes = {
-                        {% for key, value in pv_nodes.items %}
-                            "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
-                        {% endfor %}
-                    };
+                      var proteinViewNodes = {
+                          {% for key, value in pv_nodes.items %}
+                              "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                          {% endfor %}
+                      };
 
-                    var proteinViewEdges = {
-                        {% for key, value in pv_edges.items %}
-                            "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
-                        {% endfor %}
-                    };
+                      var proteinViewEdges = {
+                          {% for key, value in pv_edges.items %}
+                              "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                          {% endfor %}
+                      };
 
-                    const proteinViewSelector = document.getElementById("nodeFilterSelect");
-                    // create a network
-                    var proteinViewContainer = document.getElementById('protein-network');
+                      const proteinViewSelector = document.getElementById("nodeFilterSelect");
+                      // create a network
+                      var proteinViewContainer = document.getElementById('protein-network');
 
-                    var proteinViewOptions = {
-
-
-                        interaction: {
-                            navigationButtons: true,
-
-                        },
-                        physics: {
-                            enabled: true,
-                            barnesHut: {gravitationalConstant: -10000},
-                            stabilization: {iterations: 20},
-                        },
+                      var proteinViewOptions = {
 
 
-                        nodes: {
-                            scaling: {
-                                min: 16,
-                                max: 32
-                            }
-                        },
-                        edges: {
-                            color: WHITE,
-                            smooth: false,
+                          interaction: {
+                              navigationButtons: true,
 
-                        },
+                          },
+                          physics: {
+                              enabled: true,
+                              barnesHut: {gravitationalConstant: -10000},
+                              stabilization: {iterations: 20},
+                          },
 
 
-                        groups: {
-                            protein: {
-                                shape: "dot",
-                                color: GRAY, // orange
-                                font:
-                                    {
-                                        size: 18, // px
-                                    }
-                            },
+                          nodes: {
+                              scaling: {
+                                  min: 16,
+                                  max: 32
+                              }
+                          },
+                          edges: {
+                              color: WHITE,
+                              smooth: false,
+
+                          },
 
 
-                            domain: {
-                                shape: "triangle",
-                                color: "#2B7CE9" // blue
-                            },
+                          groups: {
+                              protein: {
+                                  shape: "dot",
+                                  color: GRAY, // orange
+                                  font:
+                                      {
+                                          size: 18, // px
+                                      }
+                              },
 
 
-                            transcript: {
-                                shape: "square",
-                                color: "#109618" // green
-                            }
-                        }
-                    };
+                              domain: {
+                                  shape: "triangle",
+                                  color: "#2B7CE9" // blue
+                              },
 
-                    var proteinViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-protein]");
-                    var proteinViewPredictedCheckboxes = document.querySelectorAll(".predicted-checkbox-protein");
 
-                    let proteinViewFilterValue = {value: "PPI"};
+                              transcript: {
+                                  shape: "square",
+                                  color: "#109618" // green
+                              }
+                          }
+                      };
 
-                    var predictedItems = document.querySelectorAll(".protein-view-predicted");
+                      var proteinViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-protein]");
+                      var proteinViewPredictedCheckboxes = document.querySelectorAll(".predicted-checkbox-protein");
 
-                    // hide predicted items if proteinViewFilterValue is PPI
-                    proteinViewSelector.addEventListener("change", function () {
-                        if (proteinViewSelector.value === "PPI") {
-                            predictedItems.forEach(function (item) {
-                                item.style.visibility = "hidden";
-                            });
-                        } else {
-                            predictedItems.forEach(function (item) {
-                                item.style.visibility = "visible";
-                            });
-                        }
-                    });
+                      let proteinViewFilterValue = {value: "PPI"};
 
-                    function proteinViewFilter(node) {
-                        if (proteinViewSelector.value === "") {
-                            return node.group === "protein";
-                        }
-                        switch (proteinViewSelector.value) {
+                      var predictedItems = document.querySelectorAll(".protein-view-predicted");
 
-                            case "PPI-DDI":
-                                return node.source === "DDI";
+                      // hide predicted items if proteinViewFilterValue is PPI
+                      proteinViewSelector.addEventListener("change", function () {
+                          if (proteinViewSelector.value === "PPI") {
+                              predictedItems.forEach(function (item) {
+                                  item.style.visibility = "hidden";
+                              });
+                          } else {
+                              predictedItems.forEach(function (item) {
+                                  item.style.visibility = "visible";
+                              });
+                          }
+                      });
 
-                            case "PPI":
-                                return node.group === "protein";
+                      function proteinViewFilter(node) {
+                          if (proteinViewSelector.value === "") {
+                              return node.group === "protein";
+                          }
+                          switch (proteinViewSelector.value) {
 
-                            default:
-                                return true;
-                        }
-                    }
+                              case "PPI-DDI":
+                                  return node.source === "DDI";
 
-                    startNetwork(proteinViewContainer, proteinViewOptions, proteinViewPredictedCheckboxes,
-                        proteinViewPhysicsCheckbox, proteinViewSelector, proteinViewFilterValue,
-                        proteinViewNodes, proteinViewEdges, proteinViewFilter);
+                              case "PPI":
+                                  return node.group === "protein";
+
+                              default:
+                                  return true;
+                          }
+                      }
+
+                      startNetwork(proteinViewContainer, proteinViewOptions, proteinViewPredictedCheckboxes,
+                          proteinViewPhysicsCheckbox, proteinViewSelector, proteinViewFilterValue,
+                          proteinViewNodes, proteinViewEdges, proteinViewFilter);
 
 
                   </script>
@@ -634,32 +643,33 @@
                   <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <div  class="col-md-4">
+                        <div class="col-md-4">
                           <h5 class="modal-title" id="exampleModalLabel">Interactions + % missing DDIs</h5>
                         </div>
                         <div class="col-md-4">
                           <button class="btn btn-primary" id="interactionViewDeselect">Deselect all</button>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                         </div>
                       </div>
                       <div class="modal-body">
                         <div class="row" id="nodeFilterSelect3">
-                            {% for key, value in Interactiveview_select.items %}
-                              <div class="col">
+                          {% for key, value in Interactiveview_select.items %}
+                            <div class="col">
                               <p><b>{{ key }}</b></p>
                               {% for s in value %}
                                 <div class="form-check my-1">
-                                  <input class="form-check-input" type="checkbox" name="InteractionChecks" id="{{ s.1 }}"
+                                  <input class="form-check-input" type="checkbox" name="InteractionChecks"
+                                         id="{{ s.1 }}"
                                          value="{{ s.1 }}">
                                   <label class="form-check-label" style="width: 50%" for="{{ s.1 }}">{{ s.0 }}</label>
                                   <label class="form-check-label" style="text-align: right" id="{{ s.1 }}Label"
                                          for="{{ s.1 }}Radio">{{ s.2 }}%</label>
                                 </div>
                               {% endfor %}
-                              </div>
-                            {% endfor %}
+                            </div>
+                          {% endfor %}
                         </div>
                       </div>
                     </div>
@@ -682,11 +692,12 @@
                 <div class="col-sm-3">
                   <div class="form-inline">
                     <label for="formControlRange">Canvas height</label>
-                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840" id="interactionCanvasRange">
+                    <input type="range" class="form-control-range" min="100" max="1000" step="10" value="840"
+                           id="interactionCanvasRange">
                   </div>
                 </div>
               </div>
-            <div class="form-group row">
+              <div class="form-group row">
                 <div class="col-sm-2"><b>Predicted DDIs</b></div>
                 <div class="col-sm-2">
                   <div class="custom-control custom-switch">
@@ -722,143 +733,143 @@
             <div id="interaction-network"></div>
             <script type="text/javascript">
 
-                  var PR_LENGTH = 500,
-                      LENGTH_domain = 20,
-                      PR_DM = 400,
-                      LENGTH_SUB = 50,
-                      WIDTH_SCALE = 2,
-                      GREEN = "green",
-                      LIGHTGREEN= "lightgreen",
-                      RED = "#C5000B",
-                      //ORANGE = "orange",
-                      YELLOW = "orange",
-                      WHITE = "EED5EB"
-                  //GRAY = '#666666',
-                  GRAY = "gray",
-                      BLACK = "#2B1B17";
-                  missing = '#C70039';
-                  Residue = '#DA70D6';
+                var PR_LENGTH = 500,
+                    LENGTH_domain = 20,
+                    PR_DM = 400,
+                    LENGTH_SUB = 50,
+                    WIDTH_SCALE = 2,
+                    GREEN = "green",
+                    LIGHTGREEN = "lightgreen",
+                    RED = "#C5000B",
+                    //ORANGE = "orange",
+                    YELLOW = "orange",
+                    WHITE = "EED5EB"
+                //GRAY = '#666666',
+                GRAY = "gray",
+                    BLACK = "#2B1B17";
+                missing = '#C70039';
+                Residue = '#DA70D6';
 
 
-                  var interactionViewNodes = {
-                      {% for key, value in pv_nodes.items %}
-                          "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
-                      {% endfor %}
-                  };
+                var interactionViewNodes = {
+                    {% for key, value in pv_nodes.items %}
+                        "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                    {% endfor %}
+                };
 
-                  // create an array with edges
-                  var interactionViewEdges = {
-                      {% for key, value in pv_edges.items %}
-                          "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
-                      {% endfor %}
-                  };
+                // create an array with edges
+                var interactionViewEdges = {
+                    {% for key, value in pv_edges.items %}
+                        "{{ key }}": [ {% for edge in value %} {{ edge|safe }} {% endfor %} ],
+                    {% endfor %}
+                };
 
-                  const interactionViewSelector = document.getElementById("nodeFilterSelect3");
+                const interactionViewSelector = document.getElementById("nodeFilterSelect3");
 
-                  // create a network
-                  var interactionViewContainer = document.getElementById('interaction-network');
+                // create a network
+                var interactionViewContainer = document.getElementById('interaction-network');
 
-                  var interactionViewOptions = {
-
-
-                      interaction: {
-                          navigationButtons: true,
-
-                      },
-                      physics: {
-                          enabled: true,
-                          barnesHut: {gravitationalConstant: -10000},
-                          stabilization: {iterations: 20},
-                      },
+                var interactionViewOptions = {
 
 
-                      nodes: {
-                          scaling: {
-                              min: 16,
-                              max: 32
-                          }
-                      },
-                      edges: {
-                          color: WHITE,
-                          smooth: false,
+                    interaction: {
+                        navigationButtons: true,
 
-                      },
+                    },
+                    physics: {
+                        enabled: true,
+                        barnesHut: {gravitationalConstant: -10000},
+                        stabilization: {iterations: 20},
+                    },
 
 
-                      groups: {
-                          protein: {
-                              shape: "dot",
-                              color: GRAY, // orange
-                              font:
-                                  {
-                                      size: 18, // px
-                                  }
-                          },
+                    nodes: {
+                        scaling: {
+                            min: 16,
+                            max: 32
+                        }
+                    },
+                    edges: {
+                        color: WHITE,
+                        smooth: false,
+
+                    },
 
 
-                          domain: {
-                              shape: "triangle",
-                              color: "#2B7CE9" // blue
-                          },
+                    groups: {
+                        protein: {
+                            shape: "dot",
+                            color: GRAY, // orange
+                            font:
+                                {
+                                    size: 18, // px
+                                }
+                        },
 
 
-                          transcript: {
-                              shape: "square",
-                              color: "#109618" // green
-                          }
-                      }
-                  };
+                        domain: {
+                            shape: "triangle",
+                            color: "#2B7CE9" // blue
+                        },
 
-                  const interactionViewEntrezID = "{{ entrezID|safe }}";
 
-                  let interactionViewFilterSet = new Set([interactionViewEntrezID]);
+                        transcript: {
+                            shape: "square",
+                            color: "#109618" // green
+                        }
+                    }
+                };
 
-                  var interactionViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-interaction]");
+                const interactionViewEntrezID = "{{ entrezID|safe }}";
 
-                  var interactionViewCheckboxes = document.querySelectorAll(".predicted-checkbox-interaction");
+                let interactionViewFilterSet = new Set([interactionViewEntrezID]);
 
-                  function interactionViewFilter(node) {
-                      if (interactionViewFilterSet.size === 1) {
-                          return (node.id === "{{ entrezID|safe }}") || (node.id === "{{ first_vict|safe }}")
-                              || (node.origin === "{{ first_vict|safe }}") || (node.origin === "{{ entrezID|safe }}");
-                      }
-                      return interactionViewFilterSet.has(node.id) || interactionViewFilterSet.has(node.origin);
-                  }
+                var interactionViewPhysicsCheckbox = document.querySelector("input[name=physics-checkbox-interaction]");
 
-                  const selectedInteractionView = document.getElementById("selectedInteractionView");
-                  // change the FilterSet and the Names when a partner is selected
-                  interactionViewSelector.addEventListener("change", function () {
-                      console.log(interactionViewSelector)
-                      const interactionViewPartners = document.querySelectorAll("input[name=InteractionChecks]:checked");
-                      // get the labels of all partners
-                      const names = Array.from(interactionViewPartners).map(function (partner) {
-                          return partner.labels[0].innerText;
-                      });
-                      // add all partners as a comma seperated string list
-                      // selectedInteractionView.innerHTML = names.map(function (name) {return name;}).join(", ");
-                      selectedInteractionView.innerHTML = names.join(", ");
-                      // set the values of the interactionViewFilterSet and add the entrezID of the original transcript
-                      interactionViewFilterSet = new Set(Array.from(interactionViewPartners).map(function (partner) {
-                          return partner.value;
-                      }));
-                      interactionViewFilterSet.add(interactionViewEntrezID);
-                  });
+                var interactionViewCheckboxes = document.querySelectorAll(".predicted-checkbox-interaction");
 
-                  // Deselect all button
-                  const interactionViewDeselect = document.getElementById("interactionViewDeselect");
-                  interactionViewDeselect.addEventListener("click", function () {
-                      interactionViewFilterSet = new Set([interactionViewEntrezID]);
-                      selectedInteractionView.innerHTML = "{{ first_name | safe }}";
-                      interactionViewSelector.querySelectorAll("input[name=InteractionChecks]:checked").forEach(function (input) {
-                          input.checked = false;
-                      });
-                  });
+                function interactionViewFilter(node) {
+                    if (interactionViewFilterSet.size === 1) {
+                        return (node.id === "{{ entrezID|safe }}") || (node.id === "{{ first_vict|safe }}")
+                            || (node.origin === "{{ first_vict|safe }}") || (node.origin === "{{ entrezID|safe }}");
+                    }
+                    return interactionViewFilterSet.has(node.id) || interactionViewFilterSet.has(node.origin);
+                }
 
-                  startNetwork(interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
-                      interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterSet,
-                      interactionViewNodes, interactionViewEdges, interactionViewFilter);
+                const selectedInteractionView = document.getElementById("selectedInteractionView");
+                // change the FilterSet and the Names when a partner is selected
+                interactionViewSelector.addEventListener("change", function () {
+                    console.log(interactionViewSelector)
+                    const interactionViewPartners = document.querySelectorAll("input[name=InteractionChecks]:checked");
+                    // get the labels of all partners
+                    const names = Array.from(interactionViewPartners).map(function (partner) {
+                        return partner.labels[0].innerText;
+                    });
+                    // add all partners as a comma seperated string list
+                    // selectedInteractionView.innerHTML = names.map(function (name) {return name;}).join(", ");
+                    selectedInteractionView.innerHTML = names.join(", ");
+                    // set the values of the interactionViewFilterSet and add the entrezID of the original transcript
+                    interactionViewFilterSet = new Set(Array.from(interactionViewPartners).map(function (partner) {
+                        return partner.value;
+                    }));
+                    interactionViewFilterSet.add(interactionViewEntrezID);
+                });
 
-              </script>
+                // Deselect all button
+                const interactionViewDeselect = document.getElementById("interactionViewDeselect");
+                interactionViewDeselect.addEventListener("click", function () {
+                    interactionViewFilterSet = new Set([interactionViewEntrezID]);
+                    selectedInteractionView.innerHTML = "{{ first_name | safe }}";
+                    interactionViewSelector.querySelectorAll("input[name=InteractionChecks]:checked").forEach(function (input) {
+                        input.checked = false;
+                    });
+                });
+
+                startNetwork(interactionViewContainer, interactionViewOptions, interactionViewCheckboxes,
+                    interactionViewPhysicsCheckbox, interactionViewSelector, interactionViewFilterSet,
+                    interactionViewNodes, interactionViewEdges, interactionViewFilter);
+
+            </script>
 
             <div style="text-align: center;">
               <center>
@@ -965,8 +976,8 @@
     function addHeightListener(inputId, outputId) {
         try {
             const inputElement = document.getElementById(inputId);
-            inputElement.addEventListener("input", function() {
-              document.getElementById(outputId).style.height = `${this.value}px`;
+            inputElement.addEventListener("input", function () {
+                document.getElementById(outputId).style.height = `${this.value}px`;
             });
         } catch (e) {
             console.log(e);

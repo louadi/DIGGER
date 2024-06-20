@@ -76,8 +76,9 @@
   <div class="wider-container my-3">
     <div class="row">
       <!-- Vertical pill selection menu-->
-      <div class="col-lg-2 mb-2 rounded">
-        <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+      <div class="col-lg-2 mb-2 rounded rounded d-flex flex-column">
+        <div class="sticky-top sticky-offset align-items-center">
+          <div style="background: white" class="shadow rounded p-2">
           <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
                aria-orientation="vertical">
             <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
@@ -98,7 +99,11 @@
 
           </div>
         </div>
-      </div>
+          <div class="my-4" style="width: 50%; margin: 0 auto">
+            <a id="backToMenu" class="btn btn-primary shadow p-2" href="nease_analysis">Back to search</a>
+          </div>
+        </div>
+    </div>
       <!-- /Vertical pill selection menu -->
 
       <!-- Page content -->
@@ -224,7 +229,7 @@
                aria-labelledby="v-pills-classic_enr-tab">
             <div class="card-body">
               <p class="lead text-center"><span
-                  style="font-weight:bold">NEASE edge enrichment</span></p>
+                  style="font-weight:bold">Edge enrichment</span></p>
 
               <div class="row justify-content-center">
                 <div class="col-md-6">
@@ -355,26 +360,26 @@
     </div>
   </div>
   <script>
-      // make a GET request to the server to get the enrichment result
-      const runId = "{{ run_id }}";
-      const fileName = "{{ input_name|safe }}";
+    // make a GET request to the server to get the enrichment result
+    const runId = "{{ run_id }}";
+    const fileName = "{{ input_name|safe }}";
 
-      const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
-      const classic_databases = [ {% for db in classic_dbs %} "{{ db|safe }}", {% endfor %} ]
+    const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
+    const classic_databases = [ {% for db in classic_dbs %} "{{ db|safe }}", {% endfor %} ]
 
-      // save the runId in local storage so that it can be accessed for another 7 days
-      const userStore = window.initStore({key: runId, expiresInDays: 7, name: fileName})
-      userStore.set(runId)
+    // save the runId in local storage so that it can be accessed for another 7 days
+    const userStore = window.initStore({key: runId, expiresInDays: 7, name: fileName})
+    userStore.set(runId)
 
-      // enable tooltips
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      })
+    // enable tooltips
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
 
-      // format all tables to be responsive
-      $(document).ready(function () {
-          $("[id$='_table']").DataTable();
-      });
+    // format all tables to be responsive
+    $(document).ready(function () {
+        $("[id$='_table']").DataTable();
+    });
 
     // if the user selects visualise pathway, the visWarn div should be shown
     document.getElementById('v-pills-vis-path-tab').addEventListener('click', () => {
@@ -531,15 +536,10 @@
     analysePathway()
     visualisePath()
 
-    supported_pathways(document.getElementById('databasesToEnrich'),
-                       document.getElementById('run_enrichment'),
-                       document.getElementById('classicNotSupported'), classic_databases)
-
     supported_pathways(document.getElementById('neaseDatabasesToEnrich'),
                        document.getElementById('run_nease_enrichment'),
                        document.getElementById('neaseNotSupported'), nease_databases)
 
-    addSupportedPathwaysTooltip(document.getElementById('classicEnrichLabel'), classic_databases)
     addSupportedPathwaysTooltip(document.getElementById('neaseEnrichLabel'), nease_databases)
 
       const iframe = document.getElementById('vis_result');
