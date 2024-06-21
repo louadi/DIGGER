@@ -470,6 +470,7 @@
         document.getElementById('vis_pathway').disabled = true;
         document.getElementById('spinner-vis').style.display = 'inline-block';
 
+
         // Construct URL with query parameters
         const baseURL = window.location.origin + window.location.pathname;
         const url = new URL('nease_analysis/extra_functions', baseURL);
@@ -496,6 +497,9 @@
                 document.getElementById('k').disabled = false;
                 document.getElementById('vis_pathway').disabled = false;
                 document.getElementById('spinner-vis').style.display = 'none';
+                // disable warning
+                document.getElementById('visWarn').hidden = false;
+
             })
             .catch(error => {
                 // Show the visFail div
