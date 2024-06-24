@@ -453,39 +453,39 @@
     }
 
     function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
-    $(`#${buttonId}`).click(function () {
-        try {
-            const databases = $(`#${inputFieldId}`).val();
-            $(`#${inputFieldId}`).prop("disabled", true);
-            $(`#${buttonId}`).prop("disabled", true);
-            $(`.${spinnerId}`).css('display', 'inline-block');
+        $(`#${buttonId}`).click(function () {
+            try {
+                const databases = $(`#${inputFieldId}`).val();
+                $(`#${inputFieldId}`).prop("disabled", true);
+                $(`#${buttonId}`).prop("disabled", true);
+                $(`.${spinnerId}`).css('display', 'inline-block');
 
-            $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, databases: databases, func: funcName}), function (data) {
-                $(`#${tableId}`).html(data);
-                $(`#${tableNameId}`).DataTable({
-                  "order": [[6, "desc"]]
+                $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, databases: databases, func: funcName}), function (data) {
+                    $(`#${tableId}`).html(data);
+                    $(`#${tableNameId}`).DataTable({
+                      "order": [[6, "desc"]]
+                    });
+
+                    // Re-enable the input and button, and hide the spinner
+                    $(`#${inputFieldId}`).prop("disabled", false);
+                    $(`#${buttonId}`).prop("disabled", false);
+                    $(`.${spinnerId}`).css('display', 'none');
+
+                    // show all the relevant elements
+                    $(`#${tableNameId}_download_button`).css('display', 'block');
+
+                    const image_end = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
+                    $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end + '?' + new Date().getTime());
+                    $(`#${hrId}Hr1`).css('display', 'block');
+                    $(`#${hrId}Hr2`).css('display', 'block');
+                }).fail(function() {
+                    alert("An error occurred while processing your request.");
                 });
-
-                // Re-enable the input and button, and hide the spinner
-                $(`#${inputFieldId}`).prop("disabled", false);
-                $(`#${buttonId}`).prop("disabled", false);
-                $(`.${spinnerId}`).css('display', 'none');
-
-                // show all the relevant elements
-                $(`#${tableNameId}_download_button`).css('display', 'block');
-
-                const image_end = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
-                $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end + '?' + new Date().getTime());
-                $(`#${hrId}Hr1`).css('display', 'block');
-                $(`#${hrId}Hr2`).css('display', 'block');
-            }).fail(function() {
-                alert("An error occurred while processing your request.");
-            });
-        } catch (err) {
-            console.error(`An error occurred: ${err.message}`);
-        }
-    });
-}
+            } catch (err) {
+                console.error(`An error occurred: ${err.message}`);
+            }
+        });
+    }
 
     function analysePathway() {
         $('#anal_pathway').click(function () {
@@ -518,60 +518,60 @@
     }
 
     function visualisePath() {
-    document.getElementById('vis_pathway').addEventListener('click', () => {
-        const pathway = document.getElementById('pathwayVis').value;
-        const k = document.getElementById('k').value;
+        document.getElementById('vis_pathway').addEventListener('click', () => {
+            const pathway = document.getElementById('pathwayVis').value;
+            const k = document.getElementById('k').value;
 
-        // Disable input fields and button
-        document.getElementById('pathwayVis').disabled = true;
-        document.getElementById('k').disabled = true;
-        document.getElementById('vis_pathway').disabled = true;
-        document.getElementById('spinner-vis').style.display = 'inline-block';
+            // Disable input fields and button
+            document.getElementById('pathwayVis').disabled = true;
+            document.getElementById('k').disabled = true;
+            document.getElementById('vis_pathway').disabled = true;
+            document.getElementById('spinner-vis').style.display = 'inline-block';
 
 
-        // Construct URL with query parameters
-        const baseURL = window.location.origin + window.location.pathname;
-        const url = new URL('nease_analysis/extra_functions', baseURL);
-        url.searchParams.append('runId', runId);
-        url.searchParams.append('pathway', pathway);
-        url.searchParams.append('k', k);
-        url.searchParams.append('func', 'visualise');
+            // Construct URL with query parameters
+            const baseURL = window.location.origin + window.location.pathname;
+            const url = new URL('nease_analysis/extra_functions', baseURL);
+            url.searchParams.append('runId', runId);
+            url.searchParams.append('pathway', pathway);
+            url.searchParams.append('k', k);
+            url.searchParams.append('func', 'visualise');
 
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(html => {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                iframeDoc.open();
-                iframeDoc.write(html);
-                iframeDoc.close();
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(html);
+                    iframeDoc.close();
 
-                document.getElementById('vis_result_div').style.display = 'block';
-                document.getElementById('pathwayVis').disabled = false;
-                document.getElementById('k').disabled = false;
-                document.getElementById('vis_pathway').disabled = false;
-                document.getElementById('spinner-vis').style.display = 'none';
-                // disable warning
-                document.getElementById('visWarn').hidden = false;
+                    document.getElementById('vis_result_div').style.display = 'block';
+                    document.getElementById('pathwayVis').disabled = false;
+                    document.getElementById('k').disabled = false;
+                    document.getElementById('vis_pathway').disabled = false;
+                    document.getElementById('spinner-vis').style.display = 'none';
+                    // disable warning
+                    document.getElementById('visWarn').hidden = false;
 
-            })
-            .catch(error => {
-                // Show the visFail div
-                document.getElementById('visFail').hidden = false;
-                // Enable the input fields and button
-                document.getElementById('pathwayVis').disabled = false;
-                document.getElementById('k').disabled = false;
-                document.getElementById('vis_pathway').disabled = false;
-                document.getElementById('spinner-vis').style.display = 'none';
-            });
-    });
-}
+                })
+                .catch(error => {
+                    // Show the visFail div
+                    document.getElementById('visFail').hidden = false;
+                    // Enable the input fields and button
+                    document.getElementById('pathwayVis').disabled = false;
+                    document.getElementById('k').disabled = false;
+                    document.getElementById('vis_pathway').disabled = false;
+                    document.getElementById('spinner-vis').style.display = 'none';
+                });
+        });
+    }
 
-    function supported_pathways(inputElem, submitBtn, warnText, pathwayList) {
+    function checkSupportedPathways(inputElem, submitBtn, warnText, pathwayList) {
         // split input by , and show an error if the input is not in the list
         inputElem.addEventListener('input', () => {
             const input = inputElem.value;
@@ -598,9 +598,9 @@
     analysePathway()
     visualisePath()
 
-    supported_pathways(document.getElementById('neaseDatabasesToEnrich'),
-                       document.getElementById('run_nease_enrichment'),
-                       document.getElementById('neaseNotSupported'), nease_databases)
+    checkSupportedPathways(document.getElementById('neaseDatabasesToEnrich'),
+                           document.getElementById('run_nease_enrichment'),
+                           document.getElementById('neaseNotSupported'), nease_databases)
 
     addSupportedPathwaysList(document.getElementById('supportedDatabases'), nease_databases)
 

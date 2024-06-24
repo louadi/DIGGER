@@ -38,8 +38,8 @@
       {{ error_msg }}
     </div>
   {% endif %}
-  <div class="alert alert-warning">
-    If your input file is larger than 20MB, the analysis may take a long time to run. Please be patient.
+  <div id="sizeWarning" class="alert alert-warning" style="display: none">
+    Your input file is larger than 20MB, the analysis may take a long time to run. Please be patient.
   </div>
 
   <div role="tabpanel" class="tab-pane" id="Section3">
@@ -301,6 +301,18 @@
       else {
           document.getElementById('noFileAlert').setAttribute('hidden', '');
       }
+    });
+
+    document.getElementById('customFile').addEventListener('change', function() {
+        var file = this.files[0];
+        var maxSize = 20 * 1024 * 1024;
+        var warning = document.getElementById('sizeWarning');
+
+        if (file && file.size > maxSize) {
+            warning.style.display = 'block';
+        } else {
+            warning.style.display = 'none';
+        }
     });
 
   </script>

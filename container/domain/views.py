@@ -739,16 +739,23 @@ def setup_nease(request):
     # Run the NEASE job
     print(f"Submitted NEASE job with params: {organism}, {database_type}, {p_value}, {rm_not_in_frame}, "
           f"{divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
-
-    if input_data['splicing-events-file'].name.endswith('.json'):
-        table = pd.read_json(input_data['splicing-events-file'])
-    else:
-        table = pd.read_table(input_data['splicing-events-file'])
-
     context = {
         'error_msg': None
     }
+
     try:
+        if input_data['splicing-events-file'].name.endswith('.json'):
+            table = pd.read_json(input_data['splicing-events-file'])
+        else:
+            table = pd.read_table(input_data['splicing-events-file'])
+    except Exception as e:
+        print(e)
+        table = None
+
+    try:
+        if not table:
+            raise Exception("Could not parse the input file. Please make sure the file is in the correct format.")
+
         events, info_tables, run_id = no.run_nease(table, organism, {'db_type': database_type,
                                                                      'enrich_dbs': enrich_dbs,
                                                                      'p_value': p_value,
