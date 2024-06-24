@@ -67,6 +67,18 @@
           max-width: 55%;
           max-height: 55%;
       }
+
+      .inline-icon {
+          display: inline-block;
+          vertical-align: middle;
+          height: 1.4em;
+          width: auto;
+      }
+
+      .scrollable-list {
+          max-height: 200px;
+          overflow-y: auto;
+      }
   </style>
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
@@ -232,10 +244,21 @@
                   style="font-weight:bold">Edge enrichment</span></p>
 
               <div class="row justify-content-center">
+                <div class="col-md-3"></div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label id="neaseEnrichLabel" data-toggle="tooltip" data-placement="top"
-                     title="" for="neaseDatabasesToEnrich">Databases to enrich</label>
+                     title="Select supported databases from the list to get the edge enrichment for those
+                     databases. Note: the more databases you choose, the longer it will take to retrieve the
+                     enrichment result."
+                     for="neaseDatabasesToEnrich">Databases to enrich
+                     <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
+                         2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172
+                          16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11
+                           11H13V17H11V11Z"></path></svg>
+                     </label>
                     <input type="text" class="form-control" id="neaseDatabasesToEnrich"
                     placeholder="Reactome, KEGG, ...">
                     <p id="neaseNotSupported" class="text-danger my-1" hidden=""></p>
@@ -246,6 +269,12 @@
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
+                </div>
+                <div class="col-md-3">
+                  <h5 class="text-center">Supported databases</h5>
+                  <!-- make a list containing the supported databases -->
+                  <div id="supportedDatabases" class="list-group scrollable-list">
+                </div>
                 </div>
               </div>
 
@@ -280,7 +309,14 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label data-toggle="tooltip" data-placement="top"
-                        title="Get pathway IDs from NEASE edge enrichment" for="pathwayAnal">Pathway to analyse</label>
+                        title="Get pathway IDs from NEASE edge enrichment" for="pathwayAnal">Pathway to analyse
+                        <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
+                         2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172
+                          16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11
+                           11H13V17H11V11Z"></path></svg>
+                           </label>
                     <input type="text" class="form-control" id="pathwayAnal" placeholder="Enter pathway">
                   </div>
                   <div class="text-center row no-gutters align-items-center justify-content-center">
@@ -327,7 +363,14 @@
                     <div class="row">
                       <div class="col-md-10">
                         <label for="pathwayVis" data-toggle="tooltip" data-placement="top"
-                        title="Get pathway IDs from NEASE edge enrichment">Pathway to visualize</label>
+                        title="Get pathway IDs from NEASE edge enrichment">Pathway to visualize
+                        <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
+                         2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172
+                          16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11
+                           11H13V17H11V11Z"></path></svg>
+                        </label>
                         <input type="text" class="form-control" id="pathwayVis" placeholder="Enter pathway">
                       </div>
 
@@ -365,7 +408,6 @@
     const fileName = "{{ input_name|safe }}";
 
     const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
-    const classic_databases = [ {% for db in classic_dbs %} "{{ db|safe }}", {% endfor %} ]
 
     // save the runId in local storage so that it can be accessed for another 7 days
     const userStore = window.initStore({key: runId, expiresInDays: 7, name: fileName})
@@ -394,8 +436,20 @@
         });
     }
 
-    function addSupportedPathwaysTooltip(pathwayLabel, databases){
-        pathwayLabel.title = 'Supported pathways: ' + databases.join(', ');
+    function addSupportedPathwaysList(supportedList, databases){
+        for (const db of databases) {
+            const listItem = document.createElement('button');
+            listItem.classList.add('list-group-item', 'list-group-item-action');
+            listItem.textContent = db;
+            // add the text content to the input field when the user clicks on the list item
+            listItem.addEventListener('click', () => {
+                const inputField = document.getElementById('neaseDatabasesToEnrich');
+                inputField.value = inputField.value ? `${inputField.value}, ${db}` : db;
+                inputField.classList.remove('is-invalid');
+                document.getElementById('neaseNotSupported').hidden = true;
+            });
+            supportedList.appendChild(listItem);
+        }
     }
 
     function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
@@ -408,7 +462,9 @@
 
             $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, databases: databases, func: funcName}), function (data) {
                 $(`#${tableId}`).html(data);
-                $(`#${tableNameId}`).DataTable();
+                $(`#${tableNameId}`).DataTable({
+                  "order": [[6, "desc"]]
+                });
 
                 // Re-enable the input and button, and hide the spinner
                 $(`#${inputFieldId}`).prop("disabled", false);
@@ -439,7 +495,9 @@
           $('.spinner-border').css('display', 'inline-block');
           $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, pathway: pathway, func: 'pathway'}), function (data) {
               $('#pathway_result').html(data);
-              $('#pathway_path').DataTable();
+              $('#pathway_path').DataTable({
+                  "order": [[4, "asc"]]
+              });
               $('#pathwayAnal').prop("disabled", false);
               $('#anal_pathway').prop("disabled", false);
               $('.spinner-border').css('display', 'none');
@@ -544,7 +602,7 @@
                        document.getElementById('run_nease_enrichment'),
                        document.getElementById('neaseNotSupported'), nease_databases)
 
-    addSupportedPathwaysTooltip(document.getElementById('neaseEnrichLabel'), nease_databases)
+    addSupportedPathwaysList(document.getElementById('supportedDatabases'), nease_databases)
 
       const iframe = document.getElementById('vis_result');
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
