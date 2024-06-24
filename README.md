@@ -17,11 +17,18 @@ To install DIGGER 1.5 (running it for the first time) follow these steps:
 # https://docs.docker.com/compose/install/
 
 #  Clone this repository and change into the created directory
-git clone https://github.com/louadi/DIGGER.git && cd DIGGER
+git clone https://github.com/daisybio/DIGGER.git && cd DIGGER
 
-# Download a copy of all the data files into domain/data/Homo sapiens[human]/
+# Download a copy of all the data files into domain/data/
 # If you have more organisms, add the files into respective foldes, e.g. domain/data/Mus musculus[mouse]/
-wget https://zenodo.org/record/3973368/files/data.zip    # extract the files
+wget https://zenodo.org/records/12517244/files/data.zip
+
+# unzip this data to the appropriate directory
+unzip data.zip -d container/domain/
+
+# repeat this with the nease data:
+wget https://zenodo.org/records/12517244/files/nease_data.zip
+unzip nease_data.zip -d container/domain/nease/
 
 
 # Create a copy of the .env.sample file and edit the .env file
