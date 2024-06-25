@@ -1,3 +1,4 @@
+import ast
 import timeit
 
 from .process import *
@@ -277,7 +278,7 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
     path_genes = list(Pathways[Pathways['external_id'] == path_id]['entrez_gene_ids'])[0]
     p = pathway_node_degree(annotated_graph, path_genes)
     # convert path_genes to str
-    path_genes_str = [str(x) for x in path_genes]
+    path_genes_str = ast.literal_eval(path_genes)
 
     #collect:
     spliced_genes = []
