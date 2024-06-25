@@ -300,7 +300,6 @@ def transcript(request, P_id, organism):
              'Missing domain-domain interactions', '% of missing DDIs', 'Residue-level evidence',
              "Protein-protein interaction", 'Confidence']]
         pd_interaction = pd_interaction.to_html(table_id='Interaction_table', **settings.TO_HTML_RESPONSIVE_PARAMETERS)
-        print(pd_interaction)
 
     # Get ID of missing domains with interactions
     if len(missed) != 0:
