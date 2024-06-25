@@ -81,8 +81,9 @@
 <div class="wider-container my-3">
   <div class="row">
     <!-- Vertical pill selection menu-->
-    <div class="col-lg-2 mb-2 rounded">
-      <div style="background: white" class="shadow rounded p-2 sticky-top sticky-offset">
+    <div class="col-lg-2 mb-2 rounded rounded d-flex flex-column">
+      <div class="sticky-top sticky-offset align-items-center">
+        <div style="background: white" class="shadow rounded p-2">
         <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
              aria-orientation="vertical">
           <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
@@ -104,6 +105,10 @@
                aria-controls="v-pills-interaction" aria-selected="false">Other isoforms</a>
           {% endif %}
 
+        </div>
+      </div>
+        <div class="my-4" style="width: 50%; margin: 0 auto">
+          <a id="backToMenu" class="btn btn-primary shadow p-2" href="../../isoform_level">Back to search</a>
         </div>
       </div>
     </div>

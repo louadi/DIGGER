@@ -65,6 +65,7 @@
    * @returns {Object} store with functions to set and get the value
    **/
   const initStore = options => {
+    console.log("Initializing store with options", options)
     const { key, expiresInDays, name } = validateOptions(options)
     const prefixedKey = PREFIX + key
     const prefixedName = name ? PREFIX + name : null
@@ -73,7 +74,9 @@
     const setExpiration = expiresAt => {
       clearTimeout(timeout)
       if (expiresAt != null) {
+        console.log("Setting timeout for expiration", expiresAt)
         timeout = setTimeout(() => {
+          console.log("Removing item from store")
           storage.set(prefixedKey, null)
           storage.set(prefixedName, null)
         }, expiresAt - Date.now())

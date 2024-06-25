@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html style="scroll-behavior: smooth">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -78,6 +78,9 @@
                     <a class="nav-link {% if "about" in request.path %}active{% endif %}"
                        href="{% url 'about-page' %}">About</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/daisybio/DIGGER" target="_blank">GitHub</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -102,11 +105,11 @@
 <footer class="py-4 bg-dark footer">
     <div class="container">
         <p class="m-0 text-center text-white">DIGGER &copy;
-            <u><a href="https://biomedical-big-data.de" target="_blank" rel="noopener noreferrer"
+            <u><a href="https://www.mls.ls.tum.de/daisybio/startseite/" target="_blank" rel="noopener noreferrer"
                   style="color:inherit;">
-                Big Data in Biomedicine</a></u> and
-            <u><a href="https://compsysmed.de" target="_blank" rel="noopener noreferrer" style="color:inherit;">
-                Computational Systems Medicine
+                Data Science in Systems Biology</a></u> and
+            <u><a href="https://www.cosy.bio/" target="_blank" rel="noopener noreferrer" style="color:inherit;">
+                Computational Systems Biology
             </a></u>
         </p>
     </div>

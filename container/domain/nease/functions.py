@@ -1,3 +1,4 @@
+import ast
 import timeit
 
 from .process import *
@@ -277,7 +278,7 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
     path_genes = list(Pathways[Pathways['external_id'] == path_id]['entrez_gene_ids'])[0]
     p = pathway_node_degree(annotated_graph, path_genes)
     # convert path_genes to str
-    path_genes_str = [str(x) for x in path_genes]
+    path_genes_str = ast.literal_eval(path_genes)
 
     #collect:
     spliced_genes = []
@@ -363,7 +364,7 @@ def extract_subnetwork(path_genes,
                        significant):
     # Affected_genes: genes with lost/gained interaction in the pathway
     # all_spliced_genes: all genes affected with splicing
-    all_spliced_genes = [Ensemb_to_entrez(x, mapping) for x in all_spliced_genes]
+    all_spliced_genes = [Entrez_to_name(x, mapping) for x in all_spliced_genes]
 
     # Extract the pathway module for the complete PPI
     # We would like to visualize the pathway with affected edges:

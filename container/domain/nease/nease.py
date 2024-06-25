@@ -396,7 +396,7 @@ class run(object):
         else:
 
             edges = self.interacting_domains.copy()
-            #Convert IDs to names
+            # Convert IDs to names
             c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
             edges['Affected binding'] = edges['Affected binding (NCBI)'].apply(c)
 

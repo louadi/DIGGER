@@ -38,6 +38,9 @@
       {{ error_msg }}
     </div>
   {% endif %}
+  <div id="sizeWarning" class="alert alert-warning" style="display: none">
+    Your input file is larger than 20MB, the analysis may take a long time to run. Please be patient.
+  </div>
 
   <div role="tabpanel" class="tab-pane" id="Section3">
     <form id="inputForm" class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
@@ -227,18 +230,21 @@
 
   <script>
     // load previous analyses
-  const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
-    // filter for only keys that start with 'nease/'
-  const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
+    const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+    // remove keys if they expired
+    localKeys.forEach(key => {
+      removeExpiredData(key)
+    });
+    const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
 
-  if (data.length > 0) {
-    $('#prevAnalysisContainer').css('display', 'block');
-  }
+    if (data.length > 0) {
+      $('#prevAnalysisContainer').css('display', 'block');
+    }
 
-  for (let i = 0; i < data.length; i++) {
-    const template = createHtmlTemplate(data[i]);
-    appendTemplateToDiv(template, 'previousAnalyses');
-  }
+    for (let i = 0; i < data.length; i++) {
+      const template = createHtmlTemplate(data[i]);
+      appendTemplateToDiv(template, 'previousAnalyses');
+    }
 
 
     // enable tooltips
@@ -295,6 +301,18 @@
       else {
           document.getElementById('noFileAlert').setAttribute('hidden', '');
       }
+    });
+
+    document.getElementById('customFile').addEventListener('change', function() {
+        var file = this.files[0];
+        var maxSize = 20 * 1024 * 1024;
+        var warning = document.getElementById('sizeWarning');
+
+        if (file && file.size > maxSize) {
+            warning.style.display = 'block';
+        } else {
+            warning.style.display = 'none';
+        }
     });
 
   </script>

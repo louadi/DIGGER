@@ -1,3 +1,7 @@
+import traceback
+
+import pandas as pd
+
 from .load import *
 
 import numpy as np
@@ -429,22 +433,22 @@ def get_interfaces(data, nease_data, min_delta=.05, overlap_cal=True):
 def Entrez_to_name(gene, mapping=None, mapping_dict=None):
     try:
         # make it backwards compatibale with other instances in the code but still enable fast lookups
-        if mapping:
+        if isinstance(mapping, pd.DataFrame):
             name = mapping[mapping['NCBI gene ID'] == gene]['Gene name'].unique()
         else:
-            name = mapping_dict[gene]
+            name = mapping_dict[str(gene)]
 
-        if not name or len(name) == 0:
-            # try to convert it online
-            mg = mygene.MyGeneInfo()
-            out = mg.querymany(str(gene), scopes="entrezgene", fields='symbol', species="human", verbose=False,
-                               as_dataframe=True,
-                               df_index=True)
-            name = out['symbol']
+        # if not name or len(name) == 0:
+        #     # try to convert it online
+        #     mg = mygene.MyGeneInfo()
+        #     out = mg.querymany(str(gene), scopes="entrezgene", fields='symbol', species="human", verbose=False,
+        #                        as_dataframe=True,
+        #                        df_index=True)
+        #     name = out['symbol']
 
-        return name[0] if mapping else name
+        return name[0] if isinstance(mapping, pd.DataFrame) else name
 
-    except:
+    except Exception:
         return gene
 
 

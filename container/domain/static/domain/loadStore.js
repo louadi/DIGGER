@@ -4,6 +4,17 @@ function getDataFromLocalStorage(key) {
     return jsonData ? JSON.parse(jsonData) : null;
 }
 
+function removeExpiredData(key) {
+    const value = localStorage.getItem(key);
+    if (!value) {
+        localStorage.removeItem(key);
+    }
+    const expiry= JSON.parse(value).expiresAt;
+    if (expiry < Date.now()) {
+        localStorage.removeItem(key);
+    }
+}
+
 // Function to create an HTML template
 function createHtmlTemplate(data) {
     return `
