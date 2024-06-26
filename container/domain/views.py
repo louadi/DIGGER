@@ -791,11 +791,14 @@ def nease_extra_functions(request):
         return HttpResponse("No function provided", status=400)
     run_id = request.GET.get('runId', None)
     databases = request.GET.get('databases', None)
-    databases = databases.split(",") if databases else None
     pathway = request.GET.get('pathway', None)
     k = request.GET.get('k', None)
     if not run_id:
         return HttpResponse("No run ID provided", status=400)
+
+    if databases:
+        databases = databases.split(",")
+        databases = list({db.strip() for db in databases})
 
     # get the enrichment table
     try:

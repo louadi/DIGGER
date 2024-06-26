@@ -677,8 +677,8 @@ class run(object):
                                                     self.only_DDIs)
 
         if len(enrich) == 0:
+            # TODO: return this message to the user
             print('No enrichment or genes found for the selected pathway.')
-
             return
 
         # Get genes of the pathway (Entrez IDs)
