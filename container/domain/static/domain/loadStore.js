@@ -16,13 +16,20 @@ function removeExpiredData(key) {
 }
 
 // Function to create an HTML template
-function createHtmlTemplate(data) {
+function createHtmlTemplate(data, expiresInDays = 7) {
+    // subtract 7 days from the expiry date
+    const createdDate = new Date(data.expiresAt) - (expiresInDays * 24 * 60 * 60 * 1000);
+    // format to readable date
+    const formattedDate = new Date(createdDate).toLocaleString();
+
     return `
      <div class="row">
       <div class="col-md-12 my-1">
         <div class="card previous-card" onclick="prevAnalysis('${data.value}', '${data.name}')">
           <div class="card-body">
             <h6 class="card-title" style="display: inline; font-weight: bold">${data.name}</h6>
+            <p class="card-text mx-1" style="display: inline; color: gray">●</p>
+            <p class="card-text" style="display: inline; color: gray">${formattedDate}</p>
             <p class="card-text mx-1" style="display: inline; color: gray">●</p>
             <p class="card-text" style="display: inline; color: gray">${data.value}</p>
           </div>
