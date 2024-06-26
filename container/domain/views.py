@@ -809,7 +809,11 @@ def nease_extra_functions(request):
             out_table = no.pathway_info(no.get_nease_events(run_id), pathway, run_id)
             table_name = "path"
         elif function_name == 'visualise':
-            return HttpResponse(no.visualise_path(no.get_nease_events(run_id), pathway, k), status=200)
+            try:
+                http_out = no.visualise_path(no.get_nease_events(run_id), pathway, k)
+            except Exception as e:
+                return HttpResponse(f"Error: {str(e)}", status=500)
+            return HttpResponse(http_out, status=200)
         else:
             return HttpResponse(f"Unknown function: {function_name}", status=400)
     except Exception as e:

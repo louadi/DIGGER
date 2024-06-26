@@ -715,7 +715,7 @@ class run(object):
                             margin=dict(b=20, l=5, r=5, t=40),
                             annotations=[dict(
                                 text="<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 "
-                                     "Spliced gene and known to be part of the patwhay.<br> 🟠 Spliced gene but not "
+                                     "Spliced gene and known to be part of the pathway.<br> 🟠 Spliced gene but not "
                                      "known to be in the pathway.",
                                 showarrow=False,
                                 font=dict(size=20),

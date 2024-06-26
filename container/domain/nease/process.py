@@ -18,7 +18,7 @@ pd.set_option('display.max_colwidth', 1000)
 into a joint graph and maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or as a set 
 to visually explore their interactions. The following modes of DIGGER can be used interchangeably:
 """
-DIGGER = 'https://exbio.wzw.tum.de/digger/ID/exon/'
+DIGGER = 'https://exbio.wzw.tum.de/digger-dev/ID/exon/'
 
 
 def splitDataFrameList(df, target_column):

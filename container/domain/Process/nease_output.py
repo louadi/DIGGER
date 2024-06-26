@@ -54,6 +54,11 @@ def run_nease(data, organism, params):
             pdb.to_csv(f"{data_path}{run_id}_pdb.csv")
         info_tables.update({'elm': elm, 'pdb': pdb})
 
+    # remove the unnamed column
+    for key, value in info_tables.items():
+        if 'Unnamed: 0' in value.columns:
+            value.drop(columns=['Unnamed: 0'], inplace=True)
+
     # save events to pickle
     events.save(nease_path + run_id)
     return events, info_tables, run_id
@@ -75,6 +80,7 @@ def nease_domains(events):
     return events.get_domains()
 
 
+# this function got cut from the final version
 def nease_classic_enrich(events, databases, run_id):
     events, _ = events
     try:
@@ -143,6 +149,8 @@ def visualise_path(events, pathway, k):
     except ValueError as e:
         print(e)
         pathway_visualisation = None
+    if pathway_visualisation is None:
+        raise Exception("Pathway not found")
     return pathway_visualisation
 
 
