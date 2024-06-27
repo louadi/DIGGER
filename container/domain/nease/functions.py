@@ -278,7 +278,10 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
     path_genes = list(Pathways[Pathways['external_id'] == path_id]['entrez_gene_ids'])[0]
     p = pathway_node_degree(annotated_graph, path_genes)
     # convert path_genes to str
-    path_genes_str = ast.literal_eval(path_genes)
+    if isinstance(path_genes, str):
+        path_genes_str = ast.literal_eval(path_genes)
+    else:
+        path_genes_str = path_genes
 
     #collect:
     spliced_genes = []
