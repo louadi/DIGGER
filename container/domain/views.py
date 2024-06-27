@@ -281,9 +281,13 @@ def transcript(request, P_id, organism):
 
         Interactiveview_select = pr.interactive_select(pd_interaction)
 
-        # the first protein to show, select a protein with confidence original
-        first_victim = pd_interaction[pd_interaction['Confidence'] == 'Original']['NCBI gene ID'].tolist()[0]
-        first_name = pd_interaction[pd_interaction['Confidence'] == 'Original']['_'].tolist()[0]
+        # the first protein to show, select a protein with confidence original, alternatively the first protein
+        try:
+            first_victim = pd_interaction[pd_interaction['Confidence'] == 'Original']['NCBI gene ID'].tolist()[0]
+            first_name = pd_interaction[pd_interaction['Confidence'] == 'Original']['_'].tolist()[0]
+        except IndexError:
+            first_victim = pd_interaction['NCBI gene ID'].tolist()[0]
+            first_name = pd_interaction['_'].tolist()[0]
 
         pd_interaction = pd_interaction.rename(columns={
 
@@ -812,17 +816,16 @@ def nease_extra_functions(request):
             out_table = no.pathway_info(no.get_nease_events(run_id), pathway, run_id)
             table_name = "path"
         elif function_name == 'visualise':
-            try:
-                http_out = no.visualise_path(no.get_nease_events(run_id), pathway, k)
-            except Exception as e:
-                return HttpResponse(f"Error: {str(e)}", status=500)
-            return HttpResponse(http_out, status=200)
+            out_table = no.visualise_path(no.get_nease_events(run_id), pathway, k)
         else:
             return HttpResponse(f"Unknown function: {function_name}", status=400)
     except Exception as e:
         traceback.print_exc()
         return HttpResponse(f"Error: {str(e)}", status=500)
-    return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
+    if isinstance(out_table, pd.DataFrame):
+        return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
+    else:
+        return JsonResponse(out_table, status=500)
 
 
 def get_organisms(request):

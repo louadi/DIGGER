@@ -580,27 +580,22 @@ class run(object):
         '''
 
         if self.data.empty:
-            print('Processing failed')
+            return {'errorMsg': 'Processing failed'}
         elif self.interacting_domains.empty:
-            print('No affected edges identified.')
+            return {'errorMsg': 'No affected edges identified.'}
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
 
         if len(path_info) == 0:
-            print('No pathway with the given ID found.')
+            return {'errorMsg': 'No pathway with the given ID found.'}
 
         else:
-            path_name = list(path_info['Pathway name'])[0]
-            print('Enrichment of the pathway: ' + path_name + '.\n')
-            print('Overall p_value: ', list(path_info['p_value'])[0])
-            print('\n')
             # run enrichment
             enrich, _ = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
                                            self.only_DDIs)
 
             if len(enrich) == 0:
-                print('No enrichment or genes found for the selected pathway.')
-                return
+                return {'errorMsg': 'No enrichment or genes found for the selected pathway.'}
             else:
                 return enrich.sort_values(['p_value']).reset_index(drop=True)
 
@@ -657,15 +652,14 @@ class run(object):
         k = float(k)
 
         if self.data.empty:
-            print('Processing failed')
+            return {'errorMsg': 'Processing failed'}
         elif self.interacting_domains.empty:
-            print('No affected edges identified.')
+            return {'errorMsg': 'No affected edges identified.'}
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
 
         if len(path_info) == 0:
-            print('No pathway with the given ID found.')
-            return
+            return {'errorMsg': 'No pathway with the given ID found.'}
 
         path_name = list(path_info['Pathway name'])[0]
         print('Enrichment of the pathway: ' + path_name + '.\n')
@@ -678,8 +672,7 @@ class run(object):
 
         if len(enrich) == 0:
             # TODO: return this message to the user
-            print('No enrichment or genes found for the selected pathway.')
-            return
+            return {'errorMsg': 'No enrichment or genes found for the selected pathway.'}
 
         # Get genes of the pathway (Entrez IDs)
         path_genes = list(self.path[self.path['external_id'] == path_id]['entrez_gene_ids'])[0]
@@ -701,7 +694,7 @@ class run(object):
         except Exception as e:
             print(e)
             traceback.print_exc()
-            return
+            return {'errorMsg': 'Something went wrong while creating the network.'}
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
         path_name = list(path_info['Pathway name'])[0]
@@ -729,7 +722,7 @@ class run(object):
             html = fig.to_html(full_html=True, include_plotlyjs='cdn')
         except Exception as e:
             print(e)
-            return
+            return {'errorMsg': 'Something went wrong while creating the network.'}
 
         return html
 
