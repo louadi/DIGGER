@@ -86,4 +86,4 @@ Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumb
 
 
 ## Contact us
-Elias Albrecht: Elias.Albrecht@campus.lmu.de  
+Elias Albrecht: elias.albrecht@tum.de  

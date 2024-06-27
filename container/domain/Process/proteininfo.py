@@ -98,4 +98,6 @@ def Protein_structure(ID, exons, domains, path, trID, exons_in_interface):
     ax2.title.set_position([.5, -0.5])
 
     fig.savefig(path + trID, bbox_inches='tight')
+    plt.clf()
+    plt.close(fig)
     return
