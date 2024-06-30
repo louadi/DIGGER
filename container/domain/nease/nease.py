@@ -145,8 +145,8 @@ class run(object):
                 try:
 
                     print("Using Whippet output")
-                    # data = input_data[input_data['DeltaPsi'] >= min_delta]
-                    data = input_data
+                    data = input_data[input_data['DeltaPsi'] >= min_delta]
+                    # data = input_data
                     if len(data) == 0:
                         raise ValueError('No significant events found in the input data.')
                     # data = data.rename_axis('Gene ID').reset_index()
