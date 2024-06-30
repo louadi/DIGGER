@@ -115,7 +115,7 @@ class run(object):
             Join = network[organism]
 
             if input_type == 'MAJIQ':
-
+                print("Using MAJIQ output")
                 # Processing Majiq output
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected = process_MAJIQ(input_data,
                                                                                                     self.mapping,
@@ -127,7 +127,7 @@ class run(object):
                     self.summary['error'] = 'Found no overlap with protein domains.'
 
             elif input_type == 'Standard':
-
+                print("using Standard output")
                 try:
                     self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
                         input_data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame,
@@ -142,35 +142,41 @@ class run(object):
                                      'to the correct genome build (i.e. hg38 (GRCh38) in human).')
 
             elif input_type == 'Whippet':
-
                 try:
-                    data = input_data[input_data['DeltaPsi'] >= 0.90]
-                    data = data.rename_axis('Gene ID').reset_index()
-                    data['tmp'] = data['Node'].apply(lambda x: x.split(':')[1])
+
+                    print("Using Whippet output")
+                    # data = input_data[input_data['DeltaPsi'] >= min_delta]
+                    data = input_data
+                    if len(data) == 0:
+                        raise ValueError('No significant events found in the input data.')
+                    # data = data.rename_axis('Gene ID').reset_index()
+                    data = data.rename(columns={'Gene': 'Gene ID', 'DeltaPsi': 'dPSI'})
+                    data['tmp'] = data['Coord'].apply(lambda x: x.split(':')[1])
 
                     data['start'] = data['tmp'].apply(lambda x: x.split('-')[0])
                     data['end'] = data['tmp'].apply(lambda x: x.split('-')[1])
-                    data = data[['Gene ID', 'start', 'end', 'DeltaPsi']]
-
-                    self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
-                        data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
+                    data = data[['Gene ID', 'start', 'end', 'dPSI']]
+                    print(data.head())
 
                 except:
                     raise ValueError('Invalid file format! Try to use the Standard input')
+
+                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
+                    data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
             elif input_type == 'rmats':
 
                 try:
-
+                    print("Using rMATS output")
                     data = input_data[input_data['FDR'] <= p_value_cutoff]
                     data = data[['GeneID', 'exonStart_0base', 'exonEnd', 'IncLevelDifference']]
                     data['GeneID'] = data['GeneID'].apply(lambda x: x.split('.')[0])
 
-                    self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
-                        data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
-
                 except:
                     raise ValueError('Invalid file format! Try to use the Standard input')
+
+                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
+                    data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
             elif input_type == 'DEXSeq':
 
@@ -178,19 +184,18 @@ class run(object):
                     data = input_data[input_data['padj'] <= p_value_cutoff]
                     data = data[[data.columns[1], 'genomicData.start', 'genomicData.end', 'log2fold_control_case']]
                     print('proceding with log2fold threshold: ' + str(min_delta))
-                    self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
-                        data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
-
                 except:
                     raise ValueError('Invalid file format! Try to use the Standard input')
+
+                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
+                    data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
             elif input_type == 'Spycone':
 
                 try:
 
                     self.data, self.spliced_genes = process_spycone(input_data, self.mapping)
-
-                    #spycone only uses DDI for now
+                    # spycone only uses DDI for now
                     self.only_DDIs = True
 
                 except:
