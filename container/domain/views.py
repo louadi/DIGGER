@@ -782,10 +782,10 @@ def setup_nease(request):
         }
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:
-        print("outer exception")
         print(e)
         traceback.print_exc()
-        context['error_msg'] = str(e)
+        context['error_msg'] = ("There was an error processing the input file. Please check the selected parameters "
+                                "and try again. If the problem persists, please contact us.")
     return render(request, 'setup/nease_setup.html', context)
 
 

@@ -110,6 +110,8 @@ class run(object):
                 print(e)
             if not self.confidences:
                 self.confidences = ['original']
+            else:
+                self.confidences.append('original')
             network[organism].remove_edges_from([x for x in network[organism].edges(data=True)
                                                  if x[2]['confidence'] not in self.confidences])
             Join = network[organism]
@@ -319,7 +321,9 @@ class run(object):
         """
 
         if len(self.data) == 0:
+            # return empty dataframe
             print('Processing failed')
+            return pd.DataFrame()
 
         # elif self.organism=="Mouse":
         #         #no visualization available for mouse in DIGGER
@@ -342,9 +346,9 @@ class run(object):
 
         if self.only_DDIs:
             print('You ran NEASE with the option:  only_DDIs=True. No ELM data available.')
+            return pd.DataFrame()
 
         elif self.elm_affected.empty:
-
             print('No known linear motif are affected by AS')
 
         else:
@@ -366,7 +370,6 @@ class run(object):
             print('You ran NEASE with the option: only_DDIs=True. No pdb data available.')
 
         elif self.pdb_affected.empty:
-
             print('No residue from the PDB database motif are affected by AS')
 
         else:
@@ -374,8 +377,6 @@ class run(object):
                 columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
             # Convert IDs to names
             c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
-            print(pdb_affected['Co-resolved interactions'].dtype)
-            print(type(self.mapping))
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions'].apply(c)
 
             a = lambda x: ", ".join([str(val) for val in x])
@@ -398,6 +399,7 @@ class run(object):
         """
         if len(self.data) == 0:
             print('Processing failed')
+            return pd.DataFrame()
         elif len(self.interacting_domains) == 0:
             print('No affected edges identified.')
         else:
