@@ -136,11 +136,11 @@ def pathway_info(events, pathway, run_id):
         pathway_info_table.to_csv(f"{data_path}{run_id}_path_{pathway}.csv")
     except ValueError as e:
         traceback.print_exc()
-        print(e)
-        pathway_info_table = pd.DataFrame(
-            columns=["Spliced genes", "NCBI gene ID", "Gene is known to be in the pathway",
-                     "Percentage of edges associated to the pathway", "p_value", "Affected binding (edges)",
-                     "Affected binding (NCBI)"])
+        pathway_info_table = {'errorMsg': str(e)}
+        # pathway_info_table = pd.DataFrame(
+        #     columns=["Spliced genes", "NCBI gene ID", "Gene is known to be in the pathway",
+        #              "Percentage of edges associated to the pathway", "p_value", "Affected binding (edges)",
+        #              "Affected binding (NCBI)"])
     return pathway_info_table
 
 
@@ -148,9 +148,13 @@ def visualise_path(events, pathway, k):
     events, _ = events
     try:
         pathway_visualisation = events.Vis_path(pathway, k=k)
-    except ValueError as e:
-        print(e)
-        pathway_visualisation = {'error_msg': 'Something went wrong while visualising the pathway'}
+    # except ValueError as e:
+    #     print(e)
+    #     pathway_visualisation = {'error_msg': 'Something went wrong while visualising the pathway'}
+    except Exception as e:
+        traceback.print_exc()
+        # add only the message of the error, not the error itself
+        pathway_visualisation = {'errorMsg': str(e)}
     return pathway_visualisation
 
 

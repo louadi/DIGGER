@@ -145,7 +145,7 @@ class run(object):
                 try:
 
                     print("Using Whippet output")
-                    data = input_data[input_data['DeltaPsi'] >= min_delta]
+                    data = input_data[abs(input_data['DeltaPsi']) >= min_delta]
                     # data = input_data
                     if len(data) == 0:
                         raise ValueError('No significant events found in the input data.')
@@ -374,6 +374,8 @@ class run(object):
                 columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
             # Convert IDs to names
             c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
+            print(pdb_affected['Co-resolved interactions'].dtype)
+            print(type(self.mapping))
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions'].apply(c)
 
             a = lambda x: ", ".join([str(val) for val in x])
@@ -585,14 +587,14 @@ class run(object):
         '''
 
         if self.data.empty:
-            return {'errorMsg': 'Processing failed'}
+            raise ValueError('Processing failed')
         elif self.interacting_domains.empty:
-            return {'errorMsg': 'No affected edges identified.'}
+            raise ValueError('No affected edges identified.')
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
 
         if len(path_info) == 0:
-            return {'errorMsg': 'No pathway with the given ID found.'}
+            raise ValueError('No pathway with the given ID found.')
 
         else:
             # run enrichment
@@ -600,7 +602,7 @@ class run(object):
                                            self.only_DDIs)
 
             if len(enrich) == 0:
-                return {'errorMsg': 'No enrichment or genes found for the selected pathway.'}
+                raise ValueError('No enrichment or genes found for the selected pathway.')
             else:
                 return enrich.sort_values(['p_value']).reset_index(drop=True)
 
@@ -657,14 +659,14 @@ class run(object):
         k = float(k)
 
         if self.data.empty:
-            return {'errorMsg': 'Processing failed'}
+            raise ValueError('Processing failed')
         elif self.interacting_domains.empty:
-            return {'errorMsg': 'No affected edges identified.'}
+            raise ValueError('No affected edges identified.')
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
 
         if len(path_info) == 0:
-            return {'errorMsg': 'No pathway with the given ID found.'}
+            raise ValueError('No pathway with the given ID found.')
 
         path_name = list(path_info['Pathway name'])[0]
         print('Enrichment of the pathway: ' + path_name + '.\n')
@@ -672,12 +674,15 @@ class run(object):
         print('\n')
         # run enrichment
 
-        enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                                    self.only_DDIs)
+        try:
+            enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
+                                                        self.only_DDIs)
+        except:
+            traceback.print_exc()
 
         if len(enrich) == 0:
             # TODO: return this message to the user
-            return {'errorMsg': 'No enrichment or genes found for the selected pathway.'}
+            raise ValueError('No enrichment or genes found for the selected pathway.')
 
         # Get genes of the pathway (Entrez IDs)
         path_genes = list(self.path[self.path['external_id'] == path_id]['entrez_gene_ids'])[0]
@@ -699,7 +704,7 @@ class run(object):
         except Exception as e:
             print(e)
             traceback.print_exc()
-            return {'errorMsg': 'Something went wrong while creating the network.'}
+            raise ValueError('Something went wrong while creating the network.')
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
         path_name = list(path_info['Pathway name'])[0]
@@ -727,7 +732,7 @@ class run(object):
             html = fig.to_html(full_html=True, include_plotlyjs='cdn')
         except Exception as e:
             print(e)
-            return {'errorMsg': 'Something went wrong while creating the network.'}
+            raise ValueError('Something went wrong while creating the network.')
 
         return html
 

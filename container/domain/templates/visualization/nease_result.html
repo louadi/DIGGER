@@ -147,7 +147,11 @@
 
         <!-- Tab content -->
         <div class="tab-content" id="v-pills-tabContent">
-          <!-- Overview content -->
+         <div id="visFail" class="alert alert-danger" hidden="">
+                There was an error. Please try another pathway and contact us
+                if the problem persists.
+          </div>
+            <!-- Overview content -->
           <div class="tab-pane fade show active card shadow rounded" id="v-pills-overview" role="tabpanel"
                aria-labelledby="v-pills-overview-tab">
             <div class="card-body">
@@ -345,10 +349,7 @@
           <div id="visWarn" class="alert alert-warning" hidden="">
                 This will take a while to load. Please be patient.
           </div>
-          <div id="visFail" class="alert alert-danger" hidden="">
-                There was an error when trying to visualise the pathway. Please try another pathway and contact us
-                if the problem persists.
-          </div>
+
           <div class="tab-pane fade show card shadow rounded" id="v-pills-vis-path" role="tabpanel"
                aria-labelledby="v-pills-exons-tab">
 
@@ -487,6 +488,7 @@
         });
     }
 
+    /*
     function analysePathway() {
         $('#anal_pathway').click(function () {
           pathway = $('#pathwayAnal').val();
@@ -505,7 +507,9 @@
               $('#pathwayDownloadLink').attr('href', `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv');
 
           }).fail(function() {
-              alert("An error occurred while processing your request.");
+              // get the error message from the server
+              $('visFail').textContent = data.errorMsg;
+              $('visFail').hidden = false;
               // enable the input fields and button
               $('#pathwayAnal').prop("disabled", false);
               $('#anal_pathway').prop("disabled", false);
@@ -515,6 +519,54 @@
 
         })
 
+    }
+    */
+
+    //rewrite analysePathway with JS
+    function analysePathway() {
+      document.getElementById('anal_pathway').addEventListener('click', () => {
+        const pathway = document.getElementById('pathwayAnal').value;
+        document.getElementById('pathwayAnal').disabled = true;
+        document.getElementById('anal_pathway').disabled = true;
+        document.getElementsByClassName('spinner-border')[1].style.display = 'inline-block';
+
+
+        const url = new URL("nease_analysis/extra_functions", window.location.origin + window.location.pathname)
+        url.searchParams.append('runId', runId);
+        url.searchParams.append('pathway', pathway);
+        url.searchParams.append('func', 'pathway')
+
+        fetch(url)
+            .then(response => {
+                if (response.status === 400) {
+                    return response.json().then(err => {
+                        throw new Error(err.errorMsg);
+                    });
+                }
+                return response.text();
+            })
+            .then(table => {
+                const pathwayTable = document.getElementById('pathway_result');
+                pathwayTable.innerHTML = table;
+                $(`#${tableNameId}`).DataTable({
+                    "order": [[4, "asc"]]
+                });
+                document.getElementById('pathwayAnal').disabled = false;
+                document.getElementById('anal_pathway').disabled = false;
+                document.getElementById('spinner-border').style.display = 'none';
+                document.getElementById('pathway_download_button').style.display = 'block';
+                document.getElementById('pathwayDownloadLink').href = `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv';
+            })
+            .catch(error => {
+                document.getElementById('visFail').textContent = error.message;
+                document.getElementById('visFail').hidden = false;
+                document.getElementById('pathwayAnal').disabled = false;
+                document.getElementById('anal_pathway').disabled = false;
+                document.getElementsByClassName('spinner-border')[1].style.display = 'none';
+            });
+
+
+      })
     }
 
     function visualisePath() {
@@ -539,9 +591,12 @@
 
             fetch(url)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                    if (response.status === 400) {
+                      return response.json().then(err => {
+                          throw new Error(err.errorMsg);
+                      });
                     }
+                    console.log(response)
                     return response.text();
                 })
                 .then(html => {
@@ -560,6 +615,7 @@
 
                 })
                 .catch(error => {
+                    document.getElementById('visFail').textContent = error.message;
                     // Show the visFail div
                     document.getElementById('visFail').hidden = false;
                     // Enable the input fields and button

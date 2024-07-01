@@ -822,10 +822,13 @@ def nease_extra_functions(request):
     except Exception as e:
         traceback.print_exc()
         return HttpResponse(f"Error: {str(e)}", status=500)
+
     if isinstance(out_table, pd.DataFrame):
         return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
+    elif isinstance(out_table, str):
+        return HttpResponse(out_table)
     else:
-        return JsonResponse(out_table, status=500)
+        return JsonResponse(out_table, status=400)
 
 
 def get_organisms(request):
