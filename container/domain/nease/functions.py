@@ -367,7 +367,7 @@ def extract_subnetwork(path_genes,
                        significant):
     # Affected_genes: genes with lost/gained interaction in the pathway
     # all_spliced_genes: all genes affected with splicing
-    all_spliced_genes = [Entrez_to_name(x, mapping) for x in all_spliced_genes]
+    all_spliced_genes = [Entrez_to_name(x, mapping, filter_col='Gene stable ID') for x in all_spliced_genes]
 
     # Extract the pathway module for the complete PPI
     # We would like to visualize the pathway with affected edges:
@@ -419,15 +419,15 @@ def extract_subnetwork(path_genes,
         node_info = Entrez_to_name(node, mapping)
         node_trace['text'] += tuple([node_info])
 
-        if not node in path_genes:
-            #Node not in pathway
+        if node not in path_genes:
+            # Node not in pathway
             color = 'orange'
             if node in significant:
                 size = 50
             else:
                 size = 30
 
-        elif int(node) in all_spliced_genes:
+        elif node_info in all_spliced_genes:
             # spliced and part of the pathway
             color = 'red'
             if node in significant:
@@ -455,7 +455,6 @@ def extract_subnetwork(path_genes,
         if affected_graph.has_edge(*edge):
             colored_edge_trace['x'] += tuple([x0, x1, None])
             colored_edge_trace['y'] += tuple([y0, y1, None])
-
 
         else:
             edge_trace['x'] += tuple([x0, x1, None])

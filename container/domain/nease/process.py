@@ -432,15 +432,14 @@ def get_interfaces(data, nease_data, min_delta=.05, overlap_cal=True):
 
     return elm_mapped, pdb_mapped
 
-
-# Functions to convert IDs 
-def Entrez_to_name(gene, mapping=None, mapping_dict=None):
+# Functions to convert IDs
+def Entrez_to_name(gene, mapping=None, mapping_dict=None, filter_col='NCBI gene ID'):
     try:
         # make it backwards compatibale with other instances in the code but still enable fast lookups
         if isinstance(mapping, pd.DataFrame):
             # make sure gene is a string as well as the mapping
             gene = str(gene)
-            str_map = mapping['NCBI gene ID'].astype(str)
+            str_map = mapping[filter_col].astype(str)
             name = mapping[str_map == gene]['Gene name'].unique()
             # name = mapping[mapping['NCBI gene ID'] == gene]['Gene name'].unique()
         else:
@@ -457,6 +456,7 @@ def Entrez_to_name(gene, mapping=None, mapping_dict=None):
         return name[0] if isinstance(mapping, pd.DataFrame) else name
 
     except Exception:
+        print("couldn't convert:", gene, "mapping is:", type(mapping))
         return gene
 
 

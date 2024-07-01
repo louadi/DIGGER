@@ -681,9 +681,9 @@ class run(object):
                                                         self.only_DDIs)
         except:
             traceback.print_exc()
+            enrich = pd.DataFrame()
 
         if len(enrich) == 0:
-            # TODO: return this message to the user
             raise ValueError('No enrichment or genes found for the selected pathway.')
 
         # Get genes of the pathway (Entrez IDs)
