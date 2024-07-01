@@ -1,4 +1,5 @@
 import pickle
+import traceback
 
 import numpy as np
 import pandas as pd
@@ -130,15 +131,16 @@ def pathway_info(events, pathway, run_id):
     try:
         pathway_info_table = events.path_analysis(pathway)
         if not isinstance(pathway_info_table, pd.DataFrame) or len(pathway_info_table) == 0:
-            raise ValueError("not found")
+            return pathway_info_table
         print("Table is:", len(pathway_info_table))
         pathway_info_table.to_csv(f"{data_path}{run_id}_path_{pathway}.csv")
     except ValueError as e:
-        print(e)
-        pathway_info_table = pd.DataFrame(
-            columns=["Spliced genes", "NCBI gene ID", "Gene is known to be in the pathway",
-                     "Percentage of edges associated to the pathway", "p_value", "Affected binding (edges)",
-                     "Affected binding (NCBI)"])
+        traceback.print_exc()
+        pathway_info_table = {'errorMsg': str(e)}
+        # pathway_info_table = pd.DataFrame(
+        #     columns=["Spliced genes", "NCBI gene ID", "Gene is known to be in the pathway",
+        #              "Percentage of edges associated to the pathway", "p_value", "Affected binding (edges)",
+        #              "Affected binding (NCBI)"])
     return pathway_info_table
 
 
@@ -146,11 +148,13 @@ def visualise_path(events, pathway, k):
     events, _ = events
     try:
         pathway_visualisation = events.Vis_path(pathway, k=k)
-    except ValueError as e:
-        print(e)
-        pathway_visualisation = None
-    if pathway_visualisation is None:
-        raise Exception("Pathway not found")
+    # except ValueError as e:
+    #     print(e)
+    #     pathway_visualisation = {'error_msg': 'Something went wrong while visualising the pathway'}
+    except Exception as e:
+        traceback.print_exc()
+        # add only the message of the error, not the error itself
+        pathway_visualisation = {'errorMsg': str(e)}
     return pathway_visualisation
 
 

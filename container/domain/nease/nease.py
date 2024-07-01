@@ -110,12 +110,14 @@ class run(object):
                 print(e)
             if not self.confidences:
                 self.confidences = ['original']
+            else:
+                self.confidences.append('original')
             network[organism].remove_edges_from([x for x in network[organism].edges(data=True)
                                                  if x[2]['confidence'] not in self.confidences])
             Join = network[organism]
 
             if input_type == 'MAJIQ':
-
+                print("Using MAJIQ output")
                 # Processing Majiq output
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected = process_MAJIQ(input_data,
                                                                                                     self.mapping,
@@ -127,7 +129,7 @@ class run(object):
                     self.summary['error'] = 'Found no overlap with protein domains.'
 
             elif input_type == 'Standard':
-
+                print("using Standard output")
                 try:
                     self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
                         input_data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame,
@@ -142,35 +144,41 @@ class run(object):
                                      'to the correct genome build (i.e. hg38 (GRCh38) in human).')
 
             elif input_type == 'Whippet':
-
                 try:
-                    data = input_data[input_data['DeltaPsi'] >= 0.90]
-                    data = data.rename_axis('Gene ID').reset_index()
-                    data['tmp'] = data['Node'].apply(lambda x: x.split(':')[1])
+
+                    print("Using Whippet output")
+                    data = input_data[abs(input_data['DeltaPsi']) >= min_delta]
+                    # data = input_data
+                    if len(data) == 0:
+                        raise ValueError('No significant events found in the input data.')
+                    # data = data.rename_axis('Gene ID').reset_index()
+                    data = data.rename(columns={'Gene': 'Gene ID', 'DeltaPsi': 'dPSI'})
+                    data['tmp'] = data['Coord'].apply(lambda x: x.split(':')[1])
 
                     data['start'] = data['tmp'].apply(lambda x: x.split('-')[0])
                     data['end'] = data['tmp'].apply(lambda x: x.split('-')[1])
-                    data = data[['Gene ID', 'start', 'end', 'DeltaPsi']]
-
-                    self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
-                        data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
+                    data = data[['Gene ID', 'start', 'end', 'dPSI']]
+                    print(data.head())
 
                 except:
                     raise ValueError('Invalid file format! Try to use the Standard input')
+
+                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
+                    data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
             elif input_type == 'rmats':
 
                 try:
-
+                    print("Using rMATS output")
                     data = input_data[input_data['FDR'] <= p_value_cutoff]
                     data = data[['GeneID', 'exonStart_0base', 'exonEnd', 'IncLevelDifference']]
                     data['GeneID'] = data['GeneID'].apply(lambda x: x.split('.')[0])
 
-                    self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
-                        data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
-
                 except:
                     raise ValueError('Invalid file format! Try to use the Standard input')
+
+                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
+                    data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
             elif input_type == 'DEXSeq':
 
@@ -178,19 +186,18 @@ class run(object):
                     data = input_data[input_data['padj'] <= p_value_cutoff]
                     data = data[[data.columns[1], 'genomicData.start', 'genomicData.end', 'log2fold_control_case']]
                     print('proceding with log2fold threshold: ' + str(min_delta))
-                    self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
-                        data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
-
                 except:
                     raise ValueError('Invalid file format! Try to use the Standard input')
+
+                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
+                    data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
 
             elif input_type == 'Spycone':
 
                 try:
 
                     self.data, self.spliced_genes = process_spycone(input_data, self.mapping)
-
-                    #spycone only uses DDI for now
+                    # spycone only uses DDI for now
                     self.only_DDIs = True
 
                 except:
@@ -314,7 +321,9 @@ class run(object):
         """
 
         if len(self.data) == 0:
+            # return empty dataframe
             print('Processing failed')
+            return pd.DataFrame()
 
         # elif self.organism=="Mouse":
         #         #no visualization available for mouse in DIGGER
@@ -337,9 +346,9 @@ class run(object):
 
         if self.only_DDIs:
             print('You ran NEASE with the option:  only_DDIs=True. No ELM data available.')
+            return pd.DataFrame()
 
         elif self.elm_affected.empty:
-
             print('No known linear motif are affected by AS')
 
         else:
@@ -361,7 +370,6 @@ class run(object):
             print('You ran NEASE with the option: only_DDIs=True. No pdb data available.')
 
         elif self.pdb_affected.empty:
-
             print('No residue from the PDB database motif are affected by AS')
 
         else:
@@ -391,6 +399,7 @@ class run(object):
         """
         if len(self.data) == 0:
             print('Processing failed')
+            return pd.DataFrame()
         elif len(self.interacting_domains) == 0:
             print('No affected edges identified.')
         else:
@@ -580,27 +589,22 @@ class run(object):
         '''
 
         if self.data.empty:
-            print('Processing failed')
+            raise ValueError('Processing failed')
         elif self.interacting_domains.empty:
-            print('No affected edges identified.')
+            raise ValueError('No affected edges identified.')
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
 
         if len(path_info) == 0:
-            print('No pathway with the given ID found.')
+            raise ValueError('No pathway with the given ID found.')
 
         else:
-            path_name = list(path_info['Pathway name'])[0]
-            print('Enrichment of the pathway: ' + path_name + '.\n')
-            print('Overall p_value: ', list(path_info['p_value'])[0])
-            print('\n')
             # run enrichment
             enrich, _ = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
                                            self.only_DDIs)
 
             if len(enrich) == 0:
-                print('No enrichment or genes found for the selected pathway.')
-                return
+                raise ValueError('No enrichment or genes found for the selected pathway.')
             else:
                 return enrich.sort_values(['p_value']).reset_index(drop=True)
 
@@ -657,15 +661,14 @@ class run(object):
         k = float(k)
 
         if self.data.empty:
-            print('Processing failed')
+            raise ValueError('Processing failed')
         elif self.interacting_domains.empty:
-            print('No affected edges identified.')
+            raise ValueError('No affected edges identified.')
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
 
         if len(path_info) == 0:
-            print('No pathway with the given ID found.')
-            return
+            raise ValueError('No pathway with the given ID found.')
 
         path_name = list(path_info['Pathway name'])[0]
         print('Enrichment of the pathway: ' + path_name + '.\n')
@@ -673,13 +676,15 @@ class run(object):
         print('\n')
         # run enrichment
 
-        enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                                    self.only_DDIs)
+        try:
+            enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
+                                                        self.only_DDIs)
+        except:
+            traceback.print_exc()
 
         if len(enrich) == 0:
             # TODO: return this message to the user
-            print('No enrichment or genes found for the selected pathway.')
-            return
+            raise ValueError('No enrichment or genes found for the selected pathway.')
 
         # Get genes of the pathway (Entrez IDs)
         path_genes = list(self.path[self.path['external_id'] == path_id]['entrez_gene_ids'])[0]
@@ -701,7 +706,7 @@ class run(object):
         except Exception as e:
             print(e)
             traceback.print_exc()
-            return
+            raise ValueError('Something went wrong while creating the network.')
 
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
         path_name = list(path_info['Pathway name'])[0]
@@ -729,7 +734,7 @@ class run(object):
             html = fig.to_html(full_html=True, include_plotlyjs='cdn')
         except Exception as e:
             print(e)
-            return
+            raise ValueError('Something went wrong while creating the network.')
 
         return html
 

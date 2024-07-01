@@ -43,6 +43,7 @@ def filter_by_ddi(ddi_graph, ppis):
         entrez_only = [edge[0].split("/")[0], edge[1].split("/")[0]]
         entrez_only_ordered = tuple(sorted(entrez_only))
         ddi_supported_ppis.add(entrez_only_ordered)
+    print(len(ddi_supported_ppis))
     return ppis & ddi_supported_ppis
 
 

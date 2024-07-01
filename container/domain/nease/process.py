@@ -89,7 +89,8 @@ def process_standard(data,
                 data[columns[2]] = data[columns[2]].astype(int)
         except:
             raise ValueError(
-                'Could not find exons coordinates. Please make sure that the second column corresponds to the exon start and the third to the exon end (hg38).')
+                'Could not find exons coordinates. Please make sure that the second column corresponds to the exon '
+                'start and the third to the exon end (hg38).')
 
     data['symetric'] = data.apply(lambda x: abs(x[columns[1]] - x[columns[2]]) % 3 == 0, axis=1)
 
@@ -108,7 +109,8 @@ def process_standard(data,
     if only_divisible_by_3:
         data = data[data.symetric]
         print(
-            "You selected to remove all exons that are not divisible by 3 [(abs(start-end)+1) / 3].\nIf you would like to change this option, and include all exons, please change the parameter only_divisible_by_3 to False.")
+            "You selected to remove all exons that are not divisible by 3 [(abs(start-end)+1) / 3].\nIf you would like "
+            "to change this option, and include all exons, please change the parameter only_divisible_by_3 to False.")
 
     if remove_non_in_frame:
         # parse gene coord as one set
@@ -120,7 +122,9 @@ def process_standard(data,
         data = data.drop(columns=['coord'])
 
         print(
-            "\nYou selected to remove all exons that are predicted to disturb the ORF or known to result in a non-coding gene.\nIf you would like to change this option and include all exons, please change the parameter remove_non_in_frame to False. ")
+            "\nYou selected to remove all exons that are predicted to disturb the ORF or known to result in a "
+            "non-coding gene.\nIf you would like to change this option and include all exons, please change the "
+            "parameter remove_non_in_frame to False. ")
 
     filtred = initial - len(data)
     if filtred != 0:
@@ -135,7 +139,7 @@ def process_standard(data,
         elm_affected, pdb_affected = get_interfaces(data, nease_data, min_delta, overlap_cal=True)
 
     if len(mapping_tb) == 0:
-        return []
+        raise ValueError("None of the exons map to annotated exons (Ensembl Exons).")
 
     try:
         #try to get the delta PSI from the user input
@@ -434,7 +438,11 @@ def Entrez_to_name(gene, mapping=None, mapping_dict=None):
     try:
         # make it backwards compatibale with other instances in the code but still enable fast lookups
         if isinstance(mapping, pd.DataFrame):
-            name = mapping[mapping['NCBI gene ID'] == gene]['Gene name'].unique()
+            # make sure gene is a string as well as the mapping
+            gene = str(gene)
+            str_map = mapping['NCBI gene ID'].astype(str)
+            name = mapping[str_map == gene]['Gene name'].unique()
+            # name = mapping[mapping['NCBI gene ID'] == gene]['Gene name'].unique()
         else:
             name = mapping_dict[str(gene)]
 
