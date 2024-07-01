@@ -438,7 +438,11 @@ def Entrez_to_name(gene, mapping=None, mapping_dict=None):
     try:
         # make it backwards compatibale with other instances in the code but still enable fast lookups
         if isinstance(mapping, pd.DataFrame):
-            name = mapping[mapping['NCBI gene ID'] == gene]['Gene name'].unique()
+            # make sure gene is a string as well as the mapping
+            gene = str(gene)
+            str_map = mapping['NCBI gene ID'].astype(str)
+            name = mapping[str_map == gene]['Gene name'].unique()
+            # name = mapping[mapping['NCBI gene ID'] == gene]['Gene name'].unique()
         else:
             name = mapping_dict[str(gene)]
 
