@@ -365,19 +365,29 @@ def extract_subnetwork(path_genes,
                        mapping,
                        affected_graph,
                        significant,
-                       entrez_name_map):
+                       entrez_name_map,
+                       organism):
     # Affected_genes: genes with lost/gained interaction in the pathway
     # all_spliced_genes: all genes affected with splicing
     ensembl_map = mapping.set_index('Gene stable ID')['NCBI gene ID'].to_dict()
-    i = 0
-    for key, value in ensembl_map.items():
-        print(key, value)
-        i += 1
-        if i == 5:
-            break
-    print(all_spliced_genes[:5])
-    all_spliced_genes = [Ensemb_to_entrez(x, mapping_dict=ensembl_map) for x in all_spliced_genes]
+    translated = set()
+    missing = set()
+    missing_flag = False
+    for gene in all_spliced_genes:
+        if gene in ensembl_map:
+            translated.add(str(ensembl_map.get(gene, gene)))
+        else:
+            missing.add(gene)
+    # look online once for missing genes
+    online_result = Ensemb_to_entrez(missing, organism)
+    print(f"Fetched {len(online_result)} of {len(missing)} missing genes online")
+    for gene in missing:
+        if gene in online_result:
+            translated.add(str(ensembl_map.get(gene, gene)))
+        else:
+            missing_flag = True
 
+    all_spliced_genes = translated
 
     # Extract the pathway module for the complete PPI
     # We would like to visualize the pathway with affected edges:
@@ -437,7 +447,7 @@ def extract_subnetwork(path_genes,
             else:
                 size = 30
 
-        elif type(all_spliced_genes[0])(node) in all_spliced_genes:
+        elif str(node) in all_spliced_genes:
             # spliced and part of the pathway
             color = 'red'
             if node in significant:
@@ -470,7 +480,7 @@ def extract_subnetwork(path_genes,
             edge_trace['x'] += tuple([x0, x1, None])
             edge_trace['y'] += tuple([y0, y1, None])
 
-    return [colored_edge_trace, node_trace, edge_trace]
+    return [colored_edge_trace, node_trace, edge_trace], missing_flag
 
 
 # plot domains stats

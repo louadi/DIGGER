@@ -390,7 +390,8 @@ class run(object):
 
             return pdb_affected[['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Co-resolved interactions symbol',
                                  'Co-resolved interactions']].reset_index(drop=True)
-        return self.pdb_affected.rename(columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
+        return self.pdb_affected.rename(
+            columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
 
     def get_edges(self):
 
@@ -700,15 +701,16 @@ class run(object):
             path_genes = ast.literal_eval(path_genes)
 
         try:
-            graph_data = extract_subnetwork(path_genes,
-                                            self.ppi,
-                                            list(enrich['NCBI gene ID'].unique()),
-                                            self.spliced_genes,
-                                            k,
-                                            self.mapping,
-                                            affected_graph,
-                                            significant,
-                                            self.entrez_name_map)
+            graph_data, missing_flag = extract_subnetwork(path_genes,
+                                                          self.ppi,
+                                                          list(enrich['NCBI gene ID'].unique()),
+                                                          self.spliced_genes,
+                                                          k,
+                                                          self.mapping,
+                                                          affected_graph,
+                                                          significant,
+                                                          self.entrez_name_map,
+                                                          self.organism)
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -719,6 +721,14 @@ class run(object):
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
         path_name = list(path_info['Pathway name'])[0]
 
+        fig_text = "<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 " \
+                     "Spliced gene and known to be part of the pathway.<br> 🟠 Spliced gene but not " \
+                     "known to be in the pathway."
+
+        if missing_flag:
+            # add a warning message to the figure text
+            fig_text += "<br>⚠️ Some genes could not be translated, network might be incomplete."
+
         fig = go.Figure(data=graph_data,
                         layout=go.Layout(
                             title=path_name,
@@ -727,9 +737,7 @@ class run(object):
                             hovermode='closest',
                             margin=dict(b=20, l=5, r=5, t=40),
                             annotations=[dict(
-                                text="<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 "
-                                     "Spliced gene and known to be part of the pathway.<br> 🟠 Spliced gene but not "
-                                     "known to be in the pathway.",
+                                text=fig_text,
                                 showarrow=False,
                                 font=dict(size=20),
                                 xref="paper", yref="paper",

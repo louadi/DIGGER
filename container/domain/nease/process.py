@@ -445,7 +445,7 @@ def Entrez_to_name(gene, mapping=None, mapping_dict=None, filter_col='NCBI gene 
             mapping_dict = dict(zip(str_map, mapping['Gene name']))
             name = mapping_dict[gene]
         else:
-            name = mapping_dict[str(gene)]
+            name = mapping_dict[int(gene)]
 
         # if not name or len(name) == 0:
         #     # try to convert it online
@@ -458,27 +458,18 @@ def Entrez_to_name(gene, mapping=None, mapping_dict=None, filter_col='NCBI gene 
         return name
 
     except Exception:
-        print("couldn't convert:", gene, "mapping is:", type(mapping_dict))
+        # print("couldn't convert:", gene, "mapping is:", type(mapping_dict))
         return gene
 
 
-def Ensemb_to_entrez(gene, mapping_dict):
-    try:
-        entrez = mapping_dict.get(gene)
-
-        # if not entrez:
-        #     # try to convert it online
-        #     print("going online")
-        #     mg = mygene.MyGeneInfo()
-        #     out = mg.querymany(gene, scopes="ensembl.gene", fields='entrezgene', species="human", verbose=False,
-        #                        as_dataframe=True,
-        #                        df_index=True)
-        #     entrez = out['entrezgene']
-
-        return int((entrez[0]))
-
-    except:
-        return gene
+def Ensemb_to_entrez(genes, organsim='human'):
+    mg = mygene.MyGeneInfo()
+    out = mg.querymany(genes, scopes="ensembl.gene", fields='entrezgene', species=organsim, verbose=False)
+    translated = {}
+    for result in out:
+        if 'entrezgene' in result:
+            translated[result['query']] = result['entrezgene']
+    return translated
 
 
 def Ensemb_to_name(gene, mapping):
