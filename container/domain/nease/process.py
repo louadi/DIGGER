@@ -445,7 +445,8 @@ def Entrez_to_name(gene, mapping=None, mapping_dict=None, filter_col='NCBI gene 
             mapping_dict = dict(zip(str_map, mapping['Gene name']))
             name = mapping_dict[gene]
         else:
-            name = mapping_dict[int(gene)]
+            # I really don't know why the mapping changes the type of its keys, but here we go
+            name = mapping_dict[type(list(mapping_dict.keys())[0])(gene)]
 
         # if not name or len(name) == 0:
         #     # try to convert it online
