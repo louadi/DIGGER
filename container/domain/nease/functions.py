@@ -255,7 +255,7 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
     return Enrichment.sort_values(['p_value'], ascending=True)
 
 
-def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs):
+def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs, entrez_name_map):
     # Totat degree of structural network for human (pre-computer)
     # For statistical test: edge enrichment
     ppi_set = ppi_interactions(PPI[organism])
@@ -312,11 +312,11 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs)
             _, p_value = edge_enrich(a, b, p, n)
 
             # Save results
-            spliced_genes.append(Entrez_to_name(g, mapping))
+            spliced_genes.append(Entrez_to_name(g, mapping_dict=entrez_name_map))
             spliced_genes_entrez.append(g)
             gene_association.append(g in path_genes_str)
             num.append(str(a) + '/' + str(a + b))
-            affected_edges.append((', ').join([Entrez_to_name(x, mapping) for x in edges]))
+            affected_edges.append((', ').join([Entrez_to_name(x, mapping_dict=entrez_name_map) for x in edges]))
             affected_edges_entrez.append((', ').join(edges))
             p_val.append(p_value)
 
@@ -364,10 +364,20 @@ def extract_subnetwork(path_genes,
                        k,
                        mapping,
                        affected_graph,
-                       significant):
+                       significant,
+                       entrez_name_map):
     # Affected_genes: genes with lost/gained interaction in the pathway
     # all_spliced_genes: all genes affected with splicing
-    all_spliced_genes = [Entrez_to_name(x, mapping, filter_col='Gene stable ID') for x in all_spliced_genes]
+    ensembl_map = mapping.set_index('Gene stable ID')['NCBI gene ID'].to_dict()
+    i = 0
+    for key, value in ensembl_map.items():
+        print(key, value)
+        i += 1
+        if i == 5:
+            break
+    print(all_spliced_genes[:5])
+    all_spliced_genes = [Ensemb_to_entrez(x, mapping_dict=ensembl_map) for x in all_spliced_genes]
+
 
     # Extract the pathway module for the complete PPI
     # We would like to visualize the pathway with affected edges:
@@ -416,7 +426,7 @@ def extract_subnetwork(path_genes,
         x, y = G.nodes[node]['pos']
         node_trace['x'] += tuple([x])
         node_trace['y'] += tuple([y])
-        node_info = Entrez_to_name(node, mapping)
+        node_info = Entrez_to_name(node, mapping_dict=entrez_name_map)
         node_trace['text'] += tuple([node_info])
 
         if node not in path_genes:
@@ -427,7 +437,7 @@ def extract_subnetwork(path_genes,
             else:
                 size = 30
 
-        elif node_info in all_spliced_genes:
+        elif type(all_spliced_genes[0])(node) in all_spliced_genes:
             # spliced and part of the pathway
             color = 'red'
             if node in significant:
