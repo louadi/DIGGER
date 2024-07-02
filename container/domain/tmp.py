@@ -2,6 +2,7 @@ import os.path
 import pickle
 import re
 import networkx as nx
+import mygene
 
 def load_obj(name):
     with open('data/' + name + '.pkl', 'rb') as f:
@@ -127,13 +128,20 @@ def extract_confidence(domainG):
     print(confidences)
 
 
+def Ensemb_to_entrez(genes, organsim='human'):
+    mg = mygene.MyGeneInfo()
+    out = mg.querymany(genes, scopes="ensembl.gene", fields='entrezgene', species=organsim, verbose=False)
+    translated = {}
+    for result in out:
+        if 'entrezgene' in result:
+            translated[result['query']] = result['entrezgene']
+    return translated
+
+
 if __name__ == '__main__':
-    path = "test/this/path.txt"
-    if not os.path.exists(path):
-        folders = "/".join(path.split("/")[:-1])
-        os.makedirs(folders)
-        with open(path, 'w') as f:
-            f.write("test")
+    # random ensembl genes
+    genes = ['ENSG00000058404', 'ENSG00000058435', 'ENS0000000003', 'ENS0000000004']
+    Ensemb_to_entrez(genes)
 
     # ppi_graph: nx.Graph = pickle.load(open('../domain/data/Homo sapiens[human]/DomainG.pkl', 'rb'))
     # print(len(ppi_graph.nodes))

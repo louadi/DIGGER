@@ -215,7 +215,7 @@
       <!-- submit button -->
       <div class="card-body row no-gutters align-items-center justify-content-end">
         <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
-        <div class="spinner-border m-2" role="status" style="display: none">
+        <div id="spinner" class="spinner-border m-2" role="status" style="display: none">
           <span class="sr-only">Loading...</span>
         </div>
         <button id="submit" class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
@@ -326,6 +326,8 @@
       if ((!fileInput || !fileInput.files || fileInput.files.length === 0) && !prevInput.value) {
       event.preventDefault();
       document.getElementById('noFileAlert').removeAttribute('hidden');
+      document.getElementById('loading_text').style.display = 'none';
+      document.getElementById('spinner').style.display = 'none';
       }
       else {
           document.getElementById('noFileAlert').setAttribute('hidden', '');

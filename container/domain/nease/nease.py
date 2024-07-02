@@ -103,6 +103,10 @@ class run(object):
 
             self.cutoff = p_value_cutoff
 
+            # I don't want to break anything downstream so I save it in a tmp variable
+            tmp = self.mapping['NCBI gene ID'].astype(str)
+            self.entrez_name_map = dict(zip(tmp, self.mapping['Gene name']))
+
             # preprocess data to make analysis easier
             try:
                 self.path['entrez_gene_ids'] = self.path['entrez_gene_ids'].apply(eval)
@@ -147,7 +151,8 @@ class run(object):
                 try:
 
                     print("Using Whippet output")
-                    data = input_data[abs(input_data['DeltaPsi']) >= min_delta]
+                    data = input_data[input_data['Probability'] >= 0.9]
+                    data = data[abs(data['DeltaPsi']) >= min_delta]
                     # data = input_data
                     if len(data) == 0:
                         raise ValueError('No significant events found in the input data.')
@@ -376,7 +381,7 @@ class run(object):
             pdb_affected = self.pdb_affected.rename(
                 columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
             # Convert IDs to names
-            c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
+            c = lambda x: [Entrez_to_name(gene, mapping_dict=self.entrez_name_map) for gene in list(set(x))]
             pdb_affected['Co-resolved interactions symbol'] = pdb_affected['Co-resolved interactions'].apply(c)
 
             a = lambda x: ", ".join([str(val) for val in x])
@@ -385,7 +390,8 @@ class run(object):
 
             return pdb_affected[['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Co-resolved interactions symbol',
                                  'Co-resolved interactions']].reset_index(drop=True)
-        return self.pdb_affected.rename(columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
+        return self.pdb_affected.rename(
+            columns={"symbol": "Gene name", 'entrezgene': 'Co-resolved interactions'}).copy()
 
     def get_edges(self):
 
@@ -406,7 +412,7 @@ class run(object):
 
             edges = self.interacting_domains.copy()
             # Convert IDs to names
-            c = lambda x: [Entrez_to_name(gene, self.mapping) for gene in list(set(x))]
+            c = lambda x: [Entrez_to_name(gene, mapping_dict=self.entrez_name_map) for gene in list(set(x))]
             edges['Affected binding'] = edges['Affected binding (NCBI)'].apply(c)
 
             # count number of affected PPI for every domain
@@ -601,7 +607,7 @@ class run(object):
         else:
             # run enrichment
             enrich, _ = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                           self.only_DDIs)
+                                           self.only_DDIs, self.entrez_name_map)
 
             if len(enrich) == 0:
                 raise ValueError('No enrichment or genes found for the selected pathway.')
@@ -678,12 +684,12 @@ class run(object):
 
         try:
             enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                                        self.only_DDIs)
+                                                        self.only_DDIs, self.entrez_name_map)
         except:
             traceback.print_exc()
+            enrich = pd.DataFrame()
 
         if len(enrich) == 0:
-            # TODO: return this message to the user
             raise ValueError('No enrichment or genes found for the selected pathway.')
 
         # Get genes of the pathway (Entrez IDs)
@@ -695,21 +701,33 @@ class run(object):
             path_genes = ast.literal_eval(path_genes)
 
         try:
-            graph_data = extract_subnetwork(path_genes,
-                                            self.ppi,
-                                            list(enrich['NCBI gene ID'].unique()),
-                                            self.spliced_genes,
-                                            k,
-                                            self.mapping,
-                                            affected_graph,
-                                            significant)
+            graph_data, missing_flag = extract_subnetwork(path_genes,
+                                                          self.ppi,
+                                                          list(enrich['NCBI gene ID'].unique()),
+                                                          self.spliced_genes,
+                                                          k,
+                                                          self.mapping,
+                                                          affected_graph,
+                                                          significant,
+                                                          self.entrez_name_map,
+                                                          self.organism)
         except Exception as e:
             print(e)
             traceback.print_exc()
             raise ValueError('Something went wrong while creating the network.')
 
+        print("extracted subnetwork")
+
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
         path_name = list(path_info['Pathway name'])[0]
+
+        fig_text = "<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 " \
+                     "Spliced gene and known to be part of the pathway.<br> 🟠 Spliced gene but not " \
+                     "known to be in the pathway."
+
+        if missing_flag:
+            # add a warning message to the figure text
+            fig_text += "<br>⚠️ Some genes could not be translated, network might be incomplete."
 
         fig = go.Figure(data=graph_data,
                         layout=go.Layout(
@@ -719,9 +737,7 @@ class run(object):
                             hovermode='closest',
                             margin=dict(b=20, l=5, r=5, t=40),
                             annotations=[dict(
-                                text="<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 "
-                                     "Spliced gene and known to be part of the pathway.<br> 🟠 Spliced gene but not "
-                                     "known to be in the pathway.",
+                                text=fig_text,
                                 showarrow=False,
                                 font=dict(size=20),
                                 xref="paper", yref="paper",

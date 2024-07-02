@@ -548,16 +548,17 @@
             .then(table => {
                 const pathwayTable = document.getElementById('pathway_result');
                 pathwayTable.innerHTML = table;
-                $(`#${tableNameId}`).DataTable({
+                $(`#pathway_path`).DataTable({
                     "order": [[4, "asc"]]
                 });
                 document.getElementById('pathwayAnal').disabled = false;
                 document.getElementById('anal_pathway').disabled = false;
-                document.getElementById('spinner-border').style.display = 'none';
                 document.getElementById('pathway_download_button').style.display = 'block';
+                document.getElementsByClassName('spinner-border')[1].style.display = 'none';
                 document.getElementById('pathwayDownloadLink').href = `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv';
             })
             .catch(error => {
+                console.log(error)
                 document.getElementById('visFail').textContent = error.message;
                 document.getElementById('visFail').hidden = false;
                 document.getElementById('pathwayAnal').disabled = false;

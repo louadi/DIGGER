@@ -419,7 +419,7 @@ def get_interfaces(data, nease_data, min_delta=.05, overlap_cal=True):
             pdb_mapped['dPSI'] = pdb_mapped['delta'].apply(m)
 
     # convert
-    elm_mapped['Gene name'] = elm_mapped['entrezgene'].apply(lambda x: Entrez_to_name(str(x), nease_data.mapping))
+    elm_mapped['Gene name'] = elm_mapped['entrezgene'].apply(lambda x: Entrez_to_name(str(x), nease_data.entrez_name_map))
     elm_mapped['ID'] = elm_mapped['entrezgene'].astype("str") + "/" + elm_mapped['ELMIdentifier'].astype("str")
     elm_mapped = elm_mapped[
         ['Gene name', 'entrezgene', 'Gene stable ID', 'ELMIdentifier', 'dPSI', 'ID']].drop_duplicates()
@@ -433,18 +433,19 @@ def get_interfaces(data, nease_data, min_delta=.05, overlap_cal=True):
     return elm_mapped, pdb_mapped
 
 
-# Functions to convert IDs 
-def Entrez_to_name(gene, mapping=None, mapping_dict=None):
+# Functions to convert IDs
+def Entrez_to_name(gene, mapping=None, mapping_dict=None, filter_col='NCBI gene ID'):
     try:
         # make it backwards compatibale with other instances in the code but still enable fast lookups
         if isinstance(mapping, pd.DataFrame):
-            # make sure gene is a string as well as the mapping
+            print("using df mapping")
             gene = str(gene)
-            str_map = mapping['NCBI gene ID'].astype(str)
-            name = mapping[str_map == gene]['Gene name'].unique()
-            # name = mapping[mapping['NCBI gene ID'] == gene]['Gene name'].unique()
+            str_map = mapping[filter_col].astype(str)
+            # convert mapping to dictionary
+            mapping_dict = dict(zip(str_map, mapping['Gene name']))
+            name = mapping_dict[gene]
         else:
-            name = mapping_dict[str(gene)]
+            name = mapping_dict[int(gene)]
 
         # if not name or len(name) == 0:
         #     # try to convert it online
@@ -454,27 +455,21 @@ def Entrez_to_name(gene, mapping=None, mapping_dict=None):
         #                        df_index=True)
         #     name = out['symbol']
 
-        return name[0] if isinstance(mapping, pd.DataFrame) else name
+        return name
 
     except Exception:
+        # print("couldn't convert:", gene, "mapping is:", type(mapping_dict))
         return gene
 
 
-def Ensemb_to_entrez(gene, mapping):
-    try:
-        entrez = mapping[mapping['Gene stable ID'] == gene]['NCBI gene ID'].unique()
-        if len(entrez) == 0:
-            # try to convert it online
-            mg = mygene.MyGeneInfo()
-            out = mg.querymany(gene, scopes="ensembl.gene", fields='entrezgene', species="human", verbose=False,
-                               as_dataframe=True,
-                               df_index=True)
-            entrez = out['entrezgene']
-
-        return int((entrez[0]))
-
-    except:
-        return gene
+def Ensemb_to_entrez(genes, organsim='human'):
+    mg = mygene.MyGeneInfo()
+    out = mg.querymany(genes, scopes="ensembl.gene", fields='entrezgene', species=organsim, verbose=False)
+    translated = {}
+    for result in out:
+        if 'entrezgene' in result:
+            translated[result['query']] = result['entrezgene']
+    return translated
 
 
 def Ensemb_to_name(gene, mapping):
