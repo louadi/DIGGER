@@ -406,7 +406,8 @@
   <script>
     // make a GET request to the server to get the enrichment result
     const runId = "{{ run_id }}";
-    const fileName = "{{ input_name|safe }}";
+    // if the "custom_name" variable is not none then use it as the file name
+    const fileName = "{{ custom_name|default:input_name|safe }}";
 
     const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
 
