@@ -139,10 +139,7 @@ def Ensemb_to_entrez(genes, organsim='human'):
 
 
 if __name__ == '__main__':
-    # random ensembl genes
-    genes = ['ENSG00000058404', 'ENSG00000058435', 'ENS0000000003', 'ENS0000000004']
-    Ensemb_to_entrez(genes)
-
+    pass
     # ppi_graph: nx.Graph = pickle.load(open('../domain/data/Homo sapiens[human]/DomainG.pkl', 'rb'))
     # print(len(ppi_graph.nodes))
     # ppi_graph = remove_nan_nodes(ppi_graph)

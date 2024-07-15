@@ -404,7 +404,7 @@ def get_interfaces(data, nease_data, min_delta=.05, overlap_cal=True):
             elm_mapped = elm_mapped[['Gene stable ID', 'entrezgene', 'ELMIdentifier', 'dPSI']].drop_duplicates()
 
     else:
-        # no overal: direct mapping of junctions (Majiq output)
+        # no overal: direct mapping of junctions (Majiq output) ==> only in case of Majiq output
         # already filtered by signifcant
         elm_mapped = pd.merge(nease_data.elm, data, left_on='Genomic coding start', right_on='targets')
         pdb_mapped = pd.merge(nease_data.pdb, data, left_on='Genomic coding start', right_on='targets')
@@ -419,7 +419,8 @@ def get_interfaces(data, nease_data, min_delta=.05, overlap_cal=True):
             pdb_mapped['dPSI'] = pdb_mapped['delta'].apply(m)
 
     # convert
-    elm_mapped['Gene name'] = elm_mapped['entrezgene'].apply(lambda x: Entrez_to_name(str(x), nease_data.entrez_name_map))
+    elm_mapped['Gene name'] = elm_mapped['entrezgene'].apply(
+        lambda x: Entrez_to_name(str(x), nease_data.entrez_name_map))
     elm_mapped['ID'] = elm_mapped['entrezgene'].astype("str") + "/" + elm_mapped['ELMIdentifier'].astype("str")
     elm_mapped = elm_mapped[
         ['Gene name', 'entrezgene', 'Gene stable ID', 'ELMIdentifier', 'dPSI', 'ID']].drop_duplicates()

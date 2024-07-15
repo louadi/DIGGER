@@ -742,8 +742,8 @@ def setup_nease(request):
     divisible_by_3 = request.POST.get('only_divisible_by_3', 'off') == 'on'
 
     # Run the NEASE job
-    print(f"Submitted NEASE job with params: {organism}, {database_type}, {p_value}, {rm_not_in_frame}, "
-          f"{divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
+    print(f"{time.asctime(time.localtime(time.time()))} Submitted NEASE job with params: {organism}, {database_type}, "
+          f"{p_value}, {rm_not_in_frame}, {divisible_by_3}, {min_delta}, {majiq_confidence}, {only_ddis}, {confidences}")
     context = {
         'error_msg': None
     }
