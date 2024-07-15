@@ -1,5 +1,6 @@
 import pickle
 import traceback
+from io import StringIO
 
 import numpy as np
 import pandas as pd
@@ -63,6 +64,30 @@ def run_nease(data, organism, params):
     # save events to pickle
     events.save(nease_path + run_id)
     return events, info_tables, run_id
+
+
+def file_needs_cleaning(file_obj):
+    file_obj.seek(0)
+    for line in file_obj:
+        if line.endswith(b'\t\n') or line.endswith(b'\t \n'):
+            file_obj.seek(0)
+            print(f"File {file_obj.name} needs cleaning.")
+            return True
+    # Reset the file pointer to the beginning
+    file_obj.seek(0)
+    return False
+
+
+def read_extra_spaces(file_obj):
+    cleaned_lines = []
+    for line in file_obj:
+        # Decode the line if it's bytes, strip trailing tab and space, and encode it back to bytes
+        cleaned_line = line.decode('utf-8').rstrip('\t').rstrip()
+        cleaned_lines.append(cleaned_line)
+
+    cleaned_data = '\n'.join(cleaned_lines)
+    df = pd.read_table(StringIO(cleaned_data))
+    return df
 
 
 def get_nease_events(run_id):

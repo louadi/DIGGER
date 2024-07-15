@@ -717,6 +717,7 @@ def setup_nease(request):
     # otherwise continue with new analysis
     if not request.FILES:
         return render(request, 'setup/nease_setup.html')
+
     # Get the input file and post data
     input_data = request.FILES
     if 'splicing-events-file' not in input_data:
@@ -724,6 +725,7 @@ def setup_nease(request):
 
     organism = request.POST.get('organism', 'human')
     database_type = request.POST.get('inputType', 'Standard')
+    custom_name = request.POST.get('analysis_name', None)
 
     confidences = []
     for confidence in ["high", "mid", "low"]:
@@ -750,7 +752,10 @@ def setup_nease(request):
         if input_data['splicing-events-file'].name.endswith('.json'):
             table = pd.read_json(input_data['splicing-events-file'])
         else:
-            table = pd.read_table(input_data['splicing-events-file'])
+            if not no.file_needs_cleaning(input_data['splicing-events-file']):
+                table = pd.read_table(input_data['splicing-events-file'])
+            else:
+                table = no.read_extra_spaces(input_data['splicing-events-file'])
     except Exception as e:
         print(e)
         table = None
@@ -774,6 +779,7 @@ def setup_nease(request):
 
         context = {
             'input_name': input_data['splicing-events-file'].name,
+            'custom_name': custom_name,
             **events.summary,
             **info_tables,
             'stats': run_id + ".jpg",

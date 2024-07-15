@@ -151,6 +151,7 @@ class run(object):
                 try:
 
                     print("Using Whippet output")
+                    input_data['Probability'] = input_data['Probability'].apply(float)
                     data = input_data[input_data['Probability'] >= 0.9]
                     data = data[abs(data['DeltaPsi']) >= min_delta]
                     # data = input_data
@@ -163,7 +164,6 @@ class run(object):
                     data['start'] = data['tmp'].apply(lambda x: x.split('-')[0])
                     data['end'] = data['tmp'].apply(lambda x: x.split('-')[1])
                     data = data[['Gene ID', 'start', 'end', 'dPSI']]
-                    print(data.head())
 
                 except:
                     raise ValueError('Invalid file format! Try to use the Standard input')
