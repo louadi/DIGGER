@@ -145,7 +145,8 @@ if __name__ == '__main__':
     # ppi_graph = remove_nan_nodes(ppi_graph)
     # print(len(ppi_graph.nodes))
     # pickle.dump(ppi_graph, open('../domain/data/Homo sapiens[human]/DomainG_up.pkl', 'wb'))
-
+    pdb_data = pickle.load(open('data/Homo sapiens[human]/pdb', 'rb'))
+    print(pdb_data.head())
 
     # edges_domainV = {'test': [1,2,3,4], 'original': [1,2,3,4]}
     # print(len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True)

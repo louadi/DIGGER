@@ -49,9 +49,10 @@ def gene(request, gene_ID, organism):
     return render(request, 'visualization/gene.html', context)
 
 
+# if the user inputs multiple queries, this function will handle them
 def multiple_queries(request, inputs, organism):
     print("Currently in multiple queries view")
-    # retrieve get data from the form which (for now is only gene names)
+    # retrieve get data from the form
     input_names = [x.strip() for x in inputs.split(",")]
     print(input_names)
     transcript_table = {}
@@ -638,6 +639,7 @@ def network(request):
     })
 
 
+# network level analysis
 def Multi_proteins(request, organism, job='0'):
     with open(f'{jobs_path}/{job}.txt', "rb") as fp:  # Unpickling
         inputs = pickle.load(fp)
@@ -709,6 +711,7 @@ def set_previous_analysis(request):
     return render(request, 'visualization/nease_result.html', context)
 
 
+# this does the initial nease run or loads a previous analysis
 def setup_nease(request):
     # handle previous analysis
     if request.POST.get('previousAnalysis', None):
@@ -795,6 +798,7 @@ def setup_nease(request):
     return render(request, 'setup/nease_setup.html', context)
 
 
+# extra functions for the NEASE output once the analysis is done
 def nease_extra_functions(request):
     function_name = request.GET.get('func', None)
     if not function_name:
@@ -830,13 +834,15 @@ def nease_extra_functions(request):
         return HttpResponse(f"Error: {str(e)}", status=500)
 
     if isinstance(out_table, pd.DataFrame):
-        return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS))
+        return HttpResponse(out_table.to_html(table_id=f"{function_name}_{table_name}",
+                                              **settings.TO_HTML_RESPONSIVE_PARAMETERS))
     elif isinstance(out_table, str):
         return HttpResponse(out_table)
     else:
         return JsonResponse(out_table, status=400)
 
 
+# retrieve the list of organisms for the organism selection dropdown based on the available data folders
 def get_organisms(request):
     directory_path = os.path.join(settings.PROJECT_ROOT, 'domain/data')
 
