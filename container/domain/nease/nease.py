@@ -358,6 +358,7 @@ class run(object):
 
         else:
             self.elm_affected['ELM link'] = self.elm_affected.apply(create_elm_link, axis=1)
+        # TODO: keep only ELM Identifier and integrate link into that
 
         return self.elm_affected.drop(columns=['ID', 'Affected binding (NCBI)']).reset_index(drop=True)
 

@@ -195,6 +195,7 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
 
         except Exception as e:
             print(e)
+            path_genes = []
             pass
 
         for gene in g2edges:
@@ -220,7 +221,7 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
 
                     gene_count = gene_count + 1
 
-        #  affected edges not connected to tha pathway
+        #  affected edges not connected to that pathway
         not_connected = affected_edges - connected
 
         # Join function is slow can be optimized later 
@@ -352,7 +353,11 @@ def edge_enrich(a, b, p, n):
     d = (2 * n) - p - b
 
     # retun oddsratio and pvalue from fisher exact test
-    return stats.fisher_exact([[a, b], [c, d]], alternative='greater')
+    try:
+        return stats.fisher_exact([[a, b], [c, d]], alternative='greater')
+    except ValueError:
+        print("Wrong numbers in fisher exact test")
+        return np.nan, 1.0
 
 
 # Visualization Function
