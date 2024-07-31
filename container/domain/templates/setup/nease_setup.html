@@ -281,8 +281,11 @@
     }
 
     for (let i = 0; i < data.length; i++) {
-      const template = createHtmlTemplate(data[i]);
-      appendTemplateToDiv(template, 'previousAnalyses');
+        if (!data[i]) {
+            continue;
+        }
+        const template = createHtmlTemplate(data[i]);
+        appendTemplateToDiv(template, 'previousAnalyses');
     }
 
 
