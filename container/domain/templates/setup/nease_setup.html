@@ -277,7 +277,7 @@
     const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
 
     if (data.length > 0) {
-      $('#prevAnalysisContainer').css('display', 'block');
+        document.getElementById('prevAnalysisContainer').style.display = 'block';
     }
 
     for (let i = 0; i < data.length; i++) {
