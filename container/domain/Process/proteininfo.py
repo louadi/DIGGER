@@ -26,13 +26,13 @@ def get_protein_info(ID, organism):
     (
         domains, unique, exons, text1, domainshtml, Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID,
         entrezID,
-        gene_description, exons, droped1, droped2, exons_in_interface, co_partners) = info
+        gene_description, exons, droped1, droped2, exons_in_interface, co_partners, co_partner_edges) = info
     #save Image of protein Structure
 
     Protein_structure(trID, exons, domains, images_path, trID, exons_in_interface)
 
     return (domains, unique, exons, text1, domainshtml, Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID,
-            entrezID, gene_description, exons, droped1, droped2, trID, images_path, co_partners)
+            entrezID, gene_description, exons, droped1, droped2, trID, images_path, co_partners, co_partner_edges)
 
 
 def get_protein_info2(ID):

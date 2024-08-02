@@ -18,7 +18,7 @@ COPY auto_clean.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/auto_clean.sh
 
 # Add cron job
-RUN (crontab -l ; echo "0 0 * * * /usr/local/bin/auto_clean.sh") | crontab -
+RUN (crontab -l ; echo "0 0 * * * /usr/local/bin/auto_clean.sh >> /var/log/auto_clean.log 2>&1") | crontab -
 
 # Install Python dependencies
 RUN pip install -r requirements.txt

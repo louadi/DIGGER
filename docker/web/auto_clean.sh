@@ -8,7 +8,9 @@ DELETE_AFTER=${DELETE_AFTER:-7}
 
 
 # Find and delete files in /code/nease_events directory
+echo "Found $(find /code/nease_events -type f -atime +$DELETE_AFTER | wc -l) files to delete"
 find /code/nease_events -type f -atime +$DELETE_AFTER -delete
 
 # Find and delete files in /code/run/media directory
+echo "Found $(find /code/run/media -type f -atime +$DELETE_AFTER | wc -l) files to delete"
 find /code/run/media -type f -atime +$DELETE_AFTER -delete
