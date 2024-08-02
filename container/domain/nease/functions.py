@@ -401,9 +401,9 @@ def extract_subnetwork(path_genes,
     G = nx.Graph(G)
     G.remove_nodes_from(list(nx.isolates(G)))
 
-    #Position nodes using Fruchterman-Reingold force-directed algorithm.
+    # Position nodes using Fruchterman-Reingold force-directed algorithm.
     pos = nx.spring_layout(G, k=k, iterations=100)
-    #pos = nx.kamada_kawai_layout(G)
+    # pos = nx.kamada_kawai_layout(G)
 
     # Prepare the visualization
     for n, p in pos.items():
@@ -423,6 +423,20 @@ def extract_subnetwork(path_genes,
                                 size=[],
                                 line=dict(width=0)))
 
+    colored_node_trace = go.Scatter(x=[],
+                                    y=[],
+                                    text=[],
+                                    mode='markers+text',
+                                    hoverinfo='text',
+                                    textposition='top center',
+                                    #textfont_size = 22,
+                                    marker=dict(
+                                        reversescale=True,
+                                        color=[],
+                                        size=[],
+                                        line=dict(width=0)))
+
+
     edge_trace = go.Scatter(x=[],
                             y=[],
                             mode='lines',
@@ -437,12 +451,24 @@ def extract_subnetwork(path_genes,
                                               color='red'),
                                     hoverinfo='none')
 
+    for edge in G.edges():
+
+        x0, y0 = G.nodes[edge[0]]['pos']
+        x1, y1 = G.nodes[edge[1]]['pos']
+
+        # Check if edge is affected
+        if affected_graph.has_edge(*edge):
+            colored_edge_trace['x'] += tuple([x0, x1, None])
+            colored_edge_trace['y'] += tuple([y0, y1, None])
+
+
+        else:
+            edge_trace['x'] += tuple([x0, x1, None])
+            edge_trace['y'] += tuple([y0, y1, None])
+
     for node in G.nodes():
         x, y = G.nodes[node]['pos']
-        node_trace['x'] += tuple([x])
-        node_trace['y'] += tuple([y])
         node_info = Entrez_to_name(node, mapping_dict=entrez_name_map)
-        node_trace['text'] += tuple([node_info])
 
         if node not in path_genes:
             # Node not in pathway
@@ -467,25 +493,20 @@ def extract_subnetwork(path_genes,
                 size = 50
             else:
                 size = 20
+            # check if node has a colored edge trace coming to it
+            if node in affected_graph.nodes():
+                color = '#888887'
 
-        node_trace['marker']['color'] += tuple([color])
-        node_trace['marker']['size'] += tuple([size])
+        trace_type = colored_node_trace if color != '#888' or size > 20 else node_trace
 
-    for edge in G.edges():
+        trace_type['x'] += tuple([x])
+        trace_type['y'] += tuple([y])
+        trace_type['text'] += tuple([node_info])
 
-        x0, y0 = G.nodes[edge[0]]['pos']
-        x1, y1 = G.nodes[edge[1]]['pos']
+        trace_type['marker']['color'] += tuple([color])
+        trace_type['marker']['size'] += tuple([size])
 
-        # Check if edge is affected
-        if affected_graph.has_edge(*edge):
-            colored_edge_trace['x'] += tuple([x0, x1, None])
-            colored_edge_trace['y'] += tuple([y0, y1, None])
-
-        else:
-            edge_trace['x'] += tuple([x0, x1, None])
-            edge_trace['y'] += tuple([y0, y1, None])
-
-    return [colored_edge_trace, node_trace, edge_trace], missing_flag
+    return [colored_edge_trace, node_trace, edge_trace, colored_node_trace], missing_flag
 
 
 # plot domains stats
