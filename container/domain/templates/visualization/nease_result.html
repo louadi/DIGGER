@@ -378,7 +378,8 @@
 
                       <div class="col-md-2">
                         <label for="k" data-toggle="tooltip" data-placement="top"
-                                title="Position nodes using Fruchterman-Reingold force-directed algorithm">k</label>
+                                title="Position nodes using Fruchterman-Reingold force-directed algorithm, higher
+                                 k moves nodes further apart">k</label>
                         <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
@@ -399,10 +400,17 @@
               </div>
 
               <!-- result of the pathway visualisation -->
-
+              <div id="vis_result_info" style="display: none">
+              <h5>
+              The large nodes have p-value ≤ 0.05 (affecting the pathway).<br>
+              🔴 Spliced gene and known to be part of the pathway.<br>
+              🟠 Spliced gene but not known to be in the pathway.
+              </h5>
+              </div>
               <div id="vis_result_div" class="embed-responsive embed-responsive-16by9" style="display: none">
                 <iframe id="vis_result" class="embed-responsive-item"></iframe>
               </div>
+
             </div>
           </div>
         </div>
@@ -619,6 +627,7 @@
                     document.getElementById('k').disabled = false;
                     document.getElementById('vis_pathway').disabled = false;
                     document.getElementById('spinner-vis').style.display = 'none';
+                    document.getElementById('vis_result_info').style.display = 'block';
                     // disable warning
                     document.getElementById('visWarn').hidden = false;
 

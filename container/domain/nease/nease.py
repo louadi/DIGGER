@@ -722,29 +722,46 @@ class run(object):
         path_info = self.enrichment[self.enrichment['Pathway ID'] == path_id]
         path_name = list(path_info['Pathway name'])[0]
 
-        fig_text = "<br> The large nodes have p_value<=0.05 (affecting the pathway).<br> 🔴 " \
-                     "Spliced gene and known to be part of the pathway.<br> 🟠 Spliced gene but not " \
-                     "known to be in the pathway."
+        fig_text = ""
 
         if missing_flag:
             # add a warning message to the figure text
-            fig_text += "<br>⚠️ Some genes could not be translated, network might be incomplete."
+            fig_text += "⚠️ Some genes could not be translated, network might be incomplete."
 
         fig = go.Figure(data=graph_data,
                         layout=go.Layout(
-                            title=path_name,
+                            title=f"</b>{path_name}</b>",
                             titlefont_size=16,
                             showlegend=False,
                             hovermode='closest',
                             margin=dict(b=20, l=5, r=5, t=40),
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            paper_bgcolor='white',
+                            plot_bgcolor='white',
+                            updatemenus=[dict(
+                                buttons=list([
+                                    dict(label="Show All Edges",
+                                         method="update",
+                                         args=[{"visible": [True, True, True, True]}]),
+                                    dict(label="Hide Background Edges",
+                                         method="update",
+                                         args=[{"visible": [True, False, False, True]}])
+                                ]),
+                                direction="down",
+                                showactive=True
+                            )],
                             annotations=[dict(
                                 text=fig_text,
                                 showarrow=False,
-                                font=dict(size=20),
                                 xref="paper", yref="paper",
-                                x=0.005, y=-0.002)],
-                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+                                x=0.0,
+                                y=0,
+                                xanchor='left',
+                                yanchor='bottom',
+                                font=dict(size=14)
+                            )]
+                        ))
 
         # get the html as a string
         try:
