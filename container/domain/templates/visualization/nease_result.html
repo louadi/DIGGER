@@ -82,6 +82,8 @@
   </style>
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
+  <script src="{% static "domain/pathwayTooltips.js" %}" type="text/javascript"></script>
+
 {% endblock %}
 
 {% block raw_content %}
@@ -245,8 +247,11 @@
           <div class="tab-pane fade show card shadow rounded" id="v-pills-nease_enr" role="tabpanel"
                aria-labelledby="v-pills-classic_enr-tab">
             <div class="card-body">
+            <div class="hover-trigger">
               <p class="lead text-center"><span
                   style="font-weight:bold">Edge enrichment</span></p>
+            </div>
+
 
               <div class="row justify-content-center">
                 <div class="col-md-3"></div>
@@ -434,6 +439,10 @@
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
+
+    // enable tooltips for pathway names
+    const triggers = document.querySelectorAll('.hover-trigger');
+    tooltipTransitions(triggers, "test");
 
     // format all tables to be responsive
     $(document).ready(function () {
