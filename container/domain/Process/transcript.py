@@ -33,7 +33,7 @@ def Protein_view(P_id, organism):
     i = info.get_protein_info(P_id, organism)
     if i == 0: return 0
     domains, unique_domains, exons, text1, domainshtml, Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID,\
-        entrezID, gene_description, exons, droped1, droped2, trID, p, co_partners = i
+        entrezID, gene_description, exons, droped1, droped2, trID, p, co_partners, co_partner_edges = i
 
     PPI = PPI_all[organism]
     g2d = g2d_all[organism]
@@ -43,6 +43,8 @@ def Protein_view(P_id, organism):
     if PPI.has_node(entrezID):
         g = exd.nx.Graph()
         g.add_edges_from(PPI.edges(entrezID))
+        g.add_edges_from(co_partner_edges)
+        g.add_edges_from([(entrezID, x) for x in co_partners])
 
     else:
         print('no interactions')
@@ -260,7 +262,6 @@ def table_interaction(tran_name, trID, entrezID, g, protein_with_DDI, missing_do
 
 
 def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_partners, organism):
-    print(protein_with_DDI)
     # convert N and E to dictionaries to accommodate for different confidence interactions
     N = {'original': [], 'high': [], 'mid': [], 'low': []}
     E = {'original': [], 'high': [], 'mid': [], 'low': []}
@@ -277,7 +278,7 @@ def vis_pv_node_(g, entrezID, protein_with_DDI, tran_name, missing_domain, co_pa
                     N[c].append(f'{{id: "{node}", label: "{label}", group: "{group_node(node, entrezID)}", '
                              f'physics: {physics(node, entrezID)}, source: "{source_node(node, entrezID, protein_with_DDI)}", value: "{value_node(node, entrezID)}"}},')
                 except KeyError:
-                    print(' ')
+                    print('problem with:', node)
 
             else:
                 color = ''

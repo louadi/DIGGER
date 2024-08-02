@@ -90,7 +90,7 @@ def multiple_queries(request, inputs, organism):
                 tran_name, _, _, entrez_id, _ = proc_data.tranID_convert(t_id, organism)
                 exons, _, unique_domains = proc_data.transcript(t_id, organism)
                 if find_co_partners:
-                    _, _, co_partners = exd.exon_3D(exons['Exon stable ID'].tolist(), t_id, organism)
+                    _, _, co_partners, _ = exd.exon_3D(exons['Exon stable ID'].tolist(), t_id, organism)
                     find_co_partners = False
                 id_list.append([tran_name, entrez_id, unique_domains, co_partners])
         except AttributeError:

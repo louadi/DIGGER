@@ -171,7 +171,7 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
     exons_in_interface = []
     # p1=PPI[ PPI['Transcript stable ID_x']==Ensemble_transID]
     # p2=PPI[ PPI['Transcript stable ID_y']==Ensemble_transID]
-
+    text_edges = []
     partners = []
 
     query = """
@@ -191,17 +191,43 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
     tr_2 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
 
     co_partners = []
+    partner_dict = {Ensemble_transID: pr.tranID_convert(Ensemble_transID, organism)[3]}
     if len(partners) != 0:
-        partners = list(set(partners + tr_2['Transcript stable ID_x'].unique().tolist()))
+        partners = set(partners + tr_2['Transcript stable ID_x'].unique().tolist())
 
         if len(partners) != 0:
             for x in partners:
                 try:
-                    co_partners.append(pr.tranID_convert(x, organism)[3])
+                    partner_dict[x] = pr.tranID_convert(x, organism)[3]
+                    co_partners.append(partner_dict[x])
                 except TypeError:
                     pass
 
+        # get unique exons where we extract the domains
+        unqiue_exons = set(tr_1['Exon stable ID_y'].unique().tolist() + tr_2['Exon stable ID_x'].unique().tolist() +
+                           tr_1['Exon stable ID_x'].unique().tolist())
+        query = f"""
+        SELECT "Exon stable ID", "Pfam ID"
+        FROM exons_to_domains_data_{organism}
+        WHERE "Exon stable ID" IN ({','.join([f"'{x}'" for x in unqiue_exons])})
+        """
+        domains = pd.read_sql_query(sql=text(query), con=engine)
+        exon_to_domain = domains.set_index('Exon stable ID').to_dict()['Pfam ID']
+
+        edge_tuples = set()
+        # make tuples of the partners in fashion of ((transcript_x, exon_x), (transcript_y, exon_y))
+        for idx, row in pd.concat([tr_1, tr_2]).iterrows():
+            edge_tuples.add(((partner_dict.get(row['Transcript stable ID_x'], None),
+                              exon_to_domain.get(row['Exon stable ID_x'], None)),
+                             (partner_dict.get(row['Transcript stable ID_y'], None),
+                              exon_to_domain.get(row['Exon stable ID_y'], None))))
+
+        # convert the edge tuples to strings such that we can use it in the graph
+        text_edges = [(f"{x[0][0]}/{x[0][1]}", f"{x[1][0]}/{x[1][1]}")
+                      for x in edge_tuples if all([x[0][0], x[0][1], x[1][0], x[1][1]])]
+
     co_partners = list(set(co_partners))
+    print(f"Co partners: {co_partners}")
 
     for exon_ID in exon_IDs:
         # print(exon_ID)
@@ -250,7 +276,7 @@ def exon_3D(exon_IDs, Ensemble_transID, organism):
         n = len(p1)
         N.append(n)
         if n != 0: exons_in_interface.append(exon_ID)
-    return N, exons_in_interface, co_partners
+    return N, exons_in_interface, co_partners, text_edges
 
 
 # if the input is a transcript ID:
@@ -292,7 +318,8 @@ def input_transcript(Ensemble_transID, organism):
     pd.set_option('display.max_colwidth', 1000)
 
     exon_info = exons[['Exon stable ID', 'Exon rank in transcript']]
-    n, exons_in_interface, co_partners = exon_3D(exon_info['Exon stable ID'].tolist(), Ensemble_transID, organism)
+    n, exons_in_interface, co_partners, co_partner_edges = exon_3D(exon_info['Exon stable ID'].tolist(),
+                                                                   Ensemble_transID, organism)
     exon_info.loc[:, 'Number of interaction interface mapped to the exon'] = n
 
     # print(exons_in_interface)
@@ -342,6 +369,7 @@ def input_transcript(Ensemble_transID, organism):
     droped2 = droped2[
         ['Pfam ID', 'Interactions mediated by the domain', 'Symbol', 'Summary', 'Link to other databases']]
 
-    return domains, unique_domains, exons, text1, domains.to_html(
-        escape=False), Text_nodes, text_edges, tran_name, gene_name, Ensemble_geneID, entrezID, gene_description, exons, droped1.to_html(
-        **settings.TO_HTML_PARAMETERS), droped2.to_html(**settings.TO_HTML_PARAMETERS), exons_in_interface, co_partners
+    return (domains, unique_domains, exons, text1, domains.to_html(escape=False), Text_nodes, text_edges, tran_name,
+            gene_name, Ensemble_geneID, entrezID, gene_description, exons, droped1.to_html(
+        **settings.TO_HTML_PARAMETERS), droped2.to_html(**settings.TO_HTML_PARAMETERS), exons_in_interface, co_partners,
+            co_partner_edges)
