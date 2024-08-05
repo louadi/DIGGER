@@ -5,6 +5,7 @@
 
 {% block header %}
   <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tooltips.css' %}">
 
   <style>
       .sticky-offset {
@@ -83,6 +84,7 @@
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/pathwayTooltips.js" %}" type="text/javascript"></script>
+  <!-- for the pathway tooltips -->
 
 {% endblock %}
 
@@ -247,10 +249,7 @@
           <div class="tab-pane fade show card shadow rounded" id="v-pills-nease_enr" role="tabpanel"
                aria-labelledby="v-pills-classic_enr-tab">
             <div class="card-body">
-            <div class="hover-trigger">
-              <p class="lead text-center"><span
-                  style="font-weight:bold">Edge enrichment</span></p>
-            </div>
+              <p class="lead text-center"><span style="font-weight:bold">Edge enrichment</span></p>
 
 
               <div class="row justify-content-center">
@@ -440,10 +439,6 @@
       $('[data-toggle="tooltip"]').tooltip()
     })
 
-    // enable tooltips for pathway names
-    const triggers = document.querySelectorAll('.hover-trigger');
-    tooltipTransitions(triggers, "test");
-
     // format all tables to be responsive
     $(document).ready(function () {
         $("[id$='_table']").DataTable();
@@ -490,6 +485,15 @@
                     $(`#${tableId}`).html(data);
                     $(`#${tableNameId}`).DataTable({
                       "order": [[6, "desc"]]
+                    });
+
+                    // enable tooltips for pathway names
+                    $('.tooltips').append("<span></span>");
+                    $('.tooltips:not([tooltip-position])').attr('tooltip-position','top');
+
+
+                    $(".tooltips").mouseenter(function(){
+                     $(this).find('span').empty().append($(this).attr('tooltip'));
                     });
 
                     // Re-enable the input and button, and hide the spinner
@@ -570,12 +574,13 @@
                 }
                 return response.text();
             })
-            .then(table => {
+            .then(async table => {
                 const pathwayTable = document.getElementById('pathway_result');
-                pathwayTable.innerHTML = table;
-                $(`#pathway_path`).DataTable({
+                pathwayTable.innerHTML = await table;
+                $('#pathway_result').DataTable({
                     "order": [[4, "asc"]]
                 });
+
                 document.getElementById('pathwayAnal').disabled = false;
                 document.getElementById('anal_pathway').disabled = false;
                 document.getElementById('pathway_download_button').style.display = 'block';

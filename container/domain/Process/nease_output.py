@@ -147,6 +147,11 @@ def nease_enrichment(events, databases, run_id):
     pvalues = [-np.log10(x) for x in pvalues]
     cut_off = -np.log10(events.get_p_value())
 
+    enrich_table.iloc[:, 0] = enrich_table.iloc[:, 0].apply(lambda x: f"""<p class="tooltips" 
+    tooltip="<p class='my-1'>Inspect {x}:</p> 
+    <button class='btn btn-secondary'>Analyse</button> <button class='btn btn-secondary'>Visualise</button>"
+                  tooltip-position="right">{x}</p>""".replace("\n", ""))
+
     create_plot(terms, pvalues, cut_off, f"{images_path}{run_id}_neenr.jpg")
 
     return enrich_table

@@ -8,46 +8,30 @@ function makePathwayTooltip(pathwayName) {
     `;
 }
 
-function tooltipTransitions(triggers, pathwayName) {
+function addTooltip(triggers) {
     triggers.forEach(function (trigger) {
+        // get pathway name from the trigger title
+        const pathwayName = trigger.title;
         // add the tooltip
         trigger.innerHTML += makePathwayTooltip(pathwayName);
 
-        // add the hover events
-        trigger.addEventListener('mouseenter', function () {
-            var tooltip = trigger.querySelector('.pathway-tooltip');
+        // positioning the tooltip
+        trigger.addEventListener('mouseover', function() {
+            const tooltip = document.querySelector('.pathway-tooltip');
+            const parentRect = this.getBoundingClientRect();
+            tooltip.style.display = 'hidden';
+            tooltip.style.left = `${parentRect.left + parentRect.width / 2}px`;
+            tooltip.style.top = `${parentRect.top - tooltip.offsetHeight - 10}px`;
+            console.log(parentRect.left, parentRect.width, parentRect.top, tooltip.offsetHeight);
             tooltip.style.display = 'block';
-            setTimeout(function () {
-                tooltip.classList.add('hovered');
-            }, 10); // Small delay to trigger transition
         });
 
-        trigger.addEventListener('mouseleave', function () {
-            var tooltip = trigger.querySelector('.pathway-tooltip');
+        trigger.addEventListener('mouseout', function() {
+            const tooltip = document.querySelector('.pathway-tooltip');
             setTimeout(function () {
-                if (!tooltip.matches(':hover')) {
-                    tooltip.classList.remove('hovered');
-                    setTimeout(function () {
-                        tooltip.style.display = 'none';
-                    }, 100); // Match the transition duration
-                }
-            }, 100); // Delay for smooth fade-out effect
-        });
-
-        var tooltip = trigger.querySelector('.pathway-tooltip');
-        tooltip.addEventListener('mouseenter', function () {
-            tooltip.classList.add('hovered');
-        });
-
-        tooltip.addEventListener('mouseleave', function () {
-            setTimeout(function () {
-                if (!trigger.matches(':hover')) {
-                    tooltip.classList.remove('hovered');
-                    setTimeout(function () {
-                        tooltip.style.display = 'none';
-                    }, 100); // Match the transition duration
-                }
-            }, 100); // Delay for smooth fade-out effect
+                tooltip.style.display = 'none';
+            }, 100)
         });
     });
 }
+
