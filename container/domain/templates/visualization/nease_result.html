@@ -106,7 +106,7 @@
                role="tab"
                aria-controls="v-pills-compare" aria-selected="false">NEASE edge enrichment</a>
 
-            <a class="nav-link" id="v-pills-protein-tab" data-toggle="pill" href="#v-pills-pathway" role="tab"
+            <a class="nav-link" id="v-pills-pathway-tab" data-toggle="pill" href="#v-pills-pathway" role="tab"
                aria-controls="v-pills-protein" aria-selected="false">Pathway analysis</a>
 
             <a class="nav-link" id="v-pills-vis-path-tab" data-toggle="pill" href="#v-pills-vis-path"
@@ -245,7 +245,6 @@
           </div>
 
           <!-- Nease enrichment content -->
-          <!-- TODO: Add button to each to directly go to pathway vis / visualisation -->
           <div class="tab-pane fade show card shadow rounded" id="v-pills-nease_enr" role="tabpanel"
                aria-labelledby="v-pills-classic_enr-tab">
             <div class="card-body">
@@ -304,7 +303,6 @@
             </div>
 
           </div>
-
 
           <!-- Pathway content -->
           <div class="tab-pane fade show card shadow rounded" id="v-pills-pathway" role="tabpanel"
@@ -517,146 +515,122 @@
         });
     }
 
-    /*
-    function analysePathway() {
-        $('#anal_pathway').click(function () {
-          pathway = $('#pathwayAnal').val();
-          $('#pathwayAnal').prop("disabled", true);
-          $('#anal_pathway').prop("disabled", true);
-          $('.spinner-border').css('display', 'inline-block');
-          $.get(`nease_analysis/extra_functions?` + $.param({runId: runId, pathway: pathway, func: 'pathway'}), function (data) {
-              $('#pathway_result').html(data);
-              $('#pathway_path').DataTable({
+    function analysePathway(pathway) {
+
+        // check if the pathway tab (v-pills-pathway) is active, if it isn't then show the tab
+      if (!document.getElementById('v-pills-pathway').classList.contains('active')) {
+        document.getElementById('v-pills-pathway-tab').click();
+      }
+
+      // check if the pathwayVis field is not the same as the input, if it isn't then fill it
+      if (document.getElementById('pathwayAnal').value !== pathway) {
+        document.getElementById('pathwayAnal').value = pathway;
+      }
+
+      document.getElementById('pathwayAnal').disabled = true;
+      document.getElementById('anal_pathway').disabled = true;
+      document.getElementsByClassName('spinner-border')[1].style.display = 'inline-block';
+
+
+      const url = new URL("nease_analysis/extra_functions", window.location.origin + window.location.pathname)
+      url.searchParams.append('runId', runId);
+      url.searchParams.append('pathway', pathway);
+      url.searchParams.append('func', 'pathway')
+
+      fetch(url)
+          .then(response => {
+              if (response.status === 400) {
+                  return response.json().then(err => {
+                      throw new Error(err.errorMsg);
+                  });
+              }
+              return response.text();
+          })
+          .then(table => {
+              const pathwayTable = document.getElementById('pathway_result');
+              pathwayTable.innerHTML = table;
+              $(`#pathway_path`).DataTable({
                   "order": [[4, "asc"]]
               });
-              $('#pathwayAnal').prop("disabled", false);
-              $('#anal_pathway').prop("disabled", false);
-              $('.spinner-border').css('display', 'none');
-              $('#pathway_download_button').css('display', 'block');
-              $('#pathwayDownloadLink').attr('href', `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv');
-
-          }).fail(function() {
-              // get the error message from the server
-              $('visFail').textContent = data.errorMsg;
-              $('visFail').hidden = false;
-              // enable the input fields and button
-              $('#pathwayAnal').prop("disabled", false);
-              $('#anal_pathway').prop("disabled", false);
-              $('.spinner-border').css('display', 'none');
-
-          });
-
-        })
-
+              document.getElementById('pathwayAnal').disabled = false;
+              document.getElementById('anal_pathway').disabled = false;
+              document.getElementById('pathway_download_button').style.display = 'block';
+              document.getElementsByClassName('spinner-border')[1].style.display = 'none';
+              document.getElementById('pathwayDownloadLink').href = `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv';
+          })
+          .catch(error => {
+              console.log(error)
+              document.getElementById('visFail').textContent = error.message;
+              document.getElementById('visFail').hidden = false;
+              document.getElementById('pathwayAnal').disabled = false;
+              document.getElementById('anal_pathway').disabled = false;
+              document.getElementsByClassName('spinner-border')[1].style.display = 'none';
+          })
     }
-    */
-
-    //rewrite analysePathway with JS
-    function analysePathway() {
-      document.getElementById('anal_pathway').addEventListener('click', () => {
-        const pathway = document.getElementById('pathwayAnal').value;
-        document.getElementById('pathwayAnal').disabled = true;
-        document.getElementById('anal_pathway').disabled = true;
-        document.getElementsByClassName('spinner-border')[1].style.display = 'inline-block';
 
 
-        const url = new URL("nease_analysis/extra_functions", window.location.origin + window.location.pathname)
+    function visualisePath(pathway, k) {
+        // check if the vis_path tab (v-pills-vis-path) is active, if it isn't then show the tab
+        if (!document.getElementById('v-pills-vis-path').classList.contains('active')) {
+            document.getElementById('v-pills-vis-path-tab').click();
+        }
+
+        // fill the pathwayVis field with the pathway name if it is not the same as the input
+        if (document.getElementById('pathwayVis').value !== pathway) {
+            document.getElementById('pathwayVis').value = pathway;
+        }
+
+        // Disable input fields and button
+        document.getElementById('pathwayVis').disabled = true;
+        document.getElementById('k').disabled = true;
+        document.getElementById('vis_pathway').disabled = true;
+        document.getElementById('spinner-vis').style.display = 'inline-block';
+
+
+        // Construct URL with query parameters
+        const baseURL = window.location.origin + window.location.pathname;
+        const url = new URL('nease_analysis/extra_functions', baseURL);
         url.searchParams.append('runId', runId);
         url.searchParams.append('pathway', pathway);
-        url.searchParams.append('func', 'pathway')
+        url.searchParams.append('k', k);
+        url.searchParams.append('func', 'visualise');
 
         fetch(url)
             .then(response => {
                 if (response.status === 400) {
-                    return response.json().then(err => {
-                        throw new Error(err.errorMsg);
-                    });
+                  return response.json().then(err => {
+                      throw new Error(err.errorMsg);
+                  });
                 }
+                console.log(response)
                 return response.text();
             })
-            .then(async table => {
-                const pathwayTable = document.getElementById('pathway_result');
-                pathwayTable.innerHTML = await table;
-                $('#pathway_result').DataTable({
-                    "order": [[4, "asc"]]
-                });
+            .then(html => {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
 
-                document.getElementById('pathwayAnal').disabled = false;
-                document.getElementById('anal_pathway').disabled = false;
-                document.getElementById('pathway_download_button').style.display = 'block';
-                document.getElementsByClassName('spinner-border')[1].style.display = 'none';
-                document.getElementById('pathwayDownloadLink').href = `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv';
+                document.getElementById('vis_result_div').style.display = 'block';
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                document.getElementById('vis_pathway').disabled = false;
+                document.getElementById('spinner-vis').style.display = 'none';
+                document.getElementById('vis_result_info').style.display = 'block';
+                // disable warning
+                document.getElementById('visWarn').hidden = false;
+
             })
             .catch(error => {
-                console.log(error)
                 document.getElementById('visFail').textContent = error.message;
+                // Show the visFail div
                 document.getElementById('visFail').hidden = false;
-                document.getElementById('pathwayAnal').disabled = false;
-                document.getElementById('anal_pathway').disabled = false;
-                document.getElementsByClassName('spinner-border')[1].style.display = 'none';
+                // Enable the input fields and button
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                document.getElementById('vis_pathway').disabled = false;
+                document.getElementById('spinner-vis').style.display = 'none';
             });
-
-
-      })
-    }
-
-    function visualisePath() {
-        document.getElementById('vis_pathway').addEventListener('click', () => {
-            const pathway = document.getElementById('pathwayVis').value;
-            const k = document.getElementById('k').value;
-
-            // Disable input fields and button
-            document.getElementById('pathwayVis').disabled = true;
-            document.getElementById('k').disabled = true;
-            document.getElementById('vis_pathway').disabled = true;
-            document.getElementById('spinner-vis').style.display = 'inline-block';
-
-
-            // Construct URL with query parameters
-            const baseURL = window.location.origin + window.location.pathname;
-            const url = new URL('nease_analysis/extra_functions', baseURL);
-            url.searchParams.append('runId', runId);
-            url.searchParams.append('pathway', pathway);
-            url.searchParams.append('k', k);
-            url.searchParams.append('func', 'visualise');
-
-            fetch(url)
-                .then(response => {
-                    if (response.status === 400) {
-                      return response.json().then(err => {
-                          throw new Error(err.errorMsg);
-                      });
-                    }
-                    console.log(response)
-                    return response.text();
-                })
-                .then(html => {
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    iframeDoc.open();
-                    iframeDoc.write(html);
-                    iframeDoc.close();
-
-                    document.getElementById('vis_result_div').style.display = 'block';
-                    document.getElementById('pathwayVis').disabled = false;
-                    document.getElementById('k').disabled = false;
-                    document.getElementById('vis_pathway').disabled = false;
-                    document.getElementById('spinner-vis').style.display = 'none';
-                    document.getElementById('vis_result_info').style.display = 'block';
-                    // disable warning
-                    document.getElementById('visWarn').hidden = false;
-
-                })
-                .catch(error => {
-                    document.getElementById('visFail').textContent = error.message;
-                    // Show the visFail div
-                    document.getElementById('visFail').hidden = false;
-                    // Enable the input fields and button
-                    document.getElementById('pathwayVis').disabled = false;
-                    document.getElementById('k').disabled = false;
-                    document.getElementById('vis_pathway').disabled = false;
-                    document.getElementById('spinner-vis').style.display = 'none';
-                });
-        });
     }
 
     function checkSupportedPathways(inputElem, submitBtn, warnText, pathwayList) {
@@ -683,8 +657,17 @@
     runEnrichment('neaseDatabasesToEnrich', 'run_nease_enrichment', 'spinner-border', 'nease', 'neaseEdgeImage',
                   'nease_enrichment_result', 'nease_enrich', 'neaseEdge');
 
-    analysePathway()
-    visualisePath()
+
+    document.getElementById('anal_pathway').addEventListener('click', () => {
+        const pathway = document.getElementById('pathwayAnal').value;
+        analysePathway(pathway);
+    });
+
+    document.getElementById('vis_pathway').addEventListener('click', () => {
+        const pathway = document.getElementById('pathwayVis').value;
+        const k = document.getElementById('k').value;
+        visualisePath(pathway, k);
+    });
 
     checkSupportedPathways(document.getElementById('neaseDatabasesToEnrich'),
                            document.getElementById('run_nease_enrichment'),

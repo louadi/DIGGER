@@ -149,8 +149,9 @@ def nease_enrichment(events, databases, run_id):
 
     enrich_table.iloc[:, 0] = enrich_table.iloc[:, 0].apply(lambda x: f"""<p class="tooltips" 
     tooltip="<p class='my-1'>Inspect {x}:</p> 
-    <button class='btn btn-secondary'>Analyse</button> <button class='btn btn-secondary'>Visualise</button>"
-                  tooltip-position="right">{x}</p>""".replace("\n", ""))
+    <button class='btn btn-secondary' onclick=&quot;analysePathway('{x}')&quot;>Analyse</button>
+    <button class='btn btn-secondary' onclick=&quot;visualisePath('{x}', 0.8)&quot;>Visualise</button>"
+    tooltip-position="right">{x}</p>""".replace("\n", ""))
 
     create_plot(terms, pvalues, cut_off, f"{images_path}{run_id}_neenr.jpg")
 
