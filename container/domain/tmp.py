@@ -3,6 +3,10 @@ import pickle
 import re
 import networkx as nx
 import mygene
+import pandas as pd
+from sqlalchemy import text
+from sqlalchemy import create_engine
+
 
 def load_obj(name):
     with open('data/' + name + '.pkl', 'rb') as f:
@@ -138,15 +142,49 @@ def Ensemb_to_entrez(genes, organsim='human'):
     return translated
 
 
+def co_partner_egdes(Ensemble_transID, organism):
+    # create connection to database
+    engine = create_engine('postgresql://postgres:postgres@172.19.0.3:5432/postgres')
+
+    N = []
+    exons_in_interface = []
+    # p1=PPI[ PPI['Transcript stable ID_x']==Ensemble_transID]
+    # p2=PPI[ PPI['Transcript stable ID_y']==Ensemble_transID]
+
+    partners = []
+
+    query = """
+                     SELECT * 
+                     FROM ppi_data_""" + organism + """  
+                     WHERE  "Transcript stable ID_x"=:ensemble_trans_id
+                     """
+    tr_1 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
+
+    partners = tr_1['Transcript stable ID_y'].unique().tolist()
+
+    query = """   
+             SELECT * 
+             FROM ppi_data_""" + organism + """  
+             WHERE "Transcript stable ID_y"=:ensemble_trans_id
+            """
+    tr_2 = pd.read_sql_query(sql=text(query), con=engine, params={'ensemble_trans_id': Ensemble_transID})
+
+    co_partners = []
+    if len(partners) != 0:
+        partners = list(set(partners + tr_2['Transcript stable ID_x'].unique().tolist()))
+    print(partners)
+
+
 if __name__ == '__main__':
     pass
+
+    co_partner_egdes('ENST00000286548', 'human')
+
     # ppi_graph: nx.Graph = pickle.load(open('../domain/data/Homo sapiens[human]/DomainG.pkl', 'rb'))
     # print(len(ppi_graph.nodes))
     # ppi_graph = remove_nan_nodes(ppi_graph)
     # print(len(ppi_graph.nodes))
     # pickle.dump(ppi_graph, open('../domain/data/Homo sapiens[human]/DomainG_up.pkl', 'wb'))
-    pdb_data = pickle.load(open('data/Homo sapiens[human]/pdb', 'rb'))
-    print(pdb_data.head())
 
     # edges_domainV = {'test': [1,2,3,4], 'original': [1,2,3,4]}
     # print(len(edges_domainV.get('original')) > 70 if edges_domainV.get('original') else True)
