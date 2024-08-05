@@ -270,6 +270,7 @@
 
     // load previous analyses
     const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+
     // remove keys if they expired
     localKeys.forEach(key => {
       removeExpiredData(key)
@@ -288,12 +289,10 @@
         appendTemplateToDiv(template, 'previousAnalyses');
     }
 
-
     // enable tooltips
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
-
 
     // check if input_type is Majiq, if it is not, disable Majiq_confidence
     $('#input_type').change(function () {
@@ -303,6 +302,18 @@
         $('#Majiq_confidence').prop('disabled', true);
       }
     });
+
+    // if the input_type is Whippet, set the min delta to 0.3 and highlight it shortly to indicate the change
+    $('#input_type').change(function () {
+      if ($('#input_type').val() === 'Whippet') {
+        $('#min_delta').val(0.3);
+        $('#min_delta').addClass('border-warning');
+        setTimeout(function() {
+          $('#min_delta').removeClass('border-warning');
+        }, 1000);
+      }
+    });
+
 
     // enable the spinner when the form is submitted and disable the button
     $('#inputForm').submit(function () {

@@ -421,7 +421,6 @@
     </div>
   </div>
   <script>
-    // make a GET request to the server to get the enrichment result
     const runId = "{{ run_id }}";
     // if the "custom_name" variable is not none then use it as the file name
     const fileName = "{{ custom_name|default:input_name|safe }}";
@@ -446,6 +445,7 @@
     document.getElementById('v-pills-vis-path-tab').addEventListener('click', () => {
         document.getElementById('visWarn').hidden = false;
     });
+
     // if the user selects another tab, the visWarn div should be hidden
     for (const tab of document.querySelectorAll('.nav-link')) {
         if (tab.id === 'v-pills-vis-path-tab') continue;
@@ -572,7 +572,6 @@
               document.getElementsByClassName('spinner-border')[1].style.display = 'none';
           })
     }
-
 
     function visualisePath(pathway, k) {
         // check if the vis_path tab (v-pills-vis-path) is active, if it isn't then show the tab
