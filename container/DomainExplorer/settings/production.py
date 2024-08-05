@@ -22,8 +22,7 @@ ALLOWED_HOSTS = ['*']   # ToDo change for production
 db_name = os.environ.get('POSTGRES_DB', 'postgres')
 db_user = os.environ.get('POSTGRES_USER', 'postgres')
 db_password = os.environ.get('POSTGRES_PASSWORD', 'postgres')
-# TODO: change before commit
-db_host = '172.19.0.3'
+db_host = 'db'
 db_port = '5432'
 DATABASES = {
     'default': {
