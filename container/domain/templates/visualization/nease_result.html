@@ -455,6 +455,16 @@
         });
     }
 
+    function updateTooltips(){
+        $('.tooltips').append("<span></span>");
+        $('.tooltips:not([tooltip-position])').attr('tooltip-position','top');
+
+
+        $(".tooltips").mouseenter(function(){
+         $(this).find('span').empty().append($(this).attr('tooltip'));
+        });
+    }
+
     function addSupportedPathwaysList(supportedList, databases){
         for (const db of databases) {
             const listItem = document.createElement('button');
@@ -486,13 +496,8 @@
                     });
 
                     // enable tooltips for pathway names
-                    $('.tooltips').append("<span></span>");
-                    $('.tooltips:not([tooltip-position])').attr('tooltip-position','top');
-
-
-                    $(".tooltips").mouseenter(function(){
-                     $(this).find('span').empty().append($(this).attr('tooltip'));
-                    });
+                    updateTooltips()
+                    document.getElementById('nease_enrich_paginate').addEventListener('click', updateTooltips)
 
                     // Re-enable the input and button, and hide the spinner
                     $(`#${inputFieldId}`).prop("disabled", false);
