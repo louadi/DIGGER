@@ -8,7 +8,7 @@ interactions of protein isoforms.
 
 # The concept of DIGGER
 
-Experimental evidence suggests that the majority of protein isoforms have different interaction partners. However, conducting experiments for all possible isoforms will be time- and resource-consuming. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein and domain-domain interactions (DDI) into a joint graph and maps interacting residues to exons (Figure, **A**, upper part). The concept is the following: if an alternative splicing event leads to splicing out an interacting domain or residues, the interaction between proteins might be lost or impaired (Figure, A, lower part). 
+Experimental evidence suggests that the majority of protein isoforms have different interaction partners. However, conducting experiments for all possible isoforms will be time- and resource-consuming. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein and domain-domain interactions (DDI) into a joint graph and maps interacting residues to exons (Figure, **A**, upper part). The concept is the following: if an alternative splicing event leads to splicing out an interacting domain or residues, the interaction between proteins might be lost or impaired (Figure, **A**, lower part). 
 
 <p align="center">
 <img alt="DIGGER workflow" src="https://exbio.wzw.tum.de/digger/static/image/figure%201.png" width="800"/>
@@ -44,11 +44,27 @@ As input, isoform-level analysis accepts the name of a gene, an Ensebml identifi
 
 If there is information about interactions for the isoform of interest, the resulting window will show a summary of information about them in a network ('Network', **A**) and tabular views ('Queries' **B**). A user can switch between both.
 
-A network view provides information about known interactions of query isoforms. Predicted DDIs toggle bars allow the addition of predicted DDIs of different levels of confidence (**A**). Interactions lost or impaired due to splicing are marked as dashed lines (**B**). A user could also adjust the view of the network by enabling/disabling physics and adjusting the height of a canvas (**B). 
+A network view provides information about known interactions of query isoforms. Predicted DDIs toggle bars allow the addition of predicted DDIs of different levels of confidence (**A**). Interactions lost or impaired due to splicing are marked as dashed lines (**B**). A user could also adjust the view of the network by enabling/disabling physics and adjusting the height of a canvas (**B**). 
 <p align="center">
 </p>
 
-The tabular view presents the information about query isoforms or all annotated protein-coding  isoforms if a query consisted of a gene name/identifier. Pfam domains (**A**) column contains information about known PFAM domains of a resulting protein. "Present / Missing interacting domains in the isoform" column (**B**) demonstrates the percentage of interactions lost or impaired for this particular isoform due to alternative splicing. To further investigate the impact of a splicing event, a user can click 'Visualize' (**C**).
+The tabular view presents the information about query isoforms or all annotated protein-coding  isoforms if a query consisted of a gene name/identifier. The Pfam domains (**A**) column contains information about known PFAM domains of a resulting protein. "Present / Missing interacting domains in the isoform" column (**B**) demonstrates the percentage of interactions lost or impaired for this particular isoform due to alternative splicing. In this example, transcript BAG-207 possibly lost an interaction due to alternative splicing that leads to removing the part of the protein that encodes a domain PF02179.
+<p align="center">
+</p>
+
+To further investigate the impact of a splicing event, a user can click 'Visualize' (**C**).
+
+A "Visualize" window, provides five different visualization panels: Overview, Protein View, Interaction View, Domain View, and Other Isoforms.
+
+The Overview window shows the general information about the transcript (**A**), a scheme of transcript exons and mapped Pfam domains (**B**), and the table of all exons and Pfam domains mapped on exons. Comparing BAG1-201 and BAG-207 isoforms, one can detect that these isoforms differ in exons that encode a domain PF02179 as well as exons that contain interacting residues.
+<p align="center">
+</p>
+
+The Protein view shows all known direct interactors of an isoform. View mode can be changed from PPI to PPI-DDI view. In the example, PPI-DDI view for BAG1-207 depicts possibly missing interactions with BAG3, HSPA1A, and HSPA4.
+<p align="center">
+</p>
+
+
 
 # Exon-level analysis
 
