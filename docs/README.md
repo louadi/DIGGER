@@ -2,30 +2,20 @@
   <img src="https://exbio.wzw.tum.de/digger/static/image/DIGGER.png" height="130">
 </p>
 
-Domain Interaction Graph Guided ExploreR (DIGGER) helps to investigate the impact of alternative splicing on protein-protein interactions (PPI) on the level of an exon, event, transcript, or the whole network.
+Domain Interaction Graph Guided ExploreR (DIGGER) helps to investigate the impact of alternative splicing on protein-protein interactions (PPI) on the level of an exon, event, transcript, or the whole network. DIGGER is ideally suited to investigate the difference in interactions
+between the isoforms, analyze the effect of isoform switch, or to explore how alternative splicing events such as exon skipping lead to altered
+interactions of protein isoforms.   
 
 # The concept of DIGGER
 
-Experimental evidence suggests that the majority of protein isoforms have different interaction partners. However, conducting experiments for all possible isoforms will be time- and resource-consuming. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein and domain-domain interactions into a joint graph and maps interacting residues to exons. The concept is the following: if an alternative splicing event leads to splicing out an interacting domain or residues, the interaction between proteins might be lost or impaired. 
+Experimental evidence suggests that the majority of protein isoforms have different interaction partners. However, conducting experiments for all possible isoforms will be time- and resource-consuming. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein and domain-domain interactions into a joint graph and maps interacting residues to exons (Figure, A, upper part). The concept is the following: if an alternative splicing event leads to splicing out an interacting domain or residues, the interaction between proteins might be lost or impaired (Figure, A, lower part). 
 
 <img alt="DIGGER workflow" src="https://exbio.wzw.tum.de/digger/static/image/figure%201.png" width="800"/>
 
-DIGGER provides a great way to visualize PPI in structure context using a
-dynamic graph visualization that can be toggled between a protein
-isoform and a domain-centric view.  
-By comparing the structure of different isoforms, DIGGER identifies the
-surfaces specific to an isoform and missing in others. In this way,
-isoform-specific interactions can be precisely identified.  
-Furthermore, the tool maps the protein features encoded by a selected exon,
-to judge the functional role of individual exons in the PPI.  
-DIGGER is ideally suited to investigate the difference of interactions
-between the isoforms, analyze the effect of isoform-switch, To or explore
-how alternative splicing events such as exon skipping lead to altered
-interactions of protein isoforms.   
-DIGGER’s joint PPI and domain-domain interaction network can also be
-used for subnetwork extraction, providing a basis for network analysis. From
-a list of proteins or transcripts, the tool re-score the PPI edges based on
-the structure evidence of the input proteins.  
+DIGGER provides PPI visualizations in a structural context using a dynamic graph visualization that can be toggled between a protein
+isoform and a domain-centric view (Figure, B). Furthermore, the tool maps the protein features encoded by a selected exon,
+to judge the functional role of individual exons in the PPI (Figure, C).  DIGGER’s joint PPI and domain-domain interaction network can also be
+used for subnetwork extraction, providing a basis for network analysis (D).
 
 # Workflow for alternative splicing analysis
 
