@@ -35,11 +35,20 @@ Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment metho
 
 
 The isoform-level analysis investigates the difference in interactions between isoforms. 
-
 <p align="center">
 </p>
 
-As input 
+As input, isoform-level analysis accepts the name of a gene, an Ensebml identifier of a gene, and an Ensembl identifier of a transcript. A user can also put multiple identifiers separated by a comma. Then a user should select an organism. Currently, DIGGER contains the data from Homo sapiens and Mus musculus.
+<p align="center">
+</p>
+
+If there is information about interactions for the isoform of interest, the resulting window will show a summary of information about them in a network ('Network', **A**) and tabular views ('Queries' **B**). A user can switch between both.
+
+A network view provides information about known interactions of query isoforms. Predicted DDIs toggle bars allow the addition of predicted DDIs of different levels of confidence (**A**). Interactions lost or impaired due to splicing are marked as dashed lines (**B**). A user could also adjust the view of the network by enabling/disabling physics and adjusting the height of a canvas (**B). 
+<p align="center">
+</p>
+
+The tabular view presents the information about query isoforms or all annotated protein-coding  isoforms if a query consisted of a gene name/identifier. Pfam domains (**A**) column contains information about known PFAM domains of a resulting protein. "Present / Missing interacting domains in the isoform" column (**B**) demonstrates the percentage of interactions lost or impaired for this particular isoform due to alternative splicing. To further investigate the impact of a splicing event, a user can click 'Visualize' (**C**).
 
 # Exon-level analysis
 
