@@ -2,19 +2,13 @@
   <img src="https://exbio.wzw.tum.de/digger/static/image/DIGGER.png" height="130">
 </p>
 
-Protein-protein interaction (PPI) networks are a key resource for systems biology. However, they do not consider the influence of alternative splicing, even though experimental evidence suggests that interaction partners are different for isoforms of the same protein. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein interactions and domain-domain interactions into a joint graph and maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or as a set to visually explore their interactions and it is available at: https://exbio.wzw.tum.de/digger
+Domain Interaction Graph Guided ExploreR (DIGGER) helps to investigate the impact of alternative splicing on protein-protein interactions (PPI) on the level of an exon, event, transcript, or the whole network.
 
-# Overview of the workflow
+# The concept of DIGGER
+
+Experimental evidence suggests that the majority of protein isoforms have different interaction partners. However, conducting experiments for all possible isoforms will be time- and resource-consuming. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein and domain-domain interactions into a joint graph and maps interacting residues to exons. The concept is the following: if an alternative splicing event leads to splicing out an interacting domain or residues, the interaction between proteins might be lost or impaired. 
 
 <img alt="DIGGER workflow" src="https://exbio.wzw.tum.de/digger/static/image/figure%201.png" width="800"/>
-
-PPI networks do not consider the influence of alternative splicing, even
-though experimental evidence suggests that the majority of protein isoforms
-have different interaction partners.
-
-Domain Interaction Graph Guided ExploreR (DIGGER) integrates
-protein-protein interaction and domain-domain interactions into a joint
-graph and maps interacting residues to exons.
 
 DIGGER provides a great way to visualize PPI in structure context using a
 dynamic graph visualization that can be toggled between a protein
