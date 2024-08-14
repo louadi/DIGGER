@@ -146,6 +146,12 @@ If interactions between isoforms are known, the isoforms are connected to the su
 
 # Running NEASE
 
+**NEASE** (Network Enrichment method for Alternative Splicing Events) is a splicing-based functional network enrichment tool. Currently NEASE supports the following formats:
+- List of genes with exon coordinates;
+- MAJIQ *deltapsi.tsv
+- Whippet *.diff
+- rMATS SE.MATS.JC.txt
+
 # Hosting your own instance
 
 If you want, you can also host your own instance of DIGGER. To do so, follow the instructions below.
