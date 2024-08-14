@@ -78,8 +78,15 @@ The Protein view shows all known direct interactors of an isoform. View mode can
 <p align="center">
 </p>
 
+Interaction View allows investigation into details of the PPI between a query isoform and all known and predicted interactors. The interactors can be chosen from the Select Interaction Partner Menu (just tick the box with the interaction of interest there).
 
+*Example: Interaction View depicts the missing interaction between BAG1-207 and HSPA8*
 
+Domain View shows all interactors known for a particular domain.
+
+*Example: Splicing out a domain PF02179 in the isoform BAG1-207 leads to missing PPIs with BAG3, HSPA1A, HSPA4, and HSPA8 comparing to BAG1-201.*
+
+Other isoforms View again depicts the table of all other known protein-coding isoforms of a gene.
 
 # Exon-level analysis
 
