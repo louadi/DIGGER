@@ -146,11 +146,29 @@ If interactions between isoforms are known, the isoforms are connected to the su
 
 # Running NEASE
 
-**NEASE** (Network Enrichment method for Alternative Splicing Events) is a splicing-based functional network enrichment tool. Currently NEASE supports the following formats:
-- List of genes with exon coordinates;
+**NEASE** (Network Enrichment method for Alternative Splicing Events) is a splicing-based functional network enrichment tool. Currently, NEASE supports the following formats:
+- Standard (List of genes with exon coordinates)
 - MAJIQ *deltapsi.tsv
 - Whippet *.diff
 - rMATS SE.MATS.JC.txt
+
+If you have a lot of files to run with NEASE, consider using the Python package: https://github.com/louadi/NEASE.
+
+To start the analysis, upload your file (**A**), define an organism (currently, Homo sapiens or Mus musculus, **B**), the input file type (**C**), and adjust the parameters.
+
+For all input files except MAJIQ:
+- Analysis name
+- Usage of predicted DDIs (**D**)
+- P-value cutoff (**E**)
+- Minimum delta PSI (Min delta, **F**)
+
+For MAJIQ:
+- Minimum delta PSI will start by default from 0.2 (Min delta, **F**)
+- Confidence interval (0.95 corresponds to P-value 0.05)
+
+The results of the analysis will be stored for **7 days** and visible from the NEASE starting page (Previous Analysis). For large files, the running time might take up to several minutes.
+
+
 
 # Hosting your own instance
 
