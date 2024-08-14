@@ -33,8 +33,7 @@ Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment metho
 
 # Isoform-level analysis
 
-
-The isoform-level analysis investigates the difference in interactions between isoforms. In the documentation, we will use an example of BAG1 and NCK2 genes from the DIGGER publication. 
+The isoform-level analysis investigates the difference in interactions between isoforms or the consequences of isoform switch. In the documentation, we will use an example of BAG1 and NCK2 genes from the DIGGER publication. 
 <p align="center">
 </p>
 
@@ -81,14 +80,57 @@ The Protein view shows all known direct interactors of an isoform. View mode can
 Interaction View allows investigation into details of the PPI between a query isoform and all known and predicted interactors. The interactors can be chosen from the Select Interaction Partner Menu (just tick the box with the interaction of interest there).
 
 *Example: Interaction View depicts the missing interaction between BAG1-207 and HSPA8*
+<p align="center">
+</p>
 
 Domain View shows all interactors known for a particular domain.
 
 *Example: Splicing out a domain PF02179 in the isoform BAG1-207 leads to missing PPIs with BAG3, HSPA1A, HSPA4, and HSPA8 comparing to BAG1-201.*
+<p align="center">
+</p>
 
 Other isoforms View again depicts the table of all other known protein-coding isoforms of a gene.
+<p align="center">
+</p>
 
 # Exon-level analysis
+
+The Exon-level analysis investigates the consequences of exon skipping event to interactions between isoforms. In the documentation, we will use an example of the INSR gene from the DIGGER publication.
+<p align="center">
+</p>
+
+In addition to input as in isoform-level analysis, exon-level analysis accepts an Ensebml identifier of an exon, an Ensembl identifier of a gene with the coordinates of an exon. A user can also put multiple identifiers separated by a comma. Then a user should select an organism.
+
+*Example: an input exon is exon ENSE00003569638 from BAG1; the organism is Homo sapiens*
+<p align="center">
+</p>
+
+Results of the exon analysis consists of DomainView, ProteinView, InteractionView, and the table of Proteins that use this exon.
+
+DomainView presents the general information about an exon (**A**), the information about the corresponding Pfam domain with a link to Pfam and 3did databases (**B**) and a network with all known interactions (**C**). Using toggle bars, a user can add predicted DDIs of different level of confidence (**D**).
+
+*Example: ENSE00003569638 encode a domain PF02719. This domain is known to interact with BAG through a DDI with PF02719 and HSPA1A, HSPA4, and HSPA8 through a DDI with PF00012.*
+<p align="center">
+</p>
+
+ProteinView is similar to Isoform-level analysis.
+
+*Example: Skipping of ENSE00003569638 might lead to loss of interactions with BAG, HSPA1A, HSPA4, and HSPA8.*
+<p align="center">
+</p>
+
+InteractionView is also similar to Isoform-level analysis.
+
+Example: Skipping of ENSE00003569638 might lead to loss of interactions with HSPA8.
+<p align="center">
+</p>
+
+Finally, a table "Proteins that use this exon" give use the list of such protein-coding isoforms:
+
+<p align="center">
+</p>
+
+
 
 # Network-level analysis
 
