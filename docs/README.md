@@ -165,10 +165,34 @@ For all input files except MAJIQ:
 For MAJIQ:
 - Minimum delta PSI will start by default from 0.2 (Min delta, **F**)
 - Confidence interval (0.95 corresponds to P-value 0.05)
+<p align="center">
+</p>
 
 The results of the analysis will be stored for **7 days** and visible from the NEASE starting page (Previous Analysis). For large files, the running time might take up to several minutes.
 
+The resulting 'Overview' page contains: 
+- the general information about the number of genes with AS that affect any known protein feature;
+- the table of affected protein domains;
+- the table with affected interactions;
+- the table with affected linear features;
+- the table with affected interacting residues.
 
+All tables are downloadable in a csv format.
+
+NEASE contains three further types of analysis: enrichment analysis, pathway analysis, and visualization.
+
+NEASE edge enrichment supports the following ontologies:
+
+Homo sapiens: TODO
+Mus musculus: KEGG, Reactome, MouseCyc.
+<p align="center">
+</p>
+
+Simply type the name of the ontology of interest and click the "Run enrichment" button. The resulting table will show the list of pathways, the list of genes that lost/impaired interactions with these pathways due to alternative splicing, and the significance assessment with p-value and adjusted p-value. NEASE score re-weights the pathways according to the hub bias. For more details, check the publication:  https://doi.org/10.1186/s13059-021-02538-1.
+
+To investigate the enriched pathways in detail, use Pathway analysis. Type in the pathway ID from NEASE edge enrichment analysis, e.g., "path:mmu04010". The resulting table contains the information about each gene with list/impaired interactions with this pathway due to alternative splicing: whether it belongs to the pathway, how many interactions were lost/impaired, and the p-value.
+
+Finally, "Visualize pathways" option provides the visualization of teh resulting network with lost/impaired interactions. Be aware, the visualization might take up to several minutes. 
 
 # Hosting your own instance
 
