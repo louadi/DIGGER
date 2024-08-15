@@ -29,7 +29,7 @@ Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment metho
 
 # Step-by-step functional analysis of alternative splicing
 <p align="center">
-  <img src="https://github.com/OlgaVT/DIGGER/patch-1/docs/Figure 1.png" width="128"/>
+  <img src="https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%202.png" width="128"/>
 </p>
 
 # Isoform-level analysis
