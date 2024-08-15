@@ -31,7 +31,7 @@ Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment metho
 
 # Isoform-level analysis
 
-<img align="left" src="https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%202.png" width="256"/>
+<img align="left" src="https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%202.png" width="128"/>
 
 The isoform-level analysis investigates the difference in interactions between isoforms or the consequences of isoform switch. In the documentation, we will use an example of BAG1 and NCK2 genes from the DIGGER publication. 
 
