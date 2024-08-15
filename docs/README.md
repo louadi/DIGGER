@@ -28,14 +28,12 @@ to judge the functional role of individual exons in the PPI (Figure, **C**).  DI
 Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment method for Alternative Splicing Events) - a tool for the functional enrichment of alternative splicing exons/events.
 
 # Step-by-step functional analysis of alternative splicing
-<p align="center">
-  <img src="https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%202.png" width="128"/>
-</p>
 
 # Isoform-level analysis
 
 The isoform-level analysis investigates the difference in interactions between isoforms or the consequences of isoform switch. In the documentation, we will use an example of BAG1 and NCK2 genes from the DIGGER publication. 
 <p align="center">
+  <img src="https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%202.png" width="256"/>
 </p>
 
 As input, isoform-level analysis accepts the name of a gene, an Ensebml identifier of a gene, and an Ensembl identifier of a transcript. A user can also put multiple identifiers separated by a comma. Then a user should select an organism. Currently, DIGGER contains the data from Homo sapiens and Mus musculus.
