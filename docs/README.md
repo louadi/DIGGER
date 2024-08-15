@@ -38,8 +38,7 @@ The isoform-level analysis investigates the difference in interactions between i
 As input, isoform-level analysis accepts the name of a gene, an Ensebml identifier of a gene, and an Ensembl identifier of a transcript. A user can also put multiple identifiers separated by a comma. Then a user should select an organism. Currently, DIGGER contains the data from Homo sapiens and Mus musculus.
 
 *Example: Input genes are BAG1 and NCK2; the chosen organism is Homo sapiens.*
-<p align="center">
-</p>
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%203.png/>
 
 If there is information about interactions for the isoforms of interest, the resulting window will show a summary of information about them in a network ('Network') and tabular views ('Queries'). A user can switch between them in the menu in the upper left corner.
 
