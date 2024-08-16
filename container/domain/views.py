@@ -708,7 +708,12 @@ def set_previous_analysis(request):
         'run_id': run_id,
         **events.get_databases()
     }
-    return render(request, 'visualization/nease_result.html', context)
+    try:
+        return render(request, 'visualization/nease_result.html', context)
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        return render(request, 'setup/nease_setup.html', context)
 
 
 # this does the initial nease run or loads a previous analysis
