@@ -178,5 +178,5 @@ TO_HTML_PARAMETERS = {
 
 TO_HTML_RESPONSIVE_PARAMETERS = {
     **TO_HTML_PARAMETERS,
-    'classes': ['table', 'table-striped', 'table-bordered', 'table-responsive']
+    'classes': ['table', 'table-striped', 'table-bordered', 'table-responsive', 'mx-auto']
 }

@@ -21,6 +21,47 @@ to visually explore their interactions. The following modes of DIGGER can be use
 DIGGER = 'https://exbio.wzw.tum.de/digger-dev/ID/exon/'
 
 
+# Adjust tables to be more usable when displayed in the web interface
+def webify_table(df, options=None):
+    link_col, link_prefix, link_id, drop_col = (options['link_col'], options['link_prefix'], options['link_id'],
+                                                options['drop_col'])
+
+    if not link_id:
+        clean_link_id = link_col
+    else:
+        clean_link_id = []
+        for l_id, col in zip(link_id, link_col):
+            if l_id:
+                clean_link_id.append(l_id)
+            else:
+                clean_link_id.append(col)
+
+    for col, prefix, l_id in zip(link_col, link_prefix, clean_link_id):
+        df[col] = df[col].astype('object')
+
+        if col == l_id:
+            df[col] = df[col].apply(lambda x: f'<a href="{prefix}{x}" target="_blank">{x}</a>')
+
+        else:
+            for idx, row in df[[col, l_id]].iterrows():
+                display_values = str(row[col]).split(',')
+                link_values = str(row[l_id]).split(',')
+                links = []
+
+                for dv, lv in zip(display_values, link_values):
+                    links.append(f'<a href="{prefix}{lv.strip()}" target="_blank">{dv}</a>')
+
+                df.at[idx, col] = ', '.join(links)
+
+    try:
+        df = df.drop(columns=drop_col)
+    except KeyError:
+        print(f"Columns {drop_col} not found in the dataframe. Skipping.")
+        pass
+
+    return df
+
+
 def splitDataFrameList(df, target_column):
     """
     Efficiently split Pandas Dataframe cells containing lists into multiple rows,

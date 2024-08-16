@@ -80,6 +80,17 @@
           max-height: 200px;
           overflow-y: auto;
       }
+
+      .short-table {
+        display: table;
+      }
+
+      @media screen and (max-width: 1399px) {
+        .short-table {
+          display: block;
+        }
+      }
+
   </style>
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
@@ -230,7 +241,7 @@
                   <div class="col-sm-12 col-md-6 my-2">
                     <h5 class="text-center">Affected interacting genes with residue-level evidence</h5>
                   </div>
-                  <div class="col-sm-12 col-md-6">
+                  <div class="col-sm-10 col-md-6">
                     <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_pdb.csv"
                        class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
                   </div>
@@ -438,7 +449,27 @@
 
     // format all tables to be responsive
     $(document).ready(function () {
-        $("[id$='_table']").DataTable();
+        // so that these smaller tables are nice and centered
+        $("#pdb_table").DataTable({
+             columnDefs: [
+                 { width: "20%", targets: 0 },
+                 { width: "30%", targets: 1 },
+                 { width: "50%", targets: 2 }
+             ]
+        });
+        $("#elm_table").DataTable({
+             columnDefs: [
+                 { width: "20%", targets: 0 },
+                 { width: "30%", targets: 1 },
+                 { width: "30%", targets: 2 },
+                 { width: "20%", targets: 3 }
+             ]
+        });
+        $("#edges_table").DataTable();
+        $("#domains_table").DataTable();
+
+        // change display of short tables on smaller screens
+        $("[id$='_table']").addClass("short-table")
     });
 
     // if the user selects visualise pathway, the visWarn div should be shown
