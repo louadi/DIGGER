@@ -65,7 +65,6 @@ def run_nease(data, organism, params):
 
     events.get_stats(file_path=image_path)
 
-    # TODO: add function to better format tables for web view while keeping the original tables in csv
     domains: pd.DataFrame = events.get_domains()
     # check if domains is not empty
     if not domains.empty:
