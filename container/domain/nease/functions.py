@@ -529,7 +529,7 @@ def stats_domains(affecting_percentage,
     # rotate so that first wedge is split by the x-axis
     angle = -180 * ratios[0]
     ax1.pie(ratios, autopct='%1.1f%%', startangle=angle,
-            labels=labels, explode=explode, shadow=True, )
+            labels=labels, explode=explode, shadow=False, )
     ax1.set_title("Genes with AS affecting protein features")
     # bar chart parameters
 
