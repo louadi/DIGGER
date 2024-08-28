@@ -180,7 +180,7 @@ def process_standard(data,
         elm_affected, pdb_affected = get_interfaces(data, nease_data, min_delta, overlap_cal=True)
 
     if len(mapping_tb) == 0:
-        raise ValueError("None of the exons map to annotated exons (Ensembl Exons).")
+        raise Exception("None of the exons map to annotated (Ensembl) exons. Did you select the right organism?")
 
     try:
         #try to get the delta PSI from the user input
