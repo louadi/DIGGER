@@ -184,7 +184,7 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
         connected = 0
         genes_tmp = []
         gene_count = 0
-        c+=1
+        c += 1
         #if c == 10:
         #    break
 
@@ -436,7 +436,6 @@ def extract_subnetwork(path_genes,
                                         size=[],
                                         line=dict(width=0)))
 
-
     edge_trace = go.Scatter(x=[],
                             y=[],
                             mode='lines',
@@ -517,65 +516,33 @@ def stats_domains(affecting_percentage,
                   elm_number,
                   pdb_number,
                   file_path):
-    # from https://matplotlib.org/stable/gallery/pie_and_polar_charts/bar_of_pie.html#sphx-glr-gallery-pie-and-polar-charts-bar-of-pie-py
-    # make figure and assign axis objects
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 7))
     fig.subplots_adjust(wspace=0)
 
     # pie chart parameters
-    ratios = [affecting_percentage, 1 - affecting_percentage]
-    labels = ['Affecting protein features', 'Not affecting any feature']
-    explode = [0.1, 0, ]
-    # rotate so that first wedge is split by the x-axis
-    angle = -180 * ratios[0]
-    ax1.pie(ratios, autopct='%1.1f%%', startangle=angle,
-            labels=labels, explode=explode, shadow=False, )
+    ratios_pie = [affecting_percentage, 1 - affecting_percentage]
+    labels_pie = ['Affecting protein features', 'Not affecting any feature']
+    ax1.pie(ratios_pie, labels=labels_pie, autopct='%1.1f%%', startangle=0, wedgeprops={'edgecolor': 'white'})
     ax1.set_title("Genes with AS affecting protein features")
-    # bar chart parameters
 
-    xpos = 0
-    bottom = 0
-    ratios = [round(elm_number / number_of_features, 2), round(pdb_number / number_of_features, 2),
-              round(domain_number / number_of_features, 2)]
-    width = .2
-    colors = ['#F0D0C8', '#B09880', '#9B412B']
+    ratios_bar = [round(elm_number / number_of_features, 2) * 100, round(pdb_number / number_of_features, 2) * 100,
+              round(domain_number / number_of_features, 2) * 100]
 
-    for j in range(len(ratios)):
-        height = ratios[j]
-        ax2.bar(xpos, height, width, bottom=bottom, color=colors[j])
-        ypos = bottom + ax2.patches[j].get_height() / 2
-        bottom += height
-        ax2.text(xpos, ypos, "%d%%" % (ax2.patches[j].get_height() * 100),
-                 ha='center')
+    labels_bar = ['Linear motifs', 'Residues', 'Domains']
 
+    colors = ['#2ba8fc', '#2284c6', '#15547e']
+
+    ax2.barh(labels_bar, ratios_bar, color=colors)
+    ax2.set_xlim(0, 100)
     ax2.set_title('Affected features')
-    ax2.legend(('Linear motifs', 'Residues', 'Domains'))
-    ax2.axis('off')
-    ax2.set_xlim(- 2.5 * width, 2.5 * width)
+    ax2.grid(False)
+    ax2.yaxis.set_ticks_position('none')
+    ax2.spines[['right', 'top']].set_visible(False)
 
-    # use ConnectionPatch to draw lines between the two plots
-    # get the wedge data
-    theta1, theta2 = ax1.patches[0].theta1, ax1.patches[0].theta2
-    center, r = ax1.patches[0].center, ax1.patches[0].r
-    bar_height = sum([item.get_height() for item in ax2.patches])
+    for i, v in enumerate(ratios_bar):
+        ax2.text(v + 1, i, f"{v}%", va='center', color='black', fontweight='bold')
 
-    # draw top connecting line
-    x = r * np.cos(np.pi / 180 * theta2) + center[0]
-    y = r * np.sin(np.pi / 180 * theta2) + center[1]
-    con = ConnectionPatch(xyA=(-width / 2, bar_height), coordsA=ax2.transData,
-                          xyB=(x, y), coordsB=ax1.transData)
-    con.set_color([0, 0, 0])
-    con.set_linewidth(4)
-    ax2.add_artist(con)
-
-    # draw bottom connecting line
-    x = r * np.cos(np.pi / 180 * theta1) + center[0]
-    y = r * np.sin(np.pi / 180 * theta1) + center[1]
-    con = ConnectionPatch(xyA=(-width / 2, 0), coordsA=ax2.transData,
-                          xyB=(x, y), coordsB=ax1.transData)
-    con.set_color([0, 0, 0])
-    ax2.add_artist(con)
-    con.set_linewidth(4)
+    plt.tight_layout()
 
     plt.savefig(file_path + ".jpg", format='jpg', bbox_inches='tight')
     plt.clf()
