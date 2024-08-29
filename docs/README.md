@@ -55,7 +55,7 @@ A network view (Figure 3) provides information about known/predicted interaction
 
 The tabular view (Figure 4) presents the information about query isoforms or all annotated protein-coding isoforms if a query consists of a gene name/identifier. The Pfam domains column contains information about known PFAM domains of a resulting protein. "Present / Missing interacting domains in the isoform" column demonstrates the percentage of interactions possibly lost or impaired for this particular isoform due to alternative splicing. To further investigate the impact of a splicing event, a user can click 'Visualize'.
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%204.png/>
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%205.png/>
 <p align="center">
   <em>Figure 3: Example: a tabular view on isoforms of BAG1 and NCK2. A transcript BAG-207 possibly lost a PPI due to alternative splicing that leads to removing the part of the protein that encodes a domain PF02179. A transcript NCK-202 also lost a PPI due to splicing of domains PF00017 and PF14604.</em>
 </p>
