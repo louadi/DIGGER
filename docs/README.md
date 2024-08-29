@@ -19,10 +19,12 @@ Experimental evidence suggests that the majority of protein isoforms have differ
 
 DIGGER uses the following sources for PPI, DDIs, and interacting residues:
 
-Homo sapiens:
-[TODO]
-Mus musculus:
-[TODO]
+- BioGRID (PPIs)
+- 3did (DDIs)
+- DOMINE (DDIs)
+- PDB (interacting residues)
+
+Domain-domain interaction predictions are based on the predictions of PPIDM (10.1371/journal.pcbi.1008844).
 
 DIGGER provides PPI visualizations in a structural context using a dynamic graph visualization that can be toggled between a protein
 isoform and a domain-centric view (Figure 1, **B**). Furthermore, the tool maps the protein features encoded by a selected exon,
@@ -195,7 +197,7 @@ For MAJIQ:
   <em>Figure 17: NEASE starting page </em>
 </p>
 
-The results of the analysis will be stored for **7 days** and visible from the NEASE starting page (Previous Analysis). For large files, the running time might take up to several minutes.
+The results of the analysis will be stored for **7 days** and visible from the NEASE starting page (Previous Analyses). For large files, the running time might take up to several minutes.
 
 The resulting 'Overview' page contains: 
 - the general information about the number of genes with AS that affect any known protein feature;
@@ -204,18 +206,16 @@ The resulting 'Overview' page contains:
 - the table with affected linear features;
 - the table with affected interacting residues.
 
-All tables are downloadable in a csv format.
+All tables are downloadable in a CSV format.
 
 NEASE contains three further types of analysis: enrichment analysis, pathway analysis, and visualization.
 
 NEASE edge enrichment supports the following ontologies:
 
-Homo sapiens: TODO
+Homo sapiens: PharmGKB, HumanCyc, Wikipathways, Reactome, and KEGG
 Mus musculus: KEGG, Reactome, MouseCyc.
-<p align="center">
-</p>
 
-Simply type the name of the ontology of interest and click the "Run enrichment" button. The resulting table will show the list of pathways, the list of genes that lost/impaired interactions with these pathways due to alternative splicing, and the significance assessment with p-value and adjusted p-value. NEASE score re-weights the pathways according to the hub bias. For more details, check the publication:  https://doi.org/10.1186/s13059-021-02538-1.
+Type in the name of the ontology of interest and click the "Run enrichment" button. The resulting table will show the list of pathways, the list of genes that lost/impaired interactions with these pathways due to alternative splicing, and the significance assessment with p-value and adjusted p-value. NEASE score re-weights the pathways according to the hub bias. For more details, check the publication:  https://doi.org/10.1186/s13059-021-02538-1.
 
 To investigate the enriched pathways in detail, use Pathway analysis. Type in the pathway ID from NEASE edge enrichment analysis, e.g., "path:mmu04010". The resulting table contains the information about each gene with list/impaired interactions with this pathway due to alternative splicing: whether it belongs to the pathway, how many interactions were lost/impaired, and the p-value.
 
