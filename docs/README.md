@@ -57,24 +57,29 @@ The tabular view (Figure 4) presents the information about query isoforms or all
 
 <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%205.png/>
 <p align="center">
-  <em>Figure 4: a tabular view on isoforms of BAG1 and NCK2.</em>
-  <em>A transcript BAG-207 possibly lost a PPI due to alternative splicing that leads to removing the part of the protein that encodes a domain PF02179. A transcript NCK-202 also lost a PPI due to splicing of domains PF00017 and PF14604.</em>
+  <em>Figure 4: a tabular view on isoforms of BAG1 and NCK2.
+  A transcript BAG-207 possibly lost a PPI due to alternative splicing that leads to removing the part of the protein that encodes a domain PF02179. A transcript NCK-202 also lost a PPI due to splicing of domains PF00017 and PF14604.</em>
 </p>
 
 A "Visualize" window, provides five different visualization panels: Overview, Protein View, Interaction View, Domain View, and Other Isoforms.
 
-The Overview window header shows the general information about the transcript.
+The Overview window header (Figure 5) shows the general information about the transcript.
+
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%206.png/>
 <p align="center">
+  <em>Figure 5: General information about a transcript</em>
 </p>
 
-Below is a scheme of transcript exons and mapped Pfam domains, and the table of all exons and Pfam domains mapped on exons. 
+Below (Figures 6, 7) is a scheme of transcript exons and mapped Pfam domains, and the table of all exons and Pfam domains mapped on exons. 
 
-*Example: Comparing BAG1-210 and BAG-207 isoforms, one can detect that these isoforms differ in exons that encode a domain PF02179 as well as exons that contain interacting residues.*
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%207.png/>
 <p align="center">
+  <em>Figure 6: Comparing BAG1-210 and BAG-207 isoforms, one can detect that these isoforms differ in exons that encode a domain PF02179 as well as exons that contain interacting residues</em>
 </p>
 
-*Example: Comparing NCK-201 and NCK-202 isoforms, one can detect that these isoforms differ in exons that encode domains PF14604, the second PF00018, PF00017 as well as exons that contain interacting residues.*
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%208.png/>
 <p align="center">
+  <em>Figure 7: Comparing NCK-201 and NCK-202 isoforms, one can detect that these isoforms differ in exons that encode domains PF14604, the second PF00018, PF00017 as well as exons that contain interacting residues</em>
 </p>
 
 The Protein view shows all known direct interactors of an isoform. View mode can be changed from PPI to PPI-DDI view. 
