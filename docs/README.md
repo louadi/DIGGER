@@ -300,8 +300,11 @@ docker-compose up -d --force-recreate
 
 If you use DIGGER, please cite:
 
-Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumbach, Tim Kacprowski*, Markus List*. DIGGER: exploring the functional role of alternative splicing in protein interactions, Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa768  (*joint last author)
+Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumbach, Tim Kacprowski*, Markus List*. DIGGER: exploring the functional role of alternative splicing in protein interactions, Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa768  (*joint last authors)
 
+If you use NEASE, please cite:
+
+Zakaria Louadi, Maria L. Elkjaer, Melissa Klug, Chit Tong Lio, Amit Fenn, Zsolt Illes, Dario Bongiovanni, Jan Baumbach, Tim Kacprowski, Markus List*, Olga Tsoy*. Functional enrichment of alternative splicing events with NEASE reveals insights into tissue identity and diseases, Genome Biology, https://doi.org/10.1186/s13059-021-02538-1 (*joint last authors)
 
 # Contact us
 Elias Albrecht: elias.albrecht@in.tum.de  
