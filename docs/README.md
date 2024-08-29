@@ -130,7 +130,7 @@ In addition to input (Figure 12) as in isoform-level analysis, exon-level analys
   <em>Figure 12: An input exon is exon ENSE00003569638 from BAG1; the organism is Homo sapiens</em>
 </p>
 
-Results of the exon analysis consist of DomainView, ProteinView, InteractionView, and the table of Proteins that use this exon. DomainView (Figure 13), ProteinView, and InteractionView are similar to Isoform-level analysis but for an exon of interest. DomainView additionally shows the information about the corresponding Pfam domain with a link to the Pfam and 3did database.
+Results of the exon analysis consist of DomainView, ProteinView, InteractionView, and the table of Proteins that use this exon. DomainView, ProteinView, and InteractionView are similar to Isoform-level analysis but for an exon of interest. DomainView additionally shows the information about the corresponding Pfam domain with a link to the Pfam and 3did database (Figure 13).
 
 <p align="center">
   <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure13.png/>
@@ -212,8 +212,17 @@ NEASE contains three further types of analysis: enrichment analysis, pathway ana
 
 NEASE edge enrichment supports the following ontologies:
 
-Homo sapiens: PharmGKB, HumanCyc, Wikipathways, Reactome, and KEGG
-Mus musculus: KEGG, Reactome, MouseCyc.
+Homo sapiens: 
+- PharmGKB
+- HumanCyc
+- Wikipathways
+- Reactome
+- KEGG
+  
+Mus musculus
+- KEGG
+- Reactome
+- MouseCyc
 
 Type in the name of the ontology of interest and click the "Run enrichment" button. The resulting table will show the list of pathways, the list of genes that lost/impaired interactions with these pathways due to alternative splicing, and the significance assessment with p-value and adjusted p-value. NEASE score re-weights the pathways according to the hub bias. For more details, check the [NEASE publication] (https://doi.org/10.1186/s13059-021-02538-1).
 
