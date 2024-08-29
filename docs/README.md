@@ -115,7 +115,7 @@ Other isoforms View (Figure 11) again depicts the table of all other known prote
   <em>Figure 11: All transcripts of BAG1</em>
 </p>
 
-# Exon-level analysis
+## Exon-level analysis
 
 The Exon-level analysis investigates the consequences of exon skipping events to interactions between isoforms.
 
@@ -147,19 +147,22 @@ A table "Proteins that use this exon" (Figure 14) reports the list of all protei
 </p>
 
 
-# Network-level analysis
-Network analysis investigates the systematic impact of alternative splicing events on the PPIs.
+## Network-level analysis
+Network analysis investigates the systematic impact of alternative splicing events on the PPIs. As input (Figure 15), Network-level analysis accepts the list of genes, transcripts, proteins, or a transcript count file and constructs a subnetwork from this list.
 <p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2021.png/>
+</p>
+<p align="center">
+  <em>Figure 15: An example input for Network-level analysis </em>
 </p>
 
-As input, Network-level analysis accepts the list of genes, transcripts, proteins, or a transcript count file and constructs a subnetwork from this list.
+If interactions between isoforms are known, the isoforms are connected to the subnetworks, and the interactions are marked as lost or present as well as based on the interaction evidence (Figure 16). For further exploration, the network can be downloaded in SIF or GraphML formats.
 <p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2022.png/>
 </p>
-
-If interactions between isoforms are known, the isoforms are connected to the subnetworks and the interactions are marked as lost or present as well as based on the interaction evidence. For further exploration, the network can be downloaded in SIF or GraphML formats.
 <p align="center">
+  <em>Figure 16: An example output for Network-level analysis </em>
 </p>
-
 
 # Running NEASE
 
