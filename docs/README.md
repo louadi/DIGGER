@@ -93,7 +93,7 @@ The Protein view shows all known direct interactors of an isoform. View mode can
 
 Interaction View (Figure 9) allows investigation into details of the PPI between a query isoform and all known and predicted interactors. The interactors can be chosen from the **Select Interaction Partner Menu** (just tick the box with the interaction of interest there).
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2010.png/ width="200" >
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2011B.png/ width="600" align=""center>
 <p align="center">
   <em>Figure 9: Interaction View of BAG1-207 isoform. An interaction with HSPA8 might be lost due to alternative splicing of PF02179</em>
 </p>
