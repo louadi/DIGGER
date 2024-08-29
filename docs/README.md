@@ -12,6 +12,7 @@ Experimental evidence suggests that the majority of protein isoforms have differ
 
 <p align="center">
 <img alt="DIGGER workflow" src="https://exbio.wzw.tum.de/digger/static/image/figure%201.png" width="800"/>
+<em>The overview of DIGGER</em>
 </p>
 
 DIGGER uses the following sources for PPI, DDIs, and interacting residues:
