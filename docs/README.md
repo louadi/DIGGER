@@ -174,18 +174,25 @@ If interactions between isoforms are known, the isoforms are connected to the su
 
 If you have a lot of files to run with NEASE, consider using the Python package: https://github.com/louadi/NEASE.
 
-To start the analysis, upload your file (**A**), define an organism (currently, Homo sapiens or Mus musculus, **B**), the input file type (**C**), and adjust the parameters.
+To start the analysis, upload your file (**A**), define an organism (**B**) (currently, Homo sapiens or Mus musculus), the input file type (**C**), and adjust the parameters.
 
 For all input files except MAJIQ:
-- Analysis name
 - Usage of predicted DDIs (**D**)
-- P-value cutoff (**E**)
-- Minimum delta PSI (Min delta, **F**)
+- Analysis name (**E**)
+- P-value cutoff (**F**)
+- Minimum delta PSI (Min delta, **G**)
 
 For MAJIQ:
-- Minimum delta PSI will start by default from 0.2 (Min delta, **F**)
-- Confidence interval (0.95 corresponds to P-value 0.05)
+- Minimum delta PSI will start by default from 0.2 (Min delta, **G**)
+- Confidence interval (0.95 corresponds to P-value 0.05, **H**)
 <p align="center">
+</p>
+
+<p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/FigureNEASE.png/>
+</p>
+<p align="center">
+  <em>Figure 17: NEASE starting page </em>
 </p>
 
 The results of the analysis will be stored for **7 days** and visible from the NEASE starting page (Previous Analysis). For large files, the running time might take up to several minutes.
