@@ -73,11 +73,13 @@ The Overview window header (Figure 5) shows the general information about the tr
 Below (Figures 6, 7) is a scheme of transcript exons and mapped Pfam domains, and the table of all exons and Pfam domains mapped on exons. 
 
 <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%207A.png/>
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%207B.png/>
 <p align="center">
   <em>Figure 6: Comparing BAG1-210 and BAG-207 isoforms, one can detect that these isoforms differ in exons that encode a domain PF02179 as well as exons that contain interacting residues</em>
 </p>
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%207B.png/>
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%208A.png/>
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%208B.png/>
 <p align="center">
   <em>Figure 7: Comparing NCK-201 and NCK-202 isoforms, one can detect that these isoforms differ in exons that encode domains PF14604, the second PF00018, PF00017 as well as exons that contain interacting residues</em>
 </p>
