@@ -95,17 +95,26 @@ Interaction View (Figure 9) allows investigation into details of the PPI between
 
 <p align="center">
   <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2011B.png/ width="400" align="center">
+</p>
+<p align="center">
   <em>Figure 9: Interaction View of BAG1-207 isoform. An interaction with HSPA8 might be lost due to alternative splicing of PF02179</em>
 </p>
 
-Domain View shows all interactors known for a particular domain.
+Domain View (Figure 10) shows all interactors known for a particular domain.
 
-*Example: Splicing out a domain PF02179 in the isoform BAG1-207 leads to missing PPIs with BAG3, HSPA1A, HSPA4, and HSPA8 comparing to BAG1-201.*
 <p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2012B.png/ width="400" align="center">
+</p>
+<p align="center">
+  <em>Figure 10: Splicing out a domain PF02179 in the isoform BAG1-207 leads to missing PPIs with BAG3, HSPA1A, HSPA4, and HSPA8</em>
 </p>
 
-Other isoforms View again depicts the table of all other known protein-coding isoforms of a gene.
+Other isoforms View (Figure 11) again depicts the table of all other known protein-coding isoforms of a gene.
 <p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2013.png/>
+</p>
+<p align="center">
+  <em>Figure 11: All transcripts of BAG1</em>
 </p>
 
 # Exon-level analysis
