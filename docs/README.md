@@ -32,16 +32,18 @@ Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment metho
 
 # Step-by-step functional analysis of alternative splicing
 
-# Isoform-level analysis
+## Isoform-level analysis
 
 <img align="left" src="https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%202.png" width="96"/>
 
-The isoform-level analysis investigates the difference in interactions between isoforms or the consequences of isoform switch. In the documentation, we will use an example of BAG1 and NCK2 genes from the DIGGER publication. 
+The isoform-level analysis investigates the difference in interactions between isoforms or the consequences of isoform switches. The documentation will use an example of BAG1 and NCK2 genes from the DIGGER publication. 
 
-As input, isoform-level analysis accepts the name of a gene, an Ensebml identifier of a gene, and an Ensembl identifier of a transcript. A user can also put multiple identifiers separated by a comma. Then a user should select an organism. Currently, DIGGER contains the data from Homo sapiens and Mus musculus.
+As input (Figure 2), isoform-level analysis accepts the name of a gene, an Ensebml identifier of a gene, and an Ensembl identifier of a transcript. A user can also put multiple identifiers separated by a comma. Then a user should select an organism. Currently, DIGGER contains the data from Homo sapiens and Mus musculus.
 
-*Example: Input genes are BAG1 and NCK2; the chosen organism is Homo sapiens.*
 <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%203.png/>
+<p align="center">
+  <em>Figure 2: Example: Input genes are BAG1 and NCK2; the chosen organism is Homo sapiens.</em>
+</p>
 
 If there is information about interactions for the isoforms of interest, the resulting window will show a summary of information about them in a network ('Network') and tabular views ('Queries'). A user can switch between them in the menu in the upper left corner.
 
