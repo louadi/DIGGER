@@ -34,8 +34,6 @@ Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment metho
 
 ## Isoform-level analysis
 
-<img align="left" src="https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%202.png" width="96"/>
-
 The isoform-level analysis investigates the difference in interactions between isoforms or the consequences of isoform switches. The documentation will use an example of BAG1 and NCK2 genes from the DIGGER publication. 
 
 As input (Figure 2), isoform-level analysis accepts the name of a gene, an Ensebml identifier of a gene, and an Ensembl identifier of a transcript. A user can also put multiple identifiers separated by a comma. Then a user should select an organism. Currently, DIGGER contains the data from Homo sapiens and Mus musculus.
@@ -119,40 +117,35 @@ Other isoforms View (Figure 11) again depicts the table of all other known prote
 
 # Exon-level analysis
 
-The Exon-level analysis investigates the consequences of exon skipping event to interactions between isoforms. In the documentation, we will use an example of the INSR gene from the DIGGER publication.
-<p align="center">
-</p>
+The Exon-level analysis investigates the consequences of exon skipping events to interactions between isoforms.
 
-In addition to input as in isoform-level analysis, exon-level analysis accepts an Ensebml identifier of an exon, an Ensembl identifier of a gene with the coordinates of an exon. A user can also put multiple identifiers separated by a comma. Then a user should select an organism.
-
-*Example: an input exon is exon ENSE00003569638 from BAG1; the organism is Homo sapiens*
-<p align="center">
-</p>
-
-Results of the exon analysis consists of DomainView, ProteinView, InteractionView, and the table of Proteins that use this exon.
-
-DomainView presents the general information about an exon (**A**), the information about the corresponding Pfam domain with a link to Pfam and 3did databases (**B**) and a network with all known interactions (**C**). Using toggle bars, a user can add predicted DDIs of different level of confidence (**D**).
-
-*Example: ENSE00003569638 encode a domain PF02719. This domain is known to interact with BAG through a DDI with PF02719 and HSPA1A, HSPA4, and HSPA8 through a DDI with PF00012.*
-<p align="center">
-</p>
-
-ProteinView is similar to Isoform-level analysis.
-
-*Example: Skipping of ENSE00003569638 might lead to loss of interactions with BAG, HSPA1A, HSPA4, and HSPA8.*
-<p align="center">
-</p>
-
-InteractionView is also similar to Isoform-level analysis.
-
-Example: Skipping of ENSE00003569638 might lead to loss of interactions with HSPA8.
-<p align="center">
-</p>
-
-Finally, a table "Proteins that use this exon" give use the list of such protein-coding isoforms:
+In addition to input (Figure 12) as in isoform-level analysis, exon-level analysis accepts an Ensebml identifier of an exon, an Ensembl identifier of a gene with the coordinates of an exon. A user can also put multiple identifiers separated by a comma. Then a user should select an organism.
 
 <p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2015.png/>
 </p>
+<p align="center">
+  <em>Figure 12: An input exon is exon ENSE00003569638 from BAG1; the organism is Homo sapiens</em>
+</p>
+
+Results of the exon analysis consist of DomainView, ProteinView (Figure 14), InteractionView (Figure 15), and the table of Proteins that use this exon. DomainView (Figure 13), ProteinView, and InteractionView are similar to Isoform-level analysis but for an exon of interest. DomainView additionally shows the information about the corresponding Pfam domain with a link to Pfam and 3did database.
+
+<p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2016.png/>
+</p>
+<p align="center">
+  <em>Figure 13: A DomainView for and exon ENSE00003569638 </em>
+</p>
+
+A table "Proteins that use this exon" (Figure 14) reports the list of all protein-coding isoforms that encodes this exon:
+
+<p align="center">
+  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2019.png/>
+</p>
+<p align="center">
+  <em>Figure 14: A table "Proteins that use this exon" for an exon ENSE00003569638 </em>
+</p>
+
 
 # Network-level analysis
 Network analysis investigates the systematic impact of alternative splicing events on the PPIs.
