@@ -84,16 +84,18 @@ Below (Figures 6, 7) is a scheme of transcript exons and mapped Pfam domains, an
   <em>Figure 7: Comparing NCK-201 and NCK-202 isoforms, one can detect that these isoforms differ in exons that encode domains PF14604, the second PF00018, PF00017 as well as exons that contain interacting residues</em>
 </p>
 
-The Protein view shows all known direct interactors of an isoform. View mode can be changed from PPI to PPI-DDI view. 
+The Protein view shows all known direct interactors of an isoform. View mode can be changed from PPI to PPI-DDI view (Figure 8). 
 
-*Example: PPI-DDI view for BAG1-207 depicts possibly missing interactions with BAG3, HSPA1A, HSPA4, and HSPA8.*
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%209.png/>
 <p align="center">
+  <em>Figure 8: PPI-DDI view for BAG1-207 depicts possibly missing interactions with BAG3, HSPA1A, HSPA4, and HSPA8</em>
 </p>
 
-Interaction View allows investigation into details of the PPI between a query isoform and all known and predicted interactors. The interactors can be chosen from the Select Interaction Partner Menu (just tick the box with the interaction of interest there).
+Interaction View (Figure 9) allows investigation into details of the PPI between a query isoform and all known and predicted interactors. The interactors can be chosen from the **Select Interaction Partner Menu** (just tick the box with the interaction of interest there).
 
-*Example: Interaction View depicts the missing interaction between BAG1-207 and HSPA8*
+<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure%2010.png/ width="200" >
 <p align="center">
+  <em>Figure 9: Interaction View of BAG1-207 isoform. An interaction with HSPA8 might be lost due to alternative splicing of PF02179</em>
 </p>
 
 Domain View shows all interactors known for a particular domain.
