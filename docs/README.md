@@ -8,13 +8,13 @@ interactions of protein isoforms.
 
 # The concept of DIGGER
 
-Experimental evidence suggests that the majority of protein isoforms have different interaction partners. However, conducting experiments for all possible isoforms will be time- and resource-consuming. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein and domain-domain interactions (DDI) into a joint graph and maps interacting residues to exons (Figure, **A**, upper part). The concept is the following: if an alternative splicing event leads to splicing out an interacting domain or residues, the interaction between proteins might be lost or impaired (Figure, **A**, lower part). 
+Experimental evidence suggests that the majority of protein isoforms have different interaction partners. However, conducting experiments for all possible isoforms will be time- and resource-consuming. Domain Interaction Graph Guided ExploreR (DIGGER) integrates protein-protein and domain-domain interactions (DDI) into a joint graph and maps interacting residues to exons (Figure 1, **A**, upper part). The concept is the following: if an alternative splicing event leads to splicing out an interacting domain or residues, the interaction between proteins might be lost or impaired (Figure 1, **A**, lower part). 
 
 <p align="center">
 <img alt="DIGGER workflow" src="https://exbio.wzw.tum.de/digger/static/image/figure%201.png" width="800"/>
 </p>
-<p>
-  <em>The overview of DIGGER</em>
+<p align="center">
+  <em>Figure 1: The overview of DIGGER</em>
 </p>
 
 DIGGER uses the following sources for PPI, DDIs, and interacting residues:
@@ -25,8 +25,8 @@ Mus musculus:
 [TODO]
 
 DIGGER provides PPI visualizations in a structural context using a dynamic graph visualization that can be toggled between a protein
-isoform and a domain-centric view (Figure, **B**). Furthermore, the tool maps the protein features encoded by a selected exon,
-to judge the functional role of individual exons in the PPI (Figure, **C**).  DIGGER’s joint PPI and domain-domain interaction network can also be used for subnetwork extraction, providing a basis for network analysis (**D**).
+isoform and a domain-centric view (Figure 1, **B**). Furthermore, the tool maps the protein features encoded by a selected exon,
+to judge the functional role of individual exons in the PPI (Figure 1, **C**).  DIGGER’s joint PPI and domain-domain interaction network can also be used for subnetwork extraction, providing a basis for network analysis (Figure 1, **D**).
 
 Finally, DIGGER provides a web interface for **NEASE** (Network Enrichment method for Alternative Splicing Events) - a tool for the functional enrichment of alternative splicing exons/events.
 
