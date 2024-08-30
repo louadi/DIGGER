@@ -381,7 +381,7 @@
     // when clicking the example data button, fill in the form with example data
     document.getElementById('exampleData').addEventListener('click', function() {
         document.getElementById('spinner').style.display = 'inline-block';
-        document.getElementById('loading_text').value = 'Fetching example data...'
+        document.getElementById('loading_text').innerText = 'Fetching example data...'
         document.getElementById('loading_text').style.display = 'inline-block';
         const exampleFileUrl = 'https://raw.githubusercontent.com/louadi/NEASE-tutorials/main/AS%20data/MS/AL_NAWM.deltapsi.tsv';
 
