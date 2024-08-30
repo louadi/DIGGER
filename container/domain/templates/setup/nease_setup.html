@@ -225,8 +225,10 @@
       <!-- submit button -->
       <div class="card-body row no-gutters align-items-center">
         <div class="col-md-6">
-          <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start" type="button"
-          >Example data</button>
+          <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start svgOption"
+                  type="button" data-toggle="tooltip" data-placement="top" title="Use example MAJIQ output of MS
+                   data from the NEASE tutorial"
+          >Example data </button>
         </div>
         <div class="col-md-6 text-right d-flex align-items-center justify-content-end">
           <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
@@ -337,16 +339,22 @@
       }, 2000);
     });
 
-    // change the label text when a file is selected
-    $(document).ready(function(){
-      // Add change event listener to file input
-      $('#customFile').on('change', function(){
-          // Get the name of the selected file
-          var fileName = $(this).val().split('\\').pop();
-          // Update the label text
-          $(this).next('.custom-file-label').html(fileName);
-      });
+  // Wait until the DOM content is fully loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the file input element
+    const fileInput = document.getElementById('customFile');
+
+    // Add change event listener to the file input
+    fileInput.addEventListener('change', function () {
+      // Get the name of the selected file
+      const fileName = fileInput.value.split('\\').pop();
+      // Update the label text
+      const label = fileInput.nextElementSibling;
+      if (label.classList.contains('custom-file-label')) {
+        label.innerHTML = fileName;
+      }
     });
+  });
 
     // prevent form submission if no file is selected
     document.getElementById('inputForm').addEventListener('submit', function(event) {
@@ -367,9 +375,9 @@
     });
 
     document.getElementById('customFile').addEventListener('change', function() {
-        var file = this.files[0];
-        var maxSize = 20 * 1024 * 1024;
-        var warning = document.getElementById('sizeWarning');
+        const file = this.files[0];
+        const maxSize = 20 * 1024 * 1024;
+        const warning = document.getElementById('sizeWarning');
 
         if (file && file.size > maxSize) {
             warning.style.display = 'block';
@@ -391,7 +399,8 @@
           .then(blob => {
             // Create a new File object from the Blob
             const file = new File([blob], 'AL_NAWM.deltapsi.tsv', { type: blob.type });
-            console.log('Fetched the example file:', file);
+            // update file label
+            document.getElementById('customFile').nextElementSibling.innerHTML = file.name;
 
             // Add the file to the file input
             const dataTransfer = new DataTransfer(); // Create a DataTransfer object
