@@ -682,10 +682,16 @@ def Multi_proteins(request, organism, job='0'):
     return render(request, 'visualization/network.html', context)
 
 
-def set_previous_analysis(request):
-    print("got previous analysis with run ID:", request.POST.get('previousAnalysis'))
+def set_previous_analysis(request, post_request=True):
+    if post_request:
+        run_id = request.POST.get('previousAnalysis')
+        run_name = request.POST.get('previousName')
+    else:
+        run_id = request.GET.get('runId')
+        run_name = request.GET.get('runName')
+    print("got previous analysis with run ID:", run_id)
     try:
-        events, info_tables = no.get_nease_events(request.POST.get('previousAnalysis'))
+        events, info_tables = no.get_nease_events(run_id)
 
     except FileNotFoundError:
         context = {'error_msg': "Could not find this analysis, please run it again."}
@@ -695,13 +701,11 @@ def set_previous_analysis(request):
         context = {'error_msg': str(e)}
         return render(request, 'setup/nease_setup.html', context)
 
-    run_id = request.POST.get('previousAnalysis')
-
     for key, value in info_tables.items():
         info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
     context = {
-        'input_name': request.POST.get('previousName'),
+        'input_name': run_name,
         **events.summary,
         **info_tables,
         'stats': run_id + ".jpg",
@@ -710,18 +714,15 @@ def set_previous_analysis(request):
     }
     return render(request, 'visualization/nease_result.html', context)
 
-
 # this does the initial nease run or loads a previous analysis
 def setup_nease(request):
     # handle previous analysis
     if request.POST.get('previousAnalysis', None):
-        return set_previous_analysis(request)
+        return set_previous_analysis(request, True)
 
     # handle previous analysis as a get request
     if request.GET.get('runId', None):
-        request.POST.set('previousAnalysis', request.GET.get('runId'))
-        request.POST.set('previousName', request.GET.get('runName'))
-        return set_previous_analysis(request)
+        return set_previous_analysis(request, False)
 
     # otherwise continue with new analysis
     if not request.FILES:
