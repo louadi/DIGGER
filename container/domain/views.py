@@ -12,6 +12,7 @@ from django.db import connection
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils.html import escape
 from io import StringIO
 
@@ -709,6 +710,7 @@ def set_previous_analysis(request, post_request=True):
         **events.summary,
         **info_tables,
         'stats': run_id + ".jpg",
+        'shareable_link': request.build_absolute_uri(reverse('nease-analysis')) + "?runId=" + run_id + "&runName=" + run_name,
         'run_id': run_id,
         **events.get_databases()
     }
@@ -793,6 +795,7 @@ def setup_nease(request):
             **events.summary,
             **info_tables,
             'stats': run_id + ".jpg",
+            'shareable_link': request.build_absolute_uri(reverse('nease-analysis')) + "?runId=" + run_id + "&runName=" + input_data['splicing-events-file'].name,
             'run_id': run_id,
             **events.get_databases(),
         }

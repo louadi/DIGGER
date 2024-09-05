@@ -146,8 +146,23 @@
           </h5>
           <h5 class="lead"><span
               style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
-            </h5>
+          </h5>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Link for sharing (click to copy):</span> <div id="link_text" onclick="copyDivToClipboard()"> {{ shareable_link|safe }} </div>
+
+          </h5>
         </div>
+        <script>
+            function copyDivToClipboard() {
+                var range = document.createRange();
+                range.selectNode(document.getElementById("link_text"));
+                window.getSelection().removeAllRanges(); // clear current selection
+                window.getSelection().addRange(range); // to select text
+                document.execCommand("copy");
+                window.getSelection().removeAllRanges();// to deselect
+                alert("Copied successfully!");
+            }
+        </script>
 
         <!-- Tab content -->
         <div class="tab-content" id="v-pills-tabContent">
