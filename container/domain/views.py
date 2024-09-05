@@ -717,6 +717,12 @@ def setup_nease(request):
     if request.POST.get('previousAnalysis', None):
         return set_previous_analysis(request)
 
+    # handle previous analysis as a get request
+    if request.GET.get('runId', None):
+        request.POST.set('previousAnalysis', request.GET.get('runId'))
+        request.POST.set('previousName', request.GET.get('runName'))
+        return set_previous_analysis(request)
+
     # otherwise continue with new analysis
     if not request.FILES:
         return render(request, 'setup/nease_setup.html')
