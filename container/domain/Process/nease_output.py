@@ -15,8 +15,11 @@ import uuid
 images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
 data_path = os.path.join(settings.MEDIA_ROOT, 'nease_tables/')
 nease_path = 'nease_events/'
+# The subdirectories contain files saved for one week, one month, and six months. To be very lenient, we calculated every month with 31 days.
+days_to_folder = {"7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/", "186": nease_path+"onehundredeightysix_days/"}
+default_path = days_to_folder["7"]
 
-for path in [images_path, data_path, nease_path]:
+for path in [images_path, data_path, days_to_folder.values()]:
     if not os.path.exists(path):
         os.makedirs(path)
 
@@ -63,7 +66,7 @@ def run_nease(data, organism, params):
             value.drop(columns=['Unnamed: 0'], inplace=True)
 
     # save events to pickle
-    events.save(nease_path + run_id)
+    events.save(default_path + run_id)
     return events, info_tables, run_id
 
 
@@ -91,8 +94,12 @@ def read_extra_spaces(file_obj):
     return df
 
 
-def get_nease_events(run_id):
-    events = nease.load(nease_path + run_id + '.pkl')
+def get_nease_events(run_id, days):
+    if days not in days_to_folder:
+        file_path = default_path
+    else:
+        file_path = days_to_folder[str(days)]
+    events = nease.load(file_path + run_id + '.pkl')
     domains = pd.read_csv(f"{data_path}{run_id}_domains.csv")
     edges = pd.read_csv(f"{data_path}{run_id}_edges.csv")
     info_tables = {'domains': domains, 'edges': edges}

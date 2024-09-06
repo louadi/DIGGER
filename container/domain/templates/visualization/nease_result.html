@@ -148,19 +148,38 @@
               style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
           </h5>
           <h5 class="lead"><span
-              style="font-weight:bold; display: inline-block; width: 500px">Link for sharing (click to copy):</span> <div id="link_text" onclick="copyDivToClipboard()"> {{ shareable_link|safe }} </div>
+              style="font-weight:bold; display: inline-block; width: 500px">Keep data saved for:</span>
+              <select onchange="duration_change()" name="time_duration" id="time_duration">
+                  <option value="7">One week</option>
+                  <option value="31">One month</option>
+                  <option value="186">Six months</option>
+              </select>
+
+          </h5>
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Link for sharing:</span> <small hidden style="display:none;" id="link_text">{{ shareable_link|safe }}</small> <button onclick="copyDivToClipboard()"> Click to copy </button>
 
           </h5>
         </div>
         <script>
             function copyDivToClipboard() {
-                var range = document.createRange();
-                range.selectNode(document.getElementById("link_text"));
-                window.getSelection().removeAllRanges(); // clear current selection
-                window.getSelection().addRange(range); // to select text
-                document.execCommand("copy");
-                window.getSelection().removeAllRanges();// to deselect
-                alert("Copied successfully!");
+                // Get the text field
+                var copyText = document.getElementById("link_text");
+
+                // Select the text field
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); // For mobile devices
+
+                // Copy the text inside the text field
+                navigator.clipboard.writeText(copyText.value);
+
+                // Alert the copied text
+                alert("Copied the text: " + copyText.value);
+            }
+            function duration_change(){
+                const duration = document.getElementById("time_duration").value;
+                const id = "{{ run_id|safe }}";
+                //
             }
         </script>
 
