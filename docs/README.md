@@ -48,7 +48,7 @@ As input (Figure 2), isoform-level analysis accepts the name of a gene, an Enseb
 If there is information about interactions for the isoforms of interest, the resulting window will show a summary of information about them in a network ('Network') and tabular views ('Queries'). A user can switch between them in the menu in the upper left corner.
 
 A network view (Figure 3) provides information about known/predicted interactions of query isoforms. Predicted DDIs toggle bars allow the addition of predicted DDIs of different levels of confidence. Interactions lost or impaired due to splicing are marked as dashed lines. A user could also adjust the view of the network by enabling/disabling physics and adjusting the height of a canvas.
-<img src="./Figure3.png>
+<img src="./Figure3.png">
 <p align="center">
   <em>Figure 3: A network view for chosen isoforms of BAG1 and NCK2.</em>
 </p>
@@ -78,7 +78,7 @@ This page also contains a scheme of transcript exons and mapped Pfam domains, an
   <em>Figure 6: Comparing BAG1-210 and BAG-207 isoforms, one can detect that these isoforms differ in exons that encode a domain PF02179 as well as exons that contain interacting residues</em>
 </p>
 
-<img src="./Figure7A.png>
+<img src="./Figure7A.png">
 <img src="./Figure7B.png">
 <p align="center">
   <em>Figure 7: Comparing NCK-201 and NCK-202 isoforms, one can detect that these isoforms differ in exons that encode domains PF14604, the second PF00018, PF00017 as well as exons that contain interacting residues</em>
@@ -212,14 +212,14 @@ NEASE contains three further types of analysis: enrichment analysis, pathway ana
 
 NEASE edge enrichment supports the following ontologies:
 
-Homo sapiens: 
+#### Homo sapiens: 
 - PharmGKB
 - HumanCyc
 - Wikipathways
 - Reactome
 - KEGG
   
-Mus musculus
+#### Mus musculus
 - KEGG
 - Reactome
 - MouseCyc
