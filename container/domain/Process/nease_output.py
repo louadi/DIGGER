@@ -242,3 +242,16 @@ def create_plot(terms, pvalues, cut_off, filename):
     # flush the plot
     plt.clf()
     plt.close()
+
+
+def match_name_with_format(filename):
+    name_matches = {'deltapsi': 'MAIJQ',
+                    'maijq': 'MAIJQ',
+                    'diff': 'Whippet',
+                    'whippet': 'Whippet',
+                    'mats': 'rmats'}
+
+    for name, format in name_matches.items():
+        if name in filename.lower():
+            return f"{format} input"
+    return None
