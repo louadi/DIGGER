@@ -278,7 +278,7 @@ def process_MAJIQ(data,
     except Exception as e:
         print(e)
         raise Exception(
-            "Could not recognize MAJIQ format. Please make sure your table matches MAJIQ output or use the standard format.")
+            "Could not recognize MAJIQ format.")
 
     #filter for significant of diff. AS events
     # only keep diff used junction with confidence higher than 'Majiq_confidence' (for instance: 0.95)

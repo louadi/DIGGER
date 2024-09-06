@@ -42,7 +42,7 @@
 
   {% if error_msg %}
     <div class="alert alert-danger" role="alert">
-      {{ error_msg }}
+      {{ error_msg|safe }}
     </div>
   {% endif %}
   <div id="sizeWarning" class="alert alert-warning" style="display: none">
@@ -88,7 +88,7 @@
                   <!-- options: 'MAJIQ', 'Standard', 'Spycone', 'Whippet', 'rmats', 'DEXSeq' -->
                   <option value="Standard">Standard</option>
                   <option value="MAJIQ">MAJIQ</option>
-                  <option value="Spycone">Spycone</option>
+                  <!-- <option value="Spycone">Spycone</option> -->
                   <option value="Whippet">Whippet</option>
                   <option value="rmats">rmats</option>
                   <!-- <option value="DEXSeq">DEXSeq</option> -->
