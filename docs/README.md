@@ -40,7 +40,7 @@ The isoform-level analysis investigates the difference in interactions between i
 
 As input (Figure 2), isoform-level analysis accepts the name of a gene, an Ensebml identifier of a gene, and an Ensembl identifier of a transcript. A user can also put multiple identifiers separated by a comma. Then a user should select an organism. Currently, DIGGER contains the data from Homo sapiens and Mus musculus.
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure2.png/>
+<img src="./Figure2.png">
 <p align="center">
   <em>Figure 2: Input genes are BAG1 and NCK2; the chosen organism is Homo sapiens.</em>
 </p>
@@ -48,14 +48,14 @@ As input (Figure 2), isoform-level analysis accepts the name of a gene, an Enseb
 If there is information about interactions for the isoforms of interest, the resulting window will show a summary of information about them in a network ('Network') and tabular views ('Queries'). A user can switch between them in the menu in the upper left corner.
 
 A network view (Figure 3) provides information about known/predicted interactions of query isoforms. Predicted DDIs toggle bars allow the addition of predicted DDIs of different levels of confidence. Interactions lost or impaired due to splicing are marked as dashed lines. A user could also adjust the view of the network by enabling/disabling physics and adjusting the height of a canvas.
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure3.png/>
+<img src="./Figure3.png>
 <p align="center">
   <em>Figure 3: A network view for chosen isoforms of BAG1 and NCK2.</em>
 </p>
 
 The tabular view (Figure 4) presents the information about query isoforms or all annotated protein-coding isoforms if a query consists of a gene name/identifier. The Pfam domains column contains information about known PFAM domains of a resulting protein. "Present / Missing interacting domains in the isoform" column demonstrates the percentage of interactions possibly lost or impaired for this particular isoform due to alternative splicing. To further investigate the impact of a splicing event, a user can click 'Visualize'.
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure4.png/>
+<img src="./Figure4.png">
 <p align="center">
   <em>Figure 4: a tabular view on isoforms of BAG1 and NCK2.
   A transcript BAG-207 possibly lost a PPI due to alternative splicing that leads to removing the part of the protein that encodes a domain PF02179. A transcript NCK-202 also lost a PPI due to splicing of domains PF00017 and PF14604.</em>
@@ -65,28 +65,28 @@ A "Visualize" window, provides five different visualization panels: Overview, Pr
 
 The Overview window header (Figure 5) shows the general information about the transcript.
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure5.png/>
+<img src="./Figure5.png">
 <p align="center">
   <em>Figure 5: General information about a transcript</em>
 </p>
 
 This page also contains a scheme of transcript exons and mapped Pfam domains, and the table of all exons and Pfam domains mapped on exons (Figures 6, 7). 
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure6A.png/>
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure6B.png/>
+<img src="./Figure6A.png">
+<img src="./Figure6B.png">
 <p align="center">
   <em>Figure 6: Comparing BAG1-210 and BAG-207 isoforms, one can detect that these isoforms differ in exons that encode a domain PF02179 as well as exons that contain interacting residues</em>
 </p>
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure7A.png/>
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure7B.png/>
+<img src="./Figure7A.png>
+<img src="./Figure7B.png">
 <p align="center">
   <em>Figure 7: Comparing NCK-201 and NCK-202 isoforms, one can detect that these isoforms differ in exons that encode domains PF14604, the second PF00018, PF00017 as well as exons that contain interacting residues</em>
 </p>
 
 The Protein view shows all known direct interactors of an isoform. View mode can be changed from PPI to PPI-DDI view (Figure 8). 
 
-<img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure8.png/>
+<img src="./Figure8.png">
 <p align="center">
   <em>Figure 8: PPI-DDI view for BAG1-207 depicts possibly missing interactions with BAG3, HSPA1A, HSPA4, and HSPA8</em>
 </p>
@@ -94,7 +94,7 @@ The Protein view shows all known direct interactors of an isoform. View mode can
 Interaction View (Figure 9) allows investigation into details of the PPI between a query isoform and all known and predicted interactors. The interactors can be chosen from the **Select Interaction Partner Menu** (just tick the box with the interaction of interest there).
 
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure9.png/ width="400" align="center">
+  <img src="./Figure9.png" width="400" align="center">
 </p>
 <p align="center">
   <em>Figure 9: Interaction View of BAG1-207 isoform. An interaction with HSPA8 might be lost due to alternative splicing of PF02179</em>
@@ -103,7 +103,7 @@ Interaction View (Figure 9) allows investigation into details of the PPI between
 Domain View (Figure 10) shows all interactors known for a particular domain.
 
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure10.png/ width="400" align="center">
+  <img src="./Figure10.png" width="400" align="center">
 </p>
 <p align="center">
   <em>Figure 10: Splicing out a domain PF02179 in the isoform BAG1-207 leads to missing PPIs with BAG3, HSPA1A, HSPA4, and HSPA8</em>
@@ -111,7 +111,7 @@ Domain View (Figure 10) shows all interactors known for a particular domain.
 
 Other isoforms View (Figure 11) again depicts the table of all other known protein-coding isoforms of a gene.
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure11.png/>
+  <img src="./Figure11.png">
 </p>
 <p align="center">
   <em>Figure 11: All transcripts of BAG1</em>
@@ -124,7 +124,7 @@ The Exon-level analysis investigates the consequences of exon skipping events to
 In addition to input (Figure 12) as in isoform-level analysis, exon-level analysis accepts an Ensebml identifier of an exon, an Ensembl identifier of a gene with the coordinates of an exon. A user can also put multiple identifiers separated by a comma. Then a user should select an organism.
 
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure12.png/>
+  <img src="./Figure12.png">
 </p>
 <p align="center">
   <em>Figure 12: An input exon is exon ENSE00003569638 from BAG1; the organism is Homo sapiens</em>
@@ -133,7 +133,7 @@ In addition to input (Figure 12) as in isoform-level analysis, exon-level analys
 Results of the exon analysis consist of DomainView, ProteinView, InteractionView, and the table of Proteins that use this exon. DomainView, ProteinView, and InteractionView are similar to Isoform-level analysis but for an exon of interest. DomainView additionally shows the information about the corresponding Pfam domain with a link to the Pfam and 3did database (Figure 13).
 
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure13.png/>
+  <img src="./Figure13.png">
 </p>
 <p align="center">
   <em>Figure 13: A DomainView for and exon ENSE00003569638 </em>
@@ -142,7 +142,7 @@ Results of the exon analysis consist of DomainView, ProteinView, InteractionView
 A table "Proteins that use this exon" (Figure 14) reports the list of all protein-coding isoforms that encodes this exon:
 
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure14.png/>
+  <img src="./Figure14.png">
 </p>
 <p align="center">
   <em>Figure 14: A table "Proteins that use this exon" for an exon ENSE00003569638 </em>
@@ -152,7 +152,7 @@ A table "Proteins that use this exon" (Figure 14) reports the list of all protei
 ## Network-level analysis
 Network analysis investigates the systematic impact of alternative splicing events on the PPIs. As input (Figure 15), Network-level analysis accepts the list of genes, transcripts, proteins, or a transcript count file and constructs a subnetwork from this list.
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure15.png/>
+  <img src="./Figure15.png">
 </p>
 <p align="center">
   <em>Figure 15: An example input for Network-level analysis </em>
@@ -160,7 +160,7 @@ Network analysis investigates the systematic impact of alternative splicing even
 
 If interactions between isoforms are known, the isoforms are connected to the subnetworks, and the interactions are marked as lost or present as well as based on the interaction evidence (Figure 16). For further exploration, the network can be downloaded in SIF or GraphML formats.
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/Figure16.png/>
+  <img src="./Figure16.png">
 </p>
 <p align="center">
   <em>Figure 16: An example output for Network-level analysis </em>
@@ -191,7 +191,7 @@ For MAJIQ:
 </p>
 
 <p align="center">
-  <img src=https://github.com/OlgaVT/DIGGER/blob/patch-1/docs/FigureNEASE.png/>
+  <img src="./FigureNEASE.png">
 </p>
 <p align="center">
   <em>Figure 17: NEASE starting page </em>
