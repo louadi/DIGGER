@@ -224,11 +224,11 @@ NEASE edge enrichment supports the following ontologies:
 - Reactome
 - MouseCyc
 
-Type in the name of the ontology of interest and click the "Run enrichment" button. The resulting table will show the list of pathways, the list of genes that lost/impaired interactions with these pathways due to alternative splicing, and the significance assessment with p-value and adjusted p-value. NEASE score re-weights the pathways according to the hub bias. For more details, check the [NEASE publication] (https://doi.org/10.1186/s13059-021-02538-1).
+Type in the name of the ontology of interest and click the "Run enrichment" button. The resulting table will show the list of pathways, the list of genes that lost/impaired interactions with these pathways due to alternative splicing, and the significance assessment with p-value and adjusted p-value. NEASE score re-weights the pathways according to the hub bias. For more details, check the [NEASE publication](https://doi.org/10.1186/s13059-021-02538-1).
 
 To investigate the enriched pathways in detail, use Pathway analysis. Type in the pathway ID from NEASE edge enrichment analysis, e.g., "path:mmu04010". The resulting table contains the information about each gene with list/impaired interactions with this pathway due to alternative splicing: whether it belongs to the pathway, how many interactions were lost/impaired, and the p-value.
 
-Finally, "Visualize pathways" option provides the visualization of teh resulting network with lost/impaired interactions. Be aware, the visualization might take up to several minutes. 
+Finally, "Visualize pathways" option provides the visualization of the resulting network with lost/impaired interactions. Be aware, the visualization might take up to several minutes. 
 
 # Hosting your own instance
 
