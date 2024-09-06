@@ -1,0 +1,47 @@
+{% extends "base_information.html" %}
+{% load static %}
+
+{% block title %}Download{% endblock %}
+
+{% block section-title %}Used Networks & Databases{% endblock %}
+
+{% block section-content %}
+    <div class="card border-0 ">
+        <div class="card-body" style="background: #f2f6fc">
+          <h5>You can download all the files used in DIGGER from zenodo. The files that NEASE uses somewhat overlap
+          with the files DIGGER uses, but you can download them separately if you care only about one or the other.</h5>
+          <div class="row mx-1">
+            <div class="list-group">
+              <a class="list-group-item list-group-item-action" style="width: 400px" href="https://zenodo.org/records/12517244/files/data.zip">DIGGER files</a>
+              <a class="list-group-item list-group-item-action" style="width: 400px" href="https://zenodo.org/records/12517244/files/nease_data.zip">NEASE files</a>
+            </div>
+          </div>
+          <br>
+            <h5>Additional files that were used to create the files DIGGER uses:</h5>
+          <div class="row mx-1">
+            <div class="list-group">
+              <a class="list-group-item list-group-item-action" href="https://zenodo.org/record/3886642/files/domain_mapped_to_exons.csv?download=1">Mapping of protein domains to exons</a>
+              <a class="list-group-item list-group-item-action" href="https://zenodo.org/record/3886699/files/PPI_table_proteome_95_seq_id.tsv?download=1">Position-specific residue annotations of the PPI (~1.5GB)</a>
+              <a class="list-group-item list-group-item-action" href="https://zenodo.org/record/3886686/files/residue_interface_mapped_to_exon.csv?download=1">Position-specific residue PPI mapped to exons</a>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+    <!-- Contact us -->
+    <div class="card border-0 ">
+        <div class="card-body" style="background: #f2f6fc">
+            <h3>Contact us</h3>
+            <h5>
+                <p><b>Elias Albrecht</b></br>
+                elias.albrecht@in.tum.de
+                </p>
+                <p><b>Olga Tsoy</b></br>
+                    olga.tsoy@uni-hamburg.de</p>
+                <p><b>Markus List</b></br>
+                    markus.list@tum.de</p>
+            </h5>
+        </div>
+    </div>
+{% endblock %}

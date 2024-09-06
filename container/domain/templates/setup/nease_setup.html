@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}NEASE Analysis{% endblock %}
+
+{% block header %}
+  <script src="{% static "domain/loadStore.js" %}" type="text/javascript"></script>
+  <style>
+      .previous-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .previous-card:hover {
+        transform: scale(1.005);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);;
+    }
+    .inline-icon {
+        display: inline-block;
+        vertical-align: middle;
+        height: 1.4em;
+        width: auto;
+    }
+
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-4">NEASE Analysis</h1>
+    <p class="lead">
+      NEASE is a network-based approach for exon set enrichment.
+      <br><br>
+      Upload a file containing alternative splicing events in one of the supported formats, select
+      the options you would like to use and automatically get your results!</p>
+  </div>
+
+    <!-- make a danger alert if there is no file -->
+    <div id="noFileAlert" class="alert alert-danger" role="alert" hidden="">
+      Please select a file!
+    </div>
+
+  {% if error_msg %}
+    <div class="alert alert-danger" role="alert">
+      {{ error_msg|safe }}
+    </div>
+  {% endif %}
+  <div id="sizeWarning" class="alert alert-warning" style="display: none">
+    Your input file is larger than 20MB, the analysis may take a long time to run. Please be patient.
+  </div>
+
+  <div role="tabpanel" class="tab-pane" id="Section3">
+    <form id="inputForm" class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- file upload -->
+      <div class="card-body row no-gutters align-items-center">
+        <div class="custom-file form-group">
+            <input type="file" class="custom-file-input form-control" name="splicing-events-file" id="customFile">
+            <label class="custom-file-label" for="customFile">Upload a file with splicing events</label>
+        </div>
+      </div>
+
+      <!-- options -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5><b>Required Options</b></h5>
+            <br>
+            <!-- organism -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="org_select">Organism </label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-control" id="org_select" name="organism">
+                </select>
+              </div>
+            </div>
+            <!-- databases -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="input_type" data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="The source of the input splicing events. Dictates the format NEASE uses"
+                >Input format </label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-control" id="input_type" name="inputType">
+                  <!-- options: 'MAJIQ', 'Standard', 'Spycone', 'Whippet', 'rmats', 'DEXSeq' -->
+                  <option value="Standard">Standard</option>
+                  <option value="MAJIQ">MAJIQ</option>
+                  <!-- <option value="Spycone">Spycone</option> -->
+                  <option value="Whippet">Whippet</option>
+                  <option value="rmats">rmats</option>
+                  <!-- <option value="DEXSeq">DEXSeq</option> -->
+                </select>
+              </div>
+            </div>
+            <!-- DDIs -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="Determines which (if any) predicted Domain-Domain Interactions should be used"
+                >Predicted DDIs </label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="high_domain"
+                         name="predicted-checkbox-high" value="high">
+                  <label class="custom-control-label" for="high_domain">High</label>
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="mid_domain"
+                         name="predicted-checkbox-mid" value="mid">
+                  <label class="custom-control-label" for="mid_domain">Medium</label>
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input predicted-checkbox-domain" id="low_domain"
+                         name="predicted-checkbox-low" value="low">
+                  <label class="custom-control-label" for="low_domain">Low (confidence)</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <h5><b>Advanced Options</b></h5>
+            <br>
+            <!-- custom analysis name -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="analysis_name" data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="The name the analysis should be saved under. Default is file name">Analysis name </label>
+              </div>
+              <div class="col-md-8">
+                <input type="text" class="form-control" id="analysis_name" name="analysis_name">
+              </div>
+            </div>
+            <!-- p_value_cutoff -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="p_value_cutoff" data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="The p value cutoff used to compute NEASE scores.">P-value cutoff </label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="p_value_cutoff" name="p_value_cutoff" value="0.05"
+                       step="0.0001">
+              </div>
+            </div>
+            <!-- min_delta -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="min_delta" data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="min delta to consider in case your input has a dPsi column.
+                       The value also corresponds to logfold change in case of DEXSeq.">Min delta </label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="min_delta" name="min_delta" value="0.05"
+                       step="0.01">
+              </div>
+            </div>
+            <!-- Majiq_confidence -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label for="Majiq_confidence" data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="In case of your input format being MAJIQ. The parameter P(dPSI > 20%) is needed.
+                       Check MAJIQ paper for details about this">MAJIQ confidence </label>
+              </div>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="Majiq_confidence" name="Majiq_confidence"
+                       value="0.95"
+                       step="0.01" disabled="">
+              </div>
+            </div>
+            <!-- only_DDIs -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="Only use DDI and exclude PDB and linear motif interactions for calculations">Only DDIs </label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="only_DDIs" name="only_DDIs" value="True">
+                  <label class="custom-control-label" for="only_DDIs"></label>
+                </div>
+              </div>
+            </div>
+            <!-- remove non in frame -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="Removes all exons that are predicted to disturb the ORF or known to result
+                       in a non-coding gene. Disable to include all exons.">Remove not-in-frame</label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="remove_non_in_frame"
+                         name="remove_non_in_frame" checked>
+                  <label class="custom-control-label" for="remove_non_in_frame"></label>
+                </div>
+              </div>
+
+            </div>
+            <!-- only divisible by 3 -->
+            <div class="row my-2">
+              <div class="col-md-4">
+                <label data-toggle="tooltip" data-placement="top" class="svgOption"
+                       title="Removes exons not divisible by 3">Only divisible by 3 </label>
+              </div>
+              <div class="col-md-8">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="only_divisible_by_3"
+                         name="only_divisible_by_3" value="False">
+                  <label class="custom-control-label" for="only_divisible_by_3"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="display: none">
+          <!-- create hidden input for previous analyses -->
+          <input type="hidden" name="previousAnalysis" id="previous_analyses_input" value="">
+          <input type="hidden" name="previousName" id="previous_analyses_name" value="">
+        </div>
+      </div>
+      <!-- submit button -->
+      <div class="card-body row no-gutters align-items-center">
+        <div class="col-md-6">
+          <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start svgOption"
+                  type="button" data-toggle="tooltip" data-placement="top" title="Use example MAJIQ output of MS
+                   data from the NEASE tutorial"
+          >Example data </button>
+        </div>
+        <div class="col-md-6 text-right d-flex align-items-center justify-content-end">
+          <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
+          <div id="spinner" class="spinner-border m-2" role="status" style="display: none">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <button id="submit" class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+        </div>
+      </div>
+      <!-- previous analyses -->
+      <div id="prevAnalysisContainer" class="container" style="display: none;">
+          <div class="row">
+            <div class="col-md-12">
+              <h5><b class="svgOption" data-toggle="tooltip" data-placement="top" title="Previously executed
+                analyses will be deleted after 7 days">Previous Analyses</b></h5>
+            </div>
+          </div>
+          <div id="previousAnalyses">
+          </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="{% static "domain/organism_selector.js" %}"></script>
+
+  <script>
+    // make svg element that can be added to form options
+    function makeSvgElement() {
+        document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'inline-icon');
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('fill', 'currentColor');
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', "M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11 11H13V17H11V11Z");
+        svg.appendChild(path);
+        return svg;
+    }
+
+    // add svg element to all elements with class svgOption
+    const svgElement = makeSvgElement();
+    const svgOptions = document.getElementsByClassName('svgOption');
+    for (let i = 0; i < svgOptions.length; i++) {
+      svgOptions[i].appendChild(svgElement.cloneNode(true));
+    }
+
+    // load previous analyses
+    const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+
+    // remove keys if they expired
+    localKeys.forEach(key => {
+      removeExpiredData(key)
+    });
+    const data = localKeys.map(key => JSON.parse(localStorage.getItem(key)));
+
+    if (data.length > 0) {
+        document.getElementById('prevAnalysisContainer').style.display = 'block';
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        if (!data[i]) {
+            continue;
+        }
+        const template = createHtmlTemplate(data[i]);
+        appendTemplateToDiv(template, 'previousAnalyses');
+    }
+
+    // enable tooltips
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    // check if input_type is Majiq, if it is not, disable Majiq_confidence
+    $('#input_type').change(function () {
+      if ($('#input_type').val() === 'MAJIQ') {
+        $('#Majiq_confidence').prop('disabled', false);
+      } else {
+        $('#Majiq_confidence').prop('disabled', true);
+      }
+    });
+
+    // if the input_type is Whippet, set the min delta to 0.3 and highlight it shortly to indicate the change
+    $('#input_type').change(function () {
+      if ($('#input_type').val() === 'Whippet') {
+        $('#min_delta').val(0.3);
+        $('#min_delta').addClass('border-warning');
+        setTimeout(function() {
+          $('#min_delta').removeClass('border-warning');
+        }, 1000);
+      }
+    });
+
+
+    // enable the spinner when the form is submitted and disable the button
+    $('#inputForm').submit(function () {
+      $('.spinner-border').css('display', 'inline-block');
+      $('button').prop('disabled', true);
+
+      // check if previous analyses are selected, if so, don't show the loading text
+      if ($('#previous_analyses_input').val()) {
+        return;
+      }
+      $('#loading_text').css('display', 'inline-block');
+
+      setTimeout(function() {
+        $('#loading_text').text('Running enrichment analysis');
+      }, 2000);
+    });
+
+  // Wait until the DOM content is fully loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the file input element
+    const fileInput = document.getElementById('customFile');
+
+    // Add change event listener to the file input
+    fileInput.addEventListener('change', function () {
+      // Get the name of the selected file
+      const fileName = fileInput.value.split('\\').pop();
+      // Update the label text
+      const label = fileInput.nextElementSibling;
+      if (label.classList.contains('custom-file-label')) {
+        label.innerHTML = fileName;
+      }
+    });
+  });
+
+    // prevent form submission if no file is selected
+    document.getElementById('inputForm').addEventListener('submit', function(event) {
+      var fileInput = document.getElementById('customFile');
+      var prevInput = document.getElementById('previous_analyses_input');
+      // there must be either a file selected or a previous analysis input
+      if ((!fileInput || !fileInput.files || fileInput.files.length === 0) && !prevInput.value) {
+          event.preventDefault();
+          document.getElementById('noFileAlert').removeAttribute('hidden');
+          document.getElementById('loading_text').style.display = 'none';
+          document.getElementById('spinner').style.display = 'none';
+          document.getElementById('submit').removeAttribute('disabled');
+          document.getElementById('exampleData').removeAttribute('disabled');
+      }
+      else {
+          document.getElementById('noFileAlert').setAttribute('hidden', '');
+      }
+    });
+
+    document.getElementById('customFile').addEventListener('change', function() {
+        const file = this.files[0];
+        const maxSize = 20 * 1024 * 1024;
+        const warning = document.getElementById('sizeWarning');
+
+        if (file && file.size > maxSize) {
+            warning.style.display = 'block';
+        } else {
+            warning.style.display = 'none';
+        }
+    });
+
+    // when clicking the example data button, fill in the form with example data
+    document.getElementById('exampleData').addEventListener('click', function() {
+        document.getElementById('spinner').style.display = 'inline-block';
+        document.getElementById('loading_text').innerText = 'Fetching example data...'
+        document.getElementById('loading_text').style.display = 'inline-block';
+        const exampleFileUrl = 'https://raw.githubusercontent.com/louadi/NEASE-tutorials/main/AS%20data/MS/AL_NAWM.deltapsi.tsv';
+
+        // Fetch the example file from GitHub
+        fetch(exampleFileUrl)
+          .then(response => response.blob()) // Convert the response to a Blob
+          .then(blob => {
+            // Create a new File object from the Blob
+            const file = new File([blob], 'AL_NAWM.deltapsi.tsv', { type: blob.type });
+            // update file label
+            document.getElementById('customFile').nextElementSibling.innerHTML = file.name;
+
+            // Add the file to the file input
+            const dataTransfer = new DataTransfer(); // Create a DataTransfer object
+            dataTransfer.items.add(file); // Add the file to the DataTransfer object
+            document.getElementById('customFile').files = dataTransfer.files; // Set the file input's files
+
+            // Set other form input values
+            document.getElementById('org_select').value = 'human';
+            document.getElementById('input_type').value = 'MAJIQ';
+            document.getElementById('high_domain').checked = true;
+            document.getElementById('analysis_name').value = 'Example data';
+
+            // Submit the form
+            document.getElementById('submit').click();
+          })
+          .catch(error => console.error('Error fetching the example file:', error));
+    });
+
+
+
+  </script>
+
+{% endblock %}

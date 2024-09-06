@@ -1,0 +1,47 @@
+{% extends "base_information.html" %}
+{% load static %}
+
+{% block title %}Documentation{% endblock %}
+
+{% block section-title %}Documentation & Help{% endblock %}
+
+{% block section-content %}
+    <div class="card border-0 " style="background: #f2f6fc">
+        <div class="card-body">
+            <h3>How does DIGGER work?</h3>
+            <div class="text-center mt-4">
+                <img class="img-fluid w-75 h-75" src="{% static 'image/figure 1.png' %}"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 " style="background: #f2f6fc">
+        <div class="card-body">
+            <h3>Overview of DIGGER workflow</h3>
+            <h5 class="mt-3">DIGGER integrates protein-protein interactions and domain-domain interactions into a joint
+                graph and
+                maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or
+                as a set to visually explore their interactions. The three modes of DIGGER can be used
+                interchangeably:</h5>
+            <div class="text-center mt-4">
+                <img class="img-responsive" src="{% static 'image/workflow.png' %}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact us -->
+    <div class="card border-0 ">
+      <div class="card-body" style="background: #f2f6fc">
+        <h3>Contact us</h3>
+        <h5>
+          <p><b>Elias Albrecht</b></br>
+          elias.albrecht@tum.de
+          </p>
+          <p><b>Olga Tsoy</b></br>
+              olga.tsoy@uni-hamburg.de</p>
+          <p><b>Markus List</b></br>
+              markus.list@tum.de</p>
+        </h5>
+      </div>
+    </div>
+{% endblock %}

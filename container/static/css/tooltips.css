@@ -1,0 +1,56 @@
+/* Taken and adapted from: https://codepen.io/adobewordpress/pen/gOyWbQ */
+.tooltips {
+  position: relative;
+  display: inline;
+}
+
+.tooltips span {
+  position: absolute;
+  border-radius: 5px;
+  color: #FFFFFF;
+  background: #000000;
+  padding:5px 10px;
+  width:200px;
+  text-align: center;
+  visibility: hidden;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.tooltips > span img{max-width:140px;}
+
+
+.tooltips span:after {
+  content: '';
+  position: absolute;
+  width: 0; height: 0;
+}
+
+
+.tooltips[tooltip-position="right"] span:after{
+  top: 25%;
+  right: 100%;
+  margin-top: -8px;
+  border-right: 8px solid black;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+.tooltips:hover span {
+  visibility: visible;
+  opacity: 1;
+  z-index: 999;
+  filter: alpha(opacity=100);
+}
+
+.tooltips[tooltip-position="right"]:hover span{
+  left: 100%;
+  top: 50%;
+  margin-top: -15px;
+  margin-left: 15px;
+}
+
+.tooltips span {
+  transition: opacity 0.2s ease-in-out 0.1s, visibility 0.2s ease-in-out 0.1s; /* Add a delay to the transition */
+}

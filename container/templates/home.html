@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+  <div style="text-align: center;">
+    <img class="resize" src="{% static 'image/DIGGER.png' %}">
+  </div>
+  <div class="row mt-4">
+    <div class="card border-0 my-5" style="background: #f2f6fc">
+      <div class="card-body">
+        <div class="alert alert-primary">
+          NEASE has been added to the DIGGER website! Check it out <a href="#nease">here</a>.
+        </div>
+
+        <h5 class="mb-4" style="text-align: justify;"><span style="font-weight:bold"> Domain Interaction Graph Guided ExploreR (DIGGER)</span>
+          integrates protein-protein interactions and domain-domain interactions into a joint graph and
+          maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually
+          or as a set to visually explore their interactions. The following modes of DIGGER can be used
+          interchangeably: </h5>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow rounded">
+              <img class="card-img-top" src="{% static 'image/Isoform_mode.svg' %}" alt="">
+              <div class="card-body">
+                <div style="text-align: center;">
+                  <h4 class="card-title">Isoform-Level analysis</h4>
+                </div>
+                <p class="card-text" style="text-align: justify;">Visualize the interacting domains of
+                  proteins and compare the interactions of different isoforms.</p>
+              </div>
+              <div class="card-footer">
+                <div style="text-align: center;">
+                  <a href="{% url 'isoform-level' %}" class="btn btn-secondary px-4 py-2 btn-sm">
+                    Query isoforms</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow rounded">
+              <img class="card-img-top" src="{% static 'image/exon_page.svg' %}" alt="">
+              <div class="card-body">
+                <div style="text-align: center;">
+                  <h4 class="card-title">Exon-Level analysis </h4>
+                </div>
+                <p class="card-text" style="text-align: justify;">Input an exonic region to analyze the
+                  effect of alternative splicing
+                  events on protein interactions.</p>
+              </div>
+              <div class="card-footer">
+                <div style="text-align: center;">
+                  <a href="{% url 'exon-level' %}" class="btn btn-secondary px-4 py-2 btn-sm">Query
+                    exons</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow rounded">
+              <img class="card-img-top" src="{% static 'image/net_page.svg' %}" alt="">
+              <div class="card-body">
+                <div style="text-align: center;">
+                  <h4 class="card-title">Network-Level analysis</h4>
+                </div>
+                <p class="card-text" style="text-align: justify;">Explore interactions between multiple
+                  isoforms and generate a specific
+                  subnetwork from a list of protein variants or transcripts.</p>
+              </div>
+              <div class="card-footer">
+                <div style="text-align: center;">
+                  <a href="{% url 'network-analysis' %}" class="btn btn-secondary px-4 py-2 btn-sm">Build
+                    your subnetwork</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="nease"></div>
+
+        <h5 class="my-4" style="text-align: justify;"><span style="font-weight:bold">
+          Network Enrichment Analysis of Splicing Events (NEASE)</span>
+          allows the users to perform a functional enrichment analysis of alternative splicing events in the context of
+          protein-protein interaction networks. This tool is now integrated into DIGGER and can be used to analyze the
+          functional role of alternative splicing events. Start your analysis now!</h5>
+
+        <div class="row">
+          <div class="col-lg-3 col-md-6 mb-4"></div>
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card h-100 shadow rounded">
+              <img class="card-img-top" src="{% static 'image/nease_page.png' %}" alt="">
+              <div class="card-body">
+                <div style="text-align: center;">
+                  <h4 class="card-title">NEASE analysis</h4>
+                </div>
+                <p class="card-text" style="text-align: justify;">Run the NEASE tool to do a functional enrichment analysis of
+                  alternative splicing events</p>
+              </div>
+              <div class="card-footer">
+                <div style="text-align: center;">
+                  <a href="{% url 'nease-analysis' %}" class="btn btn-secondary px-4 py-2 btn-sm">Run NEASE</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4"></div>
+        </div>
+
+        <br>
+        <!-- /.row -->
+      </div>
+      <h3>If you use DIGGER, please cite:</h3>
+      <div class="jumbotron">
+        <p class="lead">
+          Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga V Kalinina, Jan Baumbach, Tim Kacprowski*, Markus
+          List*.
+          <a href="https://doi.org/10.1093/nar/gkaa768" target="_blank">DIGGER: exploring the functional role of
+            alternative splicing in protein interactions</a>, Nucleic Acids Research.
+          <br>* Joint last authors.</p>
+      </div>
+
+
+      <div class="alert alert-secondary">
+        Reminder: DIGGER works better on Chromium-based browsers and Firefox. If you need help, have a look at our <a
+              href="https://daisybio.github.io/DIGGER"
+              target="_blank">documentation</a>
+        or contact <a href="mailto:elias.albrecht@tum.de">Elias Albrecht</a> or
+        <a href="mailto:olga.tsoy@uni-hamburg.de">Olga Tsoy</a>.
+      </div>
+    </div>
+
+
+    <link rel="stylesheet" type="text/css" href="//wpcc.io/lib/1.0.2/cookieconsent.min.css"/>
+    <script src="//wpcc.io/lib/1.0.2/cookieconsent.min.js"></script>
+    <script>window.addEventListener("load", function () {
+        window.wpcc.init({
+            "border": "thin",
+            "corners": "small",
+            "colors": {
+                "popup": {"background": "#222222", "text": "#ffffff", "border": "#b5e1a0"},
+                "button": {"background": "#b5e1a0", "text": "#000000"}
+            },
+            "position": "bottom-right",
+            "content": {"message": "DIGGER uses cookies to ensure you get the best experience."}
+        })
+    });</script>
+
+
+  </div>
+  </div>
+{% endblock content %}
