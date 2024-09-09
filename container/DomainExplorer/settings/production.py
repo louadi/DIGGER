@@ -10,7 +10,7 @@ from .i18n import *
 __dummy = LANGUAGE_CODE
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False    # ToDo change for production
+DEBUG = True    # ToDo change for production
 
 # Restrict access to only the hostname that this service is deployed to
 ALLOWED_HOSTS = ['*']   # ToDo change for production
@@ -23,7 +23,7 @@ db_name = os.environ.get('POSTGRES_DB', 'postgres')
 db_user = os.environ.get('POSTGRES_USER', 'postgres')
 db_password = os.environ.get('POSTGRES_PASSWORD', 'postgres')
 db_host = 'db'
-db_port = '5439'
+db_port = '5432'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

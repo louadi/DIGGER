@@ -1,3 +1,4 @@
+import json
 import pickle
 import traceback
 from io import StringIO
@@ -8,6 +9,7 @@ import os
 
 from matplotlib import pyplot as plt
 
+from domain.models import NeaseSaveLocationMapping
 from domain.nease import nease
 from django.conf import settings
 import uuid
@@ -19,12 +21,12 @@ nease_path = 'nease_events/'
 days_to_folder = {"7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/", "186": nease_path+"onehundredeightysix_days/"}
 default_path = days_to_folder["7"]
 
-for path in [images_path, data_path, days_to_folder.values()]:
+for path in [images_path, data_path] + list(days_to_folder.values()):
     if not os.path.exists(path):
         os.makedirs(path)
 
 
-def run_nease(data, organism, params):
+def run_nease(data, organism, params, name=''):
     run_id = str(uuid.uuid4())
     image_path = images_path + run_id
 
@@ -67,6 +69,7 @@ def run_nease(data, organism, params):
 
     # save events to pickle
     events.save(default_path + run_id)
+    NeaseSaveLocationMapping(run_id=run_id, saved_for_days=7, name=name).save()
     return events, info_tables, run_id
 
 
@@ -94,11 +97,13 @@ def read_extra_spaces(file_obj):
     return df
 
 
-def get_nease_events(run_id, days):
+def get_nease_events(run_id):
+    days = NeaseSaveLocationMapping.get_saved_for_days(run_id)
     if days not in days_to_folder:
         file_path = default_path
     else:
         file_path = days_to_folder[str(days)]
+    print(f"Loading events from {file_path + run_id + '.pkl'}")
     events = nease.load(file_path + run_id + '.pkl')
     domains = pd.read_csv(f"{data_path}{run_id}_domains.csv")
     edges = pd.read_csv(f"{data_path}{run_id}_edges.csv")
@@ -209,3 +214,25 @@ def create_plot(terms, pvalues, cut_off, filename):
     # flush the plot
     plt.clf()
     plt.close()
+
+def change_save_timing(run_id, days):
+    mapping = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+    current_days_folder = mapping.get_number_of_saved_for_days()
+    if days not in days_to_folder:
+        new_file_path = default_path
+    else:
+        new_file_path = days_to_folder[str(days)]
+    if current_days_folder not in days_to_folder:
+        old_file_path = default_path
+    else:
+        old_file_path = days_to_folder[str(current_days_folder)]
+    # move the file
+    os.rename(old_file_path + run_id + '.pkl', new_file_path + run_id + '.pkl')
+    # update the database
+    mapping.saved_for_days = int(days)
+    mapping.save()
+
+    return json.dumps(
+        {"logmessage": "Changing the save timing from " + str(current_days_folder) + " to " + str(days) + " was successful.",
+         "days_left": mapping.days_left()}
+    )
