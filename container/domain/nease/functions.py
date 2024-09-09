@@ -522,7 +522,9 @@ def stats_domains(affecting_percentage,
     # pie chart parameters
     ratios_pie = [affecting_percentage, 1 - affecting_percentage]
     labels_pie = ['Affecting protein features', 'Not affecting any feature']
-    ax1.pie(ratios_pie, labels=labels_pie, autopct='%1.1f%%', startangle=0, wedgeprops={'edgecolor': 'white'})
+    pie_colors = ['#1f78b4', '#fe7f0e']
+    ax1.pie(ratios_pie, labels=labels_pie, autopct='%1.1f%%', startangle=0, wedgeprops={'edgecolor': 'white'},
+            colors=pie_colors)
     ax1.set_title("Genes with AS affecting protein features")
 
     ratios_bar = [round(elm_number / number_of_features, 2) * 100, round(pdb_number / number_of_features, 2) * 100,
