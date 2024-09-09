@@ -4,7 +4,6 @@ services:
 
   web:
     build: ./docker/web
-    command: gunicorn DomainExplorer.wsgi:application --bind 0.0.0.0:8000 --timeout 360 --workers=5 --threads=2 --max-requests=1000 --max-requests-jitter=50
     environment:
       - DJANGO_SETTINGS_MODULE=DomainExplorer.settings.production
     env_file:

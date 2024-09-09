@@ -15,6 +15,7 @@ WORKDIR /code
 COPY requirements.txt /code/
 COPY auto_clean.sh /usr/local/bin/
 
+# Make auto_clean.sh executable
 RUN chmod +x /usr/local/bin/auto_clean.sh
 
 # Add cron job
@@ -23,3 +24,12 @@ RUN (crontab -l ; echo "0 0 * * * /usr/local/bin/auto_clean.sh >> /var/log/auto_
 # Install Python dependencies
 RUN pip install -r requirements.txt
 # COPY . /code/
+
+# Copy the startup script
+COPY start.sh /usr/local/bin/start.sh
+
+# Make the startup script executable
+RUN chmod +x /usr/local/bin/start.sh
+
+# Use the custom startup script as the entry point
+ENTRYPOINT ["/usr/local/bin/start.sh"]
