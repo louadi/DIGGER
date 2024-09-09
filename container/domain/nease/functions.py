@@ -450,8 +450,8 @@ def extract_subnetwork(path_genes,
                                               color='red'),
                                     hoverinfo='none')
 
+    nodes_with_red_edges = set()
     for edge in G.edges():
-
         x0, y0 = G.nodes[edge[0]]['pos']
         x1, y1 = G.nodes[edge[1]]['pos']
 
@@ -459,7 +459,8 @@ def extract_subnetwork(path_genes,
         if affected_graph.has_edge(*edge):
             colored_edge_trace['x'] += tuple([x0, x1, None])
             colored_edge_trace['y'] += tuple([y0, y1, None])
-
+            nodes_with_red_edges.add(edge[0])
+            nodes_with_red_edges.add(edge[1])
 
         else:
             edge_trace['x'] += tuple([x0, x1, None])
@@ -488,13 +489,12 @@ def extract_subnetwork(path_genes,
         else:
             # other pathway nodes
             color = '#888'
+            if node in nodes_with_red_edges:
+                color = '#888887'
             if node in significant:
                 size = 50
             else:
                 size = 20
-            # check if node has a colored edge trace coming to it
-            if node in affected_graph.nodes():
-                color = '#888887'
 
         trace_type = colored_node_trace if color != '#888' or size > 20 else node_trace
 
