@@ -19,7 +19,7 @@ images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
 data_path = os.path.join(settings.MEDIA_ROOT, 'nease_tables/')
 nease_path = 'nease_events/'
 # The subdirectories contain files saved for one week, one month, and six months. To be very lenient, we calculated every month with 31 days.
-days_to_folder = {"7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/", "186": nease_path+"onehundredeightysix_days/"}
+days_to_folder = {"0": nease_path+"zero_days/", "7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/", "186": nease_path+"onehundredeightysix_days/"}
 default_path = days_to_folder["7"]
 
 for path in [images_path, data_path] + list(days_to_folder.values()):
