@@ -142,9 +142,11 @@ class run(object):
                         self.summary['error'] = ('Found no overlap with protein domains. Make sure that the genomic '
                                                  'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
                 except Exception as e:
-                    raise ValueError('Could not recognize the standard format. Please make sure your table matches '
-                                     'the standard format with these columns: Gene ensembl ID, EXON START, EXON END, '
-                                     'dPSI (optional). Also ensure that the genomic coordinates of the exons correspond '
+                    raise ValueError('Could not recognize the standard format. Did you select the correct input '
+                                     'format? <br> Please make sure your table matches '
+                                     'the standard format with these columns: <code>Gene ensembl ID</code>, '
+                                     '<code>EXON START</code>, <code>EXON END</code>, <code>dPSI (optional)</code>. '
+                                     '<br> Also ensure that the genomic coordinates of the exons correspond '
                                      'to the correct genome build (i.e. hg38 (GRCh38) in human).')
 
             elif input_type == 'Whippet':
@@ -166,7 +168,7 @@ class run(object):
                     data = data[['Gene ID', 'start', 'end', 'dPSI']]
 
                 except:
-                    raise ValueError('Invalid file format! Try to use the Standard input')
+                    raise ValueError('Invalid file format.')
 
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
                     data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
@@ -180,7 +182,7 @@ class run(object):
                     data['GeneID'] = data['GeneID'].apply(lambda x: x.split('.')[0])
 
                 except:
-                    raise ValueError('Invalid file format! Try to use the Standard input')
+                    raise ValueError('Invalid file format.')
 
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
                     data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
@@ -192,7 +194,7 @@ class run(object):
                     data = data[[data.columns[1], 'genomicData.start', 'genomicData.end', 'log2fold_control_case']]
                     print('proceding with log2fold threshold: ' + str(min_delta))
                 except:
-                    raise ValueError('Invalid file format! Try to use the Standard input')
+                    raise ValueError('Invalid file format.')
 
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
                     data, self.mapping, min_delta, self.only_DDIs, self, remove_non_in_frame, only_divisible_by_3)
@@ -206,10 +208,11 @@ class run(object):
                     self.only_DDIs = True
 
                 except:
-                    raise ValueError('Invalid file format! Try to use the Standard input')
+                    raise ValueError('Invalid file format.')
 
             if len(self.data) == 0:  #
                 self.summary['error'] = 'Found no overlap with protein domains. Analysis cancelled...'
+                raise Exception("No overlap with protein domains. Did you select the right organism?")
 
             else:
                 self.data = self.data.drop_duplicates(['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Pfam ID'],
@@ -358,9 +361,8 @@ class run(object):
 
         else:
             self.elm_affected['ELM link'] = self.elm_affected.apply(create_elm_link, axis=1)
-        # TODO: keep only ELM Identifier and integrate link into that
 
-        return self.elm_affected.drop(columns=['ID', 'Affected binding (NCBI)']).reset_index(drop=True)
+        return self.elm_affected.drop(columns=['ID', 'Affected binding (NCBI)'], errors='ignore').reset_index(drop=True)
 
     def get_pdb(self):
 

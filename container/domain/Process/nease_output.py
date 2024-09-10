@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 
 from domain.models import NeaseSaveLocationMapping
 from domain.nease import nease
+from domain.nease.process import webify_table
 from django.conf import settings
 import uuid
 
@@ -24,6 +25,33 @@ default_path = days_to_folder["7"]
 for path in [images_path, data_path] + list(days_to_folder.values()):
     if not os.path.exists(path):
         os.makedirs(path)
+
+# web_tables_options is a dictionary that contains the options for webifying the tables
+web_tables_options = {
+    'domains': {'link_col': ['Gene name', 'Gene stable ID', 'Exon stable ID', 'Pfam ID'],
+                'link_prefix': ['https://www.ncbi.nlm.nih.gov/gene/', 'https://www.ensembl.org/id/',
+                                'https://www.ensembl.org/id/', 'https://www.ebi.ac.uk/interpro/entry/pfam/'],
+                'link_id': ['NCBI gene ID', None, None, None],
+                'drop_col': ['NCBI gene ID']},
+    'edges': {'link_col': ['Gene name', 'Affected binding'],
+              'link_prefix': ['https://www.ncbi.nlm.nih.gov/gene/', 'https://www.ncbi.nlm.nih.gov/gene/'],
+              'link_id': ['NCBI gene ID', 'Affected binding (NCBI)'],
+              'drop_col': ['NCBI gene ID', 'Affected binding (NCBI)']},
+    'elm': {'link_col': ['Gene name', 'Gene stable ID', 'ELMIdentifier'],
+            'link_prefix': ['https://www.ncbi.nlm.nih.gov/gene/', 'https://www.ensembl.org/id/',
+                            'http://elm.eu.org/elms/'],
+            'link_id': ['entrezgene', None, None],
+            'drop_col': ['entrezgene', 'ELM link']},
+    'pdb': {'link_col': ['Gene name', 'Gene stable ID', 'Co-resolved interactions symbol'],
+            'link_prefix': ['https://www.ncbi.nlm.nih.gov/gene/', 'https://www.ensembl.org/id/',
+                            'https://www.ncbi.nlm.nih.gov/gene/'],
+            'link_id': ['NCBI gene ID', None, 'Co-resolved interactions'],
+            'drop_col': ['NCBI gene ID', 'Co-resolved interactions']},
+    'pathway': {'link_col': ['Spliced genes', 'Affected binding (edges)'],
+                'link_prefix': ['https://www.ncbi.nlm.nih.gov/gene/', 'https://www.ncbi.nlm.nih.gov/gene/'],
+                'link_id': ['NCBI gene ID', 'Affected binding (NCBI)'],
+                'drop_col': ['NCBI gene ID', 'Affected binding (NCBI)']}
+}
 
 
 def run_nease(data, organism, params, file_name='', custom_name=''):
@@ -41,25 +69,30 @@ def run_nease(data, organism, params, file_name='', custom_name=''):
 
     events.get_stats(file_path=image_path)
 
-    # TODO: add function to better format tables for web view while keeping the original tables in csv
     domains: pd.DataFrame = events.get_domains()
     # check if domains is not empty
     if not domains.empty:
-        domains.to_csv(f"{data_path}{run_id}_domains.csv")
+        domains.to_csv(f"{data_path}{run_id}_domains.csv", index=False)
+        domains = webify_table(domains, web_tables_options['domains'])
 
     edges = events.get_edges()
     if not edges.empty:
-        edges.to_csv(f"{data_path}{run_id}_edges.csv")
+        edges.to_csv(f"{data_path}{run_id}_edges.csv", index=False)
+        edges = webify_table(edges, web_tables_options['edges'])
 
     info_tables = {'domains': domains, 'edges': edges}
 
     if not params.get('only_ddis', False):
         elm = events.get_elm()
         if not elm.empty:
-            elm.to_csv(f"{data_path}{run_id}_elm.csv")
+            elm.to_csv(f"{data_path}{run_id}_elm.csv", index=False)
+            elm = webify_table(elm, web_tables_options['elm'])
+
         pdb = events.get_pdb()
         if not pdb.empty:
-            pdb.to_csv(f"{data_path}{run_id}_pdb.csv")
+            pdb.to_csv(f"{data_path}{run_id}_pdb.csv", index=False)
+            pdb = webify_table(pdb, web_tables_options['pdb'])
+
         info_tables.update({'elm': elm, 'pdb': pdb})
 
     # remove the unnamed column
@@ -105,13 +138,18 @@ def get_nease_events(run_id):
         file_path = days_to_folder[str(days)]
     print(f"Loading events from {file_path + run_id + '.pkl'}")
     events = nease.load(file_path + run_id + '.pkl')
-    domains = pd.read_csv(f"{data_path}{run_id}_domains.csv")
-    edges = pd.read_csv(f"{data_path}{run_id}_edges.csv")
-    info_tables = {'domains': domains, 'edges': edges}
-    if os.path.exists(f"{data_path}{run_id}_elm.csv"):
-        elm = pd.read_csv(f"{data_path}{run_id}_elm.csv")
-        pdb = pd.read_csv(f"{data_path}{run_id}_pdb.csv")
-        info_tables.update({'elm': elm, 'pdb': pdb})
+    info_tables = {}
+    try:
+        domains = webify_table(pd.read_csv(f"{data_path}{run_id}_domains.csv"), web_tables_options['domains'])
+        edges = webify_table(pd.read_csv(f"{data_path}{run_id}_edges.csv"), web_tables_options['edges'])
+        info_tables = {'domains': domains, 'edges': edges}
+        if os.path.exists(f"{data_path}{run_id}_elm.csv"):
+            elm = webify_table(pd.read_csv(f"{data_path}{run_id}_elm.csv"), web_tables_options['elm'])
+            pdb = webify_table(pd.read_csv(f"{data_path}{run_id}_pdb.csv"), web_tables_options['pdb'])
+            info_tables.update({'elm': elm, 'pdb': pdb})
+    except Exception as e:
+        traceback.print_exc()
+        print(e)
     return events, info_tables
 
 
@@ -178,6 +216,7 @@ def pathway_info(events, pathway, run_id):
             return pathway_info_table
         print("Table is:", len(pathway_info_table))
         pathway_info_table.to_csv(f"{data_path}{run_id}_path_{pathway}.csv")
+        pathway_info_table = webify_table(pathway_info_table, web_tables_options['pathway'])
     except ValueError as e:
         traceback.print_exc()
         pathway_info_table = {'errorMsg': str(e)}
@@ -236,3 +275,15 @@ def change_save_timing(run_id, days):
         {"logmessage": "Changing the save timing from " + str(current_days_folder) + " to " + str(days) + " was successful.",
          "days_left": mapping.days_left()}
     )
+
+def match_name_with_format(filename):
+    name_matches = {'deltapsi': 'MAIJQ',
+                    'maijq': 'MAIJQ',
+                    'diff': 'Whippet',
+                    'whippet': 'Whippet',
+                    'mats': 'rmats'}
+
+    for name, format in name_matches.items():
+        if name in filename.lower():
+            return f"{format} input"
+    return None

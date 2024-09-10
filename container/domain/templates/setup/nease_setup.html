@@ -42,7 +42,7 @@
 
   {% if error_msg %}
     <div class="alert alert-danger" role="alert">
-      {{ error_msg }}
+      {{ error_msg|safe }}
     </div>
   {% endif %}
   <div id="sizeWarning" class="alert alert-warning" style="display: none">
@@ -88,7 +88,7 @@
                   <!-- options: 'MAJIQ', 'Standard', 'Spycone', 'Whippet', 'rmats', 'DEXSeq' -->
                   <option value="Standard">Standard</option>
                   <option value="MAJIQ">MAJIQ</option>
-                  <option value="Spycone">Spycone</option>
+                  <!-- <option value="Spycone">Spycone</option> -->
                   <option value="Whippet">Whippet</option>
                   <option value="rmats">rmats</option>
                   <!-- <option value="DEXSeq">DEXSeq</option> -->
@@ -222,12 +222,20 @@
         </div>
       </div>
       <!-- submit button -->
-      <div class="card-body row no-gutters align-items-center justify-content-end">
-        <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
-        <div id="spinner" class="spinner-border m-2" role="status" style="display: none">
-          <span class="sr-only">Loading...</span>
+      <div class="card-body row no-gutters align-items-center">
+        <div class="col-md-6">
+          <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start svgOption"
+                  type="button" data-toggle="tooltip" data-placement="top" title="Use example MAJIQ output of MS
+                   data from the NEASE tutorial"
+          >Example data </button>
         </div>
-        <button id="submit" class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+        <div class="col-md-6 text-right d-flex align-items-center justify-content-end">
+          <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
+          <div id="spinner" class="spinner-border m-2" role="status" style="display: none">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <button id="submit" class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+        </div>
       </div>
       <!-- previous analyses -->
       <div id="prevAnalysisContainer" class="container" style="display: none;">
@@ -269,6 +277,7 @@
 
     // load previous analyses
     const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+
     // remove keys if they expired
     localKeys.forEach(key => {
       removeExpiredData(key)
@@ -287,12 +296,10 @@
         appendTemplateToDiv(template, 'previousAnalyses');
     }
 
-
     // enable tooltips
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
-
 
     // check if input_type is Majiq, if it is not, disable Majiq_confidence
     $('#input_type').change(function () {
@@ -302,6 +309,18 @@
         $('#Majiq_confidence').prop('disabled', true);
       }
     });
+
+    // if the input_type is Whippet, set the min delta to 0.3 and highlight it shortly to indicate the change
+    $('#input_type').change(function () {
+      if ($('#input_type').val() === 'Whippet') {
+        $('#min_delta').val(0.3);
+        $('#min_delta').addClass('border-warning');
+        setTimeout(function() {
+          $('#min_delta').removeClass('border-warning');
+        }, 1000);
+      }
+    });
+
 
     // enable the spinner when the form is submitted and disable the button
     $('#inputForm').submit(function () {
@@ -319,16 +338,22 @@
       }, 2000);
     });
 
-    // change the label text when a file is selected
-    $(document).ready(function(){
-      // Add change event listener to file input
-      $('#customFile').on('change', function(){
-          // Get the name of the selected file
-          var fileName = $(this).val().split('\\').pop();
-          // Update the label text
-          $(this).next('.custom-file-label').html(fileName);
-      });
+  // Wait until the DOM content is fully loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the file input element
+    const fileInput = document.getElementById('customFile');
+
+    // Add change event listener to the file input
+    fileInput.addEventListener('change', function () {
+      // Get the name of the selected file
+      const fileName = fileInput.value.split('\\').pop();
+      // Update the label text
+      const label = fileInput.nextElementSibling;
+      if (label.classList.contains('custom-file-label')) {
+        label.innerHTML = fileName;
+      }
     });
+  });
 
     // prevent form submission if no file is selected
     document.getElementById('inputForm').addEventListener('submit', function(event) {
@@ -336,10 +361,12 @@
       var prevInput = document.getElementById('previous_analyses_input');
       // there must be either a file selected or a previous analysis input
       if ((!fileInput || !fileInput.files || fileInput.files.length === 0) && !prevInput.value) {
-      event.preventDefault();
-      document.getElementById('noFileAlert').removeAttribute('hidden');
-      document.getElementById('loading_text').style.display = 'none';
-      document.getElementById('spinner').style.display = 'none';
+          event.preventDefault();
+          document.getElementById('noFileAlert').removeAttribute('hidden');
+          document.getElementById('loading_text').style.display = 'none';
+          document.getElementById('spinner').style.display = 'none';
+          document.getElementById('submit').removeAttribute('disabled');
+          document.getElementById('exampleData').removeAttribute('disabled');
       }
       else {
           document.getElementById('noFileAlert').setAttribute('hidden', '');
@@ -347,9 +374,9 @@
     });
 
     document.getElementById('customFile').addEventListener('change', function() {
-        var file = this.files[0];
-        var maxSize = 20 * 1024 * 1024;
-        var warning = document.getElementById('sizeWarning');
+        const file = this.files[0];
+        const maxSize = 20 * 1024 * 1024;
+        const warning = document.getElementById('sizeWarning');
 
         if (file && file.size > maxSize) {
             warning.style.display = 'block';
@@ -357,6 +384,41 @@
             warning.style.display = 'none';
         }
     });
+
+    // when clicking the example data button, fill in the form with example data
+    document.getElementById('exampleData').addEventListener('click', function() {
+        document.getElementById('spinner').style.display = 'inline-block';
+        document.getElementById('loading_text').innerText = 'Fetching example data...'
+        document.getElementById('loading_text').style.display = 'inline-block';
+        const exampleFileUrl = 'https://raw.githubusercontent.com/louadi/NEASE-tutorials/main/AS%20data/MS/AL_NAWM.deltapsi.tsv';
+
+        // Fetch the example file from GitHub
+        fetch(exampleFileUrl)
+          .then(response => response.blob()) // Convert the response to a Blob
+          .then(blob => {
+            // Create a new File object from the Blob
+            const file = new File([blob], 'AL_NAWM.deltapsi.tsv', { type: blob.type });
+            // update file label
+            document.getElementById('customFile').nextElementSibling.innerHTML = file.name;
+
+            // Add the file to the file input
+            const dataTransfer = new DataTransfer(); // Create a DataTransfer object
+            dataTransfer.items.add(file); // Add the file to the DataTransfer object
+            document.getElementById('customFile').files = dataTransfer.files; // Set the file input's files
+
+            // Set other form input values
+            document.getElementById('org_select').value = 'human';
+            document.getElementById('input_type').value = 'MAJIQ';
+            document.getElementById('high_domain').checked = true;
+            document.getElementById('analysis_name').value = 'Example data';
+
+            // Submit the form
+            document.getElementById('submit').click();
+          })
+          .catch(error => console.error('Error fetching the example file:', error));
+    });
+
+
 
   </script>
 

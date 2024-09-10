@@ -720,7 +720,12 @@ def set_previous_analysis(request, post_request=True):
         'time_left': time_left,
         **events.get_databases()
     }
-    return render(request, 'visualization/nease_result.html', context)
+    try:
+        return render(request, 'visualization/nease_result.html', context)
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        return render(request, 'setup/nease_setup.html', context)
 
 # this does the initial nease run or loads a previous analysis
 def setup_nease(request):
@@ -814,11 +819,19 @@ def setup_nease(request):
             **events.get_databases(),
         }
         return render(request, 'visualization/nease_result.html', context)
+
     except Exception as e:
-        print(e)
         traceback.print_exc()
-        context['error_msg'] = ("There was an error processing the input file. Please check the selected parameters "
-                                "and try again. If the problem persists, please contact us.")
+        # check for the filename and see if there is an indication that the input format is wrong
+        possible_true_format = no.match_name_with_format(input_data['splicing-events-file'].name)
+        error_out = str(e)
+        if "format" in error_out and possible_true_format:
+            if database_type == 'Standard':
+                error_out = "Invalid standard format. Are you sure you selected the correct input format?"
+            error_out += f" Try to use the {possible_true_format}!"
+        elif "format" in error_out and not possible_true_format:
+            error_out += f" Try to use the Standard input!"
+        context['error_msg'] = error_out
     return render(request, 'setup/nease_setup.html', context)
 
 # extra functions for the NEASE output once the analysis is done
