@@ -709,7 +709,8 @@ def set_previous_analysis(request, post_request=True):
     time_left = save_info.days_left()
 
     context = {
-        'input_name': save_info.name,
+        'input_name': save_info.file_name,
+        'custom_name': save_info.get_custom_name(),
         **events.summary,
         **info_tables,
         'stats': run_id + ".jpg",
@@ -790,7 +791,8 @@ def setup_nease(request):
                                                                      'majiq_confidence': majiq_confidence,
                                                                      'only_ddis': only_ddis,
                                                                      'confidences': confidences},
-                                                   input_data['splicing-events-file'].name)
+                                                   input_data['splicing-events-file'].name,
+                                                   custom_name)
 
         for key, value in info_tables.items():
             info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)

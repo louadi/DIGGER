@@ -22,7 +22,8 @@ class NeaseSaveLocationMapping(models.Model):
     run_id = models.CharField(max_length=36, primary_key=True, db_index=True)
     saved_for_days = models.IntegerField()
     date_of_creation = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=255, default='')
+    file_name = models.CharField(max_length=255, default='')
+    custom_name = models.CharField(max_length=255, default='')
 
     # Method to query the database for the run_id and return the saved_for_days
     @staticmethod
@@ -32,6 +33,12 @@ class NeaseSaveLocationMapping(models.Model):
     def get_number_of_saved_for_days(self):
         return str(self.saved_for_days)
 
-    # Calculate how many days are left until deletion
+    # Calculate how many days are left until deletion, negative values are set to 0
     def days_left(self):
-        return self.saved_for_days - (timezone.now() - self.date_of_creation).days
+        return max(0, self.saved_for_days - (timezone.now() - self.date_of_creation).days)
+
+    # Get the custom name and return None if it is empty
+    def get_custom_name(self):
+        if self.custom_name == '':
+            return None
+        return self.custom_name

@@ -26,7 +26,7 @@ for path in [images_path, data_path] + list(days_to_folder.values()):
         os.makedirs(path)
 
 
-def run_nease(data, organism, params, name=''):
+def run_nease(data, organism, params, file_name='', custom_name=''):
     run_id = str(uuid.uuid4())
     image_path = images_path + run_id
 
@@ -69,7 +69,7 @@ def run_nease(data, organism, params, name=''):
 
     # save events to pickle
     events.save(default_path + run_id)
-    NeaseSaveLocationMapping(run_id=run_id, saved_for_days=7, name=name).save()
+    NeaseSaveLocationMapping(run_id=run_id, saved_for_days=7, file_name=file_name, custom_name=custom_name).save()
     return events, info_tables, run_id
 
 

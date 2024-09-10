@@ -129,6 +129,11 @@
         <div class="jumbotron p-xl-4">
           <h1 class="display-4">NEASE summary</h1>
           <hr>
+          {% if custom_name %}
+            <h5 class="lead"><span
+                style="font-weight:bold; display: inline-block; width: 500px">Analysis name:</span> {{ custom_name|safe }}
+            </h5>
+            {% endif %}
           <h5 class="lead"><span
               style="font-weight:bold; display: inline-block; width: 500px">Input file:</span> {{ input_name|safe }}
           </h5>
@@ -187,6 +192,9 @@
                         const parsed_data = JSON.parse(data);
                         console.log(parsed_data.logmessage);
                         document.getElementById("storage_message").textContent = `Storage duration (${parsed_data.days_left} days left):`;
+                        var item = JSON.parse(localStorage.getItem("nease/"+id));
+                        item.expiresAt = Date.now() + (parsed_data.days_left * 24 * 60 * 60 * 1000);
+                        localStorage.setItem("nease/"+id, JSON.stringify(item));
 
                     }).fail(function() {
                         alert("An error occurred while processing your request.");
