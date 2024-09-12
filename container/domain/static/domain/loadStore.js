@@ -16,16 +16,16 @@ function removeExpiredData(key) {
 }
 
 // Function to create an HTML template
-function createHtmlTemplate(data, expiresInDays = 7) {
+function createHtmlTemplate(data) {
     // subtract 7 days from the expiry date
-    const createdDate = new Date(data.expiresAt) - (expiresInDays * 24 * 60 * 60 * 1000);
+    const createdDate = new Date(data.createdAt);
     // format to readable date
     const formattedDate = new Date(createdDate).toLocaleString();
 
     return `
      <div class="row">
       <div class="col-md-12 my-1">
-        <div class="card previous-card" onclick="prevAnalysis('${data.value}', '${data.name}')">
+        <div class="card previous-card" onclick="prevAnalysis('${data.value}')">
           <div class="card-body">
             <h6 class="card-title" style="display: inline; font-weight: bold">${data.name}</h6>
             <p class="card-text mx-1" style="display: inline; color: gray">●</p>
@@ -49,8 +49,7 @@ function appendTemplateToDiv(template, divId) {
     }
 }
 
-function prevAnalysis(id, name) {
+function prevAnalysis(id) {
     document.getElementById('previous_analyses_input').value = id;
-    document.getElementById('previous_analyses_name').value = name;
     document.getElementById('submit').click();
 }

@@ -12,6 +12,7 @@ from django.db import connection
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils.html import escape
 from io import StringIO
 
@@ -26,6 +27,7 @@ from .Process import network_analysis as nt
 from .Process import mutliple_query as mq
 from .Process import process_data as proc_data
 from .Process import nease_output as no
+from .models import NeaseSaveLocationMapping
 
 # --- Create folder
 # Global jobs path
@@ -682,10 +684,14 @@ def Multi_proteins(request, organism, job='0'):
     return render(request, 'visualization/network.html', context)
 
 
-def set_previous_analysis(request):
-    print("got previous analysis with run ID:", request.POST.get('previousAnalysis'))
+def set_previous_analysis(request, post_request=True):
+    if post_request:
+        run_id = request.POST.get('previousAnalysis')
+    else:
+        run_id = request.GET.get('runId')
+    print("got previous analysis with run ID:", run_id)
     try:
-        events, info_tables = no.get_nease_events(request.POST.get('previousAnalysis'))
+        events, info_tables = no.get_nease_events(run_id)
 
     except FileNotFoundError:
         context = {'error_msg': "Could not find this analysis, please run it again."}
@@ -695,17 +701,23 @@ def set_previous_analysis(request):
         context = {'error_msg': str(e)}
         return render(request, 'setup/nease_setup.html', context)
 
-    run_id = request.POST.get('previousAnalysis')
-
     for key, value in info_tables.items():
         info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
+    save_info = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+    current_duration = save_info.saved_for_days
+    time_left = save_info.days_left()
+
     context = {
-        'input_name': request.POST.get('previousName'),
+        'input_name': save_info.file_name,
+        'custom_name': save_info.get_custom_name(),
         **events.summary,
         **info_tables,
         'stats': run_id + ".jpg",
+        'shareable_link': request.build_absolute_uri(reverse('nease-analysis')) + "?runId=" + run_id,
         'run_id': run_id,
+        'current_duration': current_duration,
+        'time_left': time_left,
         **events.get_databases()
     }
     try:
@@ -715,12 +727,15 @@ def set_previous_analysis(request):
         traceback.print_exc()
         return render(request, 'setup/nease_setup.html', context)
 
-
 # this does the initial nease run or loads a previous analysis
 def setup_nease(request):
     # handle previous analysis
     if request.POST.get('previousAnalysis', None):
-        return set_previous_analysis(request)
+        return set_previous_analysis(request, True)
+
+    # handle previous analysis as a get request
+    if request.GET.get('runId', None):
+        return set_previous_analysis(request, False)
 
     # otherwise continue with new analysis
     if not request.FILES:
@@ -780,10 +795,16 @@ def setup_nease(request):
                                                                      'min_delta': min_delta,
                                                                      'majiq_confidence': majiq_confidence,
                                                                      'only_ddis': only_ddis,
-                                                                     'confidences': confidences})
+                                                                     'confidences': confidences},
+                                                   input_data['splicing-events-file'].name,
+                                                   custom_name)
 
         for key, value in info_tables.items():
             info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
+
+        save_info = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+        current_duration = save_info.saved_for_days
+        time_left = save_info.days_left()
 
         context = {
             'input_name': input_data['splicing-events-file'].name,
@@ -791,7 +812,10 @@ def setup_nease(request):
             **events.summary,
             **info_tables,
             'stats': run_id + ".jpg",
+            'shareable_link': request.build_absolute_uri(reverse('nease-analysis')) + "?runId=" + run_id,
             'run_id': run_id,
+            'current_duration': current_duration,
+            'time_left': time_left,
             **events.get_databases(),
         }
         return render(request, 'visualization/nease_result.html', context)
@@ -810,18 +834,17 @@ def setup_nease(request):
         context['error_msg'] = error_out
     return render(request, 'setup/nease_setup.html', context)
 
-
 # extra functions for the NEASE output once the analysis is done
 def nease_extra_functions(request):
     function_name = request.GET.get('func', None)
     if not function_name:
         return HttpResponse("No function provided", status=400)
     run_id = request.GET.get('runId', None)
+    if not run_id:
+        return HttpResponse("No run ID provided", status=400)
     databases = request.GET.get('databases', None)
     pathway = request.GET.get('pathway', None)
     k = request.GET.get('k', None)
-    if not run_id:
-        return HttpResponse("No run ID provided", status=400)
 
     if databases:
         databases = databases.split(",")
@@ -840,6 +863,11 @@ def nease_extra_functions(request):
             table_name = "path"
         elif function_name == 'visualise':
             out_table = no.visualise_path(no.get_nease_events(run_id), pathway, k)
+        elif function_name == 'save':
+            duration = request.GET.get('duration', None)
+            if not duration:
+                return HttpResponse("No duration provided", status=400)
+            out_table = no.change_save_timing(run_id, duration)
         else:
             return HttpResponse(f"Unknown function: {function_name}", status=400)
     except Exception as e:

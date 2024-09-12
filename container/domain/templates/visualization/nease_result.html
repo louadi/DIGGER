@@ -91,6 +91,7 @@
         }
       }
 
+
   </style>
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
@@ -140,6 +141,11 @@
         <div class="jumbotron p-xl-4">
           <h1 class="display-4">NEASE summary</h1>
           <hr>
+          {% if custom_name %}
+            <h5 class="lead"><span
+                style="font-weight:bold; display: inline-block; width: 500px">Analysis name:</span> {{ custom_name|safe }}
+            </h5>
+            {% endif %}
           <h5 class="lead"><span
               style="font-weight:bold; display: inline-block; width: 500px">Input file:</span> {{ input_name|safe }}
           </h5>
@@ -157,8 +163,109 @@
           </h5>
           <h5 class="lead"><span
               style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
-            </h5>
+          </h5>
+          <h5 class="lead" style="flex-direction: row;display: flex;"><label id="storage_message" for="time_duration"
+              style="font-weight:bold; display: inline-block; width: 500px; flex-shrink:0">Analysis availability (7 days left):</label>
+              <select class="form-control" style="margin-left: .375rem;width: auto;" onchange="duration_change()" name="time_duration" id="time_duration">
+                  <option value="0">Do not save</option>
+                  <option value="7">One week</option>
+                  <option value="31">One month</option>
+                  <option value="186">Six months</option>
+              </select>
+
+          </h5>
+
+          <h5 class="lead"><span
+              style="font-weight:bold; display: inline-block; width: 500px">Link for sharing:</span> <small hidden style="display:none;" id="link_text">{{ shareable_link|safe }}</small>
+              <button type="button" class="btn btn-secondary" id="copyButton" data-toggle="tooltip"
+              data-placement="top" title="Copy me!" onclick="copyDivToClipboard()">Click to copy</button>
+
+          </h5>
         </div>
+        <script>
+            // Set the time duration to the value saved in the 'current_duration' variable
+            document.getElementById("time_duration").value = "{{ current_duration|safe }}";
+            // Set the storage_message to the value saved in the 'time_left' variable
+            document.getElementById("storage_message").textContent = `Analysis availability ({{ time_left|safe }} days left):`;
+
+
+
+            function copyDivToClipboard() {
+                // Get the text field
+                const copyText = document.getElementById("link_text").textContent;
+
+                var copyButton = $('#copyButton')
+
+                try{
+                    //have a fallback in case the clipboard API is not supported
+                    if (!navigator.clipboard) {
+                        var textArea = document.createElement("textarea");
+                        textArea.value = copyText;
+
+                        // Avoid scrolling to bottom
+                        textArea.style.top = "0";
+                        textArea.style.left = "0";
+                        textArea.style.position = "fixed";
+
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+
+                        try {
+                        var successful = document.execCommand('copy');
+                        var msg = successful ? 'successful' : 'unsuccessful';
+                        console.log('Fallback: Copying text command was ' + msg);
+                        } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                        }
+                        document.body.removeChild(textArea);
+
+                    } else {
+                    // Copy the text inside the text field
+                    navigator.clipboard.writeText(copyText);
+                    }
+
+                    // Show the user that it was successful
+                    copyButton.attr('title', 'Copied!')
+                              .tooltip('dispose')
+                              .tooltip('show');
+                } catch (err) {
+                    console.error(`An error occurred: ${err.message}`);
+
+                    copyButton.attr('title', 'An error occurred')
+                              .tooltip('dispose')
+                              .tooltip('show');
+                }
+
+                 // Hide the tooltip after 2 seconds
+                setTimeout(function() {
+                  copyButton.tooltip('hide')
+                            .attr('title', 'Click to copy')
+                            .tooltip('dispose')
+                            .tooltip();
+                }, 2000);
+            }
+            function duration_change(){
+                const duration = document.getElementById("time_duration").value;
+                const id = "{{ run_id|safe }}";
+                //
+                try {
+                    $.get(`nease_analysis/extra_functions?` + $.param({runId: id, duration: duration, func: "save"}), function (data) {
+                        const parsed_data = JSON.parse(data);
+                        console.log(parsed_data.logmessage);
+                        document.getElementById("storage_message").textContent = `Analysis availability (${parsed_data.days_left} days left):`;
+                        var item = JSON.parse(localStorage.getItem("nease/"+id));
+                        item.expiresAt = Date.now() + (parsed_data.days_left * 24 * 60 * 60 * 1000);
+                        localStorage.setItem("nease/"+id, JSON.stringify(item));
+
+                    }).fail(function() {
+                        alert("An error occurred while processing your request.");
+                    });
+                } catch (err) {
+                    console.error(`An error occurred: ${err.message}`);
+                }
+            }
+        </script>
 
         <!-- Tab content -->
         <div class="tab-content" id="v-pills-tabContent">
@@ -438,9 +545,12 @@
 
     const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
 
-    // save the runId in local storage so that it can be accessed for another 7 days
-    const userStore = window.initStore({key: runId, expiresInDays: 7, name: fileName})
-    userStore.set(runId)
+    //check if runId is in local storage
+    if (localStorage.getItem("nease/"+runId) === null){
+        // if it is not in local storage, then set it
+        const userStore = window.initStore({key: runId, expiresInDays: {{ time_left|safe }}, name: fileName})
+        userStore.set(runId)
+    }
 
     // enable tooltips
     $(function () {

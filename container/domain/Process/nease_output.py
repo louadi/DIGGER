@@ -1,3 +1,4 @@
+import json
 import pickle
 import traceback
 from io import StringIO
@@ -8,6 +9,7 @@ import os
 
 from matplotlib import pyplot as plt
 
+from domain.models import NeaseSaveLocationMapping
 from domain.nease import nease
 from domain.nease.process import webify_table
 from django.conf import settings
@@ -16,11 +18,13 @@ import uuid
 images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
 data_path = os.path.join(settings.MEDIA_ROOT, 'nease_tables/')
 nease_path = 'nease_events/'
+# The subdirectories contain files saved for one week, one month, and six months. To be very lenient, we calculated every month with 31 days.
+days_to_folder = {"0": nease_path+"zero_days/", "7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/", "186": nease_path+"onehundredeightysix_days/"}
+default_path = days_to_folder["7"]
 
-for path in [images_path, data_path, nease_path]:
+for path in [images_path, data_path] + list(days_to_folder.values()):
     if not os.path.exists(path):
         os.makedirs(path)
-
 
 # web_tables_options is a dictionary that contains the options for webifying the tables
 web_tables_options = {
@@ -50,7 +54,7 @@ web_tables_options = {
 }
 
 
-def run_nease(data, organism, params):
+def run_nease(data, organism, params, file_name='', custom_name=''):
     run_id = str(uuid.uuid4())
     image_path = images_path + run_id
 
@@ -97,7 +101,8 @@ def run_nease(data, organism, params):
             value.drop(columns=['Unnamed: 0'], inplace=True)
 
     # save events to pickle
-    events.save(nease_path + run_id)
+    events.save(default_path + run_id)
+    NeaseSaveLocationMapping(run_id=run_id, saved_for_days=7, file_name=file_name, custom_name=custom_name).save()
     return events, info_tables, run_id
 
 
@@ -126,7 +131,13 @@ def read_extra_spaces(file_obj):
 
 
 def get_nease_events(run_id):
-    events = nease.load(nease_path + run_id + '.pkl')
+    days = NeaseSaveLocationMapping.get_saved_for_days(run_id)
+    if days not in days_to_folder:
+        file_path = default_path
+    else:
+        file_path = days_to_folder[str(days)]
+    print(f"Loading events from {file_path + run_id + '.pkl'}")
+    events = nease.load(file_path + run_id + '.pkl')
     info_tables = {}
     try:
         domains = webify_table(pd.read_csv(f"{data_path}{run_id}_domains.csv"), web_tables_options['domains'])
@@ -243,6 +254,27 @@ def create_plot(terms, pvalues, cut_off, filename):
     plt.clf()
     plt.close()
 
+def change_save_timing(run_id, days):
+    mapping = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+    current_days_folder = mapping.get_number_of_saved_for_days()
+    if days not in days_to_folder:
+        new_file_path = default_path
+    else:
+        new_file_path = days_to_folder[str(days)]
+    if current_days_folder not in days_to_folder:
+        old_file_path = default_path
+    else:
+        old_file_path = days_to_folder[str(current_days_folder)]
+    # move the file
+    os.rename(old_file_path + run_id + '.pkl', new_file_path + run_id + '.pkl')
+    # update the database
+    mapping.saved_for_days = int(days)
+    mapping.save()
+
+    return json.dumps(
+        {"logmessage": "Changing the save timing from " + str(current_days_folder) + " to " + str(days) + " was successful.",
+         "days_left": mapping.days_left()}
+    )
 
 def match_name_with_format(filename):
     name_matches = {'deltapsi': 'MAIJQ',
