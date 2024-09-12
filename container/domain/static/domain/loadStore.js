@@ -16,9 +16,9 @@ function removeExpiredData(key) {
 }
 
 // Function to create an HTML template
-function createHtmlTemplate(data, expiresInDays = 7) {
+function createHtmlTemplate(data) {
     // subtract 7 days from the expiry date
-    const createdDate = new Date(data.expiresAt) - (expiresInDays * 24 * 60 * 60 * 1000);
+    const createdDate = new Date(data.createdAt);
     // format to readable date
     const formattedDate = new Date(createdDate).toLocaleString();
 

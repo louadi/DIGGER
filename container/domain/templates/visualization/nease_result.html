@@ -163,9 +163,9 @@
           <h5 class="lead"><span
               style="font-weight:bold; display: inline-block; width: 500px">Affected protein interactions/bindings:</span> {{ interaction_affected|safe }}
           </h5>
-          <h5 class="lead"><span id="storage_message"
-              style="font-weight:bold; display: inline-block; width: 500px">Storage duration (7 days left):</span>
-              <select onchange="duration_change()" name="time_duration" id="time_duration">
+          <h5 class="lead" style="flex-direction: row;display: flex;"><label id="storage_message" for="time_duration"
+              style="font-weight:bold; display: inline-block; width: 500px; flex-shrink:0">Analysis availability (7 days left):</label>
+              <select class="form-control" style="margin-left: .375rem;" onchange="duration_change()" name="time_duration" id="time_duration">
                   <option value="0">Delete tonight</option>
                   <option value="7">One week</option>
                   <option value="31">One month</option>
@@ -175,7 +175,8 @@
           </h5>
 
           <h5 class="lead"><span
-              style="font-weight:bold; display: inline-block; width: 500px">Link for sharing:</span> <small hidden style="display:none;" id="link_text">{{ shareable_link|safe }}</small> <button onclick="copyDivToClipboard()"> Click to copy </button>
+              style="font-weight:bold; display: inline-block; width: 500px">Link for sharing:</span> <small hidden style="display:none;" id="link_text">{{ shareable_link|safe }}</small>
+              <button type="button" class="btn btn-secondary" onclick="copyDivToClipboard()"> Click to copy </button>
 
           </h5>
         </div>
@@ -183,11 +184,26 @@
             // Set the time duration to the value saved in the 'current_duration' variable
             document.getElementById("time_duration").value = "{{ current_duration|safe }}";
             // Set the storage_message to the value saved in the 'time_left' variable
-            document.getElementById("storage_message").textContent = `Storage duration ({{ time_left|safe }} days left):`;
+            document.getElementById("storage_message").textContent = `Analysis availability ({{ time_left|safe }} days left):`;
 
             function copyDivToClipboard() {
                 // Get the text field
-                const copyText = document.getElementById("link_text").textContent;
+                const textArea = document.getElementById("link_text");
+                const copyText = textArea.textContent;
+
+                //have a fallback in case the clipboard API is not supported
+                if (!navigator.clipboard) {
+                    try {
+                        textArea.focus();
+                        textArea.select();
+                        var successful = document.execCommand('copy');
+                        var msg = successful ? 'successful' : 'unsuccessful';
+                        console.log('Fallback: Copying text command was ' + msg);
+                      } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                      }
+                    return;
+                }
 
                 // Copy the text inside the text field
                 navigator.clipboard.writeText(copyText);
@@ -203,7 +219,7 @@
                     $.get(`nease_analysis/extra_functions?` + $.param({runId: id, duration: duration, func: "save"}), function (data) {
                         const parsed_data = JSON.parse(data);
                         console.log(parsed_data.logmessage);
-                        document.getElementById("storage_message").textContent = `Storage duration (${parsed_data.days_left} days left):`;
+                        document.getElementById("storage_message").textContent = `Analysis availability (${parsed_data.days_left} days left):`;
                         var item = JSON.parse(localStorage.getItem("nease/"+id));
                         item.expiresAt = Date.now() + (parsed_data.days_left * 24 * 60 * 60 * 1000);
                         localStorage.setItem("nease/"+id, JSON.stringify(item));

@@ -7,14 +7,14 @@ FOLDER_ONE="zero_days"
 FOLDER_TWO="seven_days"
 FOLDER_THREE="thirtyone_days"
 FOLDER_FOUR="onehundredeightysix_days"
-FOLDERS=($FOLDER_ONE $FOLDER_TWO $FOLDER_THREE)
+FOLDERS=($FOLDER_ONE $FOLDER_TWO $FOLDER_THREE $FOLDER_FOUR)
 
 # define the number of days after which the files should be deleted
 ONE_DELETE_AFTER=0
 TWO_DELETE_AFTER=7
 THREE_DELETE_AFTER=31
 FOUR_DELETE_AFTER=186
-DELETION_TIMES=($ONE_DELETE_AFTER $TWO_DELETE_AFTER $THREE_DELETE_AFTER)
+DELETION_TIMES=($ONE_DELETE_AFTER $TWO_DELETE_AFTER $THREE_DELETE_AFTER $FOUR_DELETE_AFTER)
 
 # Loop over the folders and deletion times
 for i in "${!FOLDERS[@]}"; do
@@ -24,5 +24,5 @@ for i in "${!FOLDERS[@]}"; do
 done
 
 # Find and delete files in /code/run/media directory
-echo "Found $(find /code/run/media -type f -mtime +$ONE_DELETE_AFTER | wc -l) files to delete"
-find /code/run/media -type f -mtime +$ONE_DELETE_AFTER -delete
+echo "Found $(find /code/run/media -type f -mtime +FOUR_DELETE_AFTER | wc -l) files to delete"
+find /code/run/media -type f -mtime +FOUR_DELETE_AFTER -delete
