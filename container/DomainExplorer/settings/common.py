@@ -14,6 +14,9 @@ import sys
 import os
 from os.path import abspath, basename, dirname, join, normpath
 
+# ##### ENVIRONMENT CONFIGURATION #########################
+env = os.environ.get
+
 # ##### PATH CONFIGURATION ################################
 
 # Fetch Django's project directory (The directory containing the settings package - DomainExplorer)
@@ -180,3 +183,5 @@ TO_HTML_RESPONSIVE_PARAMETERS = {
     **TO_HTML_PARAMETERS,
     'classes': ['table', 'table-striped', 'table-bordered', 'table-responsive', 'mx-auto']
 }
+
+BASE_URL = env('BASE_URL', default='http://localhost:8000')
