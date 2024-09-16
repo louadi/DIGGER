@@ -602,21 +602,12 @@
     // if the "custom_name" variable is not none then use it as the file name
     const fileName = "{{ custom_name|default:input_name|safe }}";
 
-    const nease_databases = [{ %
-    for db in nease_dbs %}
-    "{{ db|safe }}", { % endfor %
-    } ]
+    const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
 
     //check if runId is in local storage
     if (localStorage.getItem("nease/" + runId) === null) {
         // if it is not in local storage, then set it
-        const userStore = window.initStore({key: runId, expiresInDays: {
-        {
-            time_left | safe
-        }
-    },
-        name: fileName
-    })
+        const userStore = window.initStore({key: runId, expiresInDays: {{ time_left|safe }}, name: fileName})
         userStore.set(runId)
     }
 
