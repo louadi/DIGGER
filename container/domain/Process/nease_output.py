@@ -238,7 +238,7 @@ def create_plot(terms, pvalues, cut_off, filename):
     plt.ylabel('Terms')
     # explain the red line in the legend
     plt.legend(['Cut-off', 'Adjusted p-value'])
-    plt.savefig(filename, bbox_inches='tight')
+    plt.savefig(filename, bbox_inches='tight', dpi=1200)
     # flush the plot
     plt.clf()
     plt.close()
