@@ -100,7 +100,7 @@
         const newValue =
           value == null
             ? null
-            : { value, expiresAt: getExpiration(expiresInDays), name }
+            : { value, expiresAt: getExpiration(expiresInDays), name , createdAt: Date.now()}
         setExpiration(newValue?.expiresAt)
         storage.set(prefixedKey, newValue)
       },

@@ -10,6 +10,8 @@ import csv
 import re
 import collections
 import mygene
+from django.conf import settings
+
 
 pd.set_option('display.max_colwidth', 1000)
 
@@ -18,11 +20,21 @@ pd.set_option('display.max_colwidth', 1000)
 into a joint graph and maps interacting residues to exons. DIGGER allows the users to query exons or isoforms individually or as a set 
 to visually explore their interactions. The following modes of DIGGER can be used interchangeably:
 """
-DIGGER = 'https://exbio.wzw.tum.de/digger-dev/ID/exon/'
+DIGGER = f'{settings.BASE_URL}/ID/exon/'
 
 
 # Adjust tables to be more usable when displayed in the web interface
 def webify_table(df, options=None):
+    """
+    Makes the table more user-friendly for the web interface by adding links and removing unnecessary columns.
+    :param df: the dataframe to be webified
+    :param options: a dictionary containing the following:
+        link_col: the column that will be used to generate the link and the column that will be displayed
+        link_prefix: the prefix of the link
+        link_id: the column that will be used to generate the link (if different from the link_col)
+        drop_col: the column that will be removed from the table because it is just duplicated information
+    :return: the webified dataframe
+    """
     link_col, link_prefix, link_id, drop_col = (options['link_col'], options['link_prefix'], options['link_id'],
                                                 options['drop_col'])
 

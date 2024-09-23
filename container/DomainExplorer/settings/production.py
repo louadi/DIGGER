@@ -1,4 +1,5 @@
 # Python imports
+import os
 from os.path import join
 from sqlalchemy import create_engine
 
@@ -10,7 +11,8 @@ from .i18n import *
 __dummy = LANGUAGE_CODE
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False    # ToDo change for production
+debug_env = os.environ.get("DEBUG", "")
+DEBUG = True if debug_env == 'True' else False
 
 # Restrict access to only the hostname that this service is deployed to
 ALLOWED_HOSTS = ['*']   # ToDo change for production
