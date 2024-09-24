@@ -316,9 +316,9 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs,
             spliced_genes.append(Entrez_to_name(g, mapping_dict=entrez_name_map))
             spliced_genes_entrez.append(g)
             gene_association.append(g in path_genes_str)
-            num.append(str(a) + '/' + str(a + b))
-            affected_edges.append((', ').join([Entrez_to_name(x, mapping_dict=entrez_name_map) for x in edges]))
-            affected_edges_entrez.append((', ').join(edges))
+            num.append(f"{a}/{a+b} ({a/(a+b)*100:.2f}%)")
+            affected_edges.append(', '.join([Entrez_to_name(x, mapping_dict=entrez_name_map) for x in edges]))
+            affected_edges_entrez.append(', '.join(edges))
             p_val.append(p_value)
 
             # save affected edges
@@ -327,7 +327,7 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs,
     Enrichment = pd.DataFrame(list(
         zip(spliced_genes, spliced_genes_entrez, gene_association, num, p_val, affected_edges, affected_edges_entrez)),
         columns=['Spliced genes', 'NCBI gene ID', 'Gene is known to be in the pathway',
-                 'Percentage of edges associated to the pathway', 'p_value',
+                 'Edges associated with the pathway (%)', 'p_value',
                  'Affected binding (edges)', 'Affected binding (NCBI)'])
 
     return Enrichment, G
