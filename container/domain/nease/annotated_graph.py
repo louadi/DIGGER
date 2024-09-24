@@ -1,4 +1,5 @@
 # This file is responsible for filtering the PPI graph based on DDI, ELM and PDB
+import ast
 import pickle
 import timeit
 
@@ -89,6 +90,8 @@ def filter_ppi_graph(ppis, ddi_graph, elm, pdb, Organism):
 
 def pathway_node_degree(annotated_ppi_graph, pathway_entrez):
     # get the degree of each node in the pathway
+    if not isinstance(pathway_entrez, list):
+        pathway_entrez = ast.literal_eval(pathway_entrez)
     degree = sum([val for _, val in annotated_ppi_graph.degree(pathway_entrez)])
     return degree
 

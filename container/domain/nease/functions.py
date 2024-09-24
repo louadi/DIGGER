@@ -341,7 +341,7 @@ def edge_enrich(a, b, p, n):
     # function to calculate P value
     # test if affected edges by AS are significally enriched in a pathway
     # fisher exact test
-    # a+b affected adges, with a the one linked to pathway p
+    # a+b affected edges, with a the one linked to pathway p
     # p total degree of pathway p
     # n total edges in the ppi used.
 
