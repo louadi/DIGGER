@@ -673,6 +673,11 @@
             // add the text content to the input field when the user clicks on the list item
             listItem.addEventListener('click', () => {
                 const inputField = document.getElementById('neaseDatabasesToEnrich');
+                // check whether inputField already contains the db string. If so, don't add it again
+                // we also dont need set everything to valid
+                if (inputField.value.includes(db)) {
+                    return;
+                }
                 inputField.value = inputField.value ? `${inputField.value}, ${db}` : db;
                 inputField.classList.remove('is-invalid');
                 document.getElementById('neaseNotSupported').hidden = true;
