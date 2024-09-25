@@ -242,17 +242,23 @@ def visualise_path(events, pathway, k):
 
 
 def create_plot(terms, pvalues, cut_off, filename):
-    plt.style.use('ggplot')
+    # plt.style.use('ggplot')
     plt.barh(terms[::-1], pvalues[::-1])
-    plt.axvline(x=cut_off, color='b', linestyle='--')
+    plt.axvline(x=cut_off, color='r', linestyle='--')
     plt.xlabel('-log10(adjusted p-value)')
     plt.ylabel('Terms')
     # explain the red line in the legend
     plt.legend(['Cut-off', 'Adjusted p-value'])
+
+    ax = plt.gca()
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
     plt.savefig(filename, bbox_inches='tight', dpi=1200)
     # flush the plot
     plt.clf()
     plt.close()
+
 
 def change_save_timing(run_id, days):
     mapping = NeaseSaveLocationMapping.objects.get(run_id=run_id)

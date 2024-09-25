@@ -523,6 +523,7 @@ def stats_domains(affecting_percentage,
     ratios_pie = [affecting_percentage, 1 - affecting_percentage]
     labels_pie = ['Affecting protein features', 'Not affecting any feature']
     pie_colors = ['#1f78b4', '#fe7f0e']
+    ax1.set_facecolor('white')
     ax1.pie(ratios_pie, labels=labels_pie, autopct='%1.1f%%', startangle=0, wedgeprops={'edgecolor': 'white'},
             colors=pie_colors)
     ax1.set_title("Genes with AS affecting protein features")
@@ -534,15 +535,17 @@ def stats_domains(affecting_percentage,
 
     colors = ['#2ba8fc', '#2284c6', '#15547e']
 
+    ax2.set_facecolor('white')
     ax2.barh(labels_bar, ratios_bar, color=colors)
     ax2.set_xlim(0, 100)
     ax2.set_title('Affected features')
     ax2.grid(False)
     ax2.yaxis.set_ticks_position('none')
     ax2.spines[['right', 'top']].set_visible(False)
+    ax2.spines[['left', 'bottom']].set_visible(True)
 
     for i, v in enumerate(ratios_bar):
-        ax2.text(v + 1, i, f"{v}%", va='center', color='black', fontweight='bold')
+        ax2.text(v + 1, i, f"{v:.1f}%", va='center', color='black', fontweight='bold')
 
     plt.tight_layout()
 
