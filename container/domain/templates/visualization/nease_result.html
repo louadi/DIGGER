@@ -241,7 +241,7 @@
             </h5>
               <h5 class="lead">
               <button type="button" class="btn btn-secondary" id="copyButton" data-toggle="tooltip"
-                      data-placement="top" title="Copy me!" onclick="copyDivToClipboard()">Click to copy
+                      data-placement="top" title="Copy me!" onclick="copyDivToClipboard()"><i data-feather="clipboard"></i> Copy link
               </button>
 
             </h5>
@@ -350,8 +350,10 @@
           <div class="card-body">
             <p class="lead text-center table-head"><span>NEASE enrichment result</span></p>
             <div class="d-flex justify-content-center align-items-center position-relative">
-              <a href="{% get_media_prefix %}images/{{ stats_full }}" class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
-                 style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top" title="Download high-resolution image.">
+              <a href="{% get_media_prefix %}images/{{ stats }}" download="NEASE_stats"
+                 class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
+                 style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top"
+                 title="Download high-resolution image.">
                 <i data-feather="download"></i>
               </a>
               <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
@@ -471,7 +473,13 @@
 
             <h6 class="my-4">
               <hr id="neaseEdgeHr1" style="display: none;">
-              <div class="d-flex justify-content-center align-items-center">
+              <div class="d-flex justify-content-center align-items-center position-relative">
+                <a id="neaseEdgeBtn" download="" href=""
+                   class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
+                   style="top: 10px; right: 10px; display: none" data-toggle="tooltip" data-placement="top"
+                   title="Download high-resolution image.">
+                  <i data-feather="download"></i>
+                </a>
                 <img id="neaseEdgeImage" src="" class="resize">
               </div>
               <hr id="neaseEdgeHr2" style="display: none">
@@ -479,7 +487,7 @@
               <div id="nease_enrich_download_button" class="row" style="display: none;">
                 <div class="col-sm-12 text-center">
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_neenr.csv"
-                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download"></i>Download enrichment result</a>
+                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download"></i> Download enrichment result</a>
                 </div>
               </div>
             </h6>
@@ -711,6 +719,11 @@
                     $(`#${tableNameId}_download_button`).css('display', 'block');
 
                     const image_end = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
+                    const downloadBtn = $(`#${hrId}Btn`);
+                    downloadBtn.attr('href', `{% get_media_prefix %}images/` + runId + image_end + '?' + new Date().getTime());
+                    downloadBtn.attr('download', `${fileName}_${databases.replaceAll(",", "_")}_enrichment_result.jpg`);
+                    downloadBtn.css('display', 'block');
+
                     $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end + '?' + new Date().getTime());
                     $(`#${hrId}Hr1`).css('display', 'block');
                     $(`#${hrId}Hr2`).css('display', 'block');
