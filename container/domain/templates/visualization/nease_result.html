@@ -241,7 +241,8 @@
             </h5>
               <h5 class="lead">
               <button type="button" class="btn btn-secondary" id="copyButton" data-toggle="tooltip"
-                      data-placement="top" title="Copy me!" onclick="copyDivToClipboard()"><i data-feather="clipboard"></i> Copy link
+                      data-placement="top" title="Copy me!" onclick="copyDivToClipboard()">
+                <i data-feather="clipboard" class="mr-1 download-btn"></i>Copy link
               </button>
 
             </h5>
@@ -354,7 +355,7 @@
                  class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
                  style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top"
                  title="Download high-resolution image.">
-                <i data-feather="download"></i>
+                <i data-feather="download" class="download-btn"></i>
               </a>
               <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
             </div>
@@ -374,7 +375,7 @@
                     <h5 class="mb-0 mx-auto table-head">Affected protein domains</h5>
                     <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_domains.csv"
                          class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
-                      title="Download a .csv file of this table."><i data-feather="download"></i></a>
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
                   </div>
                 </div>
               <div class="row">
@@ -390,7 +391,7 @@
                   <h5 class="mb-0 mx-auto table-head">Affected interactions (domain binding)</h5>
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_edges.csv"
                      class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
-                      title="Download a .csv file of this table."><i data-feather="download"></i></a>
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
                 </div>
               </div>
               <div class="row">
@@ -406,7 +407,7 @@
                   <h5 class="mb-0 mx-auto table-head">Affected linear motifs</h5>
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_elm.csv"
                       class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
-                      title="Download a .csv file of this table."><i data-feather="download"></i></a>
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
                 </div>
               </div>
               <div class="row">
@@ -422,7 +423,7 @@
                   <h5 class="mb-0 mx-auto table-head">Affected interacting genes with residue-level evidence</h5>
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_pdb.csv"
                       class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
-                      title="Download a .csv file of this table."><i data-feather="download"></i></a>
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
                 </div>
               </div>
               <div class="row">
@@ -478,7 +479,7 @@
                    class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
                    style="top: 10px; right: 10px; display: none" data-toggle="tooltip" data-placement="top"
                    title="Download high-resolution image.">
-                  <i data-feather="download"></i>
+                  <i data-feather="download" class="download-btn"></i>
                 </a>
                 <img id="neaseEdgeImage" src="" class="resize">
               </div>
@@ -487,7 +488,7 @@
               <div id="nease_enrich_download_button" class="row" style="display: none;">
                 <div class="col-sm-12 text-center">
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_neenr.csv"
-                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download"></i> Download enrichment result</a>
+                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download" class="mr-1 download-btn"></i> Download enrichment result</a>
                 </div>
               </div>
             </h6>
@@ -526,8 +527,8 @@
               <div id="pathway_result"></div>
               <div id="pathway_download_button" class="row" style="display: none;">
                 <div class="col-sm-12 text-center">
-                  <a id="pathwayDownloadLink" href=""
-                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download"></i> Download pathway information</a>
+                  <button id="pathwayDownloadLink" href=""
+                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download" class="download-btn mr-1"></i> Download pathway information</button>
                 </div>
               </div>
             </h6>
@@ -597,7 +598,6 @@
 </div>
 <script>
     // create the svg icons
-    feather.icons.download.toSvg({class: 'download-btn'});
     feather.replace();
 
     const runId = "{{ run_id }}";
