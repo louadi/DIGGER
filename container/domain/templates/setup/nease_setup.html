@@ -5,6 +5,7 @@
 
 {% block header %}
   <script src="{% static "domain/loadStore.js" %}" type="text/javascript"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
   <style>
       .previous-card {
         cursor: pointer;
@@ -20,6 +21,15 @@
         vertical-align: middle;
         height: 1.4em;
         width: auto;
+    }
+
+    .feather {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
     }
 
   </style>
@@ -79,9 +89,10 @@
             <!-- databases -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="input_type" data-toggle="tooltip" data-placement="top" class="svgOption"
+
+                <label for="input_type" data-toggle="tooltip" data-placement="top"
                        title="The source of the input splicing events. Dictates the format NEASE uses"
-                >Input format </label>
+                >Input format <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <select class="form-control" id="input_type" name="inputType">
@@ -98,9 +109,9 @@
             <!-- DDIs -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label data-toggle="tooltip" data-placement="top" class="svgOption"
+                <label data-toggle="tooltip" data-placement="top"
                        title="Determines which (if any) predicted Domain-Domain Interactions should be used"
-                >Predicted DDIs </label>
+                >Predicted DDIs <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
@@ -128,8 +139,8 @@
             <!-- custom analysis name -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="analysis_name" data-toggle="tooltip" data-placement="top" class="svgOption"
-                       title="The name the analysis should be saved under. Default is file name">Analysis name </label>
+                <label for="analysis_name" data-toggle="tooltip" data-placement="top"
+                       title="The name the analysis should be saved under. Default is file name">Analysis name <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <input type="text" class="form-control" id="analysis_name" name="analysis_name">
@@ -138,8 +149,8 @@
             <!-- p_value_cutoff -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="p_value_cutoff" data-toggle="tooltip" data-placement="top" class="svgOption"
-                       title="The p value cutoff used to compute NEASE scores.">P-value cutoff </label>
+                <label for="p_value_cutoff" data-toggle="tooltip" data-placement="top"
+                       title="The p value cutoff used to compute NEASE scores.">P-value cutoff <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <input type="number" class="form-control" id="p_value_cutoff" name="p_value_cutoff" value="0.05"
@@ -149,9 +160,9 @@
             <!-- min_delta -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="min_delta" data-toggle="tooltip" data-placement="top" class="svgOption"
+                <label for="min_delta" data-toggle="tooltip" data-placement="top"
                        title="min delta to consider in case your input has a dPsi column.
-                       The value also corresponds to logfold change in case of DEXSeq.">Min delta </label>
+                       The value also corresponds to logfold change in case of DEXSeq.">Min delta <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <input type="number" class="form-control" id="min_delta" name="min_delta" value="0.05"
@@ -161,9 +172,9 @@
             <!-- Majiq_confidence -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label for="Majiq_confidence" data-toggle="tooltip" data-placement="top" class="svgOption"
+                <label for="Majiq_confidence" data-toggle="tooltip" data-placement="top"
                        title="In case of your input format being MAJIQ. The parameter P(dPSI > 20%) is needed.
-                       Check MAJIQ paper for details about this">MAJIQ confidence </label>
+                       Check MAJIQ paper for details about this">MAJIQ confidence <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <input type="number" class="form-control" id="Majiq_confidence" name="Majiq_confidence"
@@ -174,8 +185,8 @@
             <!-- only_DDIs -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label data-toggle="tooltip" data-placement="top" class="svgOption"
-                       title="Only use DDI and exclude PDB and linear motif interactions for calculations">Only DDIs </label>
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Only use DDI and exclude PDB and linear motif interactions for calculations">Only DDIs <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
@@ -187,9 +198,9 @@
             <!-- remove non in frame -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label data-toggle="tooltip" data-placement="top" class="svgOption"
+                <label data-toggle="tooltip" data-placement="top"
                        title="Removes all exons that are predicted to disturb the ORF or known to result
-                       in a non-coding gene. Disable to include all exons.">Remove not-in-frame</label>
+                       in a non-coding gene. Disable to include all exons.">Remove not-in-frame <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
@@ -203,8 +214,8 @@
             <!-- only divisible by 3 -->
             <div class="row my-2">
               <div class="col-md-4">
-                <label data-toggle="tooltip" data-placement="top" class="svgOption"
-                       title="Removes exons not divisible by 3">Only divisible by 3 </label>
+                <label data-toggle="tooltip" data-placement="top"
+                       title="Removes exons not divisible by 3">Only divisible by 3 <i data-feather="info"></i></label>
               </div>
               <div class="col-md-8">
                 <div class="custom-control custom-switch">
@@ -224,10 +235,10 @@
       <!-- submit button -->
       <div class="card-body row no-gutters align-items-center">
         <div class="col-md-6">
-          <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start svgOption"
+          <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start"
                   type="button" data-toggle="tooltip" data-placement="top" title="Use example MAJIQ output of MS
                    data from the NEASE tutorial"
-          >Example data </button>
+          >Example data <i data-feather="info"></i></button>
         </div>
         <div class="col-md-6 text-right d-flex align-items-center justify-content-end">
           <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
@@ -238,11 +249,11 @@
         </div>
       </div>
       <!-- previous analyses -->
-      <div id="prevAnalysisContainer" class="container" style="display: none;">
+      <div id="prevAnalysisContainer" class="container mb-2" style="display: none;">
           <div class="row">
             <div class="col-md-12">
-              <h5><b class="svgOption" data-toggle="tooltip" data-placement="top" title="Previously executed
-                analyses will be deleted after 7 days">Previous Analyses</b></h5>
+              <h5><b data-toggle="tooltip" data-placement="top" title="Quickly continue where you left off previously">
+                Previous Analyses <i data-feather="info"></i></b></h5>
             </div>
           </div>
           <div id="previousAnalyses">
@@ -254,26 +265,8 @@
   <script src="{% static "domain/organism_selector.js" %}"></script>
 
   <script>
-    // make svg element that can be added to form options
-    function makeSvgElement() {
-        document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('class', 'inline-icon');
-        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        svg.setAttribute('viewBox', '0 0 24 24');
-        svg.setAttribute('fill', 'currentColor');
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', "M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11 11H13V17H11V11Z");
-        svg.appendChild(path);
-        return svg;
-    }
-
-    // add svg element to all elements with class svgOption
-    const svgElement = makeSvgElement();
-    const svgOptions = document.getElementsByClassName('svgOption');
-    for (let i = 0; i < svgOptions.length; i++) {
-      svgOptions[i].appendChild(svgElement.cloneNode(true));
-    }
+      // create the svg icons
+      feather.replace();
 
     // load previous analyses
     const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
