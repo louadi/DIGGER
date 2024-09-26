@@ -727,6 +727,7 @@ def set_previous_analysis(request, post_request=True):
         traceback.print_exc()
         return render(request, 'setup/nease_setup.html', context)
 
+
 # this does the initial nease run or loads a previous analysis
 def setup_nease(request):
     # handle previous analysis
@@ -811,7 +812,8 @@ def setup_nease(request):
             'custom_name': custom_name,
             **events.summary,
             **info_tables,
-            'stats': run_id + ".jpg",
+            'stats': run_id + "_thumb.jpg",
+            'stats_full': run_id + ".jpg",
             'shareable_link': request.build_absolute_uri(reverse('nease-analysis')) + "?runId=" + run_id,
             'run_id': run_id,
             'current_duration': current_duration,

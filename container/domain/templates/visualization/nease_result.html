@@ -85,6 +85,25 @@
         display: table;
     }
 
+    .feather {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .download-btn {
+      width: 22px;
+      height: 22px;
+    }
+
+    .table-head {
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+
     @media screen and (max-width: 1399px) {
         .short-table {
             display: block;
@@ -108,6 +127,7 @@
 
 
   </style>
+  <script src="https://unpkg.com/feather-icons"></script>
   <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
   <script src="{% static "domain/pathwayTooltips.js" %}" type="text/javascript"></script>
@@ -181,7 +201,7 @@
             </div>
 
             <div class="d-flex justify-content-between">
-              <h5 style="font-weight: bold;">Affected interacting residues:</h5>
+              <h5 style="font-weight: bold;">Affected interacting (with residue evidence):</h5>
               <h5>{{ residues|safe }}</h5>
             </div>
 
@@ -221,7 +241,8 @@
             </h5>
               <h5 class="lead">
               <button type="button" class="btn btn-secondary" id="copyButton" data-toggle="tooltip"
-                      data-placement="top" title="Copy me!" onclick="copyDivToClipboard()">Click to copy
+                      data-placement="top" title="Copy me!" onclick="copyDivToClipboard()">
+                <i data-feather="clipboard" class="mr-1 download-btn"></i>Copy link
               </button>
 
             </h5>
@@ -286,7 +307,7 @@
               // Hide the tooltip after 2 seconds
               setTimeout(function () {
                   copyButton.tooltip('hide')
-                      .attr('title', 'Click to copy')
+                      .attr('title', 'Copy me!')
                       .tooltip('dispose')
                       .tooltip();
               }, 2000);
@@ -328,9 +349,14 @@
         <div class="tab-pane fade show active card shadow rounded" id="v-pills-overview" role="tabpanel"
              aria-labelledby="v-pills-overview-tab">
           <div class="card-body">
-            <p class="lead text-center"><span
-                style="font-weight:bold">NEASE enrichment result</span></p>
-            <div class="d-flex justify-content-center align-items-center">
+            <p class="lead text-center table-head"><span>NEASE enrichment result</span></p>
+            <div class="d-flex justify-content-center align-items-center position-relative">
+              <a href="{% get_media_prefix %}images/{{ stats_full }}" download="NEASE_stats"
+                 class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
+                 style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top"
+                 title="Download high-resolution image.">
+                <i data-feather="download" class="download-btn"></i>
+              </a>
               <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
             </div>
 
@@ -345,14 +371,13 @@
             <!-- tables resulting from enrichment -->
             <div class="my-5">
               <div class="row my-2">
-                <div class="col-sm-12 col-md-6 my-2">
-                  <h5 class="text-center">Affected protein domains</h5>
+                <div class="col d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 mx-auto table-head">Affected protein domains</h5>
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_domains.csv"
+                         class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
+                  </div>
                 </div>
-                <div class="col-sm-12 col-md-6">
-                  <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_domains.csv"
-                     class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
-                </div>
-              </div>
               <div class="row">
                 <div class="col-sm-12">
                   {{ domains|safe }}
@@ -362,12 +387,11 @@
 
             <div class="my-5">
               <div class="row my-2">
-                <div class="col-sm-12 col-md-6 my-2">
-                  <h5 class="text-center">Affected interactions (domain binding)</h5>
-                </div>
-                <div class="col-sm-12 col-md-6">
+                <div class="col d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 mx-auto table-head">Affected interactions (domain binding)</h5>
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_edges.csv"
-                     class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                     class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
                 </div>
               </div>
               <div class="row">
@@ -379,12 +403,11 @@
 
             <div class="my-5">
               <div class="row my-2">
-                <div class="col-sm-12 col-md-6 my-2">
-                  <h5 class="text-center">Affected linear motifs</h5>
-                </div>
-                <div class="col-sm-12 col-md-6">
+                <div class="col d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 mx-auto table-head">Affected linear motifs</h5>
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_elm.csv"
-                     class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                      class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
                 </div>
               </div>
               <div class="row">
@@ -396,12 +419,11 @@
 
             <div class="my-5">
               <div class="row my-2">
-                <div class="col-sm-12 col-md-6 my-2">
-                  <h5 class="text-center">Affected interacting genes with residue-level evidence</h5>
-                </div>
-                <div class="col-sm-10 col-md-6">
+                <div class="col d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 mx-auto table-head">Affected interacting genes with residue-level evidence</h5>
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_pdb.csv"
-                     class="btn btn-secondary px-4 py-2 btn-sm">Download table</a>
+                      class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
                 </div>
               </div>
               <div class="row">
@@ -429,14 +451,7 @@
                      databases. Note: the more databases you choose, the longer it will take to retrieve the
                      enrichment result."
                          for="neaseDatabasesToEnrich">Databases to enrich
-                    <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
-                         viewBox="0 0 24 24"
-                         fill="currentColor">
-                      <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
-                         2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172
-                          16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11
-                           11H13V17H11V11Z"></path>
-                    </svg>
+                    <i data-feather="info"></i>
                   </label>
                   <input type="text" class="form-control" id="neaseDatabasesToEnrich"
                          placeholder="Reactome, KEGG, ...">
@@ -459,7 +474,13 @@
 
             <h6 class="my-4">
               <hr id="neaseEdgeHr1" style="display: none;">
-              <div class="d-flex justify-content-center align-items-center">
+              <div class="d-flex justify-content-center align-items-center position-relative">
+                <a id="neaseEdgeBtn" download="" href=""
+                   class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
+                   style="top: 10px; right: 10px; display: none" data-toggle="tooltip" data-placement="top"
+                   title="Download high-resolution image.">
+                  <i data-feather="download" class="download-btn"></i>
+                </a>
                 <img id="neaseEdgeImage" src="" class="resize">
               </div>
               <hr id="neaseEdgeHr2" style="display: none">
@@ -467,7 +488,7 @@
               <div id="nease_enrich_download_button" class="row" style="display: none;">
                 <div class="col-sm-12 text-center">
                   <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_neenr.csv"
-                     class="btn btn-secondary px-4 py-2 btn-sm">Download enrichment result</a>
+                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download" class="mr-1 download-btn"></i> Download enrichment result</a>
                 </div>
               </div>
             </h6>
@@ -488,14 +509,7 @@
                 <div class="form-group">
                   <label data-toggle="tooltip" data-placement="top"
                          title="Get pathway IDs from NEASE edge enrichment" for="pathwayAnal">Pathway to analyse
-                    <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
-                         viewBox="0 0 24 24"
-                         fill="currentColor">
-                      <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
-                         2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172
-                          16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11
-                           11H13V17H11V11Z"></path>
-                    </svg>
+                    <i data-feather="info"></i>
                   </label>
                   <input type="text" class="form-control" id="pathwayAnal" placeholder="Enter pathway">
                 </div>
@@ -513,8 +527,8 @@
               <div id="pathway_result"></div>
               <div id="pathway_download_button" class="row" style="display: none;">
                 <div class="col-sm-12 text-center">
-                  <a id="pathwayDownloadLink" href=""
-                     class="btn btn-secondary px-4 py-2 btn-sm">Download pathway information</a>
+                  <button id="pathwayDownloadLink" href=""
+                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download" class="download-btn mr-1"></i> Download pathway information</button>
                 </div>
               </div>
             </h6>
@@ -541,14 +555,7 @@
                     <div class="col-md-10">
                       <label for="pathwayVis" data-toggle="tooltip" data-placement="top"
                              title="Get pathway IDs from NEASE edge enrichment">Pathway to visualize
-                        <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="currentColor">
-                          <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
-                         2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172
-                          16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11
-                           11H13V17H11V11Z"></path>
-                        </svg>
+                        <i data-feather="info"></i>
                       </label>
                       <input type="text" class="form-control" id="pathwayVis" placeholder="Enter pathway">
                     </div>
@@ -556,15 +563,7 @@
                     <div class="col-md-2">
                       <label for="k" data-toggle="tooltip" data-placement="top"
                              title="Position nodes using Fruchterman-Reingold force-directed algorithm, higher
-                                 k moves nodes further apart">k</label>
-                      <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg"
-                           viewBox="0 0 24 24"
-                           fill="currentColor">
-                        <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228
-                         2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172
-                          16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 7H13V9H11V7ZM11
-                           11H13V17H11V11Z"></path>
-                      </svg>
+                                 k moves nodes further apart">k <i data-feather="info"></i></label>
                       <input type="number" class="form-control" id="k" value="0.8" step="0.1">
                     </div>
                   </div>
@@ -598,6 +597,9 @@
   </div>
 </div>
 <script>
+    // create the svg icons
+    feather.replace();
+
     const runId = "{{ run_id }}";
     // if the "custom_name" variable is not none then use it as the file name
     const fileName = "{{ custom_name|default:input_name|safe }}";
@@ -716,8 +718,14 @@
                     // show all the relevant elements
                     $(`#${tableNameId}_download_button`).css('display', 'block');
 
-                    const image_end = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
-                    $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + image_end + '?' + new Date().getTime());
+                    const thumb = funcName === 'nease' ? '_neenr_thumb.jpg' : '_clenr_thumb.jpg';
+                    const fullRes = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
+                    const downloadBtn = $(`#${hrId}Btn`);
+                    downloadBtn.attr('href', `{% get_media_prefix %}images/` + runId + fullRes + '?' + new Date().getTime());
+                    downloadBtn.attr('download', `${fileName}_${databases.replaceAll(",", "_")}_enrichment_result.jpg`);
+                    downloadBtn.css('display', 'block');
+
+                    $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + thumb + '?' + new Date().getTime());
                     $(`#${hrId}Hr1`).css('display', 'block');
                     $(`#${hrId}Hr2`).css('display', 'block');
                 }).fail(function () {
