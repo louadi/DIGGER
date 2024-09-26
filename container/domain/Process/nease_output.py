@@ -18,8 +18,10 @@ import uuid
 images_path = os.path.join(settings.MEDIA_ROOT, 'images/')
 data_path = os.path.join(settings.MEDIA_ROOT, 'nease_tables/')
 nease_path = 'nease_events/'
-# The subdirectories contain files saved for one week, one month, and six months. To be very lenient, we calculated every month with 31 days.
-days_to_folder = {"0": nease_path+"zero_days/", "7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/", "186": nease_path+"onehundredeightysix_days/"}
+# The subdirectories contain files saved for one week, one month, and six months.
+# To be very lenient, we calculated every month with 31 days.
+days_to_folder = {"0": nease_path+"zero_days/", "7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/",
+                  "186": nease_path+"onehundredeightysix_days/"}
 default_path = days_to_folder["7"]
 
 for path in [images_path, data_path] + list(days_to_folder.values()):
@@ -176,7 +178,7 @@ def nease_classic_enrich(events, databases, run_id):
     p_values = [-np.log10(x) for x in p_values]
     cut_off = -np.log10(events.get_p_value())
 
-    create_plot(terms, p_values, cut_off, f"{images_path}{run_id}_clenr.jpg")
+    create_plot(terms, p_values, cut_off, f"{images_path}{run_id}_clenr")
 
     return classic_enrich_table
 
@@ -203,7 +205,7 @@ def nease_enrichment(events, databases, run_id):
     <button class='btn btn-secondary' onclick=&quot;visualisePath('{x}', 0.8)&quot;>Visualise</button>"
     tooltip-position="right">{x}</p>""".replace("\n", ""))
 
-    create_plot(terms, pvalues, cut_off, f"{images_path}{run_id}_neenr.jpg")
+    create_plot(terms, pvalues, cut_off, f"{images_path}{run_id}_neenr")
 
     return enrich_table
 
@@ -254,7 +256,8 @@ def create_plot(terms, pvalues, cut_off, filename):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-    plt.savefig(filename, bbox_inches='tight', dpi=1200)
+    plt.savefig(f"{filename}_thumb.jpg", bbox_inches='tight')
+    plt.savefig(f"{filename}.jpg", bbox_inches='tight', dpi=1200)
     # flush the plot
     plt.clf()
     plt.close()
@@ -281,6 +284,7 @@ def change_save_timing(run_id, days):
         {"logmessage": "Changing the save timing from " + str(current_days_folder) + " to " + str(days) + " was successful.",
          "days_left": mapping.days_left()}
     )
+
 
 def match_name_with_format(filename):
     name_matches = {'deltapsi': 'MAIJQ',
