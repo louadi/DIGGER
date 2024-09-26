@@ -144,11 +144,18 @@ def get_nease_events(run_id):
     try:
         domains = webify_table(pd.read_csv(f"{data_path}{run_id}_domains.csv"), web_tables_options['domains'])
         edges = webify_table(pd.read_csv(f"{data_path}{run_id}_edges.csv"), web_tables_options['edges'])
-        info_tables = {'domains': domains, 'edges': edges}
+
         if os.path.exists(f"{data_path}{run_id}_elm.csv"):
             elm = webify_table(pd.read_csv(f"{data_path}{run_id}_elm.csv"), web_tables_options['elm'])
+        else:
+            elm = pd.DataFrame(columns=["Gene name", "Gene stable ID", "ELMIdentifier", "dPSI"])
+
+        if os.path.exists(f"{data_path}{run_id}_pdb.csv"):
             pdb = webify_table(pd.read_csv(f"{data_path}{run_id}_pdb.csv"), web_tables_options['pdb'])
-            info_tables.update({'elm': elm, 'pdb': pdb})
+        else:
+            pdb = pd.DataFrame(columns=["Gene name", "Gene stable ID", "Co-resolved interactions symbol"])
+
+        info_tables = {'domains': domains, 'edges': edges, 'elm': elm, 'pdb': pdb}
     except Exception as e:
         traceback.print_exc()
         print(e)

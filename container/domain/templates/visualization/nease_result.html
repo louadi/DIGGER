@@ -351,7 +351,7 @@
           <div class="card-body">
             <p class="lead text-center table-head"><span>NEASE enrichment result</span></p>
             <div class="d-flex justify-content-center align-items-center position-relative">
-              <a href="{% get_media_prefix %}images/{{ stats_full }}" download="NEASE_stats"
+              <a href="{% get_media_prefix %}images/{{ stats_full|safe }}" download="NEASE_stats"
                  class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
                  style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top"
                  title="Download high-resolution image.">
