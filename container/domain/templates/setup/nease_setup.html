@@ -235,10 +235,24 @@
       <!-- submit button -->
       <div class="card-body row no-gutters align-items-center">
         <div class="col-md-6">
-          <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start"
+          <div class="btn-group">
+            <button id="exampleData" class="btn btn-outline-secondary my-2 my-sm-0 justify-content-start"
                   type="button" data-toggle="tooltip" data-placement="top" title="Use example MAJIQ output of MS
                    data from the NEASE tutorial"
-          >Example data <i data-feather="info"></i></button>
+            >Example data <i data-feather="info"></i></button>
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-toggle="dropdown" ara-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" target="_blank"
+                 href="https://github.com/louadi/NEASE-tutorials/blob/main/AS%20data/MS/AL_NAWM.deltapsi.tsv">
+                <i data-feather="eye"></i> source file</a>
+              <a class="dropdown-item" target="_blank" download="AL_NAWM.deltapsi.tsv"
+                 href="https://raw.githubusercontent.com/louadi/NEASE-tutorials/refs/heads/main/AS%20data/MS/AL_NAWM.deltapsi.tsv">
+                <i data-feather="download"></i> source file</a>
+            </div>
+          </div>
         </div>
         <div class="col-md-6 text-right d-flex align-items-center justify-content-end">
           <h6 id="loading_text" class="m-2" style="display: none">Processing input file</h6>
