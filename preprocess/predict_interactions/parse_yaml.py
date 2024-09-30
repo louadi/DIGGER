@@ -84,33 +84,33 @@ def parse_general(parse_sources, counter=1, col_name=None):
     if col_name is None:
         return tasks, counter
 
-    for source in parse_sources[col_name]:
-        try:
-            name = parse_sources[source]['name']
-        except KeyError:
-            name = source
+    source = col_name
+    try:
+        name = parse_sources[col_name]['name']
+    except KeyError:
+        name = source
 
-        try:
-            path = parse_sources[source]['path']
-        except KeyError:
-            print(f"YAML not properly formatted, specify a path for mippie")
-            exit(1)
+    try:
+        path = parse_sources[col_name]['path']
+    except KeyError:
+        print(f"YAML not properly formatted, specify a path for mippie")
+        exit(1)
 
-        try:
-            mapping = parse_sources[source]['mapping']
-        except KeyError:
-            print(f"YAML not properly formatted, specify mapping for {name}")
-            exit(1)
-        tasks.append((f"clean_{source}", path, f"sourcedata/source{counter}_{name}", mapping))
-        counter += 1
+    try:
+        mapping = parse_sources[col_name]['mapping']
+    except KeyError:
+        print(f"YAML not properly formatted, specify mapping for {name}")
+        exit(1)
+    tasks.append((f"clean_{source}", path, f"sourcedata/source{counter}_{name}", mapping))
+    counter += 1
     return tasks, counter
 
 
 # feel free to extend this list by adding a new function and updating the dictionary
 supported_sources = {'mitab': parse_mitab,
                      'string': parse_string,
-                     'mippie': parse_general,
-                     'homology': parse_general,
+                     'mippie': parse_mippie,
+                     'homology': parse_homology,
                      'mint': parse_mint}
 
 
@@ -131,6 +131,7 @@ def parse(file):
         if supported_source not in sources_to_parse:
             continue
         source_tasks, counter = supported_sources[supported_source](sources_to_parse, counter)
+        tasks.extend(source_tasks)
 
     if 'params' in data:
         for param in data['params']:

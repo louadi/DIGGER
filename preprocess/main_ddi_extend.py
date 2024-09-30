@@ -18,6 +18,9 @@ if __name__ == '__main__':
         print("This script only works with linux systems")
         exit(1)
     missing_files = []
+    if not os.path.isfile("database_sources.yml"):
+        print("No database_sources.yml file found, please read the README.md in sourcedata for more information.")
+        sys.exit(1)
     for file in needed_files:
         if not os.path.isfile(f"sourcedata/{file}"):
             missing_files.append(file)
@@ -26,7 +29,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # parse yaml file with information about sources
-    tasks, organism, functions, additional_flags = parse_yaml.parse("sourcedata/database_sources.yml")
+    tasks, organism, functions, additional_flags = parse_yaml.parse("database_sources.yml")
 
     # purely debug
     if 'none' in functions:
