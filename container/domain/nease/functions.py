@@ -522,27 +522,36 @@ def stats_domains(affecting_percentage,
     # pie chart parameters
     ratios_pie = [affecting_percentage, 1 - affecting_percentage]
     labels_pie = ['Affecting protein features', 'Not affecting any feature']
-    pie_colors = ['#1f78b4', '#fe7f0e']
+    pie_colors = ['#377DB0', '#E68A00']
+
     ax1.set_facecolor('white')
     ax1.pie(ratios_pie, labels=labels_pie, autopct='%1.1f%%', startangle=0, wedgeprops={'edgecolor': 'white'},
-            colors=pie_colors)
-    ax1.set_title("Genes with AS affecting protein features")
+            colors=pie_colors, textprops={'fontsize': 12, 'color': 'black'})  # Set font size and color for percentages
+    ax1.set_title("Genes with AS affecting protein features", fontsize=14)
 
     ratios_bar = [round(elm_number / number_of_features, 2) * 100, round(pdb_number / number_of_features, 2) * 100,
               round(domain_number / number_of_features, 2) * 100]
 
     labels_bar = ['Linear motifs', 'Residues', 'Domains']
 
-    colors = ['#2ba8fc', '#2284c6', '#15547e']
+    colors = ['#344552', '#377DB0', '#92C0DD'][::-1]
 
     ax2.set_facecolor('white')
     ax2.barh(labels_bar, ratios_bar, color=colors)
     ax2.set_xlim(0, 100)
-    ax2.set_title('Affected features')
+    ax2.set_title('Affected features', fontsize=14)
+
+    # Remove unnecessary spines and ticks, while keeping the clean look
+    ax2.tick_params(bottom=False)
+    ax2.tick_params(left=False)
+    ax2.spines[['left', 'bottom']].set_color('#D2D2D2')
+    ax2.spines[['left', 'bottom']].set_linewidth(2)
+    ax2.spines['right'].set_visible(False)
+    ax2.spines['bottom'].set_visible(False)
+    ax2.spines['top'].set_visible(False)
     ax2.grid(False)
     ax2.yaxis.set_ticks_position('none')
-    ax2.spines[['right', 'top']].set_visible(False)
-    ax2.spines[['left', 'bottom']].set_visible(True)
+    ax2.xaxis.set_visible(False)
 
     for i, v in enumerate(ratios_bar):
         ax2.text(v + 1, i, f"{v:.1f}%", va='center', color='black', fontweight='bold')

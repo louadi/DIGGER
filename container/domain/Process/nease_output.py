@@ -251,23 +251,51 @@ def visualise_path(events, pathway, k):
 
 
 def create_plot(terms, pvalues, cut_off, filename):
-    # plt.style.use('ggplot')
-    plt.barh(terms[::-1], pvalues[::-1])
-    plt.axvline(x=cut_off, color='r', linestyle='--')
-    plt.xlabel('-log10(adjusted p-value)')
-    plt.ylabel('Terms')
-    # explain the red line in the legend
-    plt.legend(['Cut-off', 'Adjusted p-value'])
+    # add line break to terms that are longer than 50 characters
+    terms = cut_long_terms(terms)
 
+    colors = ['#344552', '#355871', '#366B91', '#377DB0', '#448FC5', '#5E9FCD', '#78B0D5', '#92C0DD']
+    plt.figure(figsize=(12, 5))
+    plt.grid(color='#D2D2D2', linestyle='-', zorder=0)
+
+    plt.barh(terms[::-1], pvalues[::-1], color=colors[::-1], zorder=3)
+    plt.axvline(x=cut_off, color='red', linestyle='--', linewidth=1.5, zorder=5)
+    plt.ylabel("Terms", fontsize=12)
+    plt.xlabel("-log10(adjusted p-value)", fontsize=12)
+
+    plt.legend(['Cut-off', 'Adjusted p-value'], fontsize=10, frameon=True)
+
+    # Edit the spines for a cleaner look
     ax = plt.gca()
+    ax.tick_params(bottom=False)
+    ax.tick_params(left=False)
+    ax.spines[['left', 'bottom']].set_color('#D2D2D2')
+    ax.spines[['left', 'bottom']].set_linewidth(2)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
+
+    plt.tight_layout()
 
     plt.savefig(f"{filename}_thumb.jpg", bbox_inches='tight')
     plt.savefig(f"{filename}.jpg", bbox_inches='tight', dpi=1200)
     # flush the plot
     plt.clf()
     plt.close()
+
+
+def cut_long_terms(terms):
+    cut_terms = []
+    for term in terms:
+        if len(term) > 50:
+            # find the first space after the 50th character
+            space_index = term.find(' ', 50)
+            if space_index == -1:
+                cut_terms.append(term)
+            else:
+                cut_terms.append(term[:space_index] + '\n' + term[space_index + 1:])
+        else:
+            cut_terms.append(term)
+    return cut_terms
 
 
 def change_save_timing(run_id, days):
