@@ -310,7 +310,7 @@ docker-compose up -d --force-recreate
 
 **Answer 2:** The confidence level is defined based on the prediction score from the PPIDM algorithm.
 
-**Question 3:** I would like to use the output images in my manuscript.
+**Question 3:** I would like to use the output images in my manuscript. How could I do that?
 
 **Answer 3:** You can save figures with the right click of the mouse -> 'Save Image as' option. Also, for NEASE plots, you can use a download button to download high-resolution figures.
 
