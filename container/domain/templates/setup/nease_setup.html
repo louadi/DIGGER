@@ -4,6 +4,12 @@
 {% block title %}NEASE Analysis{% endblock %}
 
 {% block header %}
+  <script>
+    if (window.location.hostname.startsWith('www.')) {
+        console.log("Detected www. subdomain, redirecting...")
+        window.location.hostname = window.location.hostname.replace('www.', '');
+    }
+  </script>
   <script src="{% static "domain/loadStore.js" %}" type="text/javascript"></script>
   <script src="https://unpkg.com/feather-icons"></script>
   <style>

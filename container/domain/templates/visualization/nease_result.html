@@ -4,6 +4,12 @@
 {% block title %}NEASE result{% endblock %}
 
 {% block header %}
+  <script>
+    if (window.location.hostname.startsWith('www.')) {
+        console.log("Detected www. subdomain, redirecting...")
+        window.location.hostname = window.location.hostname.replace('www.', '');
+    }
+  </script>
 <link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
 <link rel="stylesheet" href="{% static 'css/tooltips.css' %}">
 
