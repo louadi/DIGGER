@@ -174,6 +174,12 @@ If interactions between isoforms are known, the isoforms are connected to the su
 - Whippet *.diff
 - rMATS SE.MATS.JC.txt
 
+The Standard input format contains three columns: gene ID, exon start coordinate, and exon end coordinate. E.g.:
+
+**Gene ID** | **Start** | **End**  
+--- | --- | --- 
+ENSG00000033627 | 42508572	| 42508589 | 290 | 286 | 289 | 285 | 287 | 287 | 272 | 276 | 269
+
 If you have a lot of files to run with NEASE, consider using the Python package: https://github.com/louadi/NEASE.
 
 To start the analysis, upload your file (**A**), define an organism (**B**) (currently, Homo sapiens or Mus musculus), the input file type (**C**), and adjust the parameters.
