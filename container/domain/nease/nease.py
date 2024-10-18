@@ -87,16 +87,16 @@ class run(object):
         else:
 
             # Open the Join graph and databases of the selected organism:
-            self.mapping = database_mapping[organism]
-            self.path = Pathways[organism]
-            self.ppi = PPI[organism]
+            self.mapping = database_mapping[organism].copy()
+            self.path = Pathways[organism].copy()
+            self.ppi = PPI[organism].copy()
             self.only_DDIs = only_DDIs
             self.input_type = input_type
 
             if not only_DDIs:
-                self.elm = elm[organism]
-                self.elm_interactions = elm_interactions[organism]
-                self.pdb = pdb[organism]
+                self.elm = elm[organism].copy()
+                self.elm_interactions = elm_interactions[organism].copy()
+                self.pdb = pdb[organism].copy()
             self.non_coding = non_coding
             self.data = []
             self.spliced_genes = []
@@ -781,12 +781,12 @@ class run(object):
 def load(file_path):
     nease_object = pickle.load(open(file_path, 'rb'))
     # load the static files
-    nease_object.mapping = database_mapping[nease_object.organism]
-    nease_object.path = Pathways[nease_object.organism]
-    nease_object.ppi = PPI[nease_object.organism]
+    nease_object.mapping = database_mapping[nease_object.organism].copy()
+    nease_object.path = Pathways[nease_object.organism].copy()
+    nease_object.ppi = PPI[nease_object.organism].copy()
 
     if not nease_object.only_DDIs:
-        nease_object.elm = elm[nease_object.organism]
-        nease_object.elm_interactions = elm_interactions[nease_object.organism]
-        nease_object.pdb = pdb[nease_object.organism]
+        nease_object.elm = elm[nease_object.organism].copy()
+        nease_object.elm_interactions = elm_interactions[nease_object.organism].copy()
+        nease_object.pdb = pdb[nease_object.organism].copy()
     return nease_object

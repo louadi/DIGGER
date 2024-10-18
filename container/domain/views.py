@@ -837,6 +837,7 @@ def setup_nease(request):
         context['error_msg'] = error_out
     return render(request, 'setup/nease_setup.html', context)
 
+
 # extra functions for the NEASE output once the analysis is done
 def nease_extra_functions(request):
     function_name = request.GET.get('func', None)
