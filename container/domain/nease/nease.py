@@ -116,9 +116,9 @@ class run(object):
                 self.confidences = ['original']
             else:
                 self.confidences.append('original')
-            network[organism].remove_edges_from([x for x in network[organism].edges(data=True)
-                                                 if x[2]['confidence'] not in self.confidences])
-            Join = network[organism]
+            curr_net = network[organism].copy()
+            Join = curr_net.remove_edges_from([x for x in curr_net.edges(data=True)
+                                               if x[2]['confidence'] not in self.confidences])
 
             if input_type == 'MAJIQ':
                 print("Using MAJIQ output")
