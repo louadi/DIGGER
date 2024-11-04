@@ -119,7 +119,7 @@ class run(object):
             curr_net = network[organism].copy()
             curr_net.remove_edges_from([x for x in curr_net.edges(data=True)
                                        if x[2]['confidence'] not in self.confidences])
-            Join = curr_net
+            self.Join = curr_net
 
             if input_type == 'MAJIQ':
                 print("Using MAJIQ output")
@@ -226,12 +226,12 @@ class run(object):
                 self.elm_interactions['interactor 2'] = self.elm_interactions['Interator gene 2'].astype('str') + "/" + \
                                                         self.elm_interactions['Domain of gene 2']
 
-                self.data = exons_to_edges(self.data, Join, self.elm_interactions, self.organism)
+                self.data = exons_to_edges(self.data, self.Join, self.elm_interactions, self.organism)
 
                 # Identify binding of affected domains = Edges in the PPI
                 # get DMI adn DDI for spliced domains
 
-                self.interacting_domains = affected_edges(self, Join, self.only_DDIs)
+                self.interacting_domains = affected_edges(self, self.Join, self.only_DDIs)
 
                 #get all edges of a gene from DDIs
                 # self.interacting_domains,: DMI and DDI
@@ -251,8 +251,8 @@ class run(object):
                 print('Running enrichment analysis...')
 
                 self.supported_database = list(self.path['source'].unique())
-                self.enrichment = pathway_enrichment(self.g2edges, self.path, self.mapping, organism, p_value_cutoff,
-                                                     self.only_DDIs).reset_index(drop=True)
+                self.enrichment = pathway_enrichment(self.g2edges, self.path, self.mapping, self.Join, organism,
+                                                     p_value_cutoff, self.only_DDIs).reset_index(drop=True)
                 print('NEASE enrichment done.')
 
     def save(self, file_path):
@@ -611,7 +611,7 @@ class run(object):
         else:
             # run enrichment
             enrich, _ = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                           self.only_DDIs, self.entrez_name_map)
+                                           self.only_DDIs, self.entrez_name_map, self.Join)
 
             if len(enrich) == 0:
                 raise ValueError('No enrichment or genes found for the selected pathway.')
@@ -688,7 +688,7 @@ class run(object):
 
         try:
             enrich, affected_graph = single_path_enrich(path_id, self.path, self.g2edges, self.mapping, self.organism,
-                                                        self.only_DDIs, self.entrez_name_map)
+                                                        self.only_DDIs, self.entrez_name_map, self.Join)
         except:
             traceback.print_exc()
             enrich = pd.DataFrame()
