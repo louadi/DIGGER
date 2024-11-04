@@ -137,7 +137,7 @@ def gene_to_edges(data, pdb, only_DDIs):
     return gene_edges
 
 
-def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_DDIs):
+def pathway_enrichment(g2edges, paths, mapping, ppi_ddi_graph, organism, p_value_cutoff, only_DDIs):
     # General enrichment analysis
     pathway_genes = []
     # Totat degree of structural network for human (pre-computer)
@@ -149,12 +149,12 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
     ppi_set = ppi_interactions(PPI[organism])
 
     if only_DDIs:
-        filtered_ppis = filter_by_ddi(network[organism], ppi_set)
+        filtered_ppis = filter_by_ddi(ppi_ddi_graph, ppi_set)
         n = len(filtered_ppis)
         ppi_type = 'Degree in the PPI/DDI'
 
     else:
-        filtered_ppis = filter_ppi_graph(ppi_set, network[organism], elm_interactions[organism], pdb[organism], mapping)
+        filtered_ppis = filter_ppi_graph(ppi_set, ppi_ddi_graph, elm_interactions[organism], pdb[organism], mapping)
         n = len(filtered_ppis)
         ppi_type = 'Degree in the structural PPI'
 
@@ -256,18 +256,18 @@ def pathway_enrichment(g2edges, paths, mapping, organism, p_value_cutoff, only_D
     return Enrichment.sort_values(['p_value'], ascending=True)
 
 
-def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs, entrez_name_map):
+def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs, entrez_name_map, ppi_ddi_network):
     # Totat degree of structural network for human (pre-computer)
     # For statistical test: edge enrichment
     ppi_set = ppi_interactions(PPI[organism])
 
     if only_DDIs:
-        filtered_ppis = filter_by_ddi(network[organism], ppi_set)
+        filtered_ppis = filter_by_ddi(ppi_ddi_network, ppi_set)
         n = len(filtered_ppis)
         ppi_type = 'Degree in the PPI/DDI'
 
     else:
-        filtered_ppis = filter_ppi_graph(ppi_set, network[organism],
+        filtered_ppis = filter_ppi_graph(ppi_set, ppi_ddi_network,
                                          elm_interactions[organism], pdb[organism], mapping)
         n = len(filtered_ppis)
         ppi_type = 'Degree in the structural PPI'
