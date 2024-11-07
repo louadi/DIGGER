@@ -289,7 +289,7 @@
       feather.replace();
 
     // load previous analyses
-    const localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
+    let localKeys = Object.keys(localStorage).filter(key => key.startsWith('nease/'));
 
     // remove keys if they expired
     localKeys.forEach(key => {
@@ -300,6 +300,9 @@
     if (data.length > 0) {
         document.getElementById('prevAnalysisContainer').style.display = 'block';
     }
+
+      // sort keys by date
+    data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     for (let i = 0; i < data.length; i++) {
         if (!data[i]) {
