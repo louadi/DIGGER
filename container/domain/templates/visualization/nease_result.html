@@ -110,6 +110,14 @@
         font-weight: bold;
     }
 
+    .expandable {
+    }
+
+    .expandable:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
     @media screen and (max-width: 1399px) {
         .short-table {
             display: block;
@@ -673,6 +681,19 @@
         });
     }
 
+function toggleText(element) {
+    const shortText = element.querySelector(".short-text");
+    const fullText = element.querySelector(".full-text");
+
+    if (fullText.style.display === "none") {
+        fullText.style.display = "inline";
+        shortText.style.display = "none";
+    } else {
+        fullText.style.display = "none";
+        shortText.style.display = "inline";
+    }
+}
+
     function addSupportedPathwaysList(supportedList, databases) {
         for (const db of databases) {
             const listItem = document.createElement('button');
@@ -709,7 +730,22 @@
                 }), function (data) {
                     $(`#${tableId}`).html(data);
                     $(`#${tableNameId}`).DataTable({
-                        "order": [[6, "desc"]]
+                        "order": [[6, "desc"]],
+                        "columnDefs": [
+                            { targets: [3],
+                              render: function (data, type, row) {
+                                  if (data && data.length > 40) {
+                                      return `<span class="expandable" onclick="toggleText(this)">
+                                                  <span class="short-text">${data.substring(0, 40)}...</span>
+                                                  <span class="full-text" style="display: none;">${data}</span>
+                                              </span>`;
+                                  } else {
+                                      // If there's no text, or it's short, just display it without any toggling
+                                      return `<span>${data || ''}</span>`;
+                                  }
+                              }
+                            }
+                        ]
                     });
 
                     // enable tooltips for pathway names
