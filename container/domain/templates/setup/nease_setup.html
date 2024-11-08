@@ -300,9 +300,11 @@
     if (data.length > 0) {
         document.getElementById('prevAnalysisContainer').style.display = 'block';
     }
-
-      // sort keys by date
-    data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+    // sort keys by date
+    if (data.length > 1) {
+        data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
 
     for (let i = 0; i < data.length; i++) {
         if (!data[i]) {
