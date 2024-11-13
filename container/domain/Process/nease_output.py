@@ -327,8 +327,12 @@ def match_name_with_format(filename):
                     'diff': 'Whippet',
                     'whippet': 'Whippet',
                     'mats': 'rmats'}
+    rmats_alternatives = ['a3ss.mats','a5ss.mats','mxe.mats','ri.mats']
 
     for name, format in name_matches.items():
         if name in filename.lower():
             return f"{format} input"
+    for name in rmats_alternatives:
+        if name in filename.lower():
+            return "skipped exon (SE.MATS.JC[EC].txt) pattern of rMATS. A3SS, A5SS, MXE, and RI are not supported"
     return None
