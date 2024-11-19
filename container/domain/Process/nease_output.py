@@ -8,6 +8,7 @@ import pandas as pd
 import os
 
 from matplotlib import pyplot as plt
+from networkx.algorithms.shortest_paths.unweighted import predecessor
 
 from domain.models import NeaseSaveLocationMapping
 from domain.nease import nease
@@ -62,8 +63,8 @@ def run_nease(data, organism, params, file_name='', custom_name=''):
 
     events = nease.run(data, organism, params.get('db_type', []),
                        params.get('p_value', 0.05),
-                       params.get('rm_not_in_frame'),
-                       params.get('divisible_by_3'),
+                       params.get('rm_not_in_frame', True),
+                       params.get('divisible_by_3', False),
                        params.get('min_delta', 0.1),
                        params.get('majiq_confidence', 0.95),
                        params.get('only_ddis', False),
@@ -104,7 +105,21 @@ def run_nease(data, organism, params, file_name='', custom_name=''):
 
     # save events to pickle
     events.save(default_path + run_id)
-    NeaseSaveLocationMapping(run_id=run_id, saved_for_days=7, file_name=file_name, custom_name=custom_name).save()
+
+    predicted_ddi_confidences = params.get('confidences', [])
+    if predicted_ddi_confidences:
+        predicted_ddi_confidences = ', '.join(predicted_ddi_confidences)
+    else:
+        predicted_ddi_confidences = "No DDIs"
+
+    NeaseSaveLocationMapping(run_id=run_id, saved_for_days=7, file_name=file_name, custom_name=custom_name,
+                             organism=organism, input_format=params.get("db_type", []),
+                             predicted_DDIs=predicted_ddi_confidences, p_value_cutoff=params.get('p_value', 0.05),
+                             min_delta=params.get('min_delta', 0.1), only_ddis=params.get('only_ddis', False),
+                             majiq_confidence=params.get('majiq_confidence', 0.95),
+                             remove_not_in_frame=params.get('rm_not_in_frame', True),
+                             only_divisible_by_three=params.get('divisible_by_3', False)).save()
+
     return events, info_tables, run_id
 
 

@@ -24,6 +24,15 @@ class NeaseSaveLocationMapping(models.Model):
     date_of_creation = models.DateTimeField(auto_now_add=True)
     file_name = models.CharField(max_length=255, default='')
     custom_name = models.CharField(max_length=255, default='')
+    organism = models.CharField(max_length=255, default='')
+    input_format = models.CharField(max_length=255, default='')
+    predicted_DDIs = models.CharField(max_length=255, default='')
+    p_value_cutoff = models.FloatField(default=0.05)
+    min_delta = models.FloatField(default=0.1)
+    majiq_confidence = models.FloatField(default=0.95)
+    only_ddis = models.BooleanField(default=False)
+    remove_not_in_frame = models.BooleanField(default=True)
+    only_divisible_by_three = models.BooleanField(default=False)
 
     # Method to query the database for the run_id and return the saved_for_days
     @staticmethod
