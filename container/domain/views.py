@@ -27,7 +27,7 @@ from .Process import network_analysis as nt
 from .Process import mutliple_query as mq
 from .Process import process_data as proc_data
 from .Process import nease_output as no
-from .models import NeaseSaveLocationMapping
+from .models import NeaseSavedRun
 
 # --- Create folder
 # Global jobs path
@@ -704,7 +704,7 @@ def set_previous_analysis(request, post_request=True):
     for key, value in info_tables.items():
         info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
-    save_info = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+    save_info = NeaseSavedRun.objects.get(run_id=run_id)
     current_duration = save_info.saved_for_days
     time_left = save_info.days_left()
 
@@ -804,7 +804,7 @@ def setup_nease(request):
         for key, value in info_tables.items():
             info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
-        save_info = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+        save_info = NeaseSavedRun.objects.get(run_id=run_id)
         current_duration = save_info.saved_for_days
         time_left = save_info.days_left()
 

@@ -10,7 +10,7 @@ import os
 from matplotlib import pyplot as plt
 from networkx.algorithms.shortest_paths.unweighted import predecessor
 
-from domain.models import NeaseSaveLocationMapping
+from domain.models import NeaseSavedRun
 from domain.nease import nease
 from domain.nease.process import webify_table
 from django.conf import settings
@@ -22,7 +22,7 @@ nease_path = 'nease_events/'
 # The subdirectories contain files saved for one week, one month, and six months.
 # To be very lenient, we calculated every month with 31 days.
 days_to_folder = {"0": nease_path+"zero_days/", "7": nease_path+"seven_days/", "31": nease_path+"thirtyone_days/",
-                  "186": nease_path+"onehundredeightysix_days/"}
+                  "186": nease_path+"onehundredeightysix_days/", "-1": nease_path+"eternal/"}
 default_path = days_to_folder["7"]
 
 for path in [images_path, data_path] + list(days_to_folder.values()):
@@ -112,7 +112,7 @@ def run_nease(data, organism, params, file_name='', custom_name=''):
     else:
         predicted_ddi_confidences = "No DDIs"
 
-    NeaseSaveLocationMapping(run_id=run_id, saved_for_days=7, file_name=file_name, custom_name=custom_name,
+    NeaseSavedRun(run_id=run_id, saved_for_days=7, file_name=file_name, custom_name=custom_name,
                              organism=organism, input_format=params.get("db_type", []),
                              predicted_DDIs=predicted_ddi_confidences, p_value_cutoff=params.get('p_value', 0.05),
                              min_delta=params.get('min_delta', 0.1), only_ddis=params.get('only_ddis', False),
@@ -148,7 +148,7 @@ def read_extra_spaces(file_obj):
 
 
 def get_nease_events(run_id):
-    days = NeaseSaveLocationMapping.get_saved_for_days(run_id)
+    days = NeaseSavedRun.get_saved_for_days(run_id)
     if days not in days_to_folder:
         file_path = default_path
     else:
@@ -314,7 +314,7 @@ def cut_long_terms(terms):
 
 
 def change_save_timing(run_id, days):
-    mapping = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+    mapping = NeaseSavedRun.objects.get(run_id=run_id)
     current_days_folder = mapping.get_number_of_saved_for_days()
     if days not in days_to_folder:
         new_file_path = default_path

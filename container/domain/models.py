@@ -18,7 +18,7 @@ class Domain(models.Model):
     #def __str__(self):
     #   return f"Pfam: {self.pfam_id} - Symbol: {self.symbol}"
 
-class NeaseSaveLocationMapping(models.Model):
+class NeaseSavedRun(models.Model):
     run_id = models.CharField(max_length=36, primary_key=True, db_index=True)
     saved_for_days = models.IntegerField()
     date_of_creation = models.DateTimeField(auto_now_add=True)
@@ -37,7 +37,7 @@ class NeaseSaveLocationMapping(models.Model):
     # Method to query the database for the run_id and return the saved_for_days
     @staticmethod
     def get_saved_for_days(run_id):
-        return str(NeaseSaveLocationMapping.objects.get(run_id=run_id).saved_for_days)
+        return str(NeaseSavedRun.objects.get(run_id=run_id).saved_for_days)
 
     def get_number_of_saved_for_days(self):
         return str(self.saved_for_days)
