@@ -21,7 +21,7 @@ class Domain(models.Model):
 class NeaseSavedRun(models.Model):
     run_id = models.CharField(max_length=36, primary_key=True, db_index=True)
     saved_for_days = models.IntegerField()
-    date_of_creation = models.DateTimeField(auto_now_add=True)
+    timestamp_of_creation = models.DateTimeField(auto_now_add=True)
     file_name = models.CharField(max_length=255, default='')
     custom_name = models.CharField(max_length=255, default='')
     organism = models.CharField(max_length=255, default='')
@@ -44,7 +44,7 @@ class NeaseSavedRun(models.Model):
 
     # Calculate how many days are left until deletion, negative values are set to 0
     def days_left(self):
-        return max(0, self.saved_for_days - (timezone.now() - self.date_of_creation).days)
+        return max(0, self.saved_for_days - (timezone.now() - self.timestamp_of_creation).days)
 
     # Get the custom name and return None if it is empty
     def get_custom_name(self):

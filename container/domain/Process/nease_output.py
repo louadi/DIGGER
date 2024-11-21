@@ -107,10 +107,14 @@ def run_nease(data, organism, params, file_name='', custom_name=''):
     events.save(default_path + run_id)
 
     predicted_ddi_confidences = params.get('confidences', [])
+    # Remove the "original" confidence from the list
+    if 'original' in predicted_ddi_confidences:
+        predicted_ddi_confidences.remove('original')
+    # If there are no predicted DDIs, set the string to "No DDIs"
     if predicted_ddi_confidences:
         predicted_ddi_confidences = ', '.join(predicted_ddi_confidences)
     else:
-        predicted_ddi_confidences = "No DDIs"
+        predicted_ddi_confidences = "No predicted DDIs"
 
     NeaseSavedRun(run_id=run_id, saved_for_days=7, file_name=file_name, custom_name=custom_name,
                              organism=organism, input_format=params.get("db_type", []),

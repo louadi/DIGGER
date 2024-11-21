@@ -719,6 +719,15 @@ def set_previous_analysis(request, post_request=True):
         'run_id': run_id,
         'current_duration': current_duration,
         'time_left': time_left,
+        'organism': save_info.organism,
+        'input_format': save_info.input_format,
+        'predicted_ddis': save_info.predicted_DDIs,
+        'p_value_cutoff': save_info.p_value_cutoff,
+        'min_delta': save_info.min_delta,
+        'majiq_confidence': save_info.majiq_confidence,
+        'only_ddis': save_info.only_ddis,
+        'remove_not_in_frame': save_info.remove_not_in_frame,
+        'only_divisible_by_3': save_info.only_divisible_by_three,
         **events.get_databases()
     }
     try:
@@ -762,9 +771,10 @@ def setup_nease(request):
     p_value = float(request.POST.get('p_value_cutoff', 0.05))
     min_delta = float(request.POST.get('min_delta', 0.05))
     majiq_confidence = float(request.POST.get('Majiq_confidence', 0.95))
-    only_ddis = request.POST.get('only_DDIs', 'off') == 'on'
-    rm_not_in_frame = request.POST.get('remove_non_in_frame', 'on') == 'on'
-    divisible_by_3 = request.POST.get('only_divisible_by_3', 'off') == 'on'
+    # Check if values are in POST Request (They are set to True by default), if not, set them False
+    only_ddis = request.POST.get('only_DDIs', False)
+    rm_not_in_frame = request.POST.get('remove_non_in_frame', False)
+    divisible_by_3 = request.POST.get('only_divisible_by_3', False)
 
     # Run the NEASE job
     print(f"{time.asctime(time.localtime(time.time()))} Submitted NEASE job with params: {organism}, {database_type}, "
@@ -819,6 +829,15 @@ def setup_nease(request):
             'run_id': run_id,
             'current_duration': current_duration,
             'time_left': time_left,
+            'organism': save_info.organism,
+            'input_format': save_info.input_format,
+            'predicted_ddis': save_info.predicted_DDIs,
+            'p_value_cutoff': save_info.p_value_cutoff,
+            'min_delta': save_info.min_delta,
+            'majiq_confidence': save_info.majiq_confidence,
+            'only_ddis': save_info.only_ddis,
+            'remove_not_in_frame': save_info.remove_not_in_frame,
+            'only_divisible_by_3': save_info.only_divisible_by_three,
             **events.get_databases(),
         }
         return render(request, 'visualization/nease_result.html', context)
