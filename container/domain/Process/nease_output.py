@@ -107,7 +107,8 @@ def run_nease(data, organism, params, file_name='', custom_name=''):
     events.save(default_path + run_id)
 
     predicted_ddi_confidences = params.get('confidences', [])
-    # Remove the "original" confidence from the list
+    # Remove the "original" confidence from the list, even though it is not in the list from the beginning,
+    # nease.run adds it to the list of confidences
     if 'original' in predicted_ddi_confidences:
         predicted_ddi_confidences.remove('original')
     # If there are no predicted DDIs, set the string to "No DDIs"

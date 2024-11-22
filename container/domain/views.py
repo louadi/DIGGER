@@ -772,6 +772,8 @@ def setup_nease(request):
     min_delta = float(request.POST.get('min_delta', 0.05))
     majiq_confidence = float(request.POST.get('Majiq_confidence', 0.95))
     # Check if values are in POST Request (They are set to True by default), if not, set them False
+    # We are just checking if the value is in the request, not the actual value (this is the same as done for the
+    # confidences). So our default values are in the user interface, but not here.
     only_ddis = request.POST.get('only_DDIs', False)
     rm_not_in_frame = request.POST.get('remove_non_in_frame', False)
     divisible_by_3 = request.POST.get('only_divisible_by_3', False)
