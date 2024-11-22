@@ -232,6 +232,8 @@
 
           </div>
           <div class="col-12 col-xxl-6 text-right mt-3 mt-lg-0">
+
+            {% if current_duration != -1 %}
             <div class="d-flex justify-content-between">
               <h5 class="lead" style="flex-direction: row;display: flex;">
 
@@ -248,6 +250,7 @@
                 </select>
               </h5>
             </div>
+            {% endif %}
 
             <div class="d-flex justify-content-between">
             <h5 class="lead"><span style="font-weight:bold; display: inline-block">Link for sharing:</span>
@@ -261,14 +264,32 @@
 
             </h5>
             </div>
+
+            <div class="d-flex justify-content-between">
+            <h5 class="lead"><span style="font-weight:bold; display: inline-block">Input Parameters:</span>
+            </h5>
+              <h5 class="lead">
+              <button type="button" class="btn btn-secondary popupbtn" id="showInfoButton" onclick="showInfo()">
+                <i data-feather="info" class="mr-1"></i>Show Information
+              </button>
+
+            </h5>
+            </div>
+
           </div>
         </div>
       </div>
+
+
       <script>
           // Set the time duration to the value saved in the 'current_duration' variable
-          document.getElementById("time_duration").value = "{{ current_duration|safe }}";
+          if (document.getElementById("time_duration")){
+              document.getElementById("time_duration").value = "{{ current_duration|safe }}";
+          }
           // Set the storage_message to the value saved in the 'time_left' variable
-          document.getElementById("storage_message").textContent = `Analysis availability ({{ time_left|safe }} days left):`;
+          if (document.getElementById("storage_message")){
+            document.getElementById("storage_message").textContent = `Analysis availability ({{ time_left|safe }} days left):`;
+          }
 
 
           function copyDivToClipboard() {
@@ -351,6 +372,22 @@
                   console.error(`An error occurred: ${err.message}`);
               }
           }
+          function showInfo() {
+              const formatted_message = `
+                Input Parameters:
+                - Organism: {{ organism|safe }}
+                - Input Format: {{ input_format|safe }}
+                - Using predicted DDIs of confidences: {{ predicted_ddis|safe }}
+                - P-value cutoff: {{ p_value_cutoff|safe }}
+                - Min delta: {{ min_delta|safe }}
+                - MAJIQ confidence: {{ majiq_confidence|safe }}
+                - Only using DDIs: {{ only_ddis|safe }}
+                - Remove not-in-frame: {{ remove_not_in_frame|safe }}
+                - Only divisible by 3: {{ only_divisible_by_3|safe }}
+                `;
+              alert(formatted_message);
+          }
+
       </script>
 
       <!-- Tab content -->

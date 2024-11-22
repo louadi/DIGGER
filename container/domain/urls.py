@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.urls import path, re_path
 from django.views.generic import TemplateView
 
@@ -53,4 +54,5 @@ urlpatterns = [
     # Interaction view
     # path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
     # >>>
+    path("admin/", admin.site.urls),
 ]

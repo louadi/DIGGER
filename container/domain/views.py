@@ -27,7 +27,7 @@ from .Process import network_analysis as nt
 from .Process import mutliple_query as mq
 from .Process import process_data as proc_data
 from .Process import nease_output as no
-from .models import NeaseSaveLocationMapping
+from .models import NeaseSavedRun
 
 # --- Create folder
 # Global jobs path
@@ -704,7 +704,7 @@ def set_previous_analysis(request, post_request=True):
     for key, value in info_tables.items():
         info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
-    save_info = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+    save_info = NeaseSavedRun.objects.get(run_id=run_id)
     current_duration = save_info.saved_for_days
     time_left = save_info.days_left()
 
@@ -719,6 +719,15 @@ def set_previous_analysis(request, post_request=True):
         'run_id': run_id,
         'current_duration': current_duration,
         'time_left': time_left,
+        'organism': save_info.organism,
+        'input_format': save_info.input_format,
+        'predicted_ddis': save_info.predicted_DDIs,
+        'p_value_cutoff': save_info.p_value_cutoff,
+        'min_delta': save_info.min_delta,
+        'majiq_confidence': save_info.majiq_confidence,
+        'only_ddis': save_info.only_ddis,
+        'remove_not_in_frame': save_info.remove_not_in_frame,
+        'only_divisible_by_3': save_info.only_divisible_by_three,
         **events.get_databases()
     }
     try:
@@ -762,9 +771,12 @@ def setup_nease(request):
     p_value = float(request.POST.get('p_value_cutoff', 0.05))
     min_delta = float(request.POST.get('min_delta', 0.05))
     majiq_confidence = float(request.POST.get('Majiq_confidence', 0.95))
-    only_ddis = request.POST.get('only_DDIs', 'off') == 'on'
-    rm_not_in_frame = request.POST.get('remove_non_in_frame', 'on') == 'on'
-    divisible_by_3 = request.POST.get('only_divisible_by_3', 'off') == 'on'
+    # Check if values are in POST Request (They are set to True by default), if not, set them False
+    # We are just checking if the value is in the request, not the actual value (this is the same as done for the
+    # confidences). So our default values are in the user interface, but not here.
+    only_ddis = request.POST.get('only_DDIs', False)
+    rm_not_in_frame = request.POST.get('remove_non_in_frame', False)
+    divisible_by_3 = request.POST.get('only_divisible_by_3', False)
 
     # Run the NEASE job
     print(f"{time.asctime(time.localtime(time.time()))} Submitted NEASE job with params: {organism}, {database_type}, "
@@ -804,7 +816,7 @@ def setup_nease(request):
         for key, value in info_tables.items():
             info_tables[key] = value.to_html(table_id=f"{key}_table", **settings.TO_HTML_RESPONSIVE_PARAMETERS)
 
-        save_info = NeaseSaveLocationMapping.objects.get(run_id=run_id)
+        save_info = NeaseSavedRun.objects.get(run_id=run_id)
         current_duration = save_info.saved_for_days
         time_left = save_info.days_left()
 
@@ -819,6 +831,15 @@ def setup_nease(request):
             'run_id': run_id,
             'current_duration': current_duration,
             'time_left': time_left,
+            'organism': save_info.organism,
+            'input_format': save_info.input_format,
+            'predicted_ddis': save_info.predicted_DDIs,
+            'p_value_cutoff': save_info.p_value_cutoff,
+            'min_delta': save_info.min_delta,
+            'majiq_confidence': save_info.majiq_confidence,
+            'only_ddis': save_info.only_ddis,
+            'remove_not_in_frame': save_info.remove_not_in_frame,
+            'only_divisible_by_3': save_info.only_divisible_by_three,
             **events.get_databases(),
         }
         return render(request, 'visualization/nease_result.html', context)
