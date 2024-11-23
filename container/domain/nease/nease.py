@@ -93,10 +93,10 @@ class run(object):
             self.only_DDIs = only_DDIs
             self.input_type = input_type
 
-            if not only_DDIs:
-                self.elm = elm[organism].copy()
-                self.elm_interactions = elm_interactions[organism].copy()
-                self.pdb = pdb[organism].copy()
+            self.elm = elm[organism].copy()
+            self.elm_interactions = elm_interactions[organism].copy()
+            self.pdb = pdb[organism].copy()
+
             self.non_coding = non_coding
             self.data = []
             self.spliced_genes = []
@@ -297,6 +297,9 @@ class run(object):
 
             affecting_number = domain_number
             number_of_features = domain_number
+
+            elm_number = 0
+            pdb_number = 0
 
             if not self.only_DDIs:
                 # genes with affected elm
@@ -786,8 +789,8 @@ def load(file_path):
     nease_object.path = Pathways[nease_object.organism].copy()
     nease_object.ppi = PPI[nease_object.organism].copy()
 
-    if not nease_object.only_DDIs:
-        nease_object.elm = elm[nease_object.organism].copy()
-        nease_object.elm_interactions = elm_interactions[nease_object.organism].copy()
-        nease_object.pdb = pdb[nease_object.organism].copy()
+    nease_object.elm = elm[nease_object.organism].copy()
+    nease_object.elm_interactions = elm_interactions[nease_object.organism].copy()
+    nease_object.pdb = pdb[nease_object.organism].copy()
+
     return nease_object
