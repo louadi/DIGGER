@@ -571,7 +571,7 @@ class run(object):
         enrich_results['Significant'] = ['yes' if x <= cutoff else 'no' for x in
                                          enrich_results['adj p_value']]
 
-        # TODO: Drop duplicate rows here
+        enrich_results = enrich_results.drop_duplicates()
         return enrich_results.sort_values(['Nease score', 'p_value'], ascending=[False, True]).reset_index(
             drop=True)
 
