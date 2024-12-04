@@ -8,11 +8,11 @@ import pandas as pd
 import os
 
 from matplotlib import pyplot as plt
-from networkx.algorithms.shortest_paths.unweighted import predecessor
 
 from domain.models import NeaseSavedRun
 from domain.nease import nease
 from domain.nease.process import webify_table
+from domain.nease.functions import all_pathway_network
 from django.conf import settings
 import uuid
 
@@ -220,6 +220,15 @@ def nease_enrichment(events, databases, run_id):
             columns=["Gene_set", "Term", "Overlap", "P-value", "Adjusted P-value", "Old P-value",
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
         return enrich_table
+
+    # show network that connects the enriched terms
+    if "Reactome" in databases:
+        network_html = events.vis_pathway_connection(enrich_table[(enrich_table['Significant'] == 'yes') &
+                                                                  (enrich_table['Source'] == 'Reactome')])
+    else:
+        print(f"Database {databases} (Type: {type(databases)}) is not supported for network visualisation.")
+        network_html = None
+
     enrich_table = enrich_table.sort_values(by='Nease score', ascending=False)
     terms = enrich_table['Pathway name'][:8]
     pvalues = enrich_table['adj p_value'][:8]
@@ -234,7 +243,7 @@ def nease_enrichment(events, databases, run_id):
 
     create_plot(terms, pvalues, cut_off, f"{images_path}{run_id}_neenr")
 
-    return enrich_table
+    return enrich_table, network_html
 
 
 def pathway_info(events, pathway, run_id):

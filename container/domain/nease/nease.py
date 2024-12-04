@@ -118,7 +118,7 @@ class run(object):
                 self.confidences.append('original')
             curr_net = network[organism].copy()
             curr_net.remove_edges_from([x for x in curr_net.edges(data=True)
-                                       if x[2]['confidence'] not in self.confidences])
+                                        if x[2]['confidence'] not in self.confidences])
             self.Join = curr_net
 
             if input_type == 'MAJIQ':
@@ -571,6 +571,7 @@ class run(object):
         enrich_results['Significant'] = ['yes' if x <= cutoff else 'no' for x in
                                          enrich_results['adj p_value']]
 
+        # TODO: Drop duplicate rows here
         return enrich_results.sort_values(['Nease score', 'p_value'], ascending=[False, True]).reset_index(
             drop=True)
 
@@ -780,6 +781,24 @@ class run(object):
 
     def get_p_value(self):
         return self.cutoff
+
+    def vis_pathway_connection(self, enrichment, k=1):
+        graph_data = all_pathway_network(enrichment, pathway_hierarchy[self.organism], k)
+
+        fig = go.Figure(data=graph_data,
+                        layout=go.Layout(
+                            title=f"</b>Connections of significant pathways</b>",
+                            titlefont_size=16,
+                            showlegend=False,
+                            hovermode='closest',
+                            margin=dict(b=20, l=5, r=5, t=40),
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            paper_bgcolor='white',
+                            plot_bgcolor='white',
+                        ))
+        html = fig.to_html(full_html=True, include_plotlyjs='cdn')
+        return html
 
 
 def load(file_path):
