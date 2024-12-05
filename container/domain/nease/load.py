@@ -49,5 +49,7 @@ for species in ["Homo sapiens[human]", "Mus musculus[mouse]"]:
     elm[name] = load_df(os.path.join(here, f"data/{species}/elm"))
     elm_interactions[name] = load_df(os.path.join(here, f"data/{species}/ELM_interactions"))
     pdb[name] = load_df(os.path.join(here, f"data/{species}/pdb"))
-    pathway_hierarchy[name] = load_obj(os.path.join(here, f"data/{species}/pathway_hierarchy_reactome"))
+    pathway_hierarchy[name] = {}
+    pathway_hierarchy[name]['Reactome'] = load_obj(os.path.join(here, f"data/{species}/pathway_hierarchy_reactome"))
+    pathway_hierarchy[name]['KEGG'] = load_obj(os.path.join(here, f"data/{species}/pathway_hierarchy_kegg"))
 

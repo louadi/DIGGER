@@ -222,12 +222,7 @@ def nease_enrichment(events, databases, run_id):
         return enrich_table
 
     # show network that connects the enriched terms
-    if "Reactome" in databases:
-        network_html = events.vis_pathway_connection(enrich_table[(enrich_table['Significant'] == 'yes') &
-                                                                  (enrich_table['Source'] == 'Reactome')])
-    else:
-        print(f"Database {databases} (Type: {type(databases)}) is not supported for network visualisation.")
-        network_html = None
+    network_html = events.vis_pathway_connection(enrich_table[(enrich_table['Significant'] == 'yes')], databases)
 
     enrich_table = enrich_table.sort_values(by='Nease score', ascending=False)
     terms = enrich_table['Pathway name'][:8]

@@ -782,8 +782,26 @@ class run(object):
     def get_p_value(self):
         return self.cutoff
 
-    def vis_pathway_connection(self, enrichment, k=1):
-        graph_data = all_pathway_network(enrichment, pathway_hierarchy[self.organism], k)
+    def vis_pathway_connection(self, enrichment, databases, k=1):
+        supported_dbs = ['Reactome', 'KEGG']
+        if not any([x in databases for x in supported_dbs]):
+            return None
+
+        enrichment_filtered = None
+        pathway_graph = None
+        for db in supported_dbs:
+            if db not in databases:
+                continue
+            if enrichment_filtered is None:
+                enrichment_filtered = enrichment[enrichment['Source'] == db].copy()
+                pathway_graph = pathway_hierarchy[self.organism][db]
+            else:
+                enrichment_filtered = pd.concat([enrichment_filtered, enrichment[enrichment['Source'] == db].copy()])
+                pathway_graph = nx.compose(pathway_graph, pathway_hierarchy[self.organism][db])
+
+        graph_data = all_pathway_network(enrichment, pathway_graph, k)
+        if graph_data is None:
+            return None
 
         fig = go.Figure(data=graph_data,
                         layout=go.Layout(

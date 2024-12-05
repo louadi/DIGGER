@@ -601,7 +601,11 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
             if pathway_s == pathway_d or G.has_edge(pathway_s, pathway_d):
                 continue
             # check if pathway_s is a predecessor of pathway_d in the pathways
-            if not nx.has_path(pathways, pathway_s, pathway_d):
+            parent_pathway_s = list(pathways.in_edges(pathway_s))
+            parent_pathway_d = list(pathways.in_edges(pathway_d))
+            if (not nx.has_path(pathways, pathway_s, pathway_d) and
+                    ((len(parent_pathway_s) == 0 or len(parent_pathway_d) == 0) or
+                     parent_pathway_s[0][0] != parent_pathway_d[0][0])):
                 continue
             _, genes_s = pathway_map[pathway_s]
             _, genes_d = pathway_map[pathway_d]
@@ -611,6 +615,8 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
                 edge_weights.append(len(overlap))
 
     print(f"Graph has {len(G.nodes)} nodes and {len(G.edges)} edges")
+    if len(G.nodes) == 0:
+        return None
 
     # prepare for visualization
     edge_weights.sort()
@@ -644,18 +650,24 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
                                          mode='lines',
                                          hoverinfo='text',
                                          opacity=0.5,
-                                         line=dict(width=((weight * 0.5) ** 2) + 1, color='#B0C4DE'))
+                                         line=dict(width=min(((weight * 0.5) ** 2) + 1, 50), color='#B0C4DE'))
 
     for node in G.nodes():
         x, y = G.nodes[node]['pos']
         node_info = pathway_map[node][0]
+        if 'Homo sapiens (human)' in node_info:
+            node_info = node_info.replace(' - Homo sapiens (human)', '')
+        elif 'Mus musculus (mouse)' in node_info:
+            node_info = node_info.replace(' - Mus musculus (mouse)', '')
+
         node_trace['x'] += tuple([x])
         node_trace['y'] += tuple([y])
         node_trace['text'] += tuple([node_info])
         level = depths[node]
+        base_size = 30 if max_depth < 5 else 10
 
         node_trace['marker']['color'] += tuple(['#98bdd7' if level != 0 else '#4298d6'])
-        node_trace['marker']['size'] += tuple([10 + (max_depth - level) * 5])
+        node_trace['marker']['size'] += tuple([base_size + (max_depth - level) * 5])
 
     for edge in G.edges(data=True):
         weight = edge[2]['weight']
