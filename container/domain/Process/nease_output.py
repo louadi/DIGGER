@@ -221,10 +221,11 @@ def nease_enrichment(events, databases, run_id):
                      "Old Adjusted P-value", "Odds Ratio", "Combined Score", "Genes"])
         return enrich_table
 
+    enrich_table = enrich_table.sort_values(by='Nease score', ascending=False)
+
     # show network that connects the enriched terms
     network_html = events.vis_pathway_connection(enrich_table[(enrich_table['Significant'] == 'yes')], databases)
 
-    enrich_table = enrich_table.sort_values(by='Nease score', ascending=False)
     terms = enrich_table['Pathway name'][:8]
     pvalues = enrich_table['adj p_value'][:8]
     pvalues = [-np.log10(x) for x in pvalues]

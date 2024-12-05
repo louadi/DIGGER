@@ -619,6 +619,7 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
         return None
 
     # prepare for visualization
+    top_pathways = enrichment_table.head(8)['Pathway ID'].tolist()
     edge_weights.sort()
     depths = {n: get_node_depth(pathways, n) for n in G.nodes}
     max_depth = max(depths.values(), default=0)
@@ -659,6 +660,9 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
             node_info = node_info.replace(' - Homo sapiens (human)', '')
         elif 'Mus musculus (mouse)' in node_info:
             node_info = node_info.replace(' - Mus musculus (mouse)', '')
+
+        if node in top_pathways:
+            node_info = f"<b>{node_info}</b>"
 
         node_trace['x'] += tuple([x])
         node_trace['y'] += tuple([y])
