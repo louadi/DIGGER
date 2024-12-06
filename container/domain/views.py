@@ -752,6 +752,11 @@ def setup_nease(request):
     if not request.FILES:
         return render(request, 'setup/nease_setup.html')
 
+    # reject files that are too big
+    MAX_FILE_SIZE_MB = 100
+    if request.FILES['splicing-events-file'].size > MAX_FILE_SIZE_MB * 1_000_000:
+        return HttpResponse("File is too big. Please upload a file smaller than 100 MB.", status=400)
+
     # Get the input file and post data
     input_data = request.FILES
     if 'splicing-events-file' not in input_data:
