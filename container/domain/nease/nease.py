@@ -772,7 +772,9 @@ class run(object):
 
         # get the html as a string
         try:
-            html = fig.to_html(full_html=True, include_plotlyjs='cdn')
+            html = fig.to_html(full_html=True, include_plotlyjs='cdn',
+                               config={'toImageButtonOptions':
+                                           {'format': 'png', 'filename': f"vis_{path_name}", 'scale': 2}})
         except Exception as e:
             print(e)
             raise ValueError('Something went wrong while creating the network.')
@@ -816,7 +818,9 @@ class run(object):
                             paper_bgcolor='white',
                             plot_bgcolor='white',
                         ))
-        html = fig.to_html(full_html=True, include_plotlyjs='cdn')
+        html = fig.to_html(full_html=True, include_plotlyjs='cdn',
+                           config={'toImageButtonOptions':
+                                       {'format': 'png', 'filename': 'pathway_connections', 'scale': 2}})
         return html
 
 
