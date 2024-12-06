@@ -582,17 +582,19 @@ def interpolate_line(x0, y0, x1, y1, num_points=20):
 
 
 # create network for the pathways and their connected genes
-def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=0.8):
+def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=0.8, db_name=None):
     if len(enrichment_table) < 2:
         return None
 
     pathway_map = {}
     edge_weights = []
+    node_source = {}
     for i, row in enrichment_table.iterrows():
         id = row['Pathway ID']
         name = row['Pathway name']
         genes = row['Spliced genes (number of interactions affecting the pathway)'].split(',')
         genes = {x.split('(')[0].strip() for x in genes}
+        node_source[id] = row['Source']
         pathway_map[id] = name, genes
 
     G = nx.Graph()
@@ -619,13 +621,18 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
         return None
 
     # prepare for visualization
-    top_pathways = enrichment_table.head(8)['Pathway ID'].tolist()
+    top_pathways = [p for p in enrichment_table.head(8)['Pathway ID'].tolist() if p in G.nodes]
     edge_weights.sort()
     depths = {n: get_node_depth(pathways, n) for n in G.nodes}
     max_depth = max(depths.values(), default=0)
+    num_dbs = len(db_name.split(','))
+    iterations = 80 if num_dbs == 1 else 80 * num_dbs
 
     # position nodes using Fruchterman-Reingold force-directed algorithm.
-    pos = nx.spring_layout(G, k=k, iterations=80)
+    if db_name == 'KEGG':
+        pos = nx.spring_layout(G, k=k, iterations=100, fixed=[top_pathways[0]], pos={top_pathways[0]: (0, 0)})
+    else:
+        pos = nx.spring_layout(G, k=k, iterations=iterations)
     for n, p in pos.items():
         G.nodes[n]['pos'] = p
 
@@ -660,6 +667,9 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
             node_info = node_info.replace(' - Homo sapiens (human)', '')
         elif 'Mus musculus (mouse)' in node_info:
             node_info = node_info.replace(' - Mus musculus (mouse)', '')
+
+        if num_dbs > 1:
+            node_info = f"{node_info} ({node_source[node]})"
 
         if node in top_pathways:
             node_info = f"<b>{node_info}</b>"

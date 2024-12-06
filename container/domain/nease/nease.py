@@ -799,13 +799,14 @@ class run(object):
                 enrichment_filtered = pd.concat([enrichment_filtered, enrichment[enrichment['Source'] == db].copy()])
                 pathway_graph = nx.compose(pathway_graph, pathway_hierarchy[self.organism][db])
 
-        graph_data = all_pathway_network(enrichment, pathway_graph, k)
+        graph_data = all_pathway_network(enrichment, pathway_graph, k,
+                                         db_name=','.join(databases))
         if graph_data is None:
             return None
 
         fig = go.Figure(data=graph_data,
                         layout=go.Layout(
-                            title=f"</b>Connections of significant pathways</b>",
+                            title=f"</b>Connections of significant pathways for {', '.join(databases)}</b>",
                             titlefont_size=16,
                             showlegend=False,
                             hovermode='closest',

@@ -829,6 +829,9 @@ function toggleText(element) {
 
                 }).fail(function () {
                     alert("An error occurred while processing your request.");
+                    $(`#${inputFieldId}`).prop("disabled", false);
+                    $(`#${buttonId}`).prop("disabled", false);
+                    $(`.${spinnerId}`).css('display', 'none');
                 });
             } catch (err) {
                 console.error(`An error occurred: ${err.message}`);
