@@ -54,5 +54,5 @@ urlpatterns = [
     # Interaction view
     # path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
     # >>>
-    path("admin/", admin.site.urls),
+    path("secure-admin/", admin.site.urls),
 ]

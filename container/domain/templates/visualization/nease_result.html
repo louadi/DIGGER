@@ -110,6 +110,10 @@
         font-weight: bold;
     }
 
+    .spaced-lines {
+    line-height: 1.5;
+    }
+
     .expandable {
     }
 
@@ -269,13 +273,57 @@
             <h5 class="lead"><span style="font-weight:bold; display: inline-block">Input Parameters:</span>
             </h5>
               <h5 class="lead">
-              <button type="button" class="btn btn-secondary popupbtn" id="showInfoButton" onclick="showInfo()">
+              <button type="button" class="btn btn-secondary popupbtn" id="showInfoButton" data-toggle="modal"
+                      data-target="#runOptionsModal">
                 <i data-feather="info" class="mr-1"></i>Show Information
               </button>
 
             </h5>
             </div>
 
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="runOptionsModal" tabindex="-1" aria-labelledby="runOptionsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="runOptionsModalLabel">Selected input parameters</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-6">
+                  <h5 class="spaced-lines">
+                  <b>Organism</b><br>
+                  <b>Input format</b><br>
+                  <b>Predicted DDIs</b><br>
+                  <b>P-value cutoff</b><br>
+                  <b>Min delta</b><br>
+                  <b>MAJIQ confidence</b><br>
+                  <b>Only using DDIs</b><br>
+                  <b>Remove not-in-frame</b><br>
+                  <b>Only divisible by 3</b><br>
+                  </h5>
+                </div>
+                <div class="col-6">
+                  <h5 class="spaced-lines">
+                  {{ organism|safe }} <br>
+                  {{ input_format|safe }} <br>
+                  {{ predicted_ddis|safe }} <br>
+                  {{ p_value_cutoff|safe }} <br>
+                  {{ min_delta|safe }} <br>
+                  {{ majiq_confidence|safe }} <br>
+                  {{ only_ddis|safe }} <br>
+                  {{ remove_not_in_frame|safe }} <br>
+                  {{ only_divisible_by_3|safe }} <br>
+                    </h5>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -371,21 +419,6 @@
               } catch (err) {
                   console.error(`An error occurred: ${err.message}`);
               }
-          }
-          function showInfo() {
-              const formatted_message = `
-                Input Parameters:
-                - Organism: {{ organism|safe }}
-                - Input Format: {{ input_format|safe }}
-                - Using predicted DDIs of confidences: {{ predicted_ddis|safe }}
-                - P-value cutoff: {{ p_value_cutoff|safe }}
-                - Min delta: {{ min_delta|safe }}
-                - MAJIQ confidence: {{ majiq_confidence|safe }}
-                - Only using DDIs: {{ only_ddis|safe }}
-                - Remove not-in-frame: {{ remove_not_in_frame|safe }}
-                - Only divisible by 3: {{ only_divisible_by_3|safe }}
-                `;
-              alert(formatted_message);
           }
 
       </script>
