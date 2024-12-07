@@ -542,6 +542,9 @@
                      class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download" class="mr-1 download-btn"></i> Download enrichment result</a>
                 </div>
               </div>
+              <div id="vis_pathway_net_div" class="embed-responsive embed-responsive-16by9" style="display: none">
+              <iframe id="vis_pathway_net" class="embed-responsive-item"></iframe>
+            </div>
             </h6>
           </div>
 
@@ -765,7 +768,9 @@ function toggleText(element) {
                     databases: databases,
                     func: funcName
                 }), function (data) {
-                    $(`#${tableId}`).html(data);
+                    const tableData = data.table
+                    const visualisationData = data.plot
+                    $(`#${tableId}`).html(tableData);
                     $(`#${tableNameId}`).DataTable({
                         "order": [[6, "desc"]],
                         "columnDefs": [
@@ -807,8 +812,26 @@ function toggleText(element) {
                     $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + thumb + '?' + new Date().getTime());
                     $(`#${hrId}Hr1`).css('display', 'block');
                     $(`#${hrId}Hr2`).css('display', 'block');
+
+                    // display the visualisation plot in the iframe
+                    if (visualisationData) {
+                        console.log(visualisationData);
+                        const pathwayIFrame = document.getElementById('vis_pathway_net');
+                        const iframeDoc = pathwayIFrame.contentDocument || pathwayIFrame.contentWindow.document;
+                        iframeDoc.open();
+                        iframeDoc.write(visualisationData);
+                        iframeDoc.close();
+                        const visPathwayNetDiv = document.getElementById('vis_pathway_net_div');
+                        visPathwayNetDiv.style.display = 'block';
+                    } else {
+                        visPathwayNetDiv.style.display = 'none';
+                    }
+
                 }).fail(function () {
                     alert("An error occurred while processing your request.");
+                    $(`#${inputFieldId}`).prop("disabled", false);
+                    $(`#${buttonId}`).prop("disabled", false);
+                    $(`.${spinnerId}`).css('display', 'none');
                 });
             } catch (err) {
                 console.error(`An error occurred: ${err.message}`);

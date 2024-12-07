@@ -101,6 +101,10 @@ if __name__ == '__main__':
     organism = "Homo sapiens[human]"
     domaing, ppi_graph, ELM_interactions, pdb, Organism = load_needed_files(organism)
     ppis = ppi_interactions(ppi_graph)
+    # filter domaing
+    domaing.remove_edges_from([x for x in domaing.edges(data=True)
+                                         if x[2]['confidence'] not in ['original', 'high', 'mid', 'low']])
+
     ppis = filter_ppi_graph(ppis, domaing, ELM_interactions, pdb, Organism)
 
     print("Number of edges after filtering: ", len(ppis))

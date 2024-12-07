@@ -118,7 +118,7 @@ class run(object):
                 self.confidences.append('original')
             curr_net = network[organism].copy()
             curr_net.remove_edges_from([x for x in curr_net.edges(data=True)
-                                       if x[2]['confidence'] not in self.confidences])
+                                        if x[2]['confidence'] not in self.confidences])
             self.Join = curr_net
 
             if input_type == 'MAJIQ':
@@ -571,6 +571,7 @@ class run(object):
         enrich_results['Significant'] = ['yes' if x <= cutoff else 'no' for x in
                                          enrich_results['adj p_value']]
 
+        enrich_results = enrich_results.drop_duplicates()
         return enrich_results.sort_values(['Nease score', 'p_value'], ascending=[False, True]).reset_index(
             drop=True)
 
@@ -771,7 +772,9 @@ class run(object):
 
         # get the html as a string
         try:
-            html = fig.to_html(full_html=True, include_plotlyjs='cdn')
+            html = fig.to_html(full_html=True, include_plotlyjs='cdn',
+                               config={'toImageButtonOptions':
+                                           {'format': 'png', 'filename': f"vis_{path_name}", 'scale': 2}})
         except Exception as e:
             print(e)
             raise ValueError('Something went wrong while creating the network.')
@@ -780,6 +783,45 @@ class run(object):
 
     def get_p_value(self):
         return self.cutoff
+
+    def vis_pathway_connection(self, enrichment, databases, k=1):
+        supported_dbs = ['Reactome', 'KEGG']
+        if not any([x in databases for x in supported_dbs]):
+            return None
+
+        enrichment_filtered = None
+        pathway_graph = None
+        for db in supported_dbs:
+            if db not in databases:
+                continue
+            if enrichment_filtered is None:
+                enrichment_filtered = enrichment[enrichment['Source'] == db].copy()
+                pathway_graph = pathway_hierarchy[self.organism][db]
+            else:
+                enrichment_filtered = pd.concat([enrichment_filtered, enrichment[enrichment['Source'] == db].copy()])
+                pathway_graph = nx.compose(pathway_graph, pathway_hierarchy[self.organism][db])
+
+        graph_data = all_pathway_network(enrichment, pathway_graph, k,
+                                         db_name=','.join(databases))
+        if graph_data is None:
+            return None
+
+        fig = go.Figure(data=graph_data,
+                        layout=go.Layout(
+                            title=f"</b>Connections of significant pathways for {', '.join(databases)}</b>",
+                            titlefont_size=16,
+                            showlegend=False,
+                            hovermode='closest',
+                            margin=dict(b=20, l=5, r=5, t=40),
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            paper_bgcolor='white',
+                            plot_bgcolor='white',
+                        ))
+        html = fig.to_html(full_html=True, include_plotlyjs='cdn',
+                           config={'toImageButtonOptions':
+                                       {'format': 'png', 'filename': 'pathway_connections', 'scale': 2}})
+        return html
 
 
 def load(file_path):

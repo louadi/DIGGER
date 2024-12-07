@@ -316,7 +316,7 @@ def single_path_enrich(path_id, Pathways, g2edges, mapping, organism, only_DDIs,
             spliced_genes.append(Entrez_to_name(g, mapping_dict=entrez_name_map))
             spliced_genes_entrez.append(g)
             gene_association.append(g in path_genes_str)
-            num.append(f"{a}/{a+b} ({a/(a+b)*100:.2f}%)")
+            num.append(f"{a}/{a + b} ({a / (a + b) * 100:.2f}%)")
             affected_edges.append(', '.join([Entrez_to_name(x, mapping_dict=entrez_name_map) for x in edges]))
             affected_edges_entrez.append(', '.join(edges))
             p_val.append(p_value)
@@ -530,7 +530,7 @@ def stats_domains(affecting_percentage,
     ax1.set_title("Genes with AS affecting protein features", fontsize=14)
 
     ratios_bar = [round(elm_number / number_of_features, 2) * 100, round(pdb_number / number_of_features, 2) * 100,
-              round(domain_number / number_of_features, 2) * 100]
+                  round(domain_number / number_of_features, 2) * 100]
 
     labels_bar = ['Linear motifs', 'Residues', 'Domains']
 
@@ -565,3 +565,133 @@ def stats_domains(affecting_percentage,
     # Save the figure
 
     return
+
+
+def get_node_depth(G, node, n=0):
+    pred = list(G.predecessors(node))
+    if not pred:  # No predecessors
+        return n
+    return get_node_depth(G, pred[0], n + 1)
+
+
+def interpolate_line(x0, y0, x1, y1, num_points=20):
+    """Interpolate points between two coordinates for smoother hover behavior."""
+    x_vals = np.linspace(x0, x1, num_points)
+    y_vals = np.linspace(y0, y1, num_points)
+    return x_vals, y_vals
+
+
+# create network for the pathways and their connected genes
+def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=0.8, db_name=None):
+    if len(enrichment_table) < 2:
+        return None
+
+    pathway_map = {}
+    edge_weights = []
+    node_source = {}
+    for i, row in enrichment_table.iterrows():
+        id = row['Pathway ID']
+        name = row['Pathway name']
+        genes = row['Spliced genes (number of interactions affecting the pathway)'].split(',')
+        genes = {x.split('(')[0].strip() for x in genes}
+        node_source[id] = row['Source']
+        pathway_map[id] = name, genes
+
+    G = nx.Graph()
+    for pathway_s in pathway_map:
+        for pathway_d in pathway_map:
+            if pathway_s == pathway_d or G.has_edge(pathway_s, pathway_d):
+                continue
+            # check if pathway_s is a predecessor of pathway_d in the pathways
+            parent_pathway_s = list(pathways.in_edges(pathway_s))
+            parent_pathway_d = list(pathways.in_edges(pathway_d))
+            if (not nx.has_path(pathways, pathway_s, pathway_d) and
+                    ((len(parent_pathway_s) == 0 or len(parent_pathway_d) == 0) or
+                     parent_pathway_s[0][0] != parent_pathway_d[0][0])):
+                continue
+            _, genes_s = pathway_map[pathway_s]
+            _, genes_d = pathway_map[pathway_d]
+            overlap = genes_s.intersection(genes_d)
+            if len(overlap) > 0:
+                G.add_edge(pathway_s, pathway_d, weight=len(overlap))
+                edge_weights.append(len(overlap))
+
+    print(f"Graph has {len(G.nodes)} nodes and {len(G.edges)} edges")
+    if len(G.nodes) == 0:
+        return None
+
+    # prepare for visualization
+    top_pathways = [p for p in enrichment_table.head(8)['Pathway ID'].tolist() if p in G.nodes]
+    edge_weights.sort()
+    depths = {n: get_node_depth(pathways, n) for n in G.nodes}
+    max_depth = max(depths.values(), default=0)
+    num_dbs = len(db_name.split(','))
+    iterations = 80 if num_dbs == 1 else 80 * num_dbs
+
+    # position nodes using Fruchterman-Reingold force-directed algorithm.
+    if db_name == 'KEGG':
+        pos = nx.spring_layout(G, k=k, iterations=100, fixed=[top_pathways[0]], pos={top_pathways[0]: (0, 0)})
+    else:
+        pos = nx.spring_layout(G, k=k, iterations=iterations)
+    for n, p in pos.items():
+        G.nodes[n]['pos'] = p
+
+    # create nodes and edges. Edges are weighted by the number of shared genes
+    node_trace = go.Scatter(x=[],
+                            y=[],
+                            text=[],
+                            mode='markers+text',
+                            hoverinfo='text',
+                            textposition='top center',
+                            opacity=1,
+                            marker=dict(
+                                reversescale=True,
+                                color=[],
+                                size=[],
+                                opacity=1,
+                                line=dict(width=0)))
+
+    # convert to dict for individual line widths
+    edge_traces = {}
+    for weight in edge_weights:
+        edge_traces[weight] = go.Scatter(x=[], y=[], text=f"Shared genes: {weight}",
+                                         mode='lines',
+                                         hoverinfo='text',
+                                         opacity=0.5,
+                                         line=dict(width=min(((weight * 0.5) ** 2) + 1, 50), color='#B0C4DE'))
+
+    for node in G.nodes():
+        x, y = G.nodes[node]['pos']
+        node_info = pathway_map[node][0]
+        if 'Homo sapiens (human)' in node_info:
+            node_info = node_info.replace(' - Homo sapiens (human)', '')
+        elif 'Mus musculus (mouse)' in node_info:
+            node_info = node_info.replace(' - Mus musculus (mouse)', '')
+
+        if num_dbs > 1:
+            node_info = f"{node_info} ({node_source[node]})"
+
+        if node in top_pathways:
+            node_info = f"<b>{node_info}</b>"
+
+        node_trace['x'] += tuple([x])
+        node_trace['y'] += tuple([y])
+        node_trace['text'] += tuple([node_info])
+        level = depths[node]
+        base_size = 30 if max_depth < 5 else 10
+
+        node_trace['marker']['color'] += tuple(['#98bdd7' if level != 0 else '#4298d6'])
+        node_trace['marker']['size'] += tuple([base_size + (max_depth - level) * 5])
+
+    for edge in G.edges(data=True):
+        weight = edge[2]['weight']
+        x0, y0 = pos[edge[0]]
+        x1, y1 = pos[edge[1]]
+
+        # this is for a better hover experience
+        x_vals, y_vals = interpolate_line(x0, y0, x1, y1, num_points=20)
+
+        edge_traces[weight]['x'] += tuple(x_vals) + (None,)
+        edge_traces[weight]['y'] += tuple(y_vals) + (None,)
+
+    return [*edge_traces.values(), node_trace]

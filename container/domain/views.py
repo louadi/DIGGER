@@ -752,6 +752,11 @@ def setup_nease(request):
     if not request.FILES:
         return render(request, 'setup/nease_setup.html')
 
+    # reject files that are too big
+    MAX_FILE_SIZE_MB = 100
+    if request.FILES['splicing-events-file'].size > MAX_FILE_SIZE_MB * 1_000_000:
+        return HttpResponse("File is too big. Please upload a file smaller than 100 MB.", status=400)
+
     # Get the input file and post data
     input_data = request.FILES
     if 'splicing-events-file' not in input_data:
@@ -904,6 +909,9 @@ def nease_extra_functions(request):
                                               **settings.TO_HTML_RESPONSIVE_PARAMETERS))
     elif isinstance(out_table, str):
         return HttpResponse(out_table)
+    elif isinstance(out_table, tuple):
+        return JsonResponse({'table': out_table[0].to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS),
+                             'plot': out_table[1]}, status=200)
     else:
         return JsonResponse(out_table, status=400)
 
