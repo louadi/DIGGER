@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, re_path
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 
 from domain import views, autocomplete
 
@@ -28,11 +28,6 @@ urlpatterns = [
     path('ID/gene/<str:organism>/<str:gene_ID>/', views.gene, name="gene-overview"),
     path('ID/gene/<str:organism>/multiple/<str:inputs>/', views.multiple_queries, name="multiple-queries"),
 
-    #exon selection page:
-    
-
-
-
     # --- Detailed Result Pages ---
     # Network interaction view
     path('vis_network/job/<str:organism>/<str:job>', views.Multi_proteins, name="network-visualization"),
@@ -47,12 +42,10 @@ urlpatterns = [
     # --- MISC ---
     re_path(r'^.*?/get_organisms/', views.get_organisms, name='get_organisms'),
     path('get_organisms/', views.get_organisms, name='get_organisms'),
-    # path('graph/', views.graph, name="graph"),
-    # <<< Not used anymore?
-    # Domain view
-    # path('graph/<str:Pfam_id>', views.display, name="Node_vis"),
-    # Interaction view
-    # path('ID/<str:P_id>/InteractionView/<str:P2_id>', views.InteractionView, name="InteractionView"),
-    # >>>
     path("secure-admin/", admin.site.urls),
+
+    # --- DIGGER legacy support ---
+    path('ID/gene/<str:gene_id>/', RedirectView.as_view(url='/ID/gene/human/%(gene_id)s', permanent=True)),
+    path('ID/exon/<str:exon_id>/', RedirectView.as_view(url='/ID/exon/human/%(exon_id)s', permanent=True)),
+    path('ID/<str:transcript_id>/', RedirectView.as_view(url='/ID/human/%(transcript_id)s', permanent=True)),
 ]
