@@ -64,6 +64,11 @@
   <div id="sizeWarning" class="alert alert-warning" style="display: none">
     Your input file is larger than 20MB, the analysis may take a long time to run. Please be patient.
   </div>
+  <div id="rmatsWarning" class="alert alert-warning" style="display: none">
+    Please be aware that there is a slight difference between the .JC.txt and the .JCEC.txt files produced by rMATS.
+    They both work with NEASE but might produce slightly different results.
+    Find more information here: https://github.com/Xinglab/rmats-turbo?tab=readme-ov-file#output
+  </div>
 
   <div role="tabpanel" class="tab-pane" id="Section3">
     <form id="inputForm" class="card card-sm shadow" autocomplete="off" method="post" enctype="multipart/form-data">
@@ -328,8 +333,8 @@
       }
     });
 
-    // if the input_type is Whippet, set the min delta to 0.3 and highlight it shortly to indicate the change
     $('#input_type').change(function () {
+      // if the input_type is Whippet, set the min delta to 0.3 and highlight it shortly to indicate the change
       if ($('#input_type').val() === 'Whippet') {
         $('#min_delta').val(0.3);
         $('#min_delta').addClass('border-warning');
@@ -338,6 +343,14 @@
         }, 1000);
       } else {
           $('#min_delta').val(0.05);
+      }
+      
+      // if input type is rmats, show warning banner about the difference between the files
+      const warning = document.getElementById('rmatsWarning');
+      if ($('#input_type').val() === 'rmats') {
+          warning.style.display = 'block';
+      } else {
+        warning.style.display = 'none';
       }
     });
 
