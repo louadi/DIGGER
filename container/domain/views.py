@@ -42,7 +42,8 @@ def gene(request, gene_ID, organism):
     transcript_table, gene_name = g.input_gene(gene_ID, organism)
 
     if transcript_table == []:
-        return HttpResponse(' wrong entry or protein without any known Pfam domains')
+        return render(request, 'visualization/no_info.html', {'name': gene_name,
+                                                              'info': 'Without any known Pfam domains'})
 
     context = {
         'tb': transcript_table,
@@ -129,7 +130,9 @@ def exon(request, organism, exon_ID):
     v = ex.input_exon(exon_ID, organism)
 
     if v is None:
-        return HttpResponse(' wrong entry or exon in a gene without any known Pfam domains')
+        return render(request, 'visualization/no_info.html', {'name': exon_ID,
+                                                              'info': 'Wrong entry or exon in a gene without any known '
+                                                                      'Pfam domains'})
     else:
         _, domains, gene_name, Ensemble_geneID, entrezID, tb_transc, table_domains, number = v
 
@@ -262,8 +265,11 @@ def transcript(request, P_id, organism):
 
     out = tr.Protein_view(P_id, organism)
 
-    if out == 0: return HttpResponse(' Wrong entry or protein without any known Pfam domains')
-    if out == 1: return HttpResponse(' The selected protein does not have any interaction in the current PPI database')
+    if out == 0: return render(request, 'visualization/no_info.html',
+                               {'name': P_id, 'info': 'Wrong entry or protein without any known Pfam domains'})
+    if out == 1: return render(request, 'visualization/no_info.html',
+                               {'name': P_id, 'info': 'The selected protein does not have any interaction in the '
+                                                      'current PPI database'})
 
     nodes, edges, unique, text1, tran_name, Ensemble_geneID, entrezID, gene_description, droped1, droped2, trID, p, \
         missed, pd_interaction, isoforms, co_partners = out
@@ -497,7 +503,8 @@ def exon_level(request):
                     return redirect(exon, organism=organism, exon_ID=exonID)
                     # return exon(request,exonID)
                 else:
-                    return HttpResponse("<h1>No match</h1>")
+                    return render(request, 'visualization/no_info.html', {'name': gene_ID,
+                                                                          'info': 'The exon is not in the database'})
     if "search 3" in request.GET:  # If option 3 is selected
 
         # Get and sanitize the search_query
@@ -652,10 +659,12 @@ def Multi_proteins(request, organism, job='0'):
     elif re.match(r'^ENS\w*[TP]', inputs[0]):
         info = nt.analysis_input_isoforms(inputs, organism)
     else:
-        return HttpResponse("<h1>wrong entry</h1>")
-
+        return render(request, 'visualization/no_info.html', {'name': inputs[0],
+                                                              'info': 'Wrong entry or protein without any known Pfam '
+                                                                      'domains'})
     if not info:
-        return HttpResponse("<h1>Too many inputs (max=2000 genes)</h1>")
+        return render(request, 'visualization/no_info.html', {'name': 'your job',
+                                                              'info': 'Too many inputs (max=2000 genes)'})
 
     else:
         print("info exists")
@@ -664,7 +673,9 @@ def Multi_proteins(request, organism, job='0'):
         Net = nt.Construct_network(genes, missing, job, organism)
 
         if Net == 0:
-            return HttpResponse("<h1>There is no known interaction between these proteins</h1>")
+            return render(request, 'visualization/no_info.html', {'name': 'your job',
+                                                                  'info': 'There is no known interaction between '
+                                                                          'the provided proteins'})
 
         else:
             nodes, edges, tab, tb_html = Net
@@ -910,7 +921,8 @@ def nease_extra_functions(request):
     elif isinstance(out_table, str):
         return HttpResponse(out_table)
     elif isinstance(out_table, tuple):
-        return JsonResponse({'table': out_table[0].to_html(table_id=f"{function_name}_{table_name}", **settings.TO_HTML_RESPONSIVE_PARAMETERS),
+        return JsonResponse({'table': out_table[0].to_html(table_id=f"{function_name}_{table_name}",
+                                                           **settings.TO_HTML_RESPONSIVE_PARAMETERS),
                              'plot': out_table[1]}, status=200)
     else:
         return JsonResponse(out_table, status=400)
