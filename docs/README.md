@@ -300,7 +300,7 @@ python main_ddi_extend.py
 cd ..
 docker-compose up -d --force-recreate
 ````
-# Frequently asked questions
+# Frequently asked questions (FAQ)
 
 **Question 1:** Could I input multiple isoforms?
 
@@ -316,8 +316,13 @@ docker-compose up -d --force-recreate
 
 **Question 4:** What is 'min delta' option in the NEASE analysis?
 
-*Answer 4:* 'Min delta' refers to the deltaPSI value that defines the level of differential splicing between conditions. Here PSI value means 'Percentage Spliced In' and reflects the ratio between isoforms that use and splice out alternative exon. The calculation of PSI values varies from tool to tool, thus for more details consult the manuscript about the tools of interest. deltaPSI is simply the difference between the PSI value of an event in one condition and the PSI value of the same event in the other condition.
-  The choice of the threshold depends on the study design. If only highly differentially spliced events should be considered, the threshold could be set to 0.1 or even 0.2. E.g., MAJIQ uses 0.2 as a default threshold.
+*Answer 4:* 'Min delta' refers to the deltaPSI value that defines the level of differential splicing between conditions.
+Here PSI value means 'Percentage Spliced In' and reflects the ratio between isoforms that use and splice out alternative
+exon. The calculation of PSI values varies from tool to tool, thus for more details consult the manuscript about the 
+tools of interest. deltaPSI is simply the difference between the PSI value of an event in one condition and the PSI 
+value of the same event in the other condition.
+  The choice of the threshold depends on the study design. If only highly differentially spliced events should be 
+considered, the threshold could be set to 0.1 or even 0.2. E.g., MAJIQ uses 0.2 as a default threshold.
 
 **Question 5:** What is "MAJIQ confidence" option?
 
@@ -326,6 +331,11 @@ docker-compose up -d --force-recreate
 **Question 6:** How long will my analysis be available?
 
 *Answer 6:* By default, previous analyses will be available for 7 days. This period can be extended.
+
+**Question 7:** What is the difference between SE.MATS.JC.txt and SE.MATS.JCEC.txt when using rMATS? Which one should I choose?
+
+*Answer 7:* See rMATS [documentation](https://github.com/Xinglab/rmats-turbo?tab=readme-ov-file#output) for details. 
+Both formats work, but results may vary due to their PSI value thresholds. Choose the one that fits your study design.
 
 # Cite
 
