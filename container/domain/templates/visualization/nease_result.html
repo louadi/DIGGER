@@ -112,6 +112,7 @@
 
     .spaced-lines {
     line-height: 1.5;
+    margin-bottom: 0;
     }
 
     .expandable {
@@ -300,6 +301,28 @@
                   <h5 class="spaced-lines">
                   <b>Organism</b><br>
                   <b>Input format</b><br>
+                  </h5>
+                </div>
+                <div class="col-6">
+                  <h5 class="spaced-lines">
+                  {{ organism|safe }} <br>
+                  {{ input_format|safe }} <br>
+                    </h5>
+                </div>
+              </div>
+
+              {% if input_format|safe == "rmats" %}
+              <div class="row">
+                <div style="padding-left: 15px;">
+                  <i>Used the right file? There is a slight difference</i> <br>
+                  <i>between the .JC.txt and the .JCEC.txt file!</i>
+                </div>
+              </div>
+              {% endif %}
+
+              <div class="row">
+                <div class="col-6">
+                  <h5 class="spaced-lines">
                   <b>Predicted DDIs</b><br>
                   <b>P-value cutoff</b><br>
                   <b>Min delta</b><br>
@@ -311,8 +334,6 @@
                 </div>
                 <div class="col-6">
                   <h5 class="spaced-lines">
-                  {{ organism|safe }} <br>
-                  {{ input_format|safe }} <br>
                   {{ predicted_ddis|safe }} <br>
                   {{ p_value_cutoff|safe }} <br>
                   {{ min_delta|safe }} <br>
