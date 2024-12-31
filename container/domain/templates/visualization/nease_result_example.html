@@ -124,6 +124,20 @@
         text-decoration: underline;
     }
 
+    .highlight-block {
+        outline: 2px solid hsl(10 100 90);
+        box-shadow: 0 0 10px hsl(10 80 50) !important;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .info-banner {
+        background-color: white;
+        padding: 10px;
+        max-width: 500px;
+        width: 90%;
+    }
+
+
     @media screen and (max-width: 1399px) {
         .short-table {
             display: block;
@@ -193,8 +207,8 @@
     <div class="col-lg-10">
 
       <!-- Jumbotron overview-->
-      <div class="jumbotron p-xl-4">
-        <h1 class="display-4">NEASE summary</h1>
+      <div class="jumbotron p-xl-4" id="jumbo">
+        <h1 class="display-4">NEASE summary (Example, with explanations)</h1>
         <hr>
         <div class="row">
           <div class="col-12 col-xxl-6">
@@ -455,8 +469,8 @@
         <div class="tab-pane fade show active card shadow rounded" id="v-pills-overview" role="tabpanel"
              aria-labelledby="v-pills-overview-tab">
           <div class="card-body">
-            <p class="lead text-center table-head"><span>NEASE enrichment result (Example)</span></p>
-            <div class="d-flex justify-content-center align-items-center position-relative">
+            <p class="lead text-center table-head"><span>NEASE enrichment result</span></p>
+            <div class="d-flex justify-content-center align-items-center position-relative" id="summaryImg">
               <a href="{% get_media_prefix %}images/{{ stats_full|safe }}" download="NEASE_stats"
                  class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
                  style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top"
@@ -708,6 +722,101 @@
 <script>
     // create the svg icons
     feather.replace();
+
+    const showHelp = true;
+
+    const interpretations = [
+        {element: 'jumbo', title: 'Summary info', text: "This field contains some summary information about the " +
+                "analysis, as well as quick actions. You can see how many relevant interactors NEASE found on the " +
+                "left. <br> On the right you can set  for how long you want to keep your analysis results, copy the link " +
+                "to share it, and see the input parameters."},
+
+        {element: 'summaryImg', title: 'Affected plot', text: "This image shows at glance the distribution of " +
+                "affected protein features and  where they stem from (domains, linear motifs, or interacting " +
+                "residues). <br> The download button provides a high quality image of this summary."},
+    ]
+
+    let currentInterpretation = 0;
+
+    function getCard(title, text) {
+        return `
+        <div id="info-banner" class="info-banner shadow rounded">
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <h5 style="margin: 10px"><b>${title}</b></h5>
+                <p style="margin: 10px; font-size: 1rem; color: black">
+                  ${text}
+                </p>
+                <div style="margin-top: 10px; text-align: right; width: 100%;">
+                    <button id="stop-info" class="btn btn-danger">
+                        Stop showing this
+                    </button>
+                    <button id="prev-info" class="btn btn-secondary">
+                        Previous
+                      </button>
+                    <button id="next-info" class="btn btn-primary">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>`
+    }
+
+    function showInterpretation() {
+        if (currentInterpretation >= interpretations.length || !showHelp) {
+            // Exit if all interpretations are shown or help is disabled
+            return;
+        }
+
+        const { element, title, text } = interpretations[currentInterpretation];
+        const targetElement = document.getElementById(element);
+
+        // Highlight the current element
+        targetElement.classList.add('highlight-block');
+
+        // Create and position the info banner
+        document.body.insertAdjacentHTML('beforeend', getCard(title, text));
+        const banner = document.getElementById('info-banner');
+
+        const rect = targetElement.getBoundingClientRect();
+        const offsetX = window.scrollX;
+        const offsetY = window.scrollY;
+
+        banner.style.position = 'absolute';
+        banner.style.left = `${rect.left + offsetX}px`;
+        banner.style.top = `${rect.bottom + offsetY + 10}px`;
+        banner.style.zIndex = '1050';
+
+        if (currentInterpretation === 0) {
+            document.getElementById('prev-info').disabled = true;
+        }
+
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Set up event listeners for buttons
+        document.getElementById('stop-info').addEventListener('click', () => {
+            document.getElementById('info-banner').remove();
+            targetElement.classList.remove('highlight-block');
+            localStorage.setItem('showHelp', 'false');
+        });
+
+        document.getElementById('next-info').addEventListener('click', () => {
+            document.getElementById('info-banner').remove();
+            targetElement.classList.remove('highlight-block');
+            currentInterpretation += 1;
+            showInterpretation();
+        });
+
+        document.getElementById('prev-info').addEventListener('click', () => {
+            document.getElementById('info-banner').remove();
+            targetElement.classList.remove('highlight-block');
+            currentInterpretation -= 1;
+            showInterpretation();
+        });
+    }
+
+    if (showHelp) {
+        showInterpretation();
+    }
 
     const runId = "{{ run_id }}";
     // if the "custom_name" variable is not none then use it as the file name
