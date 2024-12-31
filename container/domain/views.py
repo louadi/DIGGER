@@ -742,6 +742,9 @@ def set_previous_analysis(request, post_request=True):
         **events.get_databases()
     }
     try:
+        if request.POST.get('example', None) == 'true':
+            return render(request, 'visualization/nease_result_example.html', context)
+
         return render(request, 'visualization/nease_result.html', context)
     except Exception as e:
         print(e)
@@ -859,7 +862,6 @@ def setup_nease(request):
             **events.get_databases(),
         }
         # return the example page that includes explanations for the user
-        print("Example: ", request.POST.get('example', None))
         if request.POST.get('example', None) == 'true':
             return render(request, 'visualization/nease_result_example.html', context)
 

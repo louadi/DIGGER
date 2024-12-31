@@ -25,7 +25,7 @@ function createHtmlTemplate(data) {
     return `
      <div class="row">
       <div class="col-md-12 my-1">
-        <div class="card previous-card" onclick="prevAnalysis('${data.value}')">
+        <div class="card previous-card" onclick="prevAnalysis('${data.value}', '${data.name}')">
           <div class="card-body">
             <h6 class="card-title" style="display: inline; font-weight: bold">${data.name}</h6>
             <p class="card-text mx-1" style="display: inline; color: gray">●</p>
@@ -49,7 +49,11 @@ function appendTemplateToDiv(template, divId) {
     }
 }
 
-function prevAnalysis(id) {
+function prevAnalysis(id, name=null) {
     document.getElementById('previous_analyses_input').value = id;
+    // If we work with example data, we want interpretation help
+    if (name === 'Example data') {
+        document.getElementById('example').value = 'true';
+    }
     document.getElementById('submit').click();
 }

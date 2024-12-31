@@ -308,8 +308,10 @@
     }
       
     // sort keys by date
-    if (data.length > 1) {
+    try {
         data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } catch (e) {
+        console.error('Error sorting previous analyses:', e);
     }
 
     for (let i = 0; i < data.length; i++) {
