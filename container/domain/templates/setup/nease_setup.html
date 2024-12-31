@@ -236,7 +236,8 @@
                 </div>
               </div>
             </div>
-          </div>
+            <!-- set example true or false -->
+            <input type="hidden" id="example" name="example" value="false">
         </div>
         <div class="row" style="display: none">
           <!-- create hidden input for previous analyses -->
@@ -444,6 +445,7 @@
             document.getElementById('input_type').value = 'MAJIQ';
             document.getElementById('high_domain').checked = true;
             document.getElementById('analysis_name').value = 'Example data';
+            document.getElementById('example').value = 'true';
 
             // Submit the form
             document.getElementById('submit').click();
