@@ -162,10 +162,9 @@
 
   </style>
   <script src="https://unpkg.com/feather-icons"></script>
-  <script src="{% static "domain/createNetwork.js" %}" type="text/javascript"></script>
-  <script src="{% static "domain/initStore.js" %}" type="text/javascript"></script>
-  <script src="{% static "domain/pathwayTooltips.js" %}" type="text/javascript"></script>
-  <!-- for the pathway tooltips -->
+  <script src="{% static 'domain/createNetwork.js' %}" type="text/javascript"></script>
+  <script src="{% static 'domain/initStore.js' %}" type="text/javascript"></script>
+  <script src="{% static 'domain/pathwayTooltips.js' %}" type="text/javascript"></script>
 
 {% endblock %}
 
@@ -725,7 +724,8 @@
 
     const showHelp = true;
 
-    const interpretations = [
+
+     const interpretations = [
         {element: 'jumbo', title: 'Summary info', text: "This field contains some summary information about the " +
                 "analysis, as well as quick actions. You can see how many relevant interactors NEASE found on the " +
                 "left. <br> On the right you can set  for how long you want to keep your analysis results, copy the link " +
@@ -751,21 +751,29 @@
 
         {element: 'nease_enrichment_result', title: 'Reactome enrichment', text: "This is the resulting table of the edge " +
                 "enrichment for Reactome. Above is a plot showing the most significantly enriched terms. Here, in the " +
-                "table, you can see the pathways, which spliced genes contributed and how much.<br> Below, can see " +
-                "a network of significantly enriched pathways, grouping into three rough clusters: Neuronal System," +
-                "Muscle contraction and Signaling. The width of each edge describes the amount of shared genes between" +
-                "pathways. <br> Let's look at R-HSA-112314 more in depth!", pos: 'bottom-left', action: 'tab:v-pills-pathway-tab'},
+                "table, you can see the pathways along with test statistics, which spliced genes contributed and how" +
+                " much.<br> Below, can see a network of significantly enriched pathways, grouping into three rough " +
+                "clusters: Neuronal System, Muscle contraction and Signaling. The width of each edge describes the " +
+                "amount of shared genes between pathways. <br> Let's look at Neurotransmitter receptors (R-HSA-112314)" +
+                " more in depth!",
+            pos: 'bottom-left', action: 'tab:v-pills-pathway-tab'},
 
         {element: 'pathwaySetup', title: 'Pathway analysis', text: "Here we can enter the ID of the pathway we are " +
                 "interested in. For now, we will look at R-HSA-112314.<br> Note that you can autofill this field from" +
                 " the edge enrichment results.", pos: 'top-left', action: 'analyse:R-HSA-112314'},
 
         {element: 'pathway_result', title: 'Pathway analysis result', text: "This table shows you the spliced genes " +
-                "relating to the pathway, which binding genes are affected and their respective p-values. <br> Let's " +
-                "make this more visual!", pos: 'top-left', action: 'tab:v-pills-vis-path-tab'},
+                "relating to the pathway, which binding genes are affected and their respective p-values. While this" +
+                "is great for investigating single genes in an in-depth analysis, we can't really see what is going on" +
+                ".<br> Let's make this more visual!", pos: 'top-left',
+            action: ['tab:v-pills-vis-path-tab', 'vis:R-HSA-112314']},
 
-        {element: 'vis_result_div', title: 'Visualized pathway', text: "This will take a while to load. Please be patient." +
-                " <br> Next we will look at the visualisation of the pathway.", pos: 'top-left', action: null},
+        {element: 'vis_result_div', title: 'Visualized pathway', text: "In this plot we can immediately see the most" +
+                "important genes and what interactions are significantly affected: Mainly we have BRAF, GRIP1 and " +
+                "GRIA1, with GRIA1 containing the most affected interactions in this pathway, making it an interesting" +
+                "gene candidate to study. <br>This is the end of the example. Feel free to explore other pathways or " +
+                "test NEASE using your own data!",
+            pos: 'top-left', action: null},
     ]
 
     let currentInterpretation = 0;
@@ -794,25 +802,40 @@
     }
 
     function executeAction(action) {
+        const [type, value] = action.split(':');
+        if (type === 'tab') {
+            document.getElementById(value).click();
+            return {value: value, wait: false};
+        } else if (type === 'run') {
+            document.getElementById('neaseDatabasesToEnrich').value = value;
+            document.getElementById('run_nease_enrichment').click();
+            return {value: null, wait: true};
+        } else if (type === 'analyse') {
+            document.getElementById('pathwayAnal').value = value;
+            document.getElementById('anal_pathway').click();
+            return {value: null, wait: true};
+        } else if (type === 'vis') {
+            document.getElementById('pathwayVis').value = value;
+            document.getElementById('vis_pathway').click();
+            return {value: null, wait: true};
+        }
+    }
+
+    function processAction(action) {
         // execute action if specified
         if (action) {
-            const [type, value] = action.split(':');
-            if (type === 'tab') {
-                document.getElementById(value).click();
-                return {value: value, wait: false};
-            } else if (type === 'run') {
-                document.getElementById('neaseDatabasesToEnrich').value = value;
-                document.getElementById('run_nease_enrichment').click();
-                return {value: null, wait: true};
-            } else if (type === 'analyse') {
-                document.getElementById('pathwayAnal').value = value;
-                document.getElementById('anal_pathway').click();
-                return {value: null, wait: true};
-            } else if (type === 'vis') {
-                document.getElementById('pathwayVis').value = value;
-                document.getElementById('vis_pathway').click();
-                return {value: null, wait: true};
+            // action can be a single string or an array of strings
+            if (Array.isArray(action)) {
+                for (let a of action) {
+                    const {value, wait} = executeAction(a);
+                    if (wait) {
+                        return {value: value, wait: true};
+                    }
+                }
+                return {value: null, wait: false};
             }
+
+            return executeAction(action);
         }
         return {value: null, wait: false};
     }
@@ -835,7 +858,7 @@
             banner.style.left = `${rect.left + offsetX }px`;
             banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
         }
-        banner.style.zIndex = '1050';
+        banner.style.zIndex = '1029';
     }
 
     function positionInfoBanner(targetElementId, bannerId, pos = 'bottom-left', tabName=null, show=true, scroll=false) {
@@ -859,10 +882,11 @@
         }
     }
 
-
     function showInterpretation(tabName=null, wait=false) {
         if (currentInterpretation >= interpretations.length || !showHelp) {
             // Exit if all interpretations are shown or help is disabled
+            console.log(currentInterpretation, interpretations.length, showHelp);
+            console.log('All interpretations shown or help disabled');
             return;
         }
 
@@ -895,7 +919,7 @@
             document.getElementById('info-banner').remove();
             targetElement.classList.remove('highlight-block');
             currentInterpretation += 1;
-            const {value, wait} = executeAction(action);
+            const {value, wait} = processAction(action);
             showInterpretation(value, wait);
         });
 
