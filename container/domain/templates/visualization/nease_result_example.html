@@ -125,8 +125,7 @@
     }
 
     .highlight-block {
-        outline: 2px solid hsl(10 100 90);
-        box-shadow: 0 0 10px hsl(10 80 50) !important;
+        box-shadow: 0 0 10px hsl(60 70 50) !important;
         transition: opacity 0.3s ease-in-out;
     }
 
@@ -134,6 +133,7 @@
         background-color: white;
         padding: 10px;
         max-width: 500px;
+        outline: 1px solid black;
         width: 90%;
     }
 
@@ -175,7 +175,7 @@
     <!-- Vertical pill selection menu-->
     <div class="col-lg-2 mb-2 rounded rounded d-flex flex-column">
       <div class="sticky-top sticky-offset align-items-center">
-        <div style="background: white" class="shadow rounded p-2">
+        <div style="background: white" class="shadow rounded p-2" id="tabNav">
           <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
                aria-orientation="vertical">
             <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
@@ -489,7 +489,7 @@
             <hr>
 
             <!-- tables resulting from enrichment -->
-            <div class="my-5">
+            <div class="my-5" id="tables">
               <div class="row my-2">
                 <div class="col d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 mx-auto table-head">Affected protein domains</h5>
@@ -562,7 +562,7 @@
             <p class="lead text-center"><span style="font-weight:bold">Edge enrichment</span></p>
 
 
-            <div class="row justify-content-center">
+            <div class="row justify-content-center" id="edgeEnrich">
               <div class="col-md-3"></div>
               <div class="col-md-6">
                 <div class="form-group">
@@ -729,21 +729,35 @@
         {element: 'jumbo', title: 'Summary info', text: "This field contains some summary information about the " +
                 "analysis, as well as quick actions. You can see how many relevant interactors NEASE found on the " +
                 "left. <br> On the right you can set  for how long you want to keep your analysis results, copy the link " +
-                "to share it, and see the input parameters."},
+                "to share it, and see the input parameters.", pos: 'bottom-left', action: null},
 
         {element: 'summaryImg', title: 'Affected plot', text: "This image shows at glance the distribution of " +
-                "affected protein features and  where they stem from (domains, linear motifs, or interacting " +
-                "residues). <br> The download button provides a high quality image of this summary."},
+                "affected protein features and where they stem from (domains, linear motifs, or interacting " +
+                "residues). Here we can see that 78% of AS genes do not affect any protein. Of the 22% that do, 74%" +
+                "are affected domains. <br> On the top right you will always find a download button for high quality" +
+                "images or formatted .csv tables.", pos: 'bottom-left', action: null,},
+
+        {element: 'tables', title: 'Info tables', text: "These are the individual tables for the affected protein " +
+                "features. They show each individual gene with its interactor plus additional relevant info. <br>" +
+                "For the protein domains, you can visualize the interactions using the Visualization link at the end " +
+                "of the table.", pos: 'bottom-left', action: null},
+
+        {element: 'tabNav', title: 'Navigation', text: "Here you can navigate through the different sections of " +
+                "the analysis. <br>Next we will look at the edge enrichment.", pos: 'top-right', action: 'tab:v-pills-nease-enr-tab'},
+
+        {element: 'edgeEnrich', title: 'Edge enrichment', text: "Here you can select the databases you want to " +
+                "enrich the edges with. The more databases you select, the longer it will take to retrieve the " +
+                "enrichment result. <br> For now, we select Reactome and run the enrichment.", pos: 'top-left', action: 'run:Reactome'}
     ]
 
     let currentInterpretation = 0;
 
-    function getCard(title, text) {
+    function getCard(title, text, final=false) {
         return `
         <div id="info-banner" class="info-banner shadow rounded">
             <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                <h5 style="margin: 10px"><b>${title}</b></h5>
-                <p style="margin: 10px; font-size: 1rem; color: black">
+                <h5 style="margin: 5px"><b>${title}</b></h5>
+                <p style="margin: 5px; font-size: 1rem; color: black">
                   ${text}
                 </p>
                 <div style="margin-top: 10px; text-align: right; width: 100%;">
@@ -754,43 +768,90 @@
                         Previous
                       </button>
                     <button id="next-info" class="btn btn-primary">
-                        Next
+                        ${final ? 'Finish!' : 'Next'}
                     </button>
                 </div>
             </div>
         </div>`
     }
 
-    function showInterpretation() {
-        if (currentInterpretation >= interpretations.length || !showHelp) {
-            // Exit if all interpretations are shown or help is disabled
-            return;
+    function executeAction(action) {
+        // execute action if specified
+        if (action) {
+            const [type, value] = action.split(':');
+            if (type === 'tab') {
+                document.getElementById(value).click();
+                return value;
+            } else if (type === 'run') {
+                document.getElementById('neaseDatabasesToEnrich').value = value;
+                document.getElementById('run_nease_enrichment').click();
+            }
         }
+        return null;
+    }
 
-        const { element, title, text } = interpretations[currentInterpretation];
-        const targetElement = document.getElementById(element);
-
-        // Highlight the current element
-        targetElement.classList.add('highlight-block');
-
-        // Create and position the info banner
-        document.body.insertAdjacentHTML('beforeend', getCard(title, text));
-        const banner = document.getElementById('info-banner');
-
+    function calculatePosition(banner, targetElement, pos) {
         const rect = targetElement.getBoundingClientRect();
         const offsetX = window.scrollX;
         const offsetY = window.scrollY;
 
         banner.style.position = 'absolute';
-        banner.style.left = `${rect.left + offsetX}px`;
-        banner.style.top = `${rect.bottom + offsetY + 10}px`;
+        if (pos === 'bottom-left') {
+            banner.style.left = `${rect.left + offsetX}px`;
+            banner.style.top = `${rect.bottom + offsetY + 10}px`;
+        } else if (pos === 'top-right') {
+            // place the element at the top next to the element on the right
+            banner.style.position = 'fixed';
+            banner.style.left = `${rect.right + 10}px`;
+            banner.style.top = `${rect.top}px`;
+        } else if (pos === 'top-left') {
+            banner.style.left = `${rect.left + offsetX }px`;
+            banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
+        }
         banner.style.zIndex = '1050';
+    }
+
+    function positionInfoBanner(targetElementId, bannerId, pos = 'bottom-left', tabName=null) {
+        const targetElement = document.getElementById(targetElementId);
+        const banner = document.getElementById(bannerId);
+
+        if (!targetElement || !banner) return;
+
+        if (tabName) {
+            const tabLink = document.getElementById(tabName);
+            $(tabLink).on('shown.bs.tab', () => {
+                console.log('tab shown');
+                calculatePosition(banner, targetElement, pos);
+            });
+        } else {
+            calculatePosition(banner, targetElement, pos);
+        }
+    }
+
+
+    function showInterpretation(tabName=null) {
+        if (currentInterpretation >= interpretations.length || !showHelp) {
+            // Exit if all interpretations are shown or help is disabled
+            return;
+        }
+
+        const { element, title, text, pos, action } = interpretations[currentInterpretation];
+        const numberedTitle = `(${currentInterpretation + 1}/${interpretations.length}) ${title}`;
+        const targetElement = document.getElementById(element);
+
+        // Highlight the current element
+        targetElement.classList.add('highlight-block');
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Create and position the info banner
+        const final = currentInterpretation === interpretations.length - 1;
+        document.body.insertAdjacentHTML('beforeend', getCard(numberedTitle, text, final));
+
+        positionInfoBanner(element, 'info-banner', pos, tabName);
 
         if (currentInterpretation === 0) {
             document.getElementById('prev-info').disabled = true;
         }
-
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         // Set up event listeners for buttons
         document.getElementById('stop-info').addEventListener('click', () => {
@@ -803,7 +864,8 @@
             document.getElementById('info-banner').remove();
             targetElement.classList.remove('highlight-block');
             currentInterpretation += 1;
-            showInterpretation();
+            const tab = executeAction(action);
+            showInterpretation(tab);
         });
 
         document.getElementById('prev-info').addEventListener('click', () => {
