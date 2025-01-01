@@ -125,7 +125,7 @@
     }
 
     .highlight-block {
-        box-shadow: 0 0 10px hsl(60 70 50) !important;
+        box-shadow: 0 0 10px hsl(190, 70%, 60%) !important;
         transition: opacity 0.3s ease-in-out;
     }
 
@@ -627,7 +627,7 @@
             <p class="lead text-center"><span
                 style="font-weight:bold">Pathway analysis</span></p>
 
-            <div class="row justify-content-center">
+            <div class="row justify-content-center" id="pathwaySetup">
               <div class="col-md-6">
                 <div class="form-group">
                   <label data-toggle="tooltip" data-placement="top"
@@ -747,7 +747,25 @@
 
         {element: 'edgeEnrich', title: 'Edge enrichment', text: "Here you can select the databases you want to " +
                 "enrich the edges with. The more databases you select, the longer it will take to retrieve the " +
-                "enrichment result. <br> For now, we select Reactome and run the enrichment.", pos: 'top-left', action: 'run:Reactome'}
+                "enrichment result. <br> For now, we select Reactome and run the enrichment.", pos: 'top-left', action: 'run:Reactome'},
+
+        {element: 'nease_enrichment_result', title: 'Reactome enrichment', text: "This is the resulting table of the edge " +
+                "enrichment for Reactome. Above is a plot showing the most significantly enriched terms. Here, in the " +
+                "table, you can see the pathways, which spliced genes contributed and how much.<br> Below, can see " +
+                "a network of significantly enriched pathways, grouping into three rough clusters: Neuronal System," +
+                "Muscle contraction and Signaling. The width of each edge describes the amount of shared genes between" +
+                "pathways. <br> Let's look at R-HSA-112314 more in depth!", pos: 'bottom-left', action: 'tab:v-pills-pathway-tab'},
+
+        {element: 'pathwaySetup', title: 'Pathway analysis', text: "Here we can enter the ID of the pathway we are " +
+                "interested in. For now, we will look at R-HSA-112314.<br> Note that you can autofill this field from" +
+                " the edge enrichment results.", pos: 'top-left', action: 'analyse:R-HSA-112314'},
+
+        {element: 'pathway_result', title: 'Pathway analysis result', text: "This table shows you the spliced genes " +
+                "relating to the pathway, which binding genes are affected and their respective p-values. <br> Let's " +
+                "make this more visual!", pos: 'top-left', action: 'tab:v-pills-vis-path-tab'},
+
+        {element: 'vis_result_div', title: 'Visualized pathway', text: "This will take a while to load. Please be patient." +
+                " <br> Next we will look at the visualisation of the pathway.", pos: 'top-left', action: null},
     ]
 
     let currentInterpretation = 0;
@@ -781,13 +799,22 @@
             const [type, value] = action.split(':');
             if (type === 'tab') {
                 document.getElementById(value).click();
-                return value;
+                return {value: value, wait: false};
             } else if (type === 'run') {
                 document.getElementById('neaseDatabasesToEnrich').value = value;
                 document.getElementById('run_nease_enrichment').click();
+                return {value: null, wait: true};
+            } else if (type === 'analyse') {
+                document.getElementById('pathwayAnal').value = value;
+                document.getElementById('anal_pathway').click();
+                return {value: null, wait: true};
+            } else if (type === 'vis') {
+                document.getElementById('pathwayVis').value = value;
+                document.getElementById('vis_pathway').click();
+                return {value: null, wait: true};
             }
         }
-        return null;
+        return {value: null, wait: false};
     }
 
     function calculatePosition(banner, targetElement, pos) {
@@ -811,25 +838,29 @@
         banner.style.zIndex = '1050';
     }
 
-    function positionInfoBanner(targetElementId, bannerId, pos = 'bottom-left', tabName=null) {
+    function positionInfoBanner(targetElementId, bannerId, pos = 'bottom-left', tabName=null, show=true, scroll=false) {
         const targetElement = document.getElementById(targetElementId);
         const banner = document.getElementById(bannerId);
+        banner.style.display = show ? 'block' : 'none';
 
         if (!targetElement || !banner) return;
 
         if (tabName) {
             const tabLink = document.getElementById(tabName);
             $(tabLink).on('shown.bs.tab', () => {
-                console.log('tab shown');
                 calculatePosition(banner, targetElement, pos);
             });
         } else {
             calculatePosition(banner, targetElement, pos);
         }
+
+        if (scroll) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
 
-    function showInterpretation(tabName=null) {
+    function showInterpretation(tabName=null, wait=false) {
         if (currentInterpretation >= interpretations.length || !showHelp) {
             // Exit if all interpretations are shown or help is disabled
             return;
@@ -847,7 +878,7 @@
         const final = currentInterpretation === interpretations.length - 1;
         document.body.insertAdjacentHTML('beforeend', getCard(numberedTitle, text, final));
 
-        positionInfoBanner(element, 'info-banner', pos, tabName);
+        positionInfoBanner(element, 'info-banner', pos, tabName, !wait);
 
         if (currentInterpretation === 0) {
             document.getElementById('prev-info').disabled = true;
@@ -864,8 +895,8 @@
             document.getElementById('info-banner').remove();
             targetElement.classList.remove('highlight-block');
             currentInterpretation += 1;
-            const tab = executeAction(action);
-            showInterpretation(tab);
+            const {value, wait} = executeAction(action);
+            showInterpretation(value, wait);
         });
 
         document.getElementById('prev-info').addEventListener('click', () => {
@@ -1041,7 +1072,6 @@ function toggleText(element) {
 
                     // display the visualisation plot in the iframe
                     if (visualisationData) {
-                        console.log(visualisationData);
                         const pathwayIFrame = document.getElementById('vis_pathway_net');
                         const iframeDoc = pathwayIFrame.contentDocument || pathwayIFrame.contentWindow.document;
                         iframeDoc.open();
@@ -1052,6 +1082,11 @@ function toggleText(element) {
                     } else {
                         visPathwayNetDiv.style.display = 'none';
                     }
+
+                    // sleep for 1 second to allow the iframe to load before repositioning the banner
+                    setTimeout(() => {
+                        positionInfoBanner('nease_enrichment_result', 'info-banner', 'bottom-left', null, true, true);
+                    }, 1000);
 
                 }).fail(function () {
                     alert("An error occurred while processing your request.");
@@ -1107,6 +1142,12 @@ function toggleText(element) {
                 document.getElementById('pathway_download_button').style.display = 'block';
                 document.getElementsByClassName('spinner-border')[1].style.display = 'none';
                 document.getElementById('pathwayDownloadLink').href = `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv';
+
+                // example only: reposition the banner once the element has loaded
+                setTimeout(() => {
+                    positionInfoBanner('pathway_result', 'info-banner', 'top-left', null, true);
+                }, 1000);
+
             })
             .catch(error => {
                 console.log(error)
@@ -1151,11 +1192,12 @@ function toggleText(element) {
                         throw new Error(err.errorMsg);
                     });
                 }
-                console.log(response)
                 return response.text();
             })
             .then(html => {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+
                 iframeDoc.open();
                 iframeDoc.write(html);
                 iframeDoc.close();
@@ -1168,6 +1210,11 @@ function toggleText(element) {
                 document.getElementById('vis_result_info').style.display = 'block';
                 // disable warning
                 document.getElementById('visWarn').hidden = false;
+
+                // example only: reposition the banner once the element has loaded
+                setTimeout(() => {
+                    positionInfoBanner('vis_result', 'info-banner', 'top-left', null, true, true);
+                }, 1000);
 
             })
             .catch(error => {
