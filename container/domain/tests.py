@@ -11,9 +11,9 @@ input_files = [("Standard", "test_file1.json"), ("MAJIQ", "test_file2.json"), ("
                ("rMATS", "test_file2.json")]
 organism = ["human", "mouse"]
 predicted_ddis = [[], ["high"], ["mid"], ["low"], ["high", "mid"], ["mid", "low"],  ["high", "low"], ["high", "mid", "low"]]
-p_values = [10, 1, 0.05, 0, -1]
-deltas = [10, 1, 0.05, 0, -1]
-majiq_conf_values = [10, 1, 0.05, 0, -1]
+p_values = [1, 0.05, 0]
+deltas = [1, 0.05, -1]
+majiq_conf_values = [1, 0.95, 0]
 only_ddis_values = [True, False]
 remove_not_in_frame_values = [True, False]
 only_divisible_by_three_values = [True, False]
@@ -35,15 +35,19 @@ def test_nease_combinations(input, org, pred_ddi, p_value, delta, majiq_conf, on
     #        f"majiq_conf: {majiq_conf}, only_ddis: {only_ddis}, remove_not_in_frame: {remove_not_in_frame}, ",
     #        f"only_divisible_by_three: {only_divisible_by_three}")
     database = input[0]
+    filepath = input[1]
+    if not no.file_needs_cleaning(filepath):
+        table = pd.read_table(filepath)
+    else:
+        table = no.read_extra_spaces(filepath)
     table = readTable input
-    events, info_tables, run_id = no.run_nease(table, org, {'db_type': database_type,
-                                                                 'enrich_dbs': enrich_dbs,
+    events, info_tables, run_id = no.run_nease(table, org, {'db_type': database,
                                                                  'p_value': p_value,
-                                                                 'rm_not_in_frame': rm_not_in_frame,
-                                                                 'divisible_by_3': divisible_by_3,
-                                                                 'min_delta': min_delta,
-                                                                 'majiq_confidence': majiq_confidence,
+                                                                 'rm_not_in_frame': remove_not_in_frame,
+                                                                 'divisible_by_3': only_divisible_by_three,
+                                                                 'min_delta': delta,
+                                                                 'majiq_confidence': majiq_conf,
                                                                  'only_ddis': only_ddis,
-                                                                 'confidences': confidences},
-                                               input_data['splicing-events-file'].name,
-                                               custom_name)
+                                                                 'confidences': pred_ddi},
+                                               "filename",
+                                               "custom_name")
