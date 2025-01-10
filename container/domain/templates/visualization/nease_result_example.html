@@ -473,7 +473,8 @@
               <a href="{% get_media_prefix %}images/{{ stats_full|safe }}" download="NEASE_stats"
                  class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
                  style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top"
-                 title="Download high-resolution image.">
+                 title="Download high-resolution image."
+                 id="download">
                 <i data-feather="download" class="download-btn"></i>
               </a>
               <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
@@ -726,67 +727,62 @@
 
 
      const interpretations = [
-        {element: 'jumbo', title: 'Summary info', text: "This field contains some summary information about the " +
-                "analysis, as well as quick actions. You can see how many relevant interactors NEASE found on the " +
-                "left. In this case, we found 24 affected protein domains and a total of >300 affected protein " +
-                "interactions, giving us lots of data to work with. <br>" +
-                "On the right you can set for how long you want to keep your analysis results, " +
-                "copy the link to share it, and see the input parameters.", pos: 'bottom-left', action: null},
+        {element: 'jumbo', title: 'Summary info', text: "This field contains a summary of the analysis.<br>On the " +
+                "left, you can see the number of affected interactors. Here, we found 24 affected protein domains " +
+                "and a total of >300 affected protein interactions (giving us lots of data to work with!). <br>On " +
+                "the right, you can set how long the analysis results are kept, and copy the link to share them. " +
+                "You can also check the input parameters. ", pos: 'bottom-left', action: null},
 
-        {element: 'summaryImg', title: 'Affected plot', text: "This image shows at glance the distribution of " +
-                "affected protein features and what kind they are (domains, linear motifs, or interacting " +
-                "residues). Here we can see that 78% of AS genes do not affect any protein. Of the 22% that do, 74% " +
-                "are affected domains. <br>" +
-                "On the top right you will always find a download button for high quality " +
-                "images or formatted .csv tables.", pos: 'bottom-left', action: null,},
+        {element: 'summaryImg', title: 'Affected plot', text: "This image shows the distribution of affected " +
+                "protein features and their type (domains, linear motifs, or interacting residues). <br> We can " +
+                "see that 78% of AS genes do not affect any protein features. Of the 22% that do, 74% has affected " +
+                "domains.", pos: 'bottom-left', action: null,},
+
+        {element: 'download', title: 'Data downloads', text: "You will always find a download " +
+                "button for high-quality images or formatted .csv tables.", pos: 'top-left-align-right', action: null},
 
         {element: 'tables', title: 'Info tables', text: "These are the individual tables for the affected protein " +
-                "features. Apart from the domains table, they show each individual gene with its interactor plus " +
-                "additional relevant info. This is useful to quickly reference, which perturbations may occur. " +
-                "Feel free to click on a visualization link and explore domains. <br>" +
-                "For this analysis we added some predicted DDIs, so we should consider it when looking at the database" +
-                "visualisations.", pos: 'bottom-left', action: null},
+                "features. Apart from the domains table, they show each gene with its interactor plus additional " +
+                "relevant info. This is useful for quickly referencing which perturbations may occur. Feel free to " +
+                "click on a visualization link and explore domains. <br> We added some predicted DDIs for this " +
+                "analysis, which should be considered when evaluating the database visualizations.",
+            pos: 'bottom-left', action: null},
 
-        {element: 'tabNav', title: 'Navigation', text: "Here you can navigate through the different sections of " +
-                "the analysis. <br>" +
-                "Next we will look at the edge enrichment.", pos: 'top-right', action: 'tab:v-pills-nease-enr-tab'},
+        {element: 'tabNav', title: 'Navigation', text: "With this menu, you can navigate through the different " +
+                "sections of the analysis. <br>Next, we will look at the edge enrichment.",
+            pos: 'top-right', action: 'tab:v-pills-nease-enr-tab'},
 
-        {element: 'edgeEnrich', title: 'Edge enrichment', text: "Here you can select the databases you want to " +
-                "enrich the edges with. We recommend either Reactome or KEGG as they provide a pathway overview that " +
-                "allows you to quickly grasp affected areas. <br>" +
-                "In the next step, we will select Reactome and run the enrichment.",
-            pos: 'top-left', action: 'run:Reactome'},
+        {element: 'edgeEnrich', title: 'Edge enrichment', text: "Here, you can select the databases for the " +
+                "enrichment analysis. We recommend either Reactome or KEGG, as they provide a pathway overview " +
+                "that lets you quickly grasp the impact of alternative splicing. <br>In the next step, we will " +
+                "select Reactome and run the enrichment analysis.", pos: 'top-left', action: 'run:Reactome'},
 
-        {element: 'nease_enrichment_result', title: 'Reactome enrichment', text: "This is the resulting table of the " +
-                "edge enrichment for Reactome. Above is a plot showing the most significantly enriched terms. Here, " +
-                "in the table, you can see the pathways along with test statistics, which spliced genes contributed " +
-                "and how much." +
-                "<br> Below, can see a network of significantly enriched pathways, grouping into three rough " +
-                "clusters: Neuronal System, Muscle contraction and Signaling. The width of each edge describes the " +
-                "amount of shared genes between pathways. <br> At the center of the Neuronal System cluster we see " +
-                "Neurotransmitter receptors, let's look at that more in depth!",
+        {element: 'nease_enrichment_result', title: 'Reactome enrichment', text: "This is the table resulting from " +
+                "the edge enrichment for Reactome. Above is a plot showing the most significantly enriched terms. " +
+                "In the table, you can see the pathways, test statistics, and which spliced genes contributed and " +
+                "how much.<br>Below, you can see a network of significantly enriched pathways grouped into three " +
+                "rough clusters: Neuronal System, Muscle contraction, and Signaling. The width of each edge " +
+                "corresponds to the number of genes shared between pathways. <br>At the center of the Neuronal " +
+                "System cluster, we see Neurotransmitter receptors; let's look at that more in-depth!",
             pos: 'bottom-left', action: 'tab:v-pills-pathway-tab'},
 
-        {element: 'pathwaySetup', title: 'Pathway analysis', text: "Here we can enter the ID of the pathway we are " +
-                "interested in. For now, we will look at Neurotransmitter receptors and postsynaptic signal " +
-                "transmission (R-HSA-112314).<br> " +
-                "Note that you can autofill this field from the edge enrichment results without having to type in " +
-                "the pathway ID.",
-            pos: 'top-left', action: 'analyse:R-HSA-112314'},
+        {element: 'pathwaySetup', title: 'Pathway analysis', text: "Here, we can enter the ID of the pathway we are " +
+                "interested in. We will now look at Neurotransmitter receptors and postsynaptic signal transmission " +
+                "(R-HSA-112314).<br> Note that you can autofill this field from the edge enrichment results without " +
+                "typing in the pathway ID manually.", pos: 'top-left', action: 'analyse:R-HSA-112314'},
 
-        {element: 'pathway_result', title: 'Pathway analysis result', text: "This table shows you the spliced genes " +
-                "related to the pathway, which binding genes are affected and their respective p-values. While this "  +
-                "is great for investigating single genes in an in-depth analysis, we can't really see what is going " +
-                "on.<br> Let's make this more visual!", pos: 'top-left',
-            action: ['tab:v-pills-vis-path-tab', 'vis:R-HSA-112314']},
+        {element: 'pathway_result', title: 'Pathway analysis result', text: "This table shows the spliced genes " +
+                "related to the pathway, binding edges affected by the splicing event, and their respective " +
+                "p-values. While this is great for investigating single genes in an in-depth analysis, we can't " +
+                "really see what is happening in the bigger perspective.<br>Let's make this more visual!",
+            pos: 'top-left', action: ['tab:v-pills-vis-path-tab', 'vis:R-HSA-112314']},
 
-        {element: 'vis_result_div', title: 'Visualized pathway', text: "In this plot we can immediately see the most " +
-                "important genes and what interactions are significantly affected: Mainly we have BRAF, GRIP1 and " +
+        {element: 'vis_result_div', title: 'Visualized pathway', text: "In this plot, we can immediately see the " +
+                "most important genes and the significantly affected interactions. Mainly, we have BRAF, GRIP1, and " +
                 "GRIA1, with GRIA1 containing the most affected interactions in this pathway, making it an " +
-                "interesting gene candidate to look at more closely back in the overview! Go have a look and check " +
-                "the references of the interacting genes by following the links." +
-                " <br>This is the end of the example. Feel free to explore other pathways or test NEASE using your " +
-                "own data!",
+                "interesting gene candidate to look at more closely back in the overview! Take a look and check the " +
+                "references of the interacting genes by following the links.<br>This is the end of the example. Feel " +
+                "free to explore other pathways or test NEASE using your own data!",
             pos: 'top-top-right', action: null},
     ]
 
@@ -872,6 +868,9 @@
             banner.style.left = `${rect.left + offsetX }px`;
             banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
         } else if (pos === 'top-top-right') {
+            banner.style.left = `${rect.right + offsetX - banner.offsetWidth}px`;
+            banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
+        } else if (pos === 'top-left-align-right') {
             banner.style.left = `${rect.right + offsetX - banner.offsetWidth}px`;
             banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
         }
