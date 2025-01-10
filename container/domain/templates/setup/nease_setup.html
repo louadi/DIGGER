@@ -236,7 +236,8 @@
                 </div>
               </div>
             </div>
-          </div>
+            <!-- set example true or false -->
+            <input type="hidden" id="example" name="example" value="false">
         </div>
         <div class="row" style="display: none">
           <!-- create hidden input for previous analyses -->
@@ -307,8 +308,10 @@
     }
       
     // sort keys by date
-    if (data.length > 1) {
+    try {
         data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } catch (e) {
+        console.error('Error sorting previous analyses:', e);
     }
 
     for (let i = 0; i < data.length; i++) {
@@ -444,6 +447,7 @@
             document.getElementById('input_type').value = 'MAJIQ';
             document.getElementById('high_domain').checked = true;
             document.getElementById('analysis_name').value = 'Example data';
+            document.getElementById('example').value = 'true';
 
             // Submit the form
             document.getElementById('submit').click();

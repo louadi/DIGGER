@@ -101,6 +101,40 @@
 
 {#<div style="height: 15px"></div>#}
 
+
+<!-- cookie consent -->
+<div id="cookie-banner" class="banner shadow rounded">
+    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+        <p style="margin: 0; font-size: 1rem; color: white">
+            DIGGER 2.0 uses functional cookies necessary for its operation.
+            By continuing to use the site, you agree to their use.
+        </p>
+        <div style="margin-top: 10px; text-align: right; width: 100%;">
+            <button id="cookie-accept" class="btn btn-primary">
+                OK
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const banner = document.getElementById("cookie-banner");
+
+    if (!localStorage.getItem("cookieConsent")) {
+        banner.classList.add("show");
+    }
+
+    document.getElementById("cookie-accept").addEventListener("click", function () {
+        localStorage.setItem("cookieConsent", "true");
+        banner.classList.remove("show");
+        banner.classList.add("hide");
+    });
+});
+
+
+</script>
+
 <!-- Footer -->
 <footer class="py-4 bg-dark footer">
     <div class="container">
@@ -116,3 +150,31 @@
 </footer>
 </body>
 </html>
+
+<style>
+.banner {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    background-color: #343a40;
+    padding: 20px;
+    max-width: 370px;
+    text-align: justify;
+    width: 90%;
+}
+#cookie-banner {
+  transition: opacity 0.3s ease-in-out;
+}
+
+#cookie-banner.show {
+  display: block;
+  opacity: 1;
+}
+
+#cookie-banner.hide {
+  opacity: 0;
+  display: none;
+}
+</style>
