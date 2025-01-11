@@ -818,14 +818,17 @@
             return {value: value, wait: false};
         } else if (type === 'run') {
             document.getElementById('neaseDatabasesToEnrich').value = value;
+            document.getElementById('run_nease_enrichment').disabled = false;
             document.getElementById('run_nease_enrichment').click();
             return {value: null, wait: true};
         } else if (type === 'analyse') {
             document.getElementById('pathwayAnal').value = value;
+            document.getElementById('anal_pathway').disabled = false;
             document.getElementById('anal_pathway').click();
             return {value: null, wait: true};
         } else if (type === 'vis') {
             document.getElementById('pathwayVis').value = value;
+            document.getElementById('vis_pathway').disabled = false;
             document.getElementById('vis_pathway').click();
             return {value: null, wait: true};
         }
@@ -903,6 +906,7 @@
             // Exit if all interpretations are shown or help is disabled
             console.log(currentInterpretation, interpretations.length, showHelp);
             console.log('All interpretations shown or help disabled');
+            switchEnrichment();
             return;
         }
 
@@ -929,6 +933,7 @@
             document.getElementById('info-banner').remove();
             targetElement.classList.remove('highlight-block');
             localStorage.setItem('showHelp', 'false');
+            switchEnrichment();
         });
 
         document.getElementById('next-info').addEventListener('click', () => {
@@ -947,8 +952,32 @@
         });
     }
 
+    // disable running enrichment while the help is being shown
+    function switchEnrichment() {
+        const runEnrichment = document.getElementById('run_nease_enrichment')
+        const analPathway = document.getElementById('anal_pathway')
+        const visPathway = document.getElementById('vis_pathway')
+
+        for (const element of [runEnrichment, analPathway, visPathway]) {
+            element.disabled = !element.disabled;
+            // add tooltip to explain why the button is disabled
+            if (element.disabled) {
+              element.setAttribute('data-toggle', 'tooltip');
+              element.setAttribute('title', 'To run your own analysis, please disable the help.');
+              element.setAttribute('data-placement', 'top');
+            } else {
+                element.removeAttribute('data-toggle');
+                element.removeAttribute('title');
+                element.removeAttribute('data-placement');
+                $(element).tooltip('dispose');
+            }
+        }
+    }
+
+
     if (showHelp) {
         showInterpretation();
+        switchEnrichment()
     }
 
     const runId = "{{ run_id }}";
@@ -1093,7 +1122,9 @@ function toggleText(element) {
 
                     // Re-enable the input and button, and hide the spinner
                     $(`#${inputFieldId}`).prop("disabled", false);
-                    $(`#${buttonId}`).prop("disabled", false);
+                    if (!showHelp) {
+                        $(`#${buttonId}`).prop("disabled", false);
+                    }
                     $(`.${spinnerId}`).css('display', 'none');
 
                     // show all the relevant elements
@@ -1178,7 +1209,9 @@ function toggleText(element) {
                     "order": [[4, "asc"]]
                 });
                 document.getElementById('pathwayAnal').disabled = false;
-                document.getElementById('anal_pathway').disabled = false;
+                if (!showHelp) {
+                    document.getElementById('anal_pathway').disabled = false;
+                }
                 document.getElementById('pathway_download_button').style.display = 'block';
                 document.getElementsByClassName('spinner-border')[1].style.display = 'none';
                 document.getElementById('pathwayDownloadLink').href = `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv';
@@ -1245,7 +1278,9 @@ function toggleText(element) {
                 document.getElementById('vis_result_div').style.display = 'block';
                 document.getElementById('pathwayVis').disabled = false;
                 document.getElementById('k').disabled = false;
-                document.getElementById('vis_pathway').disabled = false;
+                if (!showHelp) {
+                    document.getElementById('vis_pathway').disabled = false;
+                }
                 document.getElementById('spinner-vis').style.display = 'none';
                 document.getElementById('vis_result_info').style.display = 'block';
                 // disable warning
