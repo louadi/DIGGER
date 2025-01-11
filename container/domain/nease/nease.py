@@ -791,18 +791,26 @@ class run(object):
 
         enrichment_filtered = None
         pathway_graph = None
+        network_pathway_names = []
         for db in supported_dbs:
             if db not in databases:
                 continue
             if enrichment_filtered is None:
                 enrichment_filtered = enrichment[enrichment['Source'] == db].copy()
                 pathway_graph = pathway_hierarchy[self.organism][db]
+                network_pathway_names.append(db)
             else:
                 enrichment_filtered = pd.concat([enrichment_filtered, enrichment[enrichment['Source'] == db].copy()])
                 pathway_graph = nx.compose(pathway_graph, pathway_hierarchy[self.organism][db])
+                network_pathway_names.append(db)
 
-        graph_data = all_pathway_network(enrichment, pathway_graph, k,
-                                         db_name=','.join(databases))
+        try:
+            graph_data = all_pathway_network(enrichment_filtered, pathway_graph, k,
+                                             db_name=','.join(network_pathway_names))
+        except Exception as e:
+            print(e)
+            return None
+
         if graph_data is None:
             return None
 
