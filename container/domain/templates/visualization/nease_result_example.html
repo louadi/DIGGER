@@ -723,7 +723,7 @@
     // create the svg icons
     feather.replace();
 
-    const showHelp = true;
+    let showHelp = true;
 
 
      const interpretations = [
@@ -906,6 +906,7 @@
             // Exit if all interpretations are shown or help is disabled
             console.log(currentInterpretation, interpretations.length, showHelp);
             console.log('All interpretations shown or help disabled');
+            showHelp = false;
             switchEnrichment();
             return;
         }
@@ -932,7 +933,7 @@
         document.getElementById('stop-info').addEventListener('click', () => {
             document.getElementById('info-banner').remove();
             targetElement.classList.remove('highlight-block');
-            localStorage.setItem('showHelp', 'false');
+            showHelp = false;
             switchEnrichment();
         });
 

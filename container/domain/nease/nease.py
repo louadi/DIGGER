@@ -816,7 +816,7 @@ class run(object):
 
         fig = go.Figure(data=graph_data,
                         layout=go.Layout(
-                            title=f"</b>Connections of significant pathways for {', '.join(databases)}</b>",
+                            title=f"</b>Connections of significant pathways for {', '.join(network_pathway_names)}</b>",
                             titlefont_size=16,
                             showlegend=False,
                             hovermode='closest',
