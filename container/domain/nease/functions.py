@@ -600,7 +600,8 @@ def all_pathway_network(enrichment_table: pd.DataFrame, pathways: nx.DiGraph, k=
     G = nx.Graph()
     for pathway_s in pathway_map:
         for pathway_d in pathway_map:
-            if pathway_s == pathway_d or G.has_edge(pathway_s, pathway_d):
+            if (pathway_s == pathway_d or G.has_edge(pathway_s, pathway_d) or
+                    not pathways.has_node(pathway_s) or not pathways.has_node(pathway_d)):
                 continue
             # check if pathway_s is a predecessor of pathway_d in the pathways
             parent_pathway_s = list(pathways.in_edges(pathway_s))
