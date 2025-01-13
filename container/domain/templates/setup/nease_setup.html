@@ -390,6 +390,7 @@
     // Check if previous analyses are selected
     const previousAnalysesInput = document.getElementById('previous_analyses_input');
     if (previousAnalysesInput && previousAnalysesInput.value) {
+      document.getElementById('spinner').style.display = 'inline-block';
       return;
     }
 
@@ -492,6 +493,10 @@
           document.getElementById('high_domain').checked = true;
           document.getElementById('analysis_name').value = 'Example data';
           document.getElementById('example').value = 'true';
+
+          // hide the loading spinner and text
+          document.getElementById('loading_text').style.display = 'none';
+          document.getElementById('spinner').style.display = 'none';
 
           // Submit the form
           document.getElementById('submit').click();
