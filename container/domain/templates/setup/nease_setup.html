@@ -38,6 +38,19 @@
       fill: none;
     }
 
+    .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75); /* Dark translucent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Above other content */
+    flex-direction: column;
+  }
   </style>
 {% endblock %}
 
@@ -67,7 +80,7 @@
   <div id="rmatsWarning" class="alert alert-warning" style="display: none">
     Please be aware that there is a slight difference between the .JC.txt and the .JCEC.txt files produced by rMATS.
     They both work with NEASE but might produce slightly different results.
-    Find more information here: https://github.com/Xinglab/rmats-turbo?tab=readme-ov-file#output
+    Find more information here: <a href="https://github.com/Xinglab/rmats-turbo?tab=readme-ov-file#output" target="_blank">rMATS Turbo</a>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="Section3">
@@ -274,6 +287,14 @@
           <button id="submit" class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
         </div>
       </div>
+      <div class="overlay d-none" id="loadingOverlay">
+          <div class="spinner-border text-light" role="status">
+              <span class="sr-only">Loading...</span>
+          </div>
+          <p id="overlayText" class="text-light mt-3">Processing file, please wait...</p>
+      </div>
+
+
       <!-- previous analyses -->
       <div id="prevAnalysisContainer" class="container mb-2" style="display: none;">
           <div class="row">
@@ -322,6 +343,8 @@
         appendTemplateToDiv(template, 'previousAnalyses');
     }
 
+    let fileSize = 0;
+
     // enable tooltips
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
@@ -358,21 +381,39 @@
     });
 
 
-    // enable the spinner when the form is submitted and disable the button
-    $('#inputForm').submit(function () {
-      $('.spinner-border').css('display', 'inline-block');
-      $('button').prop('disabled', true);
-
-      // check if previous analyses are selected, if so, don't show the loading text
-      if ($('#previous_analyses_input').val()) {
-        return;
-      }
-      $('#loading_text').css('display', 'inline-block');
-
-      setTimeout(function() {
-        $('#loading_text').text('Running enrichment analysis');
-      }, 2000);
+  document.getElementById('inputForm').addEventListener('submit', function (event) {
+    // Disable all buttons
+    document.querySelectorAll('button').forEach(button => {
+      button.disabled = true;
     });
+
+    // Check if previous analyses are selected
+    const previousAnalysesInput = document.getElementById('previous_analyses_input');
+    if (previousAnalysesInput && previousAnalysesInput.value) {
+      document.getElementById('spinner').style.display = 'inline-block';
+      return;
+    }
+
+    console.log('File size:', fileSize);
+
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+      loadingOverlay.classList.remove('d-none');
+
+      const uploadSpeedEstimate = 3000000; // Bytes per second (example estimate)
+
+      let timeoutTime;
+        if (fileSize > 0) {
+            timeoutTime =  Math.ceil(fileSize / uploadSpeedEstimate) * 1000;
+        } else {
+            timeoutTime = 5000;
+        }
+
+      setTimeout(() => {
+          document.getElementById('overlayText').textContent = 'Running enrichment analysis';
+      }, timeoutTime);
+    }
+  });
 
   // Wait until the DOM content is fully loaded
   document.addEventListener('DOMContentLoaded', function () {
@@ -391,69 +432,77 @@
     });
   });
 
-    // prevent form submission if no file is selected
-    document.getElementById('inputForm').addEventListener('submit', function(event) {
-      var fileInput = document.getElementById('customFile');
-      var prevInput = document.getElementById('previous_analyses_input');
-      // there must be either a file selected or a previous analysis input
-      if ((!fileInput || !fileInput.files || fileInput.files.length === 0) && !prevInput.value) {
-          event.preventDefault();
-          document.getElementById('noFileAlert').removeAttribute('hidden');
+  // prevent form submission if no file is selected
+  document.getElementById('inputForm').addEventListener('submit', function(event) {
+    var fileInput = document.getElementById('customFile');
+    var prevInput = document.getElementById('previous_analyses_input');
+    // there must be either a file selected or a previous analysis input
+    if ((!fileInput || !fileInput.files || fileInput.files.length === 0) && !prevInput.value) {
+        event.preventDefault();
+        document.getElementById('noFileAlert').removeAttribute('hidden');
+        document.getElementById('loading_text').style.display = 'none';
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('submit').removeAttribute('disabled');
+        document.getElementById('exampleData').removeAttribute('disabled');
+    }
+    else {
+        document.getElementById('noFileAlert').setAttribute('hidden', '');
+    }
+  });
+
+  document.getElementById('customFile').addEventListener('change', function() {
+      const file = this.files[0];
+      const maxSize = 20 * 1024 * 1024;
+      const warning = document.getElementById('sizeWarning');
+
+      if (file) {
+          fileSize = file.size;
+      }
+
+      if (file && file.size > maxSize) {
+          warning.style.display = 'block';
+      } else {
+          warning.style.display = 'none';
+      }
+  });
+
+  // when clicking the example data button, fill in the form with example data
+  document.getElementById('exampleData').addEventListener('click', function() {
+      document.getElementById('spinner').style.display = 'inline-block';
+      document.getElementById('loading_text').innerText = 'Fetching example data...'
+      document.getElementById('loading_text').style.display = 'inline-block';
+      const exampleFileUrl = 'https://raw.githubusercontent.com/louadi/NEASE-tutorials/main/AS%20data/MS/AL_NAWM.deltapsi.tsv';
+
+      // Fetch the example file from GitHub
+      fetch(exampleFileUrl)
+        .then(response => response.blob()) // Convert the response to a Blob
+        .then(blob => {
+          // Create a new File object from the Blob
+          const file = new File([blob], 'AL_NAWM.deltapsi.tsv', { type: blob.type });
+          // update file label
+          document.getElementById('customFile').nextElementSibling.innerHTML = file.name;
+
+          // Add the file to the file input
+          const dataTransfer = new DataTransfer(); // Create a DataTransfer object
+          dataTransfer.items.add(file); // Add the file to the DataTransfer object
+          document.getElementById('customFile').files = dataTransfer.files; // Set the file input's files
+
+          // Set other form input values
+          document.getElementById('org_select').value = 'human';
+          document.getElementById('input_type').value = 'MAJIQ';
+          document.getElementById('high_domain').checked = true;
+          document.getElementById('analysis_name').value = 'Example data';
+          document.getElementById('example').value = 'true';
+
+          // hide the loading spinner and text
           document.getElementById('loading_text').style.display = 'none';
           document.getElementById('spinner').style.display = 'none';
-          document.getElementById('submit').removeAttribute('disabled');
-          document.getElementById('exampleData').removeAttribute('disabled');
-      }
-      else {
-          document.getElementById('noFileAlert').setAttribute('hidden', '');
-      }
-    });
 
-    document.getElementById('customFile').addEventListener('change', function() {
-        const file = this.files[0];
-        const maxSize = 20 * 1024 * 1024;
-        const warning = document.getElementById('sizeWarning');
-
-        if (file && file.size > maxSize) {
-            warning.style.display = 'block';
-        } else {
-            warning.style.display = 'none';
-        }
-    });
-
-    // when clicking the example data button, fill in the form with example data
-    document.getElementById('exampleData').addEventListener('click', function() {
-        document.getElementById('spinner').style.display = 'inline-block';
-        document.getElementById('loading_text').innerText = 'Fetching example data...'
-        document.getElementById('loading_text').style.display = 'inline-block';
-        const exampleFileUrl = 'https://raw.githubusercontent.com/louadi/NEASE-tutorials/main/AS%20data/MS/AL_NAWM.deltapsi.tsv';
-
-        // Fetch the example file from GitHub
-        fetch(exampleFileUrl)
-          .then(response => response.blob()) // Convert the response to a Blob
-          .then(blob => {
-            // Create a new File object from the Blob
-            const file = new File([blob], 'AL_NAWM.deltapsi.tsv', { type: blob.type });
-            // update file label
-            document.getElementById('customFile').nextElementSibling.innerHTML = file.name;
-
-            // Add the file to the file input
-            const dataTransfer = new DataTransfer(); // Create a DataTransfer object
-            dataTransfer.items.add(file); // Add the file to the DataTransfer object
-            document.getElementById('customFile').files = dataTransfer.files; // Set the file input's files
-
-            // Set other form input values
-            document.getElementById('org_select').value = 'human';
-            document.getElementById('input_type').value = 'MAJIQ';
-            document.getElementById('high_domain').checked = true;
-            document.getElementById('analysis_name').value = 'Example data';
-            document.getElementById('example').value = 'true';
-
-            // Submit the form
-            document.getElementById('submit').click();
-          })
-          .catch(error => console.error('Error fetching the example file:', error));
-    });
+          // Submit the form
+          document.getElementById('submit').click();
+        })
+        .catch(error => console.error('Error fetching the example file:', error));
+  });
 
 
 
