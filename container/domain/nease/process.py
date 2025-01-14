@@ -373,7 +373,8 @@ def process_MAJIQ(data,
 
     # check mapped exons
     if len(data) == 0:
-        raise Exception('None of MAJIQ junctions maps to annotated exons (Ensembl Exons). Please check your mapping.')
+        raise Exception('None of the MAJIQ junctions map to annotated exons (Ensembl Exons). '
+                        'Please check your mapping.')
 
     else:
         data = data[
