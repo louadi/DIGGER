@@ -373,7 +373,7 @@ def process_MAJIQ(data,
 
     # check mapped exons
     if len(data) == 0:
-        print('None of MAJIQ junctions maps to annotated exons (Ensembl Exons). Try to use the standard input instead.')
+        raise Exception('None of MAJIQ junctions maps to annotated exons (Ensembl Exons). Please check your mapping.')
 
     else:
         data = data[
