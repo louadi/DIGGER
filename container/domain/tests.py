@@ -42,7 +42,7 @@ def test_nease_combinations(input, pred_ddi, p_value, delta, majiq_conf, only_dd
     if database != "MAJIQ" and majiq_conf != 0.95:
         return
     filepath = input[2]
-    with open(filepath, "r") as f:
+    with open(filepath, "rb") as f:
         if not no.file_needs_cleaning(f):
             table = pd.read_table(f)
         else:
