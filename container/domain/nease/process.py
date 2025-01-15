@@ -129,7 +129,7 @@ def process_standard(data,
         # Verify the gene IDs
         if not all(x.startswith('ENS') for x in genes):
             raise ValueError(
-                ' Could not recognize Ensembl gene ID. Please make sure that the first column corresponds to gene IDs.')
+                'Could not recognize Ensembl gene ID. Please make sure that the first column corresponds to gene IDs.')
 
         # Verify the start and end
         try:
@@ -195,7 +195,7 @@ def process_standard(data,
         elm_affected, pdb_affected = get_interfaces(data, nease_data, min_delta, overlap_cal=True)
 
     if len(mapping_tb) == 0:
-        raise Exception("None of the exons map to annotated (Ensembl) exons. Did you select the right organism?")
+        raise ValueError("None of the exons map to annotated (Ensembl) exons. Did you select the right organism?")
 
     try:
         #try to get the delta PSI from the user input
@@ -216,10 +216,8 @@ def process_standard(data,
 
     mapping_tb = mapping_tb[['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Exon stable ID', 'Pfam ID', 'max_change']]
     #mapping_tb=mapping_tb.sort_values(['max_change'].abs(), ascending=False)
-    try:
-        mapping_tb = mapping_tb.reindex(mapping_tb['max_change'].abs().sort_values(ascending=False).index)
-    except:
-        pass
+    # Shitty try: except: pass only for following line
+    mapping_tb = mapping_tb.reindex(mapping_tb['max_change'].abs().sort_values(ascending=False).index)
     mapping_tb = mapping_tb[mapping_tb['NCBI gene ID'].notnull()]
     mapping_tb['NCBI gene ID'] = mapping_tb['NCBI gene ID'].astype('int').astype('str')
     #mapping_tb=mapping_tb.drop_duplicates(['Gene name','NCBI gene ID','Gene stable ID','Pfam ID'],keep= 'first')
@@ -255,7 +253,7 @@ def process_spycone(spycone,
     spliced_genes = list(mapping_tb['NCBI gene ID'].unique())
 
     if len(mapping_tb) == 0:
-        return []
+        raise ValueError("None of the exons map to annotated (Ensembl) exons. Did you select the right organism?")
 
     mapping_tb = mapping_tb[['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Exon stable ID', 'Pfam ID']]
 
@@ -371,7 +369,7 @@ def process_MAJIQ(data,
 
     # check mapped exons
     if len(data) == 0:
-        raise Exception('None of the MAJIQ junctions map to annotated exons (Ensembl Exons). '
+        raise ValueError('None of the MAJIQ junctions map to annotated exons (Ensembl Exons). '
                         'Please check your mapping.')
 
     else:
