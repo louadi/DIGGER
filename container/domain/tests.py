@@ -42,7 +42,10 @@ def test_nease_combinations(input, pred_ddi, p_value, delta, majiq_conf, only_dd
     if database != "MAJIQ" and majiq_conf != 0.95:
         return
     filepath = input[2]
-    table = pd.read_table(filepath)
+    if database == "Whippet":
+        table = no.read_extra_spaces(filepath)
+    else:
+        table = pd.read_table(filepath)
     try:
         events, info_tables, run_id = no.run_nease(table, org, {'db_type': database,
                                                                 'p_value': p_value,
