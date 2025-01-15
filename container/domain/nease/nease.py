@@ -712,6 +712,7 @@ class run(object):
         except:
             traceback.print_exc()
             enrich = pd.DataFrame()
+            affected_graph = nx.Graph()
 
         if len(enrich) == 0:
             raise ValueError('No enrichment or genes found for the selected pathway.')
