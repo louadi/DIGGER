@@ -122,7 +122,8 @@ def process_standard(data,
         raise ValueError(
             'Make sure your table have at least two columns:    Gene ensembl ID    EXON START    EXON END    dPSI ('
             'optional)')
-
+    elif len(data) == 0:
+        raise ValueError('No significant events found in the input data.')
     else:
         genes = list(data[columns[0]])
 
