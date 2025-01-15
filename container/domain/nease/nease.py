@@ -133,8 +133,9 @@ class run(object):
                                                                                                         self)
                     if len(self.data) == 0:
                         self.summary['error'] = 'Found no overlap with protein domains.'
+                except ValueError:
+                    raise
                 except Exception as e:
-                    print(e)
                     traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
@@ -147,8 +148,9 @@ class run(object):
                     if len(self.data) == 0:
                         self.summary['error'] = ('Found no overlap with protein domains. Make sure that the genomic '
                                                  'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
+                except ValueError:
+                    raise
                 except Exception as e:
-                    print(e)
                     traceback.print_exc()
                     raise ValueError('Could not recognize the standard format. Did you select the correct input '
                                      'format? <br> Please make sure your table matches '
@@ -175,8 +177,9 @@ class run(object):
                     data['end'] = data['tmp'].apply(lambda x: x.split('-')[1])
                     data = data[['Gene ID', 'start', 'end', 'dPSI']]
 
+                except ValueError:
+                    raise
                 except Exception as e:
-                    print(e)
                     traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
@@ -192,8 +195,9 @@ class run(object):
                     data['GeneID'] = data['GeneID'].apply(lambda x: x.split('.')[0])
 
 
+                except ValueError:
+                    raise
                 except Exception as e:
-                    print(e)
                     traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
@@ -206,8 +210,9 @@ class run(object):
                     data = input_data[input_data['padj'] <= p_value_cutoff]
                     data = data[[data.columns[1], 'genomicData.start', 'genomicData.end', 'log2fold_control_case']]
                     print('proceding with log2fold threshold: ' + str(min_delta))
+                except ValueError:
+                    raise
                 except Exception as e:
-                    print(e)
                     traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
@@ -222,8 +227,9 @@ class run(object):
                     # spycone only uses DDI for now
                     self.only_DDIs = True
 
+                except ValueError:
+                    raise
                 except Exception as e:
-                    print(e)
                     traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
@@ -736,7 +742,6 @@ class run(object):
                                                           self.entrez_name_map,
                                                           self.organism)
         except Exception as e:
-            print(e)
             traceback.print_exc()
             raise ValueError('Something went wrong while creating the network.')
 

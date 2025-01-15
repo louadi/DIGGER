@@ -22,6 +22,9 @@ to visually explore their interactions. The following modes of DIGGER can be use
 """
 DIGGER = f'{settings.BASE_URL}/ID/exon/'
 
+class NoSignifEventException(Exception):
+    pass
+
 
 # Adjust tables to be more usable when displayed in the web interface
 def webify_table(df, options=None):
@@ -269,41 +272,36 @@ def process_MAJIQ(data,
                   min_delta,
                   only_DDIs,
                   nease_data):
-    try:
+    
+    # extract exon skipping events:
+    if data['ES'].dtype == 'bool':
+        data = data[data['ES'] == True]
+    else:
+        data = data[data['ES'] == 'True']
 
-        # extract exon skipping events:
-        if data['ES'].dtype == 'bool':
-            data = data[data['ES'] == True]
-        else:
-            data = data[data['ES'] == 'True']
+    # helper functions:
+    print('Processing MAJIQ format...')
+    f = lambda x: [abs(float(y)) for y in x.split(';')]
+    l = lambda x: any(y >= min_delta for y in x)
 
-        # helper functions:
-        print('Processing MAJIQ format...')
-        f = lambda x: [abs(float(y)) for y in x.split(';')]
-        l = lambda x: any(y >= min_delta for y in x)
-
-        # get Delta PSI values for each junction
-        data["delta"] = data['E(dPSI) per LSV junction'].apply(f)
-        data["P(|dPSI|>=0.20)"] = data['P(|dPSI|>=0.20) per LSV junction'].apply(f)
-        data["delta_sif"] = data['delta'].apply(l)
-        data = data[data['delta_sif']]
-    except Exception as e:
-        print(e)
-        raise Exception(
-            "Could not recognize MAJIQ format.")
+    # get Delta PSI values for each junction
+    data["delta"] = data['E(dPSI) per LSV junction'].apply(f)
+    data["P(|dPSI|>=0.20)"] = data['P(|dPSI|>=0.20) per LSV junction'].apply(f)
+    data["delta_sif"] = data['delta'].apply(l)
+    data = data[data['delta_sif']]
 
     #filter for significant of diff. AS events
     # only keep diff used junction with confidence higher than 'Majiq_confidence' (for instance: 0.95)
 
     if data.empty:
-        raise Exception("No significant events with the chosen cutoff.")
+        raise ValueError("No significant events found in the input data.")
 
     l = lambda x: any(y >= Majiq_confidence for y in x)
     data["delta_sif"] = data['P(|dPSI|>=0.20)'].apply(l)
     data = data[data['delta_sif']]
 
     if data.empty:
-        raise Exception("No significant events with the chosen cutoff.")
+        raise ValueError("No significant events with the chosen confidence cutoff.")
 
     z = lambda x: x.split(':')[1]
     data['Gene ID'] = data['Gene ID'].apply(z)

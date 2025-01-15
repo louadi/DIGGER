@@ -4,7 +4,6 @@ import pandas as pd
 # https://stackoverflow.com/questions/60369047/pytest-using-parametized-fixture-vs-pytest-mark-parametrize
 
 from .Process import nease_output as no
-
 # Run with the command pytest, add -s if you want prints (might not work now, as we added pytest-xdist), add -n auto if you want to run in parallel
 
 location="./domain"
@@ -31,6 +30,7 @@ only_divisible_by_three_values = [True, False]
 @pytest.mark.parametrize("only_ddis", only_ddis_values)
 @pytest.mark.parametrize("remove_not_in_frame", remove_not_in_frame_values)
 @pytest.mark.parametrize("only_divisible_by_three", only_divisible_by_three_values)
+@pytest.mark.django_db
 def test_nease_combinations(input, pred_ddi, p_value, delta, majiq_conf, only_ddis, remove_not_in_frame,
                   only_divisible_by_three):
     #print(f"input: {input}, org: {org}, pred_ddi: {pred_ddi}, p_value: {p_value}, delta: {delta}, ",
@@ -43,13 +43,20 @@ def test_nease_combinations(input, pred_ddi, p_value, delta, majiq_conf, only_dd
         return
     filepath = input[2]
     table = pd.read_table(filepath)
-    events, info_tables, run_id = no.run_nease(table, org, {'db_type': database,
-                                                            'p_value': p_value,
-                                                            'rm_not_in_frame': remove_not_in_frame,
-                                                            'divisible_by_3': only_divisible_by_three,
-                                                            'min_delta': delta,
-                                                            'majiq_confidence': majiq_conf,
-                                                            'only_ddis': only_ddis,
-                                                            'confidences': pred_ddi},
-                                               "filename",
-                                               "custom_name")
+    try:
+        events, info_tables, run_id = no.run_nease(table, org, {'db_type': database,
+                                                                'p_value': p_value,
+                                                                'rm_not_in_frame': remove_not_in_frame,
+                                                                'divisible_by_3': only_divisible_by_three,
+                                                                'min_delta': delta,
+                                                                'majiq_confidence': majiq_conf,
+                                                                'only_ddis': only_ddis,
+                                                                'confidences': pred_ddi},
+                                                   "filename",
+                                                   "custom_name")
+    except ValueError as e:
+        msg = e.args[0]
+        if "No significant events" in msg:
+            return
+        else:
+            raise e
