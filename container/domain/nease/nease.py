@@ -235,7 +235,7 @@ class run(object):
 
             if len(self.data) == 0:  #
                 self.summary['error'] = 'Found no overlap with protein domains. Analysis cancelled...'
-                raise Exception("No overlap with protein domains. Did you select the right organism?")
+                raise ValueError("No overlap with protein domains. Did you select the right organism?")
 
             else:
                 self.data = self.data.drop_duplicates(['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Pfam ID'],

@@ -216,8 +216,11 @@ def process_standard(data,
 
     mapping_tb = mapping_tb[['Gene name', 'NCBI gene ID', 'Gene stable ID', 'Exon stable ID', 'Pfam ID', 'max_change']]
     #mapping_tb=mapping_tb.sort_values(['max_change'].abs(), ascending=False)
-    # Shitty try: except: pass only for following line
-    mapping_tb = mapping_tb.reindex(mapping_tb['max_change'].abs().sort_values(ascending=False).index)
+    # If there are strings in 'max_change' column, there is an error with the absolute value. Then it should just be skipped
+    try:
+        mapping_tb = mapping_tb.reindex(mapping_tb['max_change'].abs().sort_values(ascending=False).index)
+    except:
+        pass
     mapping_tb = mapping_tb[mapping_tb['NCBI gene ID'].notnull()]
     mapping_tb['NCBI gene ID'] = mapping_tb['NCBI gene ID'].astype('int').astype('str')
     #mapping_tb=mapping_tb.drop_duplicates(['Gene name','NCBI gene ID','Gene stable ID','Pfam ID'],keep= 'first')

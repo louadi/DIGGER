@@ -818,7 +818,7 @@ def setup_nease(request):
 
     try:
         if not isinstance(table, pd.DataFrame) or table.empty:
-            raise Exception("Could not parse the input file. Please make sure the file is in the correct format.")
+            raise ValueError("Could not parse the input file. Please make sure the file is in the correct format.")
 
         events, info_tables, run_id = no.run_nease(table, organism, {'db_type': database_type,
                                                                      'enrich_dbs': enrich_dbs,
