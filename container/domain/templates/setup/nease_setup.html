@@ -394,13 +394,11 @@
       return;
     }
 
-    console.log('File size:', fileSize);
-
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) {
       loadingOverlay.classList.remove('d-none');
 
-      const uploadSpeedEstimate = 3000000; // Bytes per second (example estimate)
+      const uploadSpeedEstimate = 3000000; // Bytes per second (3MB/s estimate)
 
       let timeoutTime;
         if (fileSize > 0) {
