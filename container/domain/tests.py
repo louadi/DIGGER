@@ -11,7 +11,7 @@ location="./domain"
 input_files = [("Standard", "human", location+"/test_files/Standard.tsv"),
                ("MAJIQ", "human", location+"/test_files/MAJIQ.tsv"),
                ("Whippet", "mouse", location+"/test_files/Whippet.diff"),
-               ("rMATS", "mouse", location+"/test_files/rMATS.txt")]
+               ("rmats", "mouse", location+"/test_files/rMATS.txt")]
 
 predicted_ddis = [[], ["high"], ["mid"], ["low"], ["high", "mid"], ["mid", "low"],  ["high", "low"], ["high", "mid", "low"]]
 p_values = [1, 0.05, 0]

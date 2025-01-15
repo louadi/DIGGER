@@ -124,14 +124,19 @@ class run(object):
             if input_type == 'MAJIQ':
                 print("Using MAJIQ output")
                 # Processing Majiq output
-                self.data, self.spliced_genes, self.elm_affected, self.pdb_affected = process_MAJIQ(input_data,
-                                                                                                    self.mapping,
-                                                                                                    Majiq_confidence,
-                                                                                                    min_delta,
-                                                                                                    self.only_DDIs,
-                                                                                                    self)
-                if len(self.data) == 0:
-                    self.summary['error'] = 'Found no overlap with protein domains.'
+                try:
+                    self.data, self.spliced_genes, self.elm_affected, self.pdb_affected = process_MAJIQ(input_data,
+                                                                                                        self.mapping,
+                                                                                                        Majiq_confidence,
+                                                                                                        min_delta,
+                                                                                                        self.only_DDIs,
+                                                                                                        self)
+                    if len(self.data) == 0:
+                        self.summary['error'] = 'Found no overlap with protein domains.'
+                except Exception as e:
+                    print(e)
+                    traceback.print_exc()
+                    raise ValueError('Invalid file format.')
 
             elif input_type == 'Standard':
                 print("using Standard output")
@@ -143,6 +148,8 @@ class run(object):
                         self.summary['error'] = ('Found no overlap with protein domains. Make sure that the genomic '
                                                  'coordinates of the exons correspond to the human genome build hg38 (GRCh38).')
                 except Exception as e:
+                    print(e)
+                    traceback.print_exc()
                     raise ValueError('Could not recognize the standard format. Did you select the correct input '
                                      'format? <br> Please make sure your table matches '
                                      'the standard format with these columns: <code>Gene ensembl ID</code>, '
@@ -168,7 +175,9 @@ class run(object):
                     data['end'] = data['tmp'].apply(lambda x: x.split('-')[1])
                     data = data[['Gene ID', 'start', 'end', 'dPSI']]
 
-                except:
+                except Exception as e:
+                    print(e)
+                    traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
@@ -182,7 +191,10 @@ class run(object):
                     data = data[['GeneID', 'exonStart_0base', 'exonEnd', 'IncLevelDifference']]
                     data['GeneID'] = data['GeneID'].apply(lambda x: x.split('.')[0])
 
-                except:
+
+                except Exception as e:
+                    print(e)
+                    traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
@@ -194,7 +206,9 @@ class run(object):
                     data = input_data[input_data['padj'] <= p_value_cutoff]
                     data = data[[data.columns[1], 'genomicData.start', 'genomicData.end', 'log2fold_control_case']]
                     print('proceding with log2fold threshold: ' + str(min_delta))
-                except:
+                except Exception as e:
+                    print(e)
+                    traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
                 self.data, self.spliced_genes, self.elm_affected, self.pdb_affected, self.symetric_genes = process_standard(
@@ -208,7 +222,9 @@ class run(object):
                     # spycone only uses DDI for now
                     self.only_DDIs = True
 
-                except:
+                except Exception as e:
+                    print(e)
+                    traceback.print_exc()
                     raise ValueError('Invalid file format.')
 
             if len(self.data) == 0:  #
