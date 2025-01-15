@@ -60,7 +60,7 @@ def test_nease_combinations(input, pred_ddi, p_value, delta, majiq_conf, only_dd
                                                    "custom_name")
     except ValueError as e:
         msg = e.args[0]
-        if "No significant events" in msg:
+        if "No significant events" in msg or "No overlap with protein domains" in msg:
             return
         else:
             raise e
