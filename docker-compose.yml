@@ -52,8 +52,16 @@ services:
 networks:
   digger_database_network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.111.0/24
   digger_nginx_network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.110.0/24
 
 volumes:
   postgres_data:
