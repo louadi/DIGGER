@@ -396,9 +396,10 @@ def extract_subnetwork(path_genes,
 
     # Extract the pathway module for the complete PPI
     # We would like to visualize the pathway with affected edges:
-
     G = ppi.subgraph(path_genes + affected_genes)
     G = nx.Graph(G)
+    # add connections from affected_graph
+    G.add_edges_from(affected_graph.edges())
     G.remove_nodes_from(list(nx.isolates(G)))
 
     # Position nodes using Fruchterman-Reingold force-directed algorithm.
