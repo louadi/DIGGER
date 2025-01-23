@@ -24,7 +24,7 @@ services:
       - .env
     networks:
       - digger_database_network
-    # This is to make the database accessible from the host machine
+    # This is to make the database accessible from the host machine. The database runs on port 5432, but as to not have multiple databases accessible under 5432, we map it to the unique port 5461.
     # PortOnHost:PortInsideContainer
     # Access with command: psql -h localhost -U postgres -p 5461
     ports:
