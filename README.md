@@ -47,8 +47,8 @@ docker-compose exec web python manage.py import_datasets
 docker-compose exec web python manage.py collectstatic --no-input
 
 # Create the superuser for the admin page
-# This can be found under https://WEBSITE/admin and is used to manage the django models
-sudo docker compose exec web python manage.py createsuperuser
+# This can be found under https://WEBSITE/secure-admin and is used to manage the django models
+docker-compose exec web python manage.py createsuperuser
 
 # Enjoy your instance of DIGGER
 
