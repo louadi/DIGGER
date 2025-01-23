@@ -24,8 +24,11 @@ services:
       - .env
     networks:
       - digger_database_network
+    # This is to make the database accessible from the host machine
+    # PortOnHost:PortInsideContainer
+    # Access with command: psql -h localhost -U postgres -p 5461
     ports:
-      - 5432:5432
+      - 5461:5432                                             # Change this part
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
@@ -38,7 +41,7 @@ services:
     # Change the 'published' port number to the port you desire
     ports:
       - target: 80
-        published: 8082 #${NGINX_PUBLISHED_PORT}             # Change this port
+        published: 8061 #${NGINX_PUBLISHED_PORT}             # Change this port
         protocol: tcp
         mode: host
     environment:
