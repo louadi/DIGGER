@@ -1,0 +1,1360 @@
+<!-- This is only used for the example walk through so the user knows how to read NEASE output -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}NEASE result{% endblock %}
+
+{% block header %}
+  <script>
+    if (window.location.hostname.startsWith('www.')) {
+        console.log("Detected www. subdomain, redirecting...")
+        window.location.hostname = window.location.hostname.replace('www.', '');
+    }
+  </script>
+<link rel="stylesheet" href="{% static 'css/wider-container.css' %}">
+<link rel="stylesheet" href="{% static 'css/tooltips.css' %}">
+
+<style>
+    .sticky-offset {
+        top: 56px
+    }
+
+    .list-group > .list-group > .list-group-item {
+        padding-left: 2.5rem;
+    }
+
+    .tab-content > .tab-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+
+    #protein-network {
+        position: relative;
+        height: 840px;
+        border: 2px solid lightgray;
+    }
+
+    #domain-network {
+        position: relative;
+        height: 840px;
+        border: 2px solid lightgray;
+    }
+
+    #interaction-network {
+        position: relative;
+        height: 600px;
+        border: 2px solid lightgray;
+    }
+
+    img {
+        max-width: 100%;
+        max-height: 100%;
+        display: block; /* remove extra space below image */
+    }
+
+    .tab {
+        margin-left: 90px;
+    }
+
+    .tab {
+        margin-left: 50px;
+    }
+
+    img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    img.resize {
+        max-width: 80%;
+        max-height: 80%;
+    }
+
+    img.resize2 {
+        max-width: 55%;
+        max-height: 55%;
+    }
+
+    .inline-icon {
+        display: inline-block;
+        vertical-align: middle;
+        height: 1.4em;
+        width: auto;
+    }
+
+    .scrollable-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .short-table {
+        display: table;
+    }
+
+    .feather {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .download-btn {
+      width: 22px;
+      height: 22px;
+    }
+
+    .table-head {
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+
+    .spaced-lines {
+    line-height: 1.5;
+    margin-bottom: 0;
+    }
+
+    .expandable {
+    }
+
+    .expandable:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .highlight-block {
+        box-shadow: 0 0 10px hsl(190, 70%, 60%) !important;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .info-banner {
+        background-color: white;
+        padding: 10px;
+        max-width: 500px;
+        outline: 1px solid black;
+        width: 90%;
+    }
+
+
+    @media screen and (max-width: 1399px) {
+        .short-table {
+            display: block;
+        }
+    }
+
+    @media (max-width: 1400px) {
+      .col-xxl-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      .col-xxl-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+
+
+  </style>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="{% static 'domain/createNetwork.js' %}" type="text/javascript"></script>
+  <script src="{% static 'domain/initStore.js' %}" type="text/javascript"></script>
+  <script src="{% static 'domain/pathwayTooltips.js' %}" type="text/javascript"></script>
+
+{% endblock %}
+
+{% block raw_content %}
+<div class="wider-container my-3">
+  <div class="row">
+    <!-- Vertical pill selection menu-->
+    <div class="col-lg-2 mb-2 rounded rounded d-flex flex-column">
+      <div class="sticky-top sticky-offset align-items-center">
+        <div style="background: white" class="shadow rounded p-2" id="tabNav">
+          <div class="nav flex-column nav-pills sticky-top sticky-offset" id="v-pills-tab" role="tablist"
+               aria-orientation="vertical">
+            <a class="nav-link h4 my-1 active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-overview"
+               role="tab" aria-controls="v-pills-overview" aria-selected="true">Overview</a>
+
+            <hr class="border-bottom" style="width: 100%;">
+
+            <a class="nav-link" id="v-pills-nease-enr-tab" data-toggle="pill" href="#v-pills-nease_enr"
+               role="tab"
+               aria-controls="v-pills-compare" aria-selected="false">NEASE edge enrichment</a>
+
+            <a class="nav-link" id="v-pills-pathway-tab" data-toggle="pill" href="#v-pills-pathway" role="tab"
+               aria-controls="v-pills-protein" aria-selected="false">Pathway analysis</a>
+
+            <a class="nav-link" id="v-pills-vis-path-tab" data-toggle="pill" href="#v-pills-vis-path"
+               role="tab"
+               aria-controls="v-pills-compare" aria-selected="false">Visualise Pathways</a>
+
+          </div>
+        </div>
+        <div class="my-4" style="width: 50%; margin: 0 auto">
+          <a id="backToMenu" class="btn btn-primary shadow p-2" href="nease_analysis">Back to search</a>
+        </div>
+      </div>
+    </div>
+    <!-- /Vertical pill selection menu -->
+
+    <!-- Page content -->
+    <div class="col-lg-10">
+
+      <!-- Jumbotron overview-->
+      <div class="jumbotron p-xl-4" id="jumbo">
+        <h1 class="display-4">NEASE summary (Example, with explanations)</h1>
+        <hr>
+        <div class="row">
+          <div class="col-12 col-xxl-6">
+            {% if custom_name %}
+            <div class="d-flex justify-content-between">
+              <h5 style="font-weight: bold;">Analysis name:</h5>
+              <h5>{{ custom_name|safe }}</h5>
+            </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between">
+              <h5 style="font-weight: bold;">Input file:</h5>
+              <h5>{{ input_name|safe }}</h5>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <h5 style="font-weight: bold;">Affected protein domains:</h5>
+              <h5>{{ domain_affected|safe }}</h5>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <h5 style="font-weight: bold;">Affected linear motifs:</h5>
+              <h5>{{ lin_motifs|safe }}</h5>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <h5 style="font-weight: bold;">Affected interacting (with residue evidence):</h5>
+              <h5>{{ residues|safe }}</h5>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <h5 style="font-weight: bold;">Affected Domains/Motifs with known interactions:</h5>
+              <h5>{{ known_interactions|safe }}</h5>
+            </div>
+
+
+            <div class="d-flex justify-content-between">
+              <h5 style="font-weight: bold;">Affected protein interactions/bindings:</h5>
+              <h5>{{ interaction_affected|safe }}</h5>
+            </div>
+
+          </div>
+          <div class="col-12 col-xxl-6 text-right mt-3 mt-lg-0">
+
+            {% if current_duration != -1 %}
+            <div class="d-flex justify-content-between">
+              <h5 class="lead" style="flex-direction: row;display: flex;">
+
+                <label id="storage_message" for="time_duration" style="font-weight:bold; display: inline-block; flex-shrink:0">Analysis
+                availability (7 days left):</label>
+              </h5>
+              <h5 class="lead" style="flex-direction: row;display: flex;">
+                <select class="form-control" style="margin-left: .375rem;width: auto;" onchange="duration_change()"
+                        name="time_duration" id="time_duration">
+                  <option value="0">Do not save</option>
+                  <option value="7">One week</option>
+                  <option value="31">One month</option>
+                  <option value="186">Six months</option>
+                </select>
+              </h5>
+            </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between">
+            <h5 class="lead"><span style="font-weight:bold; display: inline-block">Link for sharing:</span>
+              <small hidden style="display:none;" id="link_text">{{ shareable_link|safe }}</small>
+            </h5>
+              <h5 class="lead">
+              <button type="button" class="btn btn-secondary" id="copyButton" data-toggle="tooltip"
+                      data-placement="top" title="Copy me!" onclick="copyDivToClipboard()">
+                <i data-feather="clipboard" class="mr-1 download-btn"></i>Copy link
+              </button>
+
+            </h5>
+            </div>
+
+            <div class="d-flex justify-content-between">
+            <h5 class="lead"><span style="font-weight:bold; display: inline-block">Input Parameters:</span>
+            </h5>
+              <h5 class="lead">
+              <button type="button" class="btn btn-secondary popupbtn" id="showInfoButton" data-toggle="modal"
+                      data-target="#runOptionsModal">
+                <i data-feather="info" class="mr-1"></i>Show Information
+              </button>
+
+            </h5>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="runOptionsModal" tabindex="-1" aria-labelledby="runOptionsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="runOptionsModalLabel">Selected input parameters</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-6">
+                  <h5 class="spaced-lines">
+                  <b>Organism</b><br>
+                  <b>Input format</b><br>
+                  </h5>
+                </div>
+                <div class="col-6">
+                  <h5 class="spaced-lines">
+                  {{ organism|safe }} <br>
+                  {{ input_format|safe }} <br>
+                    </h5>
+                </div>
+              </div>
+
+              {% if input_format|safe == "rmats" %}
+              <div class="row">
+                <div style="padding-left: 15px;">
+                  <i>Used the right file? There is a slight difference</i> <br>
+                  <i>between the .JC.txt and the .JCEC.txt file!</i>
+                </div>
+              </div>
+              {% endif %}
+
+              <div class="row">
+                <div class="col-6">
+                  <h5 class="spaced-lines">
+                  <b>Predicted DDIs</b><br>
+                  <b>P-value cutoff</b><br>
+                  <b>Min delta</b><br>
+                  <b>MAJIQ confidence</b><br>
+                  <b>Only using DDIs</b><br>
+                  <b>Remove not-in-frame</b><br>
+                  <b>Only divisible by 3</b><br>
+                  </h5>
+                </div>
+                <div class="col-6">
+                  <h5 class="spaced-lines">
+                  {{ predicted_ddis|safe }} <br>
+                  {{ p_value_cutoff|safe }} <br>
+                  {{ min_delta|safe }} <br>
+                  {{ majiq_confidence|safe }} <br>
+                  {{ only_ddis|safe }} <br>
+                  {{ remove_not_in_frame|safe }} <br>
+                  {{ only_divisible_by_3|safe }} <br>
+                    </h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <script>
+          // Set the time duration to the value saved in the 'current_duration' variable
+          if (document.getElementById("time_duration")){
+              document.getElementById("time_duration").value = "{{ current_duration|safe }}";
+          }
+          // Set the storage_message to the value saved in the 'time_left' variable
+          if (document.getElementById("storage_message")){
+            document.getElementById("storage_message").textContent = `Analysis availability ({{ time_left|safe }} days left):`;
+          }
+
+
+          function copyDivToClipboard() {
+              // Get the text field
+              const copyText = document.getElementById("link_text").textContent;
+
+              var copyButton = $('#copyButton')
+
+              try {
+                  //have a fallback in case the clipboard API is not supported
+                  if (!navigator.clipboard) {
+                      var textArea = document.createElement("textarea");
+                      textArea.value = copyText;
+
+                      // Avoid scrolling to bottom
+                      textArea.style.top = "0";
+                      textArea.style.left = "0";
+                      textArea.style.position = "fixed";
+
+                      document.body.appendChild(textArea);
+                      textArea.focus();
+                      textArea.select();
+
+                      try {
+                          var successful = document.execCommand('copy');
+                          var msg = successful ? 'successful' : 'unsuccessful';
+                          console.log('Fallback: Copying text command was ' + msg);
+                      } catch (err) {
+                          console.error('Fallback: Oops, unable to copy', err);
+                      }
+                      document.body.removeChild(textArea);
+
+                  } else {
+                      // Copy the text inside the text field
+                      navigator.clipboard.writeText(copyText);
+                  }
+
+                  // Show the user that it was successful
+                  copyButton.attr('title', 'Copied!')
+                      .tooltip('dispose')
+                      .tooltip('show');
+              } catch (err) {
+                  console.error(`An error occurred: ${err.message}`);
+
+                  copyButton.attr('title', 'An error occurred')
+                      .tooltip('dispose')
+                      .tooltip('show');
+              }
+
+              // Hide the tooltip after 2 seconds
+              setTimeout(function () {
+                  copyButton.tooltip('hide')
+                      .attr('title', 'Copy me!')
+                      .tooltip('dispose')
+                      .tooltip();
+              }, 2000);
+          }
+
+          function duration_change() {
+              const duration = document.getElementById("time_duration").value;
+              const id = "{{ run_id|safe }}";
+              //
+              try {
+                  $.get(`nease_analysis/extra_functions?` + $.param({
+                      runId: id,
+                      duration: duration,
+                      func: "save"
+                  }), function (data) {
+                      const parsed_data = JSON.parse(data);
+                      console.log(parsed_data.logmessage);
+                      document.getElementById("storage_message").textContent = `Analysis availability (${parsed_data.days_left} days left):`;
+                      var item = JSON.parse(localStorage.getItem("nease/" + id));
+                      item.expiresAt = Date.now() + (parsed_data.days_left * 24 * 60 * 60 * 1000);
+                      localStorage.setItem("nease/" + id, JSON.stringify(item));
+
+                  }).fail(function () {
+                      alert("An error occurred while processing your request.");
+                  });
+              } catch (err) {
+                  console.error(`An error occurred: ${err.message}`);
+              }
+          }
+
+      </script>
+
+      <!-- Tab content -->
+      <div class="tab-content" id="v-pills-tabContent">
+        <div id="visFail" class="alert alert-danger" hidden="">
+          There was an error. Please try another pathway and contact us
+          if the problem persists.
+        </div>
+        <!-- Overview content -->
+        <div class="tab-pane fade show active card shadow rounded" id="v-pills-overview" role="tabpanel"
+             aria-labelledby="v-pills-overview-tab">
+          <div class="card-body">
+            <p class="lead text-center table-head"><span>NEASE enrichment result</span></p>
+            <div class="d-flex justify-content-center align-items-center position-relative" id="summaryImg">
+              <a href="{% get_media_prefix %}images/{{ stats_full|safe }}" download="NEASE_stats"
+                 class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
+                 style="top: 10px; right: 10px;" data-toggle="tooltip" data-placement="top"
+                 title="Download high-resolution image."
+                 id="download">
+                <i data-feather="download" class="download-btn"></i>
+              </a>
+              <img src="{% get_media_prefix %}images/{{ stats }}" class="resize">
+            </div>
+
+            <div class="mt-5">
+              {% if error %}
+              <h5 class="text-danger text-center">{{ error }}</h5>
+              {% endif %}
+            </div>
+
+            <hr>
+
+            <!-- tables resulting from enrichment -->
+            <div class="my-5" id="tables">
+              <div class="row my-2">
+                <div class="col d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 mx-auto table-head">Affected protein domains</h5>
+                    <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_domains.csv"
+                         class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
+                  </div>
+                </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  {{ domains|safe }}
+                </div>
+              </div>
+            </div>
+
+            <div class="my-5">
+              <div class="row my-2">
+                <div class="col d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 mx-auto table-head">Affected interactions (domain binding)</h5>
+                  <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_edges.csv"
+                     class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  {{ edges|safe }}
+                </div>
+              </div>
+            </div>
+
+            <div class="my-5">
+              <div class="row my-2">
+                <div class="col d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 mx-auto table-head">Affected linear motifs</h5>
+                  <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_elm.csv"
+                      class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  {{ elm|safe }}
+                </div>
+              </div>
+            </div>
+
+            <div class="my-5">
+              <div class="row my-2">
+                <div class="col d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 mx-auto table-head">Affected interacting genes with residue-level evidence</h5>
+                  <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_pdb.csv"
+                      class="btn btn-secondary px-4 py-2 btn-sm" data-toggle="tooltip" data-placement="top"
+                      title="Download a .csv file of this table."><i data-feather="download" class="download-btn"></i></a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  {{ pdb|safe }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nease enrichment content -->
+        <div class="tab-pane fade show card shadow rounded" id="v-pills-nease_enr" role="tabpanel"
+             aria-labelledby="v-pills-classic_enr-tab">
+          <div class="card-body">
+            <p class="lead text-center"><span style="font-weight:bold">Edge enrichment</span></p>
+
+
+            <div class="row justify-content-center" id="edgeEnrich">
+              <div class="col-md-3"></div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label id="neaseEnrichLabel" data-toggle="tooltip" data-placement="top"
+                         title="Select supported databases from the list to get the edge enrichment for those
+                     databases. Note: the more databases you choose, the longer it will take to retrieve the
+                     enrichment result."
+                         for="neaseDatabasesToEnrich">Databases to enrich
+                    <i data-feather="info"></i>
+                  </label>
+                  <input type="text" class="form-control" id="neaseDatabasesToEnrich"
+                         placeholder="Reactome, KEGG, ...">
+                  <p id="neaseNotSupported" class="text-danger my-1" hidden=""></p>
+                </div>
+                <div class="text-center row no-gutters align-items-center justify-content-center">
+                  <button class="btn btn-primary" id="run_nease_enrichment">Run enrichment</button>
+                  <div class="spinner-border ml-1" role="status" style="display: none">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <h5 class="text-center">Supported databases</h5>
+                <!-- make a list containing the supported databases -->
+                <div id="supportedDatabases" class="list-group scrollable-list">
+                </div>
+              </div>
+            </div>
+
+            <h6 class="my-4">
+              <hr id="neaseEdgeHr1" style="display: none;">
+              <div class="d-flex justify-content-center align-items-center position-relative">
+                <a id="neaseEdgeBtn" download="" href=""
+                   class="btn btn-secondary px-4 py-2 btn-sm position-absolute"
+                   style="top: 10px; right: 10px; display: none" data-toggle="tooltip" data-placement="top"
+                   title="Download high-resolution image.">
+                  <i data-feather="download" class="download-btn"></i>
+                </a>
+                <img id="neaseEdgeImage" src="" class="resize">
+              </div>
+              <hr id="neaseEdgeHr2" style="display: none">
+              <div id="nease_enrichment_result"></div>
+              <div id="nease_enrich_download_button" class="row" style="display: none;">
+                <div class="col-sm-12 text-center">
+                  <a href="{% get_media_prefix %}nease_tables/{{ run_id }}_neenr.csv"
+                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download" class="mr-1 download-btn"></i> Download enrichment result</a>
+                </div>
+              </div>
+              <div id="vis_pathway_net_div" class="embed-responsive embed-responsive-16by9" style="display: none">
+              <iframe id="vis_pathway_net" class="embed-responsive-item"></iframe>
+            </div>
+            </h6>
+          </div>
+
+        </div>
+
+        <!-- Pathway content -->
+        <div class="tab-pane fade show card shadow rounded" id="v-pills-pathway" role="tabpanel"
+             aria-labelledby="v-pills-pathway-tab">
+
+          <div class="card-body">
+            <p class="lead text-center"><span
+                style="font-weight:bold">Pathway analysis</span></p>
+
+            <div class="row justify-content-center" id="pathwaySetup">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label data-toggle="tooltip" data-placement="top"
+                         title="Get pathway IDs from NEASE edge enrichment" for="pathwayAnal">Pathway to analyse
+                    <i data-feather="info"></i>
+                  </label>
+                  <input type="text" class="form-control" id="pathwayAnal" placeholder="Enter pathway">
+                </div>
+                <div class="text-center row no-gutters align-items-center justify-content-center">
+                  <button class="btn btn-primary" id="anal_pathway">Get pathway information</button>
+                  <div class="spinner-border ml-1" role="status" style="display: none">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- result of the pathway analysis -->
+            <h6 class="my-4">
+              <div id="pathway_result"></div>
+              <div id="pathway_download_button" class="row" style="display: none;">
+                <div class="col-sm-12 text-center">
+                  <button id="pathwayDownloadLink" href=""
+                     class="btn btn-secondary px-4 py-2 btn-sm"><i data-feather="download" class="download-btn mr-1"></i> Download pathway information</button>
+                </div>
+              </div>
+            </h6>
+          </div>
+        </div>
+
+        <!-- Visualise pathways content -->
+        <div id="visWarn" class="alert alert-warning" hidden="">
+          This will take a while to load. Please be patient.
+        </div>
+
+        <div class="tab-pane fade show card shadow rounded" id="v-pills-vis-path" role="tabpanel"
+             aria-labelledby="v-pills-exons-tab">
+
+          <div class="card-body">
+            <p class="lead text-center"><span
+                style="font-weight:bold">Visualise pathways</span></p>
+
+
+            <div class="row justify-content-center">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-md-10">
+                      <label for="pathwayVis" data-toggle="tooltip" data-placement="top"
+                             title="Get pathway IDs from NEASE edge enrichment">Pathway to visualize
+                        <i data-feather="info"></i>
+                      </label>
+                      <input type="text" class="form-control" id="pathwayVis" placeholder="Enter pathway">
+                    </div>
+
+                    <div class="col-md-2">
+                      <label for="k" data-toggle="tooltip" data-placement="top"
+                             title="Position nodes using Fruchterman-Reingold force-directed algorithm, higher
+                                 k moves nodes further apart">k <i data-feather="info"></i></label>
+                      <input type="number" class="form-control" id="k" value="0.8" step="0.1">
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center row no-gutters align-items-center justify-content-center">
+                  <button class="btn btn-primary" id="vis_pathway">Visualize pathway</button>
+                  <div id="spinner-vis" class="spinner-border ml-1" role="status" style="display: none">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- result of the pathway visualisation -->
+            <div id="vis_result_info" style="display: none">
+              <h5>
+                The large nodes have p-value ≤ 0.05 (affecting the pathway).<br>
+                🔴 Spliced gene and known to be part of the pathway.<br>
+                🟠 Spliced gene but not known to be in the pathway.
+              </h5>
+            </div>
+            <div id="vis_result_div" class="embed-responsive embed-responsive-16by9" style="display: none">
+              <iframe id="vis_result" class="embed-responsive-item"></iframe>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Page content -->
+  </div>
+</div>
+<script>
+    // create the svg icons
+    feather.replace();
+
+    let showHelp = true;
+
+
+     const interpretations = [
+        {element: 'jumbo', title: 'Summary info', text: "This field contains a summary of the analysis.<br>On the " +
+                "left, you can see the number of affected interactors. Here, we found 24 affected protein domains " +
+                "and a total of >300 affected protein interactions (giving us lots of data to work with!). <br>On " +
+                "the right, you can set how long the analysis results are kept, and copy the link to share them. " +
+                "You can also check the input parameters. ", pos: 'bottom-left', action: null},
+
+        {element: 'summaryImg', title: 'Affected plot', text: "This image shows the distribution of affected " +
+                "protein features and their type (domains, linear motifs, or interacting residues). <br> We can " +
+                "see that 78% of AS genes do not affect any protein features. Of the 22% that do, 74% has affected " +
+                "domains.", pos: 'bottom-left', action: null,},
+
+        {element: 'download', title: 'Data downloads', text: "You will always find a download " +
+                "button for high-quality images or formatted .csv tables.", pos: 'top-left-align-right', action: null},
+
+        {element: 'tables', title: 'Info tables', text: "These are the individual tables for the affected protein " +
+                "features. Apart from the domains table, they show each gene with its interactor plus additional " +
+                "relevant info. This is useful for quickly referencing which perturbations may occur. Feel free to " +
+                "click on a visualization link and explore domains. <br> We added some predicted DDIs for this " +
+                "analysis, which should be considered when evaluating the database visualizations.",
+            pos: 'bottom-left', action: null},
+
+        {element: 'tabNav', title: 'Navigation', text: "With this menu, you can navigate through the different " +
+                "sections of the analysis. <br>Next, we will look at the edge enrichment.",
+            pos: 'top-right', action: 'tab:v-pills-nease-enr-tab'},
+
+        {element: 'edgeEnrich', title: 'Edge enrichment', text: "Here, you can select the databases for the " +
+                "enrichment analysis. We recommend either Reactome or KEGG, as they provide a pathway overview " +
+                "that lets you quickly grasp the impact of alternative splicing. <br>In the next step, we will " +
+                "select Reactome and run the enrichment analysis.", pos: 'top-left', action: 'run:Reactome'},
+
+        {element: 'nease_enrichment_result', title: 'Reactome enrichment', text: "This is the table resulting from " +
+                "the edge enrichment for Reactome. Above is a plot showing the most significantly enriched terms. " +
+                "In the table, you can see the pathways, test statistics, and which spliced genes contributed and " +
+                "how much.<br>Below, you can see a network of significantly enriched pathways grouped into three " +
+                "rough clusters: Neuronal System, Muscle contraction, and Signaling. The width of each edge " +
+                "corresponds to the number of genes shared between pathways. <br>At the center of the Neuronal " +
+                "System cluster, we see Neurotransmitter receptors; let's look at that more in-depth!",
+            pos: 'bottom-left', action: 'tab:v-pills-pathway-tab'},
+
+        {element: 'pathwaySetup', title: 'Pathway analysis', text: "Here, we can enter the ID of the pathway we are " +
+                "interested in. We will now look at Neurotransmitter receptors and postsynaptic signal transmission " +
+                "(R-HSA-112314).<br> Note that you can autofill this field from the edge enrichment results without " +
+                "typing in the pathway ID manually.", pos: 'top-left', action: 'analyse:R-HSA-112314'},
+
+        {element: 'pathway_result', title: 'Pathway analysis result', text: "This table shows the spliced genes " +
+                "related to the pathway, binding edges affected by the splicing event, and their respective " +
+                "p-values. While this is great for investigating single genes in an in-depth analysis, we can't " +
+                "really see what is happening in the bigger perspective.<br>Let's make this more visual!",
+            pos: 'top-left', action: ['tab:v-pills-vis-path-tab', 'vis:R-HSA-112314']},
+
+        {element: 'vis_result_div', title: 'Visualized pathway', text: "In this plot, we can immediately see the " +
+                "most important genes and the significantly affected interactions. Mainly, we have BRAF, GRIP1, and " +
+                "GRIA1, with GRIA1 containing the most affected interactions in this pathway, making it an " +
+                "interesting gene candidate to look at more closely back in the overview! Take a look and check the " +
+                "references of the interacting genes by following the links.<br>This is the end of the example. Feel " +
+                "free to explore other pathways or test NEASE using your own data!",
+            pos: 'top-top-right', action: null},
+    ]
+
+    let currentInterpretation = 0;
+
+    function getCard(title, text, final=false) {
+        return `
+        <div id="info-banner" class="info-banner shadow rounded">
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <h5 style="margin: 5px"><b>${title}</b></h5>
+                <p style="margin: 5px; font-size: 1rem; color: black">
+                  ${text}
+                </p>
+                <div style="margin-top: 10px; text-align: right; width: 100%;">
+                    <button id="stop-info" class="btn">
+                        Stop showing this
+                    </button>
+                    <button id="prev-info" class="btn btn-outline-primary">
+                        Previous
+                      </button>
+                    <button id="next-info" class="btn btn-primary">
+                        ${final ? 'Finish!' : 'Next'}
+                    </button>
+                </div>
+            </div>
+        </div>`
+    }
+
+    function executeAction(action) {
+        const [type, value] = action.split(':');
+        if (type === 'tab') {
+            document.getElementById(value).click();
+            return {value: value, wait: false};
+        } else if (type === 'run') {
+            document.getElementById('neaseDatabasesToEnrich').value = value;
+            document.getElementById('run_nease_enrichment').disabled = false;
+            document.getElementById('run_nease_enrichment').click();
+            return {value: null, wait: true};
+        } else if (type === 'analyse') {
+            document.getElementById('pathwayAnal').value = value;
+            document.getElementById('anal_pathway').disabled = false;
+            document.getElementById('anal_pathway').click();
+            return {value: null, wait: true};
+        } else if (type === 'vis') {
+            document.getElementById('pathwayVis').value = value;
+            document.getElementById('vis_pathway').disabled = false;
+            document.getElementById('vis_pathway').click();
+            return {value: null, wait: true};
+        }
+    }
+
+    function processAction(action) {
+        // execute action if specified
+        if (action) {
+            // action can be a single string or an array of strings
+            if (Array.isArray(action)) {
+                for (let a of action) {
+                    const {value, wait} = executeAction(a);
+                    if (wait) {
+                        return {value: value, wait: true};
+                    }
+                }
+                return {value: null, wait: false};
+            }
+
+            return executeAction(action);
+        }
+        return {value: null, wait: false};
+    }
+
+    function calculatePosition(banner, targetElement, pos) {
+        const rect = targetElement.getBoundingClientRect();
+        const offsetX = window.scrollX;
+        const offsetY = window.scrollY;
+
+        banner.style.position = 'absolute';
+        if (pos === 'bottom-left') {
+            banner.style.left = `${rect.left + offsetX}px`;
+            banner.style.top = `${rect.bottom + offsetY + 10}px`;
+        } else if (pos === 'top-right') {
+            // place the element at the top next to the element on the right
+            banner.style.position = 'fixed';
+            banner.style.left = `${rect.right + 10}px`;
+            banner.style.top = `${rect.top}px`;
+        } else if (pos === 'top-left') {
+            banner.style.left = `${rect.left + offsetX }px`;
+            banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
+        } else if (pos === 'top-top-right') {
+            banner.style.left = `${rect.right + offsetX - banner.offsetWidth}px`;
+            banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
+        } else if (pos === 'top-left-align-right') {
+            banner.style.left = `${rect.right + offsetX - banner.offsetWidth}px`;
+            banner.style.top = `${rect.top + offsetY - banner.offsetHeight - 10}px`;
+        }
+        banner.style.zIndex = '1029';
+    }
+
+    function positionInfoBanner(targetElementId, bannerId, pos = 'bottom-left', tabName=null, show=true, scroll=false) {
+        const targetElement = document.getElementById(targetElementId);
+        const banner = document.getElementById(bannerId);
+        banner.style.display = show ? 'block' : 'none';
+
+        if (!targetElement || !banner) return;
+
+        if (tabName) {
+            const tabLink = document.getElementById(tabName);
+            $(tabLink).on('shown.bs.tab', () => {
+                calculatePosition(banner, targetElement, pos);
+            });
+        } else {
+            calculatePosition(banner, targetElement, pos);
+        }
+
+        if (scroll) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function showInterpretation(tabName=null, wait=false) {
+        if (currentInterpretation >= interpretations.length || !showHelp) {
+            // Exit if all interpretations are shown or help is disabled
+            console.log(currentInterpretation, interpretations.length, showHelp);
+            console.log('All interpretations shown or help disabled');
+            showHelp = false;
+            switchEnrichment();
+            return;
+        }
+
+        const { element, title, text, pos, action } = interpretations[currentInterpretation];
+        const numberedTitle = `(${currentInterpretation + 1}/${interpretations.length}) ${title}`;
+        const targetElement = document.getElementById(element);
+
+        // Highlight the current element
+        targetElement.classList.add('highlight-block');
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Create and position the info banner
+        const final = currentInterpretation === interpretations.length - 1;
+        document.body.insertAdjacentHTML('beforeend', getCard(numberedTitle, text, final));
+
+        positionInfoBanner(element, 'info-banner', pos, tabName, !wait);
+
+        if (currentInterpretation === 0) {
+            document.getElementById('prev-info').disabled = true;
+        }
+
+        // Set up event listeners for buttons
+        document.getElementById('stop-info').addEventListener('click', () => {
+            document.getElementById('info-banner').remove();
+            targetElement.classList.remove('highlight-block');
+            showHelp = false;
+            switchEnrichment();
+        });
+
+        document.getElementById('next-info').addEventListener('click', () => {
+            document.getElementById('info-banner').remove();
+            targetElement.classList.remove('highlight-block');
+            currentInterpretation += 1;
+            const {value, wait} = processAction(action);
+            showInterpretation(value, wait);
+        });
+
+        document.getElementById('prev-info').addEventListener('click', () => {
+            document.getElementById('info-banner').remove();
+            targetElement.classList.remove('highlight-block');
+            currentInterpretation -= 1;
+            showInterpretation();
+        });
+    }
+
+    // disable running enrichment while the help is being shown
+    function switchEnrichment() {
+        const runEnrichment = document.getElementById('run_nease_enrichment')
+        const analPathway = document.getElementById('anal_pathway')
+        const visPathway = document.getElementById('vis_pathway')
+
+        for (const element of [runEnrichment, analPathway, visPathway]) {
+            element.disabled = !element.disabled;
+            // add tooltip to explain why the button is disabled
+            if (element.disabled) {
+              element.setAttribute('data-toggle', 'tooltip');
+              element.setAttribute('title', 'To run your own analysis, please disable the help.');
+              element.setAttribute('data-placement', 'top');
+            } else {
+                element.removeAttribute('data-toggle');
+                element.removeAttribute('title');
+                element.removeAttribute('data-placement');
+                $(element).tooltip('dispose');
+            }
+        }
+    }
+
+
+    if (showHelp) {
+        showInterpretation();
+        switchEnrichment()
+    }
+
+    const runId = "{{ run_id }}";
+    // if the "custom_name" variable is not none then use it as the file name
+    const fileName = "{{ custom_name|default:input_name|safe }}";
+
+    const nease_databases = [ {% for db in nease_dbs %} "{{ db|safe }}", {% endfor %} ]
+
+    //check if runId is in local storage
+    if (localStorage.getItem("nease/" + runId) === null) {
+        // if it is not in local storage, then set it
+        const userStore = window.initStore({key: runId, expiresInDays: {{ time_left|safe }}, name: fileName})
+        userStore.set(runId)
+    }
+
+    // enable tooltips
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    // format all tables to be responsive
+    $(document).ready(function () {
+        // so that these smaller tables are nice and centered
+        $("#pdb_table").DataTable({
+            columnDefs: [
+                {width: "20%", targets: 0},
+                {width: "30%", targets: 1},
+                {width: "50%", targets: 2}
+            ]
+        });
+        $("#elm_table").DataTable({
+            columnDefs: [
+                {width: "20%", targets: 0},
+                {width: "30%", targets: 1},
+                {width: "30%", targets: 2},
+                {width: "20%", targets: 3}
+            ]
+        });
+        $("#edges_table").DataTable();
+        $("#domains_table").DataTable();
+
+        // change display of short tables on smaller screens
+        $("[id$='_table']").addClass("short-table")
+    });
+
+    // if the user selects visualise pathway, the visWarn div should be shown
+    document.getElementById('v-pills-vis-path-tab').addEventListener('click', () => {
+        document.getElementById('visWarn').hidden = false;
+    });
+
+    // if the user selects another tab, the visWarn div should be hidden
+    for (const tab of document.querySelectorAll('.nav-link')) {
+        if (tab.id === 'v-pills-vis-path-tab') continue;
+        tab.addEventListener('click', () => {
+            document.getElementById('visWarn').hidden = true;
+            document.getElementById('visFail').hidden = true;
+        });
+    }
+
+    function updateTooltips() {
+        $('.tooltips').append("<span></span>");
+        $('.tooltips:not([tooltip-position])').attr('tooltip-position', 'top');
+
+
+        $(".tooltips").mouseenter(function () {
+            $(this).find('span').empty().append($(this).attr('tooltip'));
+        });
+    }
+
+function toggleText(element) {
+    const shortText = element.querySelector(".short-text");
+    const fullText = element.querySelector(".full-text");
+
+    if (fullText.style.display === "none") {
+        fullText.style.display = "inline";
+        shortText.style.display = "none";
+    } else {
+        fullText.style.display = "none";
+        shortText.style.display = "inline";
+    }
+}
+
+    function addSupportedPathwaysList(supportedList, databases) {
+        for (const db of databases) {
+            const listItem = document.createElement('button');
+            listItem.classList.add('list-group-item', 'list-group-item-action');
+            listItem.textContent = db;
+            // add the text content to the input field when the user clicks on the list item
+            listItem.addEventListener('click', () => {
+                const inputField = document.getElementById('neaseDatabasesToEnrich');
+                // check whether inputField already contains the db string. If so, don't add it again
+                // we also dont need set everything to valid
+                if (inputField.value.includes(db)) {
+                    return;
+                }
+                inputField.value = inputField.value ? `${inputField.value}, ${db}` : db;
+                inputField.classList.remove('is-invalid');
+                document.getElementById('neaseNotSupported').hidden = true;
+            });
+            supportedList.appendChild(listItem);
+        }
+    }
+
+    function runEnrichment(inputFieldId, buttonId, spinnerId, funcName, imageId, tableId, tableNameId, hrId) {
+        $(`#${buttonId}`).click(function () {
+            try {
+                const databases = $(`#${inputFieldId}`).val();
+                $(`#${inputFieldId}`).prop("disabled", true);
+                $(`#${buttonId}`).prop("disabled", true);
+                $(`.${spinnerId}`).css('display', 'inline-block');
+
+                $.get(`nease_analysis/extra_functions?` + $.param({
+                    runId: runId,
+                    databases: databases,
+                    func: funcName
+                }), function (data) {
+                    const tableData = data.table
+                    const visualisationData = data.plot
+                    $(`#${tableId}`).html(tableData);
+                    $(`#${tableNameId}`).DataTable({
+                        "order": [[6, "desc"]],
+                        "columnDefs": [
+                            { targets: [3],
+                              render: function (data, type, row) {
+                                  if (data && data.length > 40) {
+                                      return `<span class="expandable" onclick="toggleText(this)">
+                                                  <span class="short-text">${data.substring(0, 40)}...</span>
+                                                  <span class="full-text" style="display: none;">${data}</span>
+                                              </span>`;
+                                  } else {
+                                      // If there's no text, or it's short, just display it without any toggling
+                                      return `<span>${data || ''}</span>`;
+                                  }
+                              }
+                            }
+                        ]
+                    });
+
+                    // enable tooltips for pathway names
+                    updateTooltips()
+                    document.getElementById('nease_enrich_paginate').addEventListener('click', updateTooltips)
+
+                    // Re-enable the input and button, and hide the spinner
+                    $(`#${inputFieldId}`).prop("disabled", false);
+                    if (!showHelp) {
+                        $(`#${buttonId}`).prop("disabled", false);
+                    }
+                    $(`.${spinnerId}`).css('display', 'none');
+
+                    // show all the relevant elements
+                    $(`#${tableNameId}_download_button`).css('display', 'block');
+
+                    const thumb = funcName === 'nease' ? '_neenr_thumb.jpg' : '_clenr_thumb.jpg';
+                    const fullRes = funcName === 'nease' ? '_neenr.jpg' : '_clenr.jpg';
+                    const downloadBtn = $(`#${hrId}Btn`);
+                    downloadBtn.attr('href', `{% get_media_prefix %}images/` + runId + fullRes + '?' + new Date().getTime());
+                    downloadBtn.attr('download', `${fileName}_${databases.replaceAll(",", "_")}_enrichment_result.jpg`);
+                    downloadBtn.css('display', 'block');
+
+                    $(`#${imageId}`).attr('src', `{% get_media_prefix %}images/` + runId + thumb + '?' + new Date().getTime());
+                    $(`#${hrId}Hr1`).css('display', 'block');
+                    $(`#${hrId}Hr2`).css('display', 'block');
+
+                    // display the visualisation plot in the iframe
+                    if (visualisationData) {
+                        const pathwayIFrame = document.getElementById('vis_pathway_net');
+                        const iframeDoc = pathwayIFrame.contentDocument || pathwayIFrame.contentWindow.document;
+                        iframeDoc.open();
+                        iframeDoc.write(visualisationData);
+                        iframeDoc.close();
+                        const visPathwayNetDiv = document.getElementById('vis_pathway_net_div');
+                        visPathwayNetDiv.style.display = 'block';
+                    } else {
+                        visPathwayNetDiv.style.display = 'none';
+                    }
+
+                    // sleep for 1 second to allow the iframe to load before repositioning the banner
+                    setTimeout(() => {
+                        positionInfoBanner('nease_enrichment_result', 'info-banner', 'bottom-left', null, true, true);
+                    }, 1000);
+
+                }).fail(function () {
+                    alert("An error occurred while processing your request.");
+                    $(`#${inputFieldId}`).prop("disabled", false);
+                    $(`#${buttonId}`).prop("disabled", false);
+                    $(`.${spinnerId}`).css('display', 'none');
+                });
+            } catch (err) {
+                console.error(`An error occurred: ${err.message}`);
+            }
+        });
+    }
+
+    function analysePathway(pathway) {
+
+        // check if the pathway tab (v-pills-pathway) is active, if it isn't then show the tab
+        if (!document.getElementById('v-pills-pathway').classList.contains('active')) {
+            document.getElementById('v-pills-pathway-tab').click();
+        }
+
+        // check if the pathwayVis field is not the same as the input, if it isn't then fill it
+        if (document.getElementById('pathwayAnal').value !== pathway) {
+            document.getElementById('pathwayAnal').value = pathway;
+        }
+
+        document.getElementById('pathwayAnal').disabled = true;
+        document.getElementById('anal_pathway').disabled = true;
+        document.getElementsByClassName('spinner-border')[1].style.display = 'inline-block';
+
+
+        const url = new URL("nease_analysis/extra_functions", window.location.origin + window.location.pathname)
+        url.searchParams.append('runId', runId);
+        url.searchParams.append('pathway', pathway);
+        url.searchParams.append('func', 'pathway')
+
+        fetch(url)
+            .then(response => {
+                if (response.status === 400) {
+                    return response.json().then(err => {
+                        throw new Error(err.errorMsg);
+                    });
+                }
+                return response.text();
+            })
+            .then(table => {
+                const pathwayTable = document.getElementById('pathway_result');
+                pathwayTable.innerHTML = table;
+                $(`#pathway_path`).DataTable({
+                    "order": [[4, "asc"]]
+                });
+                document.getElementById('pathwayAnal').disabled = false;
+                if (!showHelp) {
+                    document.getElementById('anal_pathway').disabled = false;
+                }
+                document.getElementById('pathway_download_button').style.display = 'block';
+                document.getElementsByClassName('spinner-border')[1].style.display = 'none';
+                document.getElementById('pathwayDownloadLink').href = `{% get_media_prefix %}nease_tables/` + runId + '_path_' + pathway + '.csv';
+
+                // example only: reposition the banner once the element has loaded
+                setTimeout(() => {
+                    positionInfoBanner('pathway_result', 'info-banner', 'top-left', null, true);
+                }, 1000);
+
+            })
+            .catch(error => {
+                console.log(error)
+                document.getElementById('visFail').textContent = error.message;
+                document.getElementById('visFail').hidden = false;
+                document.getElementById('pathwayAnal').disabled = false;
+                document.getElementById('anal_pathway').disabled = false;
+                document.getElementsByClassName('spinner-border')[1].style.display = 'none';
+            })
+    }
+
+    function visualisePath(pathway, k) {
+        // check if the vis_path tab (v-pills-vis-path) is active, if it isn't then show the tab
+        if (!document.getElementById('v-pills-vis-path').classList.contains('active')) {
+            document.getElementById('v-pills-vis-path-tab').click();
+        }
+
+        // fill the pathwayVis field with the pathway name if it is not the same as the input
+        if (document.getElementById('pathwayVis').value !== pathway) {
+            document.getElementById('pathwayVis').value = pathway;
+        }
+
+        // Disable input fields and button
+        document.getElementById('pathwayVis').disabled = true;
+        document.getElementById('k').disabled = true;
+        document.getElementById('vis_pathway').disabled = true;
+        document.getElementById('spinner-vis').style.display = 'inline-block';
+
+
+        // Construct URL with query parameters
+        const baseURL = window.location.origin + window.location.pathname;
+        const url = new URL('nease_analysis/extra_functions', baseURL);
+        url.searchParams.append('runId', runId);
+        url.searchParams.append('pathway', pathway);
+        url.searchParams.append('k', k);
+        url.searchParams.append('func', 'visualise');
+
+        fetch(url)
+            .then(response => {
+                if (response.status === 400) {
+                    return response.json().then(err => {
+                        throw new Error(err.errorMsg);
+                    });
+                }
+                return response.text();
+            })
+            .then(html => {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
+
+                document.getElementById('vis_result_div').style.display = 'block';
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                if (!showHelp) {
+                    document.getElementById('vis_pathway').disabled = false;
+                }
+                document.getElementById('spinner-vis').style.display = 'none';
+                document.getElementById('vis_result_info').style.display = 'block';
+                // disable warning
+                document.getElementById('visWarn').hidden = false;
+
+                // example only: reposition the banner once the element has loaded
+                setTimeout(() => {
+                    positionInfoBanner('vis_result', 'info-banner', 'top-top-right', null, true, true);
+                }, 1000);
+
+            })
+            .catch(error => {
+                document.getElementById('visFail').textContent = error.message;
+                // Show the visFail div
+                document.getElementById('visFail').hidden = false;
+                // Enable the input fields and button
+                document.getElementById('pathwayVis').disabled = false;
+                document.getElementById('k').disabled = false;
+                document.getElementById('vis_pathway').disabled = false;
+                document.getElementById('spinner-vis').style.display = 'none';
+            });
+    }
+
+    function checkSupportedPathways(inputElem, submitBtn, warnText, pathwayList) {
+        // split input by , and show an error if the input is not in the list
+        inputElem.addEventListener('input', () => {
+            const input = inputElem.value;
+            if (input.length < 3) return;
+            const inputList = input.split(',').map(item => item.trim());
+            const notSupported = inputList.filter(item => !pathwayList.includes(item));
+            if (notSupported.length > 0) {
+                inputElem.classList.add('is-invalid');
+                submitBtn.disabled = true;
+                warnText.textContent = `The following pathways are not supported: ${notSupported.join(', ')}`;
+                warnText.hidden = false;
+            } else {
+                inputElem.classList.remove('is-invalid');
+                submitBtn.disabled = false;
+                warnText.hidden = true;
+            }
+        });
+    }
+
+    runEnrichment('neaseDatabasesToEnrich', 'run_nease_enrichment', 'spinner-border', 'nease', 'neaseEdgeImage',
+        'nease_enrichment_result', 'nease_enrich', 'neaseEdge');
+
+
+    document.getElementById('anal_pathway').addEventListener('click', () => {
+        const pathway = document.getElementById('pathwayAnal').value;
+        analysePathway(pathway);
+    });
+
+    document.getElementById('vis_pathway').addEventListener('click', () => {
+        const pathway = document.getElementById('pathwayVis').value;
+        const k = document.getElementById('k').value;
+        visualisePath(pathway, k);
+    });
+
+    checkSupportedPathways(document.getElementById('neaseDatabasesToEnrich'),
+        document.getElementById('run_nease_enrichment'),
+        document.getElementById('neaseNotSupported'), nease_databases)
+
+    addSupportedPathwaysList(document.getElementById('supportedDatabases'), nease_databases)
+
+    const iframe = document.getElementById('vis_result');
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+    // Ensure HTML and body tags take full height
+    iframeDoc.documentElement.style.height = '100%';
+    iframeDoc.body.style.height = '100%';
+    iframeDoc.body.style.margin = '0';
+    iframeDoc.body.style.display = 'flex';
+    iframeDoc.body.style.flexDirection = 'column';
+
+</script>
+{% endblock %}

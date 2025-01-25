@@ -3,8 +3,7 @@ version: '3.2'
 services:
 
   web:
-    build: .
-    command: gunicorn DomainExplorer.wsgi:application --bind 0.0.0.0:8000 --timeout 360 --workers=6 --threads=2
+    build: ./docker/web
     environment:
       - DJANGO_SETTINGS_MODULE=DomainExplorer.settings.production
     env_file:
@@ -12,6 +11,7 @@ services:
     volumes:
       - static_volume:/code/run/static
       - media_volume:/code/run/media
+      - ./container:/code
     networks:
       - digger_database_network
       - digger_nginx_network
@@ -24,6 +24,11 @@ services:
       - .env
     networks:
       - digger_database_network
+    # This is to make the database accessible from the host machine. The database runs on port 5432, but as to not have multiple databases accessible under 5432, we map it to the unique port 5461.
+    # PortOnHost:PortInsideContainer
+    # Access with command: psql -h localhost -U postgres -p 5461
+    ports:
+      - 5461:5432                                             # Change this part
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
@@ -36,7 +41,7 @@ services:
     # Change the 'published' port number to the port you desire
     ports:
       - target: 80
-        published: 8082 #${NGINX_PUBLISHED_PORT}             # Change this port
+        published: 8061 #${NGINX_PUBLISHED_PORT}             # Change this port
         protocol: tcp
         mode: host
     environment:
@@ -50,8 +55,16 @@ services:
 networks:
   digger_database_network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.111.0/24
   digger_nginx_network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.110.0/24
 
 volumes:
   postgres_data:
