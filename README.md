@@ -11,7 +11,7 @@ Protein-protein interaction (PPI) networks are a key resource for systems biolog
 
 
 ## Deploying DIGGER
-To install DIGGER 1.5 (running it for the first time) follow these steps:
+To install DIGGER 2.0 (running it for the first time) follow these steps:
 ```shell script
 # First, follow this link, if you want to install docker-compose: 
 # https://docs.docker.com/compose/install/
@@ -54,9 +54,11 @@ docker-compose exec web python manage.py createsuperuser
 
 ```
 
+## Extending DIGGER by DDIs for new organisms
+>[!Warning]
+>This is only necessary if you add a new organism and want to predict DDIs for it
 
-## Extending DIGGER by DDIs
-To extend DIGGER using generated Domain-Domain Interactions (DDIs) follow these steps:
+To extend DIGGER using generated Domain-Domain Interactions (DDIs) for a new organism follow these steps:
 ````bash
 # First, create a conda environment to ensure you have all dependencies installed
 conda env create -f DIGGER_env.yml
@@ -64,7 +66,7 @@ conda env create -f DIGGER_env.yml
 # Activate the environment
 conda activate DIGGER
 
-# Make sure you have the necessary files in the sourcedata folder
+# Make sure you have the necessary files for your new organism in the sourcedata folder
 # more info about what these files should look like can be found in the sourcedata README.md
 
 # copy the example database_sources to have a backup and list of all options. 
@@ -89,4 +91,5 @@ Zakaria Louadi, Kevin Yuan, Alexander Gress, Olga Tsoy, Olga Kalinina, Jan Baumb
 
 
 ## Contact us
-Elias Albrecht: elias.albrecht@tum.de  
+Elias Albrecht: elias.albrecht@tum.de
+Konstantin Pelz: konstantin.pelz@tum.de
