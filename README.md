@@ -21,13 +21,13 @@ git clone https://github.com/daisybio/DIGGER.git && cd DIGGER
 
 # Download a copy of all the data files into domain/data/
 # If you have more organisms, add the files into respective foldes, e.g. domain/data/Mus musculus[mouse]/
-wget https://zenodo.org/records/12517244/files/data.zip
+wget https://zenodo.org/records/14770005/files/data.zip
 
 # unzip this data to the appropriate directory
 unzip data.zip -d container/domain/
 
 # repeat this with the nease data:
-wget https://zenodo.org/records/12517244/files/nease_data.zip
+wget https://zenodo.org/records/14770005/files/nease_data.zip
 unzip nease_data.zip -d container/domain/nease/
 
 
