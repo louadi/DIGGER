@@ -14,8 +14,10 @@ __dummy = LANGUAGE_CODE
 debug_env = os.environ.get("DEBUG", "")
 DEBUG = True if debug_env == 'True' else False
 
-# Restrict access to only the hostname that this service is deployed to
-ALLOWED_HOSTS = ['*']   # ToDo change for production
+# Restrict access to only the hostname(s) this service is deployed to.
+# Set ALLOWED_HOSTS in .env as a comma-separated list; falls back to the public host.
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()] \
+    or ['exbio.wzw.tum.de']
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases

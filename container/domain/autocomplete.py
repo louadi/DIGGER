@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.db import connection
 from django.views.decorators.http import require_http_methods
 
+from .views import _check_organism
+
 
 # Derived from here https://stackoverflow.com/questions/32465052/using-typeahead-js-in-django-project
 @require_http_methods(['GET'])
@@ -11,6 +13,8 @@ def gene_symbol_autocomplete(request):
     data = {}
 
     if q:
+        # Reject unknown/injected organism before it reaches the raw table name.
+        _check_organism(o)
         # Define the raw SQL query
         raw_sql = """
         SELECT gene_symbol, ensembl_id

@@ -9,7 +9,7 @@ from domain.Process import exonstodomain as exd
 # from domain.Process import proteininfo as  info
 from domain.Process import transcript as tr
 from domain.Process import gene as g
-from sqlalchemy import text
+from sqlalchemy import text, bindparam
 from django.urls import reverse
 
 # --- Get database connection aka 'SQLAlchemie engine'
@@ -236,23 +236,18 @@ def PPI_inter(exon_ID, gene_name, organism):
 
 
 def tr_to_names(list_tr, organism):
-    names = []
-    for tr in list_tr:
-        # SQL
-        query = """
-                SELECT "Transcript name" 
-                FROM gene_info_""" + organism + """ 
-                WHERE "Transcript stable ID"=:transcript_id
-                LIMIT 1
-                """
-        name = \
-            pd.read_sql_query(sql=text(query), con=engine, params={'transcript_id': tr}).iloc[0, 0].split('-')[0]
-        # name_old = tr_to_name_old[tr_to_name_old['Transcript stable ID'] == tr]['Transcript name'].tolist()[0].split('-')[0]
-
-        # assert (np.array_equal(name, name_old))
-
-        names.append(name)
-    return names
+    if len(list_tr) == 0:
+        return []
+    # One query for all transcripts (previously one query per transcript = N+1).
+    query = text("""
+                SELECT "Transcript stable ID", "Transcript name"
+                FROM gene_info_""" + organism + """
+                WHERE "Transcript stable ID" IN :transcript_ids
+                """).bindparams(bindparam('transcript_ids', expanding=True))
+    tb = pd.read_sql_query(sql=query, con=engine, params={'transcript_ids': list(list_tr)})
+    # Transcript name is functionally determined by the ID, so one row per ID is enough.
+    names_by_id = dict(zip(tb["Transcript stable ID"], tb["Transcript name"]))
+    return [names_by_id[tr].split('-')[0] for tr in list_tr]
 
 
 def exon_table(exon_ID, organism, to_html=True):
