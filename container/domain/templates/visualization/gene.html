@@ -8,6 +8,10 @@
   <div class="card-body p-3">
     <h3 class="font-weight-light card-title"> List of the gene <span style="font-weight:bold">{{ name|safe }}</span>
       transcripts with known Pfam domains. </h3>
+    <a href="https://hippie-db.net/?q={{ name|urlencode }}"
+       class="btn btn-primary shadow my-2" target="_blank" rel="noopener noreferrer">
+      Show interactions in HIPPIE
+    </a>
     <div class="table-responsive">
       <h6 class="mt-4">
         {% autoescape off %}
