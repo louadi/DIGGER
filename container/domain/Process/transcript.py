@@ -401,11 +401,15 @@ def transcript_table(transcript_id, organism, protein_ID=False):
         trans_pfams.extend([x[0] for x in pfam if x[0] is not None])
         cursor.execute(sql_trans_name, [transcript_id])
         transcript_name, gene = cursor.fetchone()
-        all_transcripts = pr.gene_to_all_transcripts(gene, organism)
-        for trans in all_transcripts:
-            cursor.execute(sql_pfam, [trans])
-            pfam = cursor.fetchall()
-            all_pfams.extend([x[0] for x in pfam if x[0] is not None])
+        all_transcripts = list(pr.gene_to_all_transcripts(gene, organism))
+        if all_transcripts:
+            # One query for all transcripts of the gene (previously one per transcript = N+1).
+            # Values are bound; %s placeholders are translated to the backend paramstyle by Django.
+            placeholders = ', '.join(['%s'] * len(all_transcripts))
+            sql_all_pfam = f"""SELECT DISTINCT "Pfam ID" FROM exons_to_domains_data_{organism}
+                               WHERE "Transcript stable ID" IN ({placeholders})"""
+            cursor.execute(sql_all_pfam, all_transcripts)
+            all_pfams.extend([x[0] for x in cursor.fetchall() if x[0] is not None])
     num_missing = len(set(all_pfams) - set(trans_pfams))
     percent_retained = (len(set(all_pfams)) - num_missing) / len(set(all_pfams))
     green_boxes = int(10 * percent_retained)

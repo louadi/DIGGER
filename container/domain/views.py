@@ -10,9 +10,10 @@ import pandas as pd
 
 from django.db import connection
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.core import signing
 from django.utils.html import escape
 from io import StringIO
 
@@ -27,6 +28,7 @@ from .Process import network_analysis as nt
 from .Process import mutliple_query as mq
 from .Process import process_data as proc_data
 from .Process import nease_output as no
+from .Process.load_data import VALID_ORGANISMS
 from .models import NeaseSavedRun
 
 # --- Create folder
@@ -36,9 +38,61 @@ if not os.path.exists(jobs_path):
     os.makedirs(jobs_path)
 
 
+def _check_organism(organism):
+    """Reject unknown or injected organism values before they reach raw SQL table names.
+
+    `organism` arrives from URL path segments and GET/POST params and is concatenated
+    into table names (e.g. ppi_data_<organism>), which cannot be parameterized. Guarding
+    it against the known set here is what makes those raw-SQL sites safe.
+    """
+    if organism not in VALID_ORGANISMS:
+        raise Http404("Unknown organism")
+
+
+HIPPIE_HANDOFF_MAX_AGE = 300  # seconds
+
+
+def receive_token(request):
+    """SSO-style signed handoff from HIPPIE into the network-analysis result page.
+
+    HIPPIE signs {organism, input:[Ensembl IDs]} with the shared secret and redirects
+    the user here via GET, avoiding a cross-site POST (which DIGGER's CSRF blocks).
+    We verify the signature + expiry, then reproduce network() Option 1.
+    """
+    token = request.GET.get('token', '')
+    try:
+        data = signing.loads(
+            token,
+            key=settings.HIPPIE_HANDOFF_SECRET,
+            salt='hippie-handoff',
+            max_age=HIPPIE_HANDOFF_MAX_AGE,
+        )
+    except signing.SignatureExpired:
+        return HttpResponseBadRequest("Handoff token expired")
+    except signing.BadSignature:
+        return HttpResponseBadRequest("Invalid handoff token")
+
+    organism = data.get('organism')
+    _check_organism(organism)  # raises Http404 on unknown organism (guards raw SQL)
+
+    raw = data.get('input', [])
+    if isinstance(raw, str):
+        raw = raw.split('\n')
+    input_query = list({e.strip() for e in raw if e and e.strip()})
+
+    if not (2 <= len(input_query) < 2000) or not re.match(r'^ENS\w*[GTP]', input_query[0]):
+        return HttpResponseBadRequest("Handoff input must be 2-1999 Ensembl IDs")
+
+    job_num = str(random.randrange(500))
+    with open(f'{jobs_path}/{job_num}.txt', "wb") as fp:
+        pickle.dump(input_query, fp)
+    return redirect(Multi_proteins, organism=organism, job=job_num)
+
+
 # Display transcripts of a gene
 def gene(request, gene_ID, organism):
     print("Currently in gene view")
+    _check_organism(organism)
     transcript_table, gene_name = g.input_gene(gene_ID, organism)
 
     if transcript_table == []:
@@ -55,6 +109,7 @@ def gene(request, gene_ID, organism):
 # if the user inputs multiple queries, this function will handle them
 def multiple_queries(request, inputs, organism):
     print("Currently in multiple queries view")
+    _check_organism(organism)
     # retrieve get data from the form
     input_names = [x.strip() for x in inputs.split(",")]
     print(input_names)
@@ -148,6 +203,7 @@ def multiple_queries(request, inputs, organism):
 # Display information of an exon (Exon-Level Analysis)
 def exon(request, organism, exon_ID):
     print("Currently in exon view")
+    _check_organism(organism)
     v = ex.input_exon(exon_ID, organism)
 
     if v is None:
@@ -283,6 +339,7 @@ def exon(request, organism, exon_ID):
 # Display information of a transcript or a protein (Isoform-Level Analysis)
 def transcript(request, P_id, organism):
     print("Currently in transcript view")
+    _check_organism(organism)
 
     out = tr.Protein_view(P_id, organism)
 
@@ -440,6 +497,7 @@ def isoform_level(request):
 
         # Get organism (human, mouse)
         organism = request.GET.get('organism', None)
+        _check_organism(organism)
 
         # allow user to input multiple queries separated by commas
         multiple = search_query.split(",")
@@ -488,6 +546,7 @@ def exon_level(request):
         print('-----------------------------------------------------------')
         search_query = request.GET['search']
         organism = request.GET.get('organism', None)
+        _check_organism(organism)
         search_query = search_query.replace(" ", "")
         search_query = search_query.split("+")[0]
         search_query = search_query.split("%")[0]
@@ -510,6 +569,7 @@ def exon_level(request):
         print('-----------------------------------------------------------')
         search_query = request.GET['search 2']
         organism = request.GET.get('organism', None)
+        _check_organism(organism)
 
         multiple = search_query.split(",")
         if len(multiple) > 1:
@@ -542,6 +602,7 @@ def exon_level(request):
         # Get and sanitize the search_query
         search_query = request.GET['search 3'].strip()
         organism = request.GET.get('organism', None)
+        _check_organism(organism)
 
         # allow user to input multiple queries separated by commas
         multiple = search_query.split(",")
@@ -583,6 +644,7 @@ def network(request):
     # Option 1: List of Ensembl IDs
     if "option1" in request.POST:
         organism = request.POST.get('organism', None)
+        _check_organism(organism)
         input_query = []
         for element in request.POST['input'].split('\n'):
             element = element.strip()
@@ -606,6 +668,7 @@ def network(request):
     if "option2" in request.POST and 'gene-count-file' in request.FILES:
         error_message_suffix = ""
         organism = request.POST.get('organism', None)
+        _check_organism(organism)
         try:
             # --- Check input file for correct format
             # Try to decode as UTF-8, sanitize and parse as table
@@ -686,6 +749,7 @@ def network(request):
 
 # network level analysis
 def Multi_proteins(request, organism, job='0'):
+    _check_organism(organism)
     with open(f'{jobs_path}/{job}.txt', "rb") as fp:  # Unpickling
         inputs = pickle.load(fp)
 
@@ -813,6 +877,7 @@ def setup_nease(request):
         return HttpResponse("No input file provided", status=400)
 
     organism = request.POST.get('organism', 'human')
+    _check_organism(organism)
     database_type = request.POST.get('inputType', 'Standard')
     custom_name = request.POST.get('analysis_name', None)
 

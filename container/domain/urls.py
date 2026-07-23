@@ -18,6 +18,8 @@ urlpatterns = [
          name="network-analysis-example-2"),
     path('network_analysis/example3', TemplateView.as_view(template_name='setup/network_example_3.html'),
          name="network-analysis-example-3"),
+    # Signed-token handoff from HIPPIE into the network-analysis result page (no cross-site POST)
+    path('receive-token/', views.receive_token, name="receive-token"),
 
     # NEASE analysis
     path('nease_analysis', views.setup_nease, name="nease-analysis"),

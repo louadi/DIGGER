@@ -146,6 +146,11 @@ except IOError:
     except IOError:
         raise Exception('Could not open %s for writing!' % SECRET_FILE)
 
+# Shared secret for the HIPPIE -> DIGGER signed handoff (see domain.views.receive_token).
+# Must be set identically in HIPPIE. Falls back to SECRET_KEY so the feature stays
+# effectively disabled (tokens won't validate cross-app) until explicitly configured.
+HIPPIE_HANDOFF_SECRET = env('HIPPIE_HANDOFF_SECRET', SECRET_KEY)
+
 # #### ADMIN / AUTHENTIFICATION CONFIGURATION
 
 # adjust the minimal login
